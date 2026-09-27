@@ -68,11 +68,22 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
-    <Content Include="Backend\Database\Migration\01_CampusEventSchema.sql" />
-    <Content Include="Backend\Database\Migration\02_UniversityEventSchema.sql" />
+    <Content Include="Default.aspx" />
+    <Content Include="Backend\Database\Migration\01_DatabaseSchema.sql" />
+    <Content Include="Frontend\Admin\TestConnection.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Backend\Models\UserModel.cs" />
+    <Compile Include="Backend\Repository\DatabaseConnection.cs" />
+    <Compile Include="Backend\Repository\UserRepository.cs" />
+    <Compile Include="Frontend\Admin\TestConnection.aspx.cs">
+      <DependentUpon>TestConnection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\Admin\TestConnection.aspx.designer.cs">
+      <DependentUpon>TestConnection.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
