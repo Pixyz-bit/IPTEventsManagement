@@ -79,10 +79,12 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Backend\Models\EventModel.cs" />
+    <Compile Include="Backend\Models\EventRegistrationModel.cs" />
     <Compile Include="Backend\Models\StudentProfile.cs" />
     <Compile Include="Backend\Models\UserModel.cs" />
     <Compile Include="Backend\Repository\DatabaseConnection.cs" />
     <Compile Include="Backend\Repository\EventRepository.cs" />
+    <Compile Include="Backend\Repository\RegistrationRepository.cs" />
     <Compile Include="Backend\Repository\StudentRepository.cs" />
     <Compile Include="Backend\Repository\UserRepository.cs" />
     <Compile Include="Backend\Helpers\PasswordHelper.cs" />
