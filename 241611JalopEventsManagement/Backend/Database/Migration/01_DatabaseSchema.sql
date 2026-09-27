@@ -11,21 +11,12 @@ CREATE TABLE UserTable (
     Email NVARCHAR(150) NOT NULL,
     PasswordHash VARCHAR(256) NOT NULL,
     PasswordSalt VARCHAR(128) NOT NULL,
-    Role VARCHAR(50) NOT NULL,
+    Role VARCHAR(50) NOT NULL, -- 'Admin', 'Student'
     IsActive BIT NOT NULL DEFAULT 1
 );
 GO
 
--- 3. Rooms Table
-CREATE TABLE RoomsTable (
-    RoomId INT IDENTITY(1,1) PRIMARY KEY,
-    VenueLocation NVARCHAR(200) NOT NULL,
-    RoomNumber NVARCHAR(50) NOT NULL,
-    MaxCapacity INT NOT NULL
-);
-GO
-
--- 4. Student Table
+-- 3. Student Table
 CREATE TABLE StudentTable (
     StudentId VARCHAR(50) PRIMARY KEY,
     FirstName NVARCHAR(100) NOT NULL,
@@ -40,16 +31,16 @@ CREATE TABLE StudentTable (
 );
 GO
 
--- 5. Events Table
+-- 4. Events Table
 -- Addresses:
---   Issue 3: MaxCapacity & CurrentRegistrations counter directly on the event
+--   Issue 3: Embedded VenueLocation, MaxCapacity & CurrentRegistrations counter directly on the event
 --   Issue 4: CreatedByUserId foreign key referencing UserTable
 --   Issue D: 4-tier audience matrix (NULL = Open to All)
 CREATE TABLE EventsTable (
     EventId INT IDENTITY(1,1) PRIMARY KEY,
     Title NVARCHAR(200) NOT NULL,
     Description NVARCHAR(MAX) NULL,
-    RoomId INT NOT NULL,
+    VenueLocation NVARCHAR(200) NOT NULL,
     MaxCapacity INT NOT NULL,
     CurrentRegistrations INT NOT NULL DEFAULT 0,
     CreatedByUserId INT NOT NULL,
@@ -66,12 +57,11 @@ CREATE TABLE EventsTable (
     TargetProgram NVARCHAR(100) NULL,
     TargetYearLevel INT NULL,
 
-    FOREIGN KEY (RoomId) REFERENCES RoomsTable(RoomId),
     FOREIGN KEY (CreatedByUserId) REFERENCES UserTable(UserId)
 );
 GO
 
--- 6. Sponsor List Table
+-- 5. Sponsor List Table
 CREATE TABLE SponsorListTable (
     SponsorEntryId INT IDENTITY(1,1) PRIMARY KEY,
     SponsorName NVARCHAR(150) NOT NULL,
@@ -81,7 +71,7 @@ CREATE TABLE SponsorListTable (
 );
 GO
 
--- 7. Event Registration Table
+-- 6. Event Registration Table
 -- Addresses:
 --   Missing Check-In Timestamp: Added CheckInTimestamp DATETIME NULL
 --   Default Status: 'NoShow'
@@ -98,7 +88,7 @@ CREATE TABLE EventRegistrationTable (
 );
 GO
 
--- 8. Performance Index
+-- 7. Performance Index
 -- Addresses Issue B: Eliminates full table scan on student dashboard queries
 CREATE INDEX IX_EventRegistrationTable_StudentId 
 ON EventRegistrationTable (StudentId);
