@@ -27,5 +27,10 @@ namespace _241611JalopEventsManagement.Backend.Models
         public bool IsActive { get; set; } = true;
 
         public bool RememberMe { get; set; }
+
+        /// <summary>
+        /// Academic and demographic profile data (populated when Role == 'Student').
+        /// </summary>
+        public StudentProfile StudentProfile { get; set; }
     }
 }

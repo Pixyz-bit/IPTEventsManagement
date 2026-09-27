@@ -38,6 +38,32 @@ namespace _241611JalopEventsManagement.Backend.Repository
             return null;
         }
 
+        /// Retrieves a user record by either their Student ID or Email address.
+        public UserModel GetUserByIdentifier(string identifier)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+            {
+                return null;
+            }
+
+            const string sql = @"
+                SELECT u.UserId, u.Email, u.PasswordHash, u.PasswordSalt, u.Role, u.IsActive,
+                       s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, s.CampusBranch, s.Department, s.Program
+                FROM dbo.UserTable u
+                LEFT JOIN dbo.StudentTable s ON u.UserId = s.UserId
+                WHERE u.Email = @Identifier OR s.StudentId = @Identifier;";
+
+            var param = new SqlParameter("@Identifier", SqlDbType.NVarChar, 150) { Value = identifier.Trim() };
+            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                return MapRowToUserModel(dt.Rows[0]);
+            }
+
+            return null;
+        }
+
         /// Retrieves a user record by their primary key (UserId).
         public UserModel GetUserById(int userId)
         {
@@ -180,7 +206,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
         private static UserModel MapRowToUserModel(DataRow row)
         {
-            return new UserModel
+            var user = new UserModel
             {
                 UserId = Convert.ToInt32(row["UserId"]),
                 Email = row["Email"]?.ToString(),
@@ -189,6 +215,24 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 Role = row["Role"]?.ToString(),
                 IsActive = row["IsActive"] != DBNull.Value && Convert.ToBoolean(row["IsActive"])
             };
+
+            if (row.Table.Columns.Contains("StudentId") && row["StudentId"] != DBNull.Value)
+            {
+                user.StudentProfile = new StudentProfile
+                {
+                    StudentId = row["StudentId"].ToString(),
+                    FirstName = row.Table.Columns.Contains("FirstName") && row["FirstName"] != DBNull.Value ? row["FirstName"].ToString() : null,
+                    MiddleName = row.Table.Columns.Contains("MiddleName") && row["MiddleName"] != DBNull.Value ? row["MiddleName"].ToString() : null,
+                    LastName = row.Table.Columns.Contains("LastName") && row["LastName"] != DBNull.Value ? row["LastName"].ToString() : null,
+                    Gender = row.Table.Columns.Contains("Gender") && row["Gender"] != DBNull.Value ? row["Gender"].ToString() : null,
+                    CampusBranch = row.Table.Columns.Contains("CampusBranch") && row["CampusBranch"] != DBNull.Value ? row["CampusBranch"].ToString() : null,
+                    Department = row.Table.Columns.Contains("Department") && row["Department"] != DBNull.Value ? row["Department"].ToString() : null,
+                    Program = row.Table.Columns.Contains("Program") && row["Program"] != DBNull.Value ? row["Program"].ToString() : null,
+                    UserId = user.UserId
+                };
+            }
+
+            return user;
         }
 
         #endregion

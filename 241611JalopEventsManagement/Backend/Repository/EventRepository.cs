@@ -77,9 +77,6 @@ namespace _241611JalopEventsManagement.Backend.Repository
             throw new InvalidOperationException("Failed to retrieve generated EventId from dbo.EventsTable.");
         }
 
-        /// <summary>
-        /// Retrieves an event record by its primary key (EventId).
-        /// </summary>
         public EventModel GetEventById(int eventId)
         {
             if (eventId <= 0)
