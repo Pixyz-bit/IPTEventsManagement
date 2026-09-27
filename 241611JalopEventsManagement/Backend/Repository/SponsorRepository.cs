@@ -1,0 +1,180 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using _241611JalopEventsManagement.Backend.Models;
+
+namespace _241611JalopEventsManagement.Backend.Repository
+{
+    /// <summary>
+    /// Repository managing persistent operations on dbo.SponsorListTable.
+    /// Manages corporate partnerships, branding associations, and event sponsor manifests.
+    /// </summary>
+    public class SponsorRepository
+    {
+        /// <summary>
+        /// Retrieves all sponsors registered for a specific event.
+        /// </summary>
+        public List<SponsorModel> GetSponsorsByEventId(int eventId)
+        {
+            var list = new List<SponsorModel>();
+            if (eventId <= 0)
+            {
+                return list;
+            }
+
+            const string sql = @"
+                SELECT s.SponsorEntryId, s.SponsorName, s.CreatedAt, s.EventId, e.Title AS EventTitle
+                FROM dbo.SponsorListTable s
+                INNER JOIN dbo.EventsTable e ON s.EventId = e.EventId
+                WHERE s.EventId = @EventId
+                ORDER BY s.SponsorEntryId ASC;";
+
+            var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
+            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+
+            if (dt != null)
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(MapRowToSponsor(row));
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Adds a single sponsor record for an event.
+        /// Returns the newly generated SponsorEntryId.
+        /// </summary>
+        public int AddSponsor(SponsorModel sponsor)
+        {
+            if (sponsor == null)
+            {
+                throw new ArgumentNullException(nameof(sponsor), "Sponsor model cannot be null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(sponsor.SponsorName))
+            {
+                throw new ArgumentException("Sponsor name is required.", nameof(sponsor.SponsorName));
+            }
+
+            if (sponsor.EventId <= 0)
+            {
+                throw new ArgumentException("EventId must reference a valid event.", nameof(sponsor.EventId));
+            }
+
+            const string sql = @"
+                INSERT INTO dbo.SponsorListTable (SponsorName, CreatedAt, EventId)
+                VALUES (@SponsorName, @CreatedAt, @EventId);
+                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+            var parameters = new[]
+            {
+                new SqlParameter("@SponsorName", SqlDbType.NVarChar, 150) { Value = sponsor.SponsorName.Trim() },
+                new SqlParameter("@CreatedAt", SqlDbType.DateTime) { Value = sponsor.CreatedAt != default ? sponsor.CreatedAt : DateTime.Now },
+                new SqlParameter("@EventId", SqlDbType.Int) { Value = sponsor.EventId }
+            };
+
+            object result = DatabaseConnection.ExecuteScalar(sql, parameters);
+            if (result != null && int.TryParse(result.ToString(), out int newId))
+            {
+                sponsor.SponsorEntryId = newId;
+                return newId;
+            }
+
+            throw new InvalidOperationException("Failed to retrieve generated SponsorEntryId from dbo.SponsorListTable.");
+        }
+
+        /// <summary>
+        /// Adds multiple sponsors to an event in a single atomic transaction.
+        /// </summary>
+        public int AddSponsors(int eventId, IEnumerable<string> sponsorNames)
+        {
+            if (eventId <= 0 || sponsorNames == null)
+            {
+                return 0;
+            }
+
+            int addedCount = 0;
+            DateTime now = DateTime.Now;
+
+            foreach (var name in sponsorNames)
+            {
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    continue;
+                }
+
+                var sponsor = new SponsorModel
+                {
+                    EventId = eventId,
+                    SponsorName = name.Trim(),
+                    CreatedAt = now
+                };
+
+                AddSponsor(sponsor);
+                addedCount++;
+            }
+
+            return addedCount;
+        }
+
+        /// <summary>
+        /// Deletes a specific sponsor record by its primary key identifier.
+        /// </summary>
+        public bool DeleteSponsor(int sponsorEntryId)
+        {
+            if (sponsorEntryId <= 0)
+            {
+                return false;
+            }
+
+            const string sql = "DELETE FROM dbo.SponsorListTable WHERE SponsorEntryId = @SponsorEntryId;";
+            var param = new SqlParameter("@SponsorEntryId", SqlDbType.Int) { Value = sponsorEntryId };
+
+            int rows = DatabaseConnection.ExecuteNonQuery(sql, param);
+            return rows > 0;
+        }
+
+        /// <summary>
+        /// Deletes all sponsor associations for a specific event (e.g., when clearing or replacing sponsors).
+        /// </summary>
+        public bool DeleteSponsorsByEventId(int eventId)
+        {
+            if (eventId <= 0)
+            {
+                return false;
+            }
+
+            const string sql = "DELETE FROM dbo.SponsorListTable WHERE EventId = @EventId;";
+            var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
+
+            int rows = DatabaseConnection.ExecuteNonQuery(sql, param);
+            return rows > 0;
+        }
+
+        #region Helper Mapping
+
+        private static SponsorModel MapRowToSponsor(DataRow row)
+        {
+            var sponsor = new SponsorModel
+            {
+                SponsorEntryId = Convert.ToInt32(row["SponsorEntryId"]),
+                SponsorName = row["SponsorName"]?.ToString(),
+                CreatedAt = Convert.ToDateTime(row["CreatedAt"]),
+                EventId = Convert.ToInt32(row["EventId"])
+            };
+
+            if (row.Table.Columns.Contains("EventTitle") && row["EventTitle"] != DBNull.Value)
+            {
+                sponsor.EventTitle = row["EventTitle"].ToString();
+            }
+
+            return sponsor;
+        }
+
+        #endregion
+    }
+}
