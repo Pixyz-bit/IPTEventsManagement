@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>University Event Management System - Specification</title>
+<style>
+  @page { size: A4; margin: 18mm 14mm 18mm 14mm; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.45;
+    font-size: 10pt;
+    margin: 0;
+    padding: 0;
+  }
+  h1 { font-size: 17pt; color: #0f172a; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+  h2 { font-size: 12pt; color: #1e40af; margin-top: 0; margin-bottom: 10px; font-weight: 600; }
+  h3 { font-size: 10.5pt; color: #0f172a; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 3px; margin-top: 18px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  p, li { font-size: 9pt; color: #334155; }
+  ul { margin-top: 3px; margin-bottom: 6px; padding-left: 18px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 14px 0; font-size: 8.5pt; }
+  th, td { border: 1px solid #cbd5e1; padding: 5px 7px; text-align: left; }
+  th { background-color: #f1f5f9; color: #0f172a; font-weight: 600; }
+  .badge { display: inline-block; padding: 2px 5px; font-weight: bold; border-radius: 3px; font-size: 7.5pt; color: #fff; }
+  .badge-green { background-color: #059669; }
+  .badge-red { background-color: #dc2626; }
+  .badge-amber { background-color: #d97706; }
+  .badge-dark { background-color: #475569; }
+  .terminal-box { border: 1px solid #94a3b8; border-radius: 4px; padding: 7px; margin: 8px 0; background: #0f172a; color: #fff; font-family: monospace; font-size: 8pt; }
+  .terminal-row { padding: 5px 8px; border-radius: 3px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+  .terminal-green { background: #064e3b; border-left: 4px solid #10b981; }
+  .terminal-red { background: #7f1d1d; border-left: 4px solid #ef4444; }
+  .terminal-amber { background: #78350f; border-left: 4px solid #f59e0b; }
+  .terminal-gray { background: #1e293b; border-left: 4px solid #64748b; }
+  .signoff-box { border: 1px solid #cbd5e1; background: #f8fafc; padding: 12px; margin-top: 20px; border-radius: 4px; page-break-inside: avoid; }
+  .signoff-cols { display: flex; justify-content: space-between; margin-top: 24px; }
+  .signoff-line { width: 44%; border-top: 1px solid #475569; text-align: center; padding-top: 4px; font-size: 8pt; color: #334155; font-weight: 600; }
+  .page-break { page-break-after: always; }
+</style>
+</head>
+<body>
+
+<h1>University Event Management & Gate Clearance System</h1>
+<h2>Operational Requirements Specification (SRS) • Two-Role Architecture</h2>
+<p><strong>Target Environment:</strong> Higher Education Operations | <strong>System Roles:</strong> Institutional Administrator & Student Attendee</p>
+
+<h3>1. Operational Roles & Access Hierarchy</h3>
+<table>
+  <tr><th style="width: 28%;">Operational Role</th><th style="width: 42%;">Core Capabilities & Administrative Scope</th><th style="width: 30%;">Touchpoints & System Tools</th></tr>
+  <tr>
+    <td><strong>Institutional Administrator (Admin)</strong></td>
+    <td>Provisions student identities, configures logistics and audience matrices, monitors registration rosters, operates live gate check-in scanners, executes manual lookups/rollbacks, and generates official attendance PDF/Excel clearance reports.</td>
+    <td>Admin Portal, Event Wizard, Gate Terminal Console, Headcount Deck, Post-Mortem Analytics, Master Ledger Hub.</td>
+  </tr>
+  <tr>
+    <td><strong>Student Attendee (User)</strong></td>
+    <td>Browses tailored event listings, verifies year/section info, books tickets (enforcing one active booking per event), receives unique QR pass via email, and manages self-service cancellations within the active registration window.</td>
+    <td>Student Portal, Profile Password Manager, Personal Dashboard, Automated QR Pass Email.</td>
+  </tr>
+</table>
+
+<h3>2. Student Identity Provisioning & Authentication</h3>
+<p>Public open registration is permanently disabled. Student master records are provisioned directly by admins from official registrar databases with immutable fields: <strong>Student Number, Last Name, First Name, Gender, University Branch, Department, Course, and Email</strong>. Accounts receive a placeholder password;</p>
+
+<h3>3. Event Parameters & Target Audience Matrix</h3>
+<p>Admins configure mandatory logistics: <em>Event Name, Description, Date & Time, Venue Location, Hosting Organization & Sponsors, Total Seating Capacity, and Registration Window (Start/End)</em>. Events are restricted via a 4-tier filtering matrix:</p>
+<ul>
+  <li><strong>University Branch:</strong> Targets specific satellite campuses or primary campus units.</li>
+  <li><strong>Department / College:</strong> Filters visibility to enrolled colleges (e.g., Engineering, Business).</li>
+  <li><strong>Degree Program / Course:</strong> Limits specialized seating strictly to approved degree majors.</li>
+  <li><strong>Academic Year Level:</strong> Enforces cohort restrictions (e.g., 1st Year Orientation, 4th Year Practicum).</li>
+</ul>
+
+<h3>4. Deterministic State Machine & Operational Precedence</h3>
+<table>
+  <tr><th>Priority</th><th>System State</th><th>Trigger Condition & Functional Logic</th><th>Allowed Public Actions</th></tr>
+  <tr><td><strong>Tier 1</strong></td><td><span class="badge badge-red">CANCELLED</span></td><td>Admin cancels event with mandatory reason. System alerts registrants via email.</td><td>Workflows locked permanently.</td></tr>
+  <tr><td><strong>Tier 2</strong></td><td><span class="badge badge-dark">MANUALLY_LOCKED</span></td><td>Admin triggers early closure kill switch (venue safety or override).</td><td>Registration & cancellation locked.</td></tr>
+  <tr><td><strong>Tier 3</strong></td><td><span class="badge badge-dark">REGISTRATION_CLOSED</span></td><td>System clock passes Registration End date/time. Rosters freeze.</td><td>Self-cancellation disabled; locked.</td></tr>
+  <tr><td><strong>Tier 4</strong></td><td><span class="badge badge-amber">FULLY_BOOKED</span></td><td>Confirmed bookings equal seating capacity ceiling within active window.</td><td>Registration locked; cancel enabled.</td></tr>
+  <tr><td><strong>Tier 5</strong></td><td><span class="badge badge-green">OPEN</span></td><td>Active time is inside registration window and available open seats remain.</td><td>Booking and self-cancel enabled.</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<h3>5. Registration Flow & The Cancellation Bounce</h3>
+<p>Eligible students review pre-filled profile data, fill in mandatory <strong>Year Level</strong> and <strong>Section</strong> fields, and submit their reservation. The system records the booking under a strict rule of one active registration per student per event and transmits a unique cryptographic QR ticket via email.</p>
+<p><strong>Cancellation Rules:</strong> Students may cancel directly from their personal dashboard strictly while the registration window remains active. Cancelling decrements active bookings and triggers <em>The Cancellation Bounce</em>: if the event was <code>FULLY_BOOKED</code>, it automatically re-opens to <code>OPEN</code>. Once the registration window ends or a QR ticket is scanned at the venue, self-cancellation is permanently locked.</p>
+
+<h3>6. Live Execution Phase & Admin Gatekeeper Verification</h3>
+<p>Admins operate the gatekeeper terminal using camera or barcode gun input (< 2.0s throughput). The system evaluates tickets across four high-visibility verification displays:</p>
+
+<div class="terminal-box">
+  <div class="terminal-row terminal-green">
+    <span><strong>ACCESS GRANTED — VALID TICKET</strong><br>Jane M. Doe (ID: 2024-10821) • College of Engineering • BSCS 3-A</span>
+    <span>[ VERIFIED ]</span>
+  </div>
+  <div class="terminal-row terminal-red">
+    <span><strong>DUPLICATE ADMISSION ALERT — ALREADY CHECKED IN</strong><br>John P. Smith (ID: 2023-04912) • Scanned: 13:04:18 at Terminal 02</span>
+    <span>[ DUPLICATE ]</span>
+  </div>
+  <div class="terminal-row terminal-amber">
+    <span><strong>REVOKED TICKET — REGISTRATION CANCELLED</strong><br>Mark E. Miller (ID: 2022-09184) • Cancelled: Sept 24, 14:15:02</span>
+    <span>[ REVOKED ]</span>
+  </div>
+  <div class="terminal-row terminal-gray">
+    <span><strong>INVALID TICKET — RECORD NOT FOUND</strong><br>Cryptographic Token Unrecognized • Not Associated with this Event</span>
+    <span>[ UNRECOGNIZED ]</span>
+  </div>
+</div>
+
+<p><strong>Manual Lookup & Rollback:</strong> If a student has a dead phone or technical issue, admins search by Student Number or Last Name to perform a manual check-in with an audit flag. An accidental check-in can be reverted via a supervisor rollback button, keeping student self-service cancellation locked.</p>
+
+<h3>7. Master Attendance Log Data Model</h3>
+<table>
+  <tr><th>Student ID</th><th>Student Full Name</th><th>Department & Program</th><th>Year & Section</th><th>Entry Timestamp</th><th>Terminal ID</th><th>Override Flag</th></tr>
+  <tr><td>2024-10821</td><td>Doe, Jane Marie</td><td>Computer Science (BSCS)</td><td>Year 3 - Sec A</td><td>2026-09-26 12:48:12</td><td>GATE-01</td><td>None (QR Scan)</td></tr>
+  <tr><td>2023-04912</td><td>Smith, John Paul</td><td>Information Tech (BSIT)</td><td>Year 2 - Sec C</td><td>2026-09-26 12:51:30</td><td>GATE-02</td><td>None (QR Scan)</td></tr>
+  <tr><td>2021-08834</td><td>Tan, Kimberly Rose</td><td>Computer Science (BSCS)</td><td>Year 4 - Sec B</td><td>2026-09-26 12:54:05</td><td>GATE-01</td><td>None (QR Scan)</td></tr>
+  <tr><td>2022-03119</td><td>Villanueva, Carlos A.</td><td>Electrical Eng (BSEE)</td><td>Year 3 - Sec A</td><td>2026-09-26 12:58:44</td><td>GATE-03</td><td>None (QR Scan)</td></tr>
+  <tr><td>2024-00412</td><td>Reyes, Maria Elena</td><td>Computer Science (BSCS)</td><td>Year 1 - Sec D</td><td>2026-09-26 13:02:19</td><td>GATE-01</td><td>Dead Battery Lookup</td></tr>
+</table>
+
+<div class="signoff-box">
+  <strong style="text-transform: uppercase; font-size: 8.5pt; color: #0f172a;">Institutional Verification & Clearance Sign-Off</strong>
+  <div class="signoff-cols">
+    <div class="signoff-line">Event Coordinator Signature & Date</div>
+    <div class="signoff-line">Dean / Department Head Seal & Date</div>
+  </div>
+</div>
+
+</body>
+</html>

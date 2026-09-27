@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise University Event Management & Dynamic Ticketing System Specification</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-dark: #0f172a;
+      --accent: #2563eb;
+      --text: #1f2937;
+      --text-muted: #4b5563;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --border-dark: #cbd5e1;
+      --green: #15803d;
+      --green-bg: #dcfce7;
+      --red: #b91c1c;
+      --red-bg: #fee2e2;
+      --amber: #b45309;
+      --amber-bg: #fef3c7;
+      --gray: #374151;
+      --gray-bg: #f3f4f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: var(--text);
+      background-color: var(--bg);
+      padding: 24px;
+    }
+
+    .document-container {
+      max-width: 1040px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: 48px;
+    }
+
+    header.doc-header {
+      border-bottom: 2px solid var(--primary-dark);
+      padding-bottom: 20px;
+      margin-bottom: 32px;
+    }
+
+    .doc-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 0.825rem;
+    }
+
+    .doc-meta-item strong {
+      display: block;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.725rem;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      color: var(--primary-dark);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      color: var(--primary);
+      border-bottom: 1.5px solid var(--border);
+      padding-bottom: 6px;
+      margin: 36px 0 16px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      color: var(--primary-dark);
+      margin: 20px 0 10px 0;
+    }
+
+    p {
+      margin-bottom: 12px;
+      font-size: 0.925rem;
+      color: var(--text);
+    }
+
+    ul, ol {
+      margin: 0 0 16px 20px;
+      font-size: 0.925rem;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px 0;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border-dark);
+      padding: 8px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-open { background-color: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+    .badge-booked { background-color: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber); }
+    .badge-closed { background-color: var(--gray-bg); color: var(--gray); border: 1px solid var(--gray); }
+    .badge-locked { background-color: #e0e7ff; color: #3730a3; border: 1px solid #6366f1; }
+    .badge-cancelled { background-color: var(--red-bg); color: var(--red); border: 1px solid var(--red); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px;
+      background-color: #ffffff;
+    }
+
+    .terminal-card {
+      border-left: 4px solid;
+      background-color: #ffffff;
+      padding: 12px;
+      border-radius: 0 4px 4px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .state-green { border-color: var(--green); background-color: #f0fdf4; }
+    .state-red { border-color: var(--red); background-color: #fef2f2; }
+    .state-amber { border-color: var(--amber); background-color: #fffbeb; }
+    .state-gray { border-color: var(--gray); background-color: #f9fafb; }
+
+    .certificate-box {
+      border: 2px solid var(--primary-dark);
+      padding: 24px;
+      background: #fafafa;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .cert-header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-dark);
+      padding-bottom: 12px;
+    }
+
+    .cert-signatures {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 28px;
+      padding-top: 16px;
+    }
+
+    .sig-line {
+      border-top: 1px solid #475569;
+      margin-top: 48px;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+
+    .hash-seal {
+      font-family: monospace;
+      font-size: 0.725rem;
+      color: #64748b;
+      word-break: break-all;
+      margin-top: 16px;
+      padding: 8px;
+      background: #f1f5f9;
+      border: 1px dashed var(--border-dark);
+    }
+
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+      .document-container {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="document-container">
+  <header class="doc-header">
+    <h1>ENTERPRISE UNIVERSITY EVENT MANAGEMENT &amp; DYNAMIC TICKETING SYSTEM</h1>
+    <div class="subtitle">Institutional Architecture, Deterministic State Governance &amp; Clearance Specification</div>
+    <div class="doc-meta-grid">
+      <div class="doc-meta-item">
+        <strong>Document Version</strong>
+        v2.5.0-PROD
+      </div>
+      <div class="doc-meta-item">
+        <strong>Classification</strong>
+        Official Technical Standard[cite: 1]
+      </div>
+      <div class="doc-meta-item">
+        <strong>Target Platform</strong>
+        Campus ERP &amp; Gate Terminal[cite: 1]
+      </div>
+      <div class="doc-meta-item">
+        <strong>Governance Body</strong>
+        Office of the Registrar &amp; VPAA[cite: 1]
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <h2>1. Executive Summary &amp; Lifecycle Architecture</h2>
+    <p>The Enterprise University Event Management and Dynamic Ticketing System governs the end-to-end lifecycle of university-wide events, co-curricular assemblies, and departmental symposia[cite: 1]. It unifies administrative event governance, pre-verified student eligibility enforcement, real-time gate admission via encrypted optical QR tokens, and tamper-resistant registrar accreditation clearance[cite: 1].</p>
+    
+    <div class="grid-2">
+      <div class="card">
+        <strong>Pre-Provisioned Registrar Store</strong>[cite: 1]
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Enforces student identity verification via immutable Student ID, University Branch, Department, and Degree Course records[cite: 1].</p>
+      </div>
+      <div class="card">
+        <strong>Live Gate Terminal (< 2.0s Validation)</strong>[cite: 1]
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Real-time optical scanner supporting 4 instant verification states: Access Granted, Duplicate Alert, Revoked, and Invalid Record[cite: 1].</p>
+      </div>
+      <div class="card">
+        <strong>Targeted Catalog Discovery</strong>[cite: 1]
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Dynamic event display filtered across 4 cohort restriction vectors: Campus Branch, Department, Degree Program, and Year Level[cite: 1].</p>
+      </div>
+      <div class="card">
+        <strong>The Dynamic Cancellation Bounce</strong>[cite: 1]
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Automatically reopens fully-booked events upon student self-cancellation strictly within the open registration window[cite: 1].</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. Institutional Role Hierarchy &amp; Governance Matrix</h2>
+    <p>System access is consolidated strictly into two authenticated user tiers, with administrative users directly executing event planning, live gate ingress scanning, and post-event clearance[cite: 1]:</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Institutional Role</th>
+          <th style="width: 45%;">Permitted Operational Scope</th>
+          <th style="width: 30%;">Access Constraints &amp; Authentication</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Institutional Administrator</strong>[cite: 1]</td>
+          <td>Full event creation, core logistics management, manual early lock execution, event cancellation, student profile pre-provisioning, manual ticket resends, optical QR check-in scanning (&lt; 2.0s ingestion), dead-battery manual override execution, supervisor scan rollbacks, velocity curve auditing, and official accreditation clearance generation[cite: 1].</td>
+          <td>MFA-protected Administrative Portal; master institution credentials[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>Student Attendee</strong>[cite: 1]</td>
+          <td>Discovery of targeted event feeds, one-click reservation confirmation, input of section and year verification, QR ticket dashboard access, and self-service cancellation strictly during the open registration window[cite: 1].</td>
+          <td>Verified university credentials with mandatory first-login password update[cite: 1].</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>3. Student Profile Pre-Provisioning &amp; Account Security</h2>
+    <p><strong>Anti-Fraud Identity Mandate:</strong> Open student self-registration is strictly prohibited[cite: 1]. All student user accounts are batch-ingested by institutional administrators directly from verified registrar master records to eliminate fictitious identities and duplicate seat reservations[cite: 1].</p>
+    <ul>
+      <li><strong>Pre-Provisioned Master Fields:</strong> Student Identification Number (Primary Key), Legal Last Name, Legal First Name, Gender, University Branch, College/Department, Degree Program/Course, Institutional Email (<code>@university.edu</code>), and Temporary Placeholder Password[cite: 1].</li>
+      <li><strong>Forced Credential Update:</strong> Upon initial login, students are immediately routed to a mandatory password change screen[cite: 1]. Access to event browsing, registration, and dashboard features is locked until new credentials are confirmed[cite: 1].</li>
+      <li><strong>Profile Immutability:</strong> All registrar-provisioned placement fields remain read-only on the student dashboard[cite: 1]. Discrepancies must be escalated to the university registrar to prevent unauthorized cohort shifts[cite: 1].</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>4. Event Configuration &amp; Target Audience Matrix</h2>
+    <p>Administrators configure event logistics and targeting parameters through structured operational forms[cite: 1]:</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 28%;">Configuration Parameter</th>
+          <th>Technical &amp; Operational Definition</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Core Logistics</strong>[cite: 1]</td>
+          <td>Event Title, Rich-Text Description, Physical Venue Name, Room/Hall Number, and Total Seating Capacity[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>Temporal Boundaries</strong>[cite: 1]</td>
+          <td>Event Date, Start Time, and End Time, combined with Registration Window Start Date/Time and Registration Window End Date/Time[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>Institutional Identity</strong>[cite: 1]</td>
+          <td>Lead Hosting Department/Organization, Co-Sponsors, and Official University Partner Badges[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>Target Audience Matrix</strong>[cite: 1]</td>
+          <td>Multi-select restriction rules configured across four discrete vectors: University Branch, College/Department, Degree Program/Course, and Year Level[cite: 1].</td>
+        </tr>
+      </tbody>
+    </table>
+    <p><strong>Target Audience Filtering Logic:</strong> Events configured with restrictions are visible only to students whose pre-provisioned master profile matches every active rule[cite: 1]. Students outside designated criteria cannot view or register for the event[cite: 1].</p>
+  </section>
+
+  <section class="page-break">
+    <h2>5. Student Registration &amp; Dynamic Cancellation Engine</h2>
+    <h3>5.1 Booking Workflow &amp; 1-Student/1-Ticket Invariant</h3>
+    <ol>
+      <li><strong>Targeted Catalog Discovery:</strong> Eligible students view tailored event cards displaying schedules, venue locations, host badges, registration countdown timers, and live seating availability[cite: 1].</li>
+      <li><strong>Verification &amp; Submission:</strong> Selecting an event opens a confirmation dialogue displaying read-only identity fields (Student ID, Full Name, Gender, Branch, Department, and Course)[cite: 1]. The student verifies their Year Level and enters their assigned Section[cite: 1].</li>
+      <li><strong>One-Ticket Rule:</strong> The database enforces an absolute constraint of one active ticket per student per event at the transactional boundary[cite: 1]. Duplicate booking attempts are blocked[cite: 1].</li>
+      <li><strong>Issuance &amp; QR Delivery:</strong> Upon confirmation, the live seat count increments, the event appears on the student dashboard, and an encrypted QR ticket is dispatched to their verified institutional email[cite: 1].</li>
+    </ol>
+
+    <h3>5.2 Window-Tethered Cancellation &amp; "The Cancellation Bounce"</h3>
+    <ul>
+      <li><strong>The Cancellation Bounce:</strong> When an event reaches maximum capacity (e.g., 200/200), its status switches to <code>FULLY_BOOKED</code> and registration locks[cite: 1]. If a student cancels while the registration window remains open, the count drops to 199/200, and status immediately flips back to <code>OPEN</code>, unlocking public registration without administrator intervention[cite: 1].</li>
+      <li><strong>Registration Window Cutoff:</strong> Students can cancel their registration directly from their personal dashboard strictly while the registration window remains active (prior to Registration End Date/Time)[cite: 1].</li>
+      <li><strong>Permanent Operational Roster Freeze:</strong> As soon as the registration window closes, the self-cancellation button is permanently hidden and disabled on all student dashboards[cite: 1]. Final rosters freeze to allow administrators to plan venue resources and identify true no-shows[cite: 1].</li>
+      <li><strong>Scan Lockout:</strong> Once a student's QR ticket is scanned at the venue entrance, its status updates to <code>CHECKED_IN</code>, permanently revoking self-cancellation privileges regardless of remaining window time[cite: 1].</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. Deterministic 5-Tier Event State Machine</h2>
+    <p>System operations, registration buttons, and cancellation controls are governed by a deterministic priority hierarchy[cite: 1]. Higher-tier administrative overrides supersede lower-tier automatic state conditions[cite: 1]:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>System State</th>
+          <th>Registration?</th>
+          <th>Self-Cancel?</th>
+          <th>Dynamic Bounce?</th>
+          <th>Trigger Conditions &amp; Precedence Rules</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-cancelled">CANCELLED (Tier 1)</span>[cite: 1]</td>
+          <td>No[cite: 1]</td>
+          <td>No[cite: 1]</td>
+          <td>No[cite: 1]</td>
+          <td>Admin cancels event; mandatory reason logged; tickets invalidated; batch notification emails sent[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-locked">MANUALLY LOCKED (Tier 2)</span>[cite: 1]</td>
+          <td>No[cite: 1]</td>
+          <td>No[cite: 1]</td>
+          <td>No[cite: 1]</td>
+          <td>Admin triggers "Close Registration Early"[cite: 1]. Manual kill switch overrides capacity rules and prevents reopening[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-closed">REGISTRATION CLOSED (Tier 3)</span>[cite: 1]</td>
+          <td>No[cite: 1]</td>
+          <td>No[cite: 1]</td>
+          <td>No[cite: 1]</td>
+          <td>Current Time &gt;= Registration End Timestamp[cite: 1]. Roster locks; self-service cancellation permanently disabled[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-booked">FULLY BOOKED (Tier 4)</span>[cite: 1]</td>
+          <td>No[cite: 1]</td>
+          <td>Yes[cite: 1]</td>
+          <td>Yes[cite: 1]</td>
+          <td>Confirmed registrations reach 100% capacity during active window[cite: 1]. A cancellation dynamically reopens the event to OPEN[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-open">OPEN (Tier 5)</span>[cite: 1]</td>
+          <td>Yes[cite: 1]</td>
+          <td>Yes[cite: 1]</td>
+          <td>N/A[cite: 1]</td>
+          <td>Active registration window, available capacity, and no active administrative overrides[cite: 1].</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="page-break">
+    <h2>7. Admin Phase 1: Planning &amp; Pre-Registration Monitoring</h2>
+    <p>Following event configuration, administrators monitor capacity and manage rosters through a real-time command dashboard[cite: 1]:</p>
+    
+    <h3>7.1 Event Overview &amp; Live Controls</h3>
+    <ul>
+      <li><strong>Dynamic Header &amp; Status Badge:</strong> Displays real-time operational status (<code>OPEN</code>, <code>FULLY_BOOKED</code>, <code>REGISTRATION_CLOSED</code>, <code>MANUALLY_LOCKED</code>, or <code>CANCELLED</code>)[cite: 1].</li>
+      <li><strong>Core Logistics Card:</strong> Shows schedule, physical venue, hall capacity, and an active registration deadline countdown timer[cite: 1].</li>
+      <li><strong>Capacity Progress Meter:</strong> Live visual gauge tracking reserved slots against venue limits (e.g., <em>210 / 250 Seats Taken (84%)</em>)[cite: 1]. Public registration locks automatically upon reaching 100% capacity[cite: 1].</li>
+      <li><strong>Administrative Action Controls:</strong>
+        <ul>
+          <li><em>Edit Event:</em> Updates schedule, venue, or host details, automatically sending notification emails to all registered students[cite: 1].</li>
+          <li><em>Close Registration Early:</em> Engages the <code>MANUALLY_LOCKED</code> state override to freeze registrations and prevent reopening[cite: 1].</li>
+          <li><em>Cancel Event:</em> Prompts for a mandatory cancellation reason, voids all issued tickets, and dispatches batch cancellation emails[cite: 1].</li>
+          <li><em>Resend All Ticket Reminders:</em> Re-transmits QR code tickets to all confirmed attendees[cite: 1].</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>7.2 Pre-Registration Roster Table</h3>
+    <ul>
+      <li><strong>Attendee Data Columns:</strong> Student Number, Full Legal Name, University Branch, College/Department, Degree Program/Course, Year Level, Section, Registration Timestamp, and Ticket Delivery Status (Sent or Failed)[cite: 1].</li>
+      <li><strong>Search &amp; Filter Tools:</strong> Search by Name or Student ID; filter records by Campus Branch, Department, Year Level, or Section[cite: 1].</li>
+      <li><strong>Roster Operations:</strong> Single-student ticket resend utility for attendees reporting lost or filtered confirmation emails[cite: 1].</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>8. Admin Phase 2: Live Gate Execution &amp; QR Terminal</h2>
+    <p>During the event, administrators operate the unified live gate terminal designed for high-throughput scanning (&lt; 2.0s per student)[cite: 1]:</p>
+    
+    <h3>8.1 Live Command Headcount KPI Deck</h3>
+    <div class="grid-4">
+      <div class="card">
+        <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Expected Headcount</span>[cite: 1]
+        <div style="font-size: 1.4rem; font-weight: 700; color: var(--primary-dark);">Total Confirmed</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Baseline locked roster[cite: 1]</div>
+      </div>
+      <div class="card">
+        <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Checked-In</span>[cite: 1]
+        <div style="font-size: 1.4rem; font-weight: 700; color: var(--green);">Verified Admitted</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Real-time room occupancy[cite: 1]</div>
+      </div>
+      <div class="card">
+        <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Pending / No-Shows</span>[cite: 1]
+        <div style="font-size: 1.4rem; font-weight: 700; color: var(--amber);">Awaiting Ingress</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Expected minus checked-in[cite: 1]</div>
+      </div>
+      <div class="card">
+        <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Turnout Rate</span>[cite: 1]
+        <div style="font-size: 1.4rem; font-weight: 700; color: var(--accent);">Live % Gauge</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">(Checked-In / Expected)[cite: 1]</div>
+      </div>
+    </div>
+    <p><strong>Streaming Audit Feed:</strong> Chronological live audit log streaming attendee names, student IDs, gate terminal ID, and exact entry timestamps[cite: 1].</p>
+
+    <h3>8.2 Optical QR Scanner &amp; 4-State Verification Terminal</h3>
+    <div class="grid-2">
+      <div class="terminal-card state-green">
+        <strong style="color: var(--green);">[GREEN] ACCESS GRANTED &ndash; VALID TICKET</strong>[cite: 1]
+        <p style="font-size: 0.8rem; margin: 4px 0 0 0;">First-time valid scan[cite: 1]. Displays Full Name, Student Number, Department, Course, Year &amp; Section[cite: 1]. Emits success chime, records entry timestamp, grants admission[cite: 1].</p>
+      </div>
+      <div class="terminal-card state-red">
+        <strong style="color: var(--red);">[RED] DUPLICATE ADMISSION ALERT</strong>[cite: 1]
+        <p style="font-size: 0.8rem; margin: 4px 0 0 0;">Ticket already checked in[cite: 1]. Displays original check-in timestamp and gate terminal identifier to prevent pass-back fraud; emits warning buzzer[cite: 1].</p>
+      </div>
+      <div class="terminal-card state-amber">
+        <strong style="color: var(--amber);">[AMBER] REVOKED &ndash; REGISTRATION CANCELLED</strong>[cite: 1]
+        <p style="font-size: 0.8rem; margin: 4px 0 0 0;">Ticket cancelled by student during the open window[cite: 1]. Displays student identity and cancellation timestamp; denies entrance[cite: 1].</p>
+      </div>
+      <div class="terminal-card state-gray">
+        <strong style="color: var(--gray);">[DARK-GRAY] INVALID TICKET &ndash; RECORD NOT FOUND</strong>[cite: 1]
+        <p style="font-size: 0.8rem; margin: 4px 0 0 0;">Unrecognized or corrupted cryptographic QR token not associated with this event[cite: 1]. Denies entry; refers student to admin desk[cite: 1].</p>
+      </div>
+    </div>
+
+    <h3>8.3 Operational Fallbacks &amp; Gate Exceptions</h3>
+    <ul>
+      <li><strong>Manual Lookup &amp; Override:</strong> Search input by Student Number or Last Name to admit attendees with dead phone batteries or damaged screens[cite: 1]. Manual admissions require a mandatory reason flag (e.g., <em>Dead Battery</em>, <em>Unsent Email</em>) for audit compliance[cite: 1].</li>
+      <li><strong>Dual-Filter Attendance Roster:</strong> Live split-table interface separating registered students into <em>Present</em> and <em>Pending Arrival</em> tabs with real-time search[cite: 1].</li>
+      <li><strong>Supervisor Scan Rollback:</strong> Admin capability to reverse accidental scans, returning the record to <em>Pending Arrival</em> and adjusting headcount metrics, while keeping student self-service cancellation locked[cite: 1].</li>
+    </ul>
+  </section>
+
+  <section class="page-break">
+    <h2>9. Admin Phase 3: Post-Event Analytics &amp; Clearance Hub</h2>
+    <h3>9.1 Performance Analytics &amp; Velocity Curves</h3>
+    <ul>
+      <li><strong>Final Turnout Metrics:</strong> Final summary comparing total seating capacity, confirmed pre-registrations, verified attendees present, final turnout percentage, and net no-shows[cite: 1].</li>
+      <li><strong>Audience Purity Percentage:</strong> Percentage of attendees who strictly matched target audience filter criteria versus authorized manual exceptions[cite: 1].</li>
+      <li><strong>Demographic Breakdown Visualizations:</strong> Breakdown of turnout across Academic Departments, Year Levels, Sections, and Campus Branches[cite: 1].</li>
+      <li><strong>Arrival Velocity Curve:</strong> Time-series distribution tracking check-in volume across 10- or 15-minute intervals to highlight peak ingress windows and door bottlenecks[cite: 1].</li>
+    </ul>
+
+    <h3>9.2 Master Audit &amp; Clearance Export Deliverables</h3>
+    <ol>
+      <li><strong>Master Raw Dataset (.xlsx):</strong> Unaggregated operational spreadsheet containing Student ID, Full Legal Name, University Branch, College/Department, Degree Program, Year Level, Section, Registration Timestamp, Ingress Check-In Timestamp, Gate Terminal ID, and Verification Mode (Optical Scan vs. Manual Override with audit notes) for registrar ingestion[cite: 1].</li>
+      <li><strong>Official Certified Attendance PDF:</strong> Tamper-evident institutional clearance certificate formatted below[cite: 1]:</li>
+    </ol>
+
+    <div class="certificate-box">
+      <div class="cert-header">
+        <h3 style="margin: 0; font-size: 1.15rem; letter-spacing: 0.05em;">OFFICIAL UNIVERSITY ACCREDITATION &amp; ATTENDANCE CLEARANCE CERTIFICATE</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 0 0;">Office of the University Registrar &bull; Division of Academic Affairs &bull; Published via Verified Campus Audit Ledger[cite: 1]</p>
+      </div>
+
+      <div class="grid-2" style="font-size: 0.85rem; margin-bottom: 12px;">
+        <div>
+          <p><strong>Event Title:</strong> Annual Computer Science Symposium 2026[cite: 1]</p>
+          <p><strong>Hosting Entity:</strong> Department of Computer Studies[cite: 1]</p>
+          <p><strong>Seating Capacity:</strong> 250 Seats[cite: 1]</p>
+        </div>
+        <div>
+          <p><strong>Event Date:</strong> September 26, 2026[cite: 1]</p>
+          <p><strong>Accreditation Ref:</strong> CS-2026-SYM-0982[cite: 1]</p>
+          <p><strong>Verified Present:</strong> 212 Attendees (84.8% Turnout)</p>
+        </div>
+      </div>
+
+      <table style="font-size: 0.8rem; margin: 12px 0;">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Full Legal Name</th>
+            <th>Department &amp; Program</th>
+            <th>Yr/Sec</th>
+            <th>Check-In Time</th>
+            <th>Ingress Verification Mode</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2024-10821[cite: 1]</td>
+            <td>Doe, Jane Alyssa[cite: 1]</td>
+            <td>Computer Science / BSCS[cite: 1]</td>
+            <td>3-A[cite: 1]</td>
+            <td>12:48:12 PM[cite: 1]</td>
+            <td>Gate 01 (Optical Scanner)[cite: 1]</td>
+          </tr>
+          <tr>
+            <td>2024-11409[cite: 1]</td>
+            <td>Smith, John Eric[cite: 1]</td>
+            <td>Information Tech / BSIT[cite: 1]</td>
+            <td>3-B[cite: 1]</td>
+            <td>12:51:04 PM[cite: 1]</td>
+            <td>Gate 02 (Optical Scanner)[cite: 1]</td>
+          </tr>
+          <tr>
+            <td>2024-08992[cite: 1]</td>
+            <td>Vance, Robert M.[cite: 1]</td>
+            <td>Computer Science / BSCS[cite: 1]</td>
+            <td>4-A[cite: 1]</td>
+            <td>12:55:40 PM[cite: 1]</td>
+            <td>Gate 01 (Manual Override: Dead Battery)[cite: 1]</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cert-signatures">
+        <div>
+          <div class="sig-line">
+            <strong>Prof. Elizabeth Sterling, M.Sc.</strong><br>
+            Lead Event Coordinator, Department of Computer Studies<br>
+            Date Signed: September 26, 2026[cite: 1]
+          </div>
+        </div>
+        <div>
+          <div class="sig-line">
+            <strong>Dr. Arthur Vance, Ph.D.</strong><br>
+            Dean, College of Computer Studies<br>
+            Date Signed: September 26, 2026[cite: 1]
+          </div>
+        </div>
+      </div>
+
+      <div class="hash-seal">
+        Institutional Cryptographic Verification Seal: SHA256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca49599167852b855[cite: 1]
+      </div>
+    </div>
+  </section>
+
+  <section class="page-break">
+    <h2>10. Conceptual Data Model &amp; Entity Relationships</h2>
+    <p>The relational database schema is structured around three core operational entities[cite: 1]:</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 20%;">Conceptual Entity</th>
+          <th style="width: 40%;">Key Functional Attributes</th>
+          <th style="width: 40%;">Relational Invariants &amp; Integrity Constraints</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>STUDENTS</strong><br><em>(Master Ingestion)</em>[cite: 1]</td>
+          <td><code>Student_ID</code> (PK), <code>First_Name</code>, <code>Last_Name</code>, <code>Gender</code>, <code>Branch_Name</code>, <code>Department_Name</code>, <code>Course_Name</code>, <code>University_Email</code>, <code>Password_Hash</code>, <code>Password_Change_Required</code>[cite: 1].</td>
+          <td>Pre-provisioned by administrators[cite: 1]. <code>Student_ID</code> and <code>University_Email</code> are globally unique[cite: 1]. Profile placement fields remain strictly immutable to the student[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>EVENTS</strong><br><em>(Event Configuration)</em>[cite: 1]</td>
+          <td><code>Event_ID</code> (PK), <code>Title</code>, <code>Description</code>, <code>Venue_Location</code>, <code>Max_Capacity</code>, <code>Current_Registrations</code>, <code>Event_Start</code>, <code>Event_End</code>, <code>Reg_Window_Start</code>, <code>Reg_Window_End</code>, <code>Target_Filters</code>, <code>Status</code>, <code>Manual_Lock_Flag</code>[cite: 1].</td>
+          <td>Event status is governed by the 5-tier state machine[cite: 1]. Dynamic reopening ("The Cancellation Bounce") triggers only when <code>Manual_Lock_Flag == FALSE</code> and current time is within registration boundaries[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>TICKETS / ROSTER</strong><br><em>(Junction Entity)</em>[cite: 1]</td>
+          <td><code>Ticket_ID</code> (PK), <code>Event_ID</code> (FK), <code>Student_ID</code> (FK), <code>Year_Confirmed</code>, <code>Section_Confirmed</code>, <code>Ticket_Token</code>, <code>Status</code> (ACTIVE, CHECKED_IN, REVOKED), <code>Reg_Timestamp</code>, <code>CheckIn_Timestamp</code>, <code>Gate_ID</code>, <code>Override_Reason</code>[cite: 1].</td>
+          <td>Enforces a strict compound unique constraint on <code>(Event_ID, Student_ID)</code> for active tickets[cite: 1]. Self-cancellation is permitted only during active registration windows prior to gate scanning[cite: 1].</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>11. Operational Edge Case Resolution Matrix</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Operational Scenario</th>
+          <th style="width: 30%;">Triggering State / Event</th>
+          <th style="width: 45%;">Systemic Resolution &amp; Enforcement Rule</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Cancellation Attempt Post-Window</strong>[cite: 1]</td>
+          <td><code>REGISTRATION_CLOSED</code>[cite: 1]</td>
+          <td>Self-cancellation button is permanently hidden and disabled on the dashboard[cite: 1]. Registered seats remain locked to preserve operational roster integrity[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>The Cancellation Bounce</strong>[cite: 1]</td>
+          <td><code>FULLY_BOOKED</code> during active registration window[cite: 1]</td>
+          <td>A student cancellation decrements booked count from <em>N</em> to <em>N - 1</em>[cite: 1]. System immediately flips status to <code>OPEN</code> and enables public registration[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>Cancellation Under Manual Lock</strong>[cite: 1]</td>
+          <td><code>MANUALLY_LOCKED</code> active override[cite: 1]</td>
+          <td>Count decrements in administrative roster table, but public status remains locked[cite: 1]. Dynamic reopening bounce is suppressed[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>Scan of a Cancelled Ticket</strong>[cite: 1]</td>
+          <td>Ticket marked <code>REVOKED</code>[cite: 1]</td>
+          <td>Gate terminal displays <code>[AMBER] REVOKED TICKET ALERT</code>, displays cancellation timestamp, and blocks entrance[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>Duplicate Pass-Back Scan Attempt</strong>[cite: 1]</td>
+          <td>Ticket marked <code>CHECKED_IN</code>[cite: 1]</td>
+          <td>Gate terminal displays <code>[RED] DUPLICATE ADMISSION ALERT</code>, displaying initial check-in timestamp and gate terminal identifier[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>Admin Scan Rollback</strong>[cite: 1]</td>
+          <td>Accidental check-in scan[cite: 1]</td>
+          <td>Rollback restores ticket status to <em>Pending Arrival</em> and decrements headcount gauge, while keeping student self-cancellation locked[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>Schedule or Venue Relocation</strong>[cite: 1]</td>
+          <td>Administrative update to active event[cite: 1]</td>
+          <td>Saving modified event logistics triggers automated email updates to all confirmed ticket holders[cite: 1].</td>
+        </tr>
+        <tr>
+          <td><strong>Event Cancellation</strong>[cite: 1]</td>
+          <td><code>CANCELLED</code> triggered by administrator[cite: 1]</td>
+          <td>Prompts for mandatory reason, voids all tickets, and dispatches batch cancellation emails to all registrants[cite: 1].</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+</body>
+</html>
