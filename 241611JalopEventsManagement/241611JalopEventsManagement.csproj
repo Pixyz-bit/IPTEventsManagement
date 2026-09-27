@@ -74,7 +74,10 @@
     <Content Include="Frontend\Admin\Admin.Master" />
     <Content Include="Frontend\Admin\Dashboard.aspx" />
     <Content Include="Frontend\Admin\TestConnection.aspx" />
+    <Content Include="Frontend\Assets\QCU Background.png" />
+    <Content Include="Frontend\Assets\QCU Logo.png" />
     <Content Include="Frontend\Login\Login.aspx" />
+    <Content Include="Frontend\User\Dashboard.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -125,6 +128,13 @@
     </Compile>
     <Compile Include="Frontend\Login\Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend\User\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\User\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

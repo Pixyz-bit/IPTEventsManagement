@@ -13,11 +13,12 @@
 
 ## 1. Architectural Purpose & Role
 
-This module establishes access control for the University Event Management System:
+This module establishes access control and visual authentication for the University Event Management System:
 1. **Unified Dual-Identifier Login:** Authenticates students via `StudentId` (e.g. `2024-00123`) or institutional email, and administrators via email.
-2. **Cryptographic Salted Hashing:** Employs PBKDF2 (`Rfc2898DeriveBytes`) with 10,000 iterations and constant-time string comparisons to eliminate timing vulnerabilities.
-3. **Session State Initialization:** Establishes session keys required for role authorization and the 4-tier audience matrix.
-4. **Access Violation Trapping:** Catches unauthorized direct URL navigation and expired sessions via `AccessDenied.aspx`.
+2. **White & Blue Institutional Theme:** Adopts the university's visual identity featuring the circular Quezon City University seal, full-bleed campus building backdrop with royal blue sky overlay, and a crisp white elevated card (`#ffffff`) with royal blue inputs and focus accents (`#2563eb`).
+3. **Cryptographic Salted Hashing:** Employs PBKDF2 (`Rfc2898DeriveBytes`) with 10,000 iterations and constant-time string comparisons to eliminate timing vulnerabilities.
+4. **Session State Initialization:** Establishes session keys required for role authorization and the 4-tier audience matrix.
+5. **Access Violation Trapping:** Catches unauthorized direct URL navigation and expired sessions via `AccessDenied.aspx`.
 
 ---
 
