@@ -120,6 +120,22 @@ namespace _241611JalopEventsManagement.Backend.Repository
         }
 
         /// <summary>
+        /// Retrieves all events across all statuses ordered by start date descending.
+        /// </summary>
+        public List<EventModel> GetAllEvents()
+        {
+            const string sql = @"
+                SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
+                       CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
+                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel 
+                FROM dbo.EventsTable 
+                ORDER BY EventStart DESC;";
+
+            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+            return MapDataTableToEventList(dt);
+        }
+
+        /// <summary>
         /// Retrieves events tailored for a specific student cohort using the 4-tier audience filtering matrix.
         /// An event is eligible if each target dimension is either NULL (open to all) or matches the student demographic.
         /// </summary>

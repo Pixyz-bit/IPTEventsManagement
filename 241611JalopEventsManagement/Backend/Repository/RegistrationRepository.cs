@@ -260,6 +260,23 @@ namespace _241611JalopEventsManagement.Backend.Repository
         }
 
         /// <summary>
+        /// Returns total count of verified checked-in attendees across all events.
+        /// </summary>
+        public int GetTotalPresentAttendees()
+        {
+            try
+            {
+                const string sql = "SELECT COUNT(*) FROM dbo.EventRegistrationTable WHERE Status = 'Present';";
+                object result = DatabaseConnection.ExecuteScalar(sql);
+                return result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
         /// Cancels a student registration and atomically decrements the event's current registration count.
         /// Business Rule: Cancellations are strictly permitted ONLY during the event's active registration period (GETDATE() &lt;= RegEnd).
         /// After the registration period ends or if the student has already checked in ('Present'), cancellation is locked.

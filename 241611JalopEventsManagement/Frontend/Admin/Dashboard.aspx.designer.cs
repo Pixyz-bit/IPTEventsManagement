@@ -15,7 +15,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litUpcomingCount;
         protected global::System.Web.UI.WebControls.Literal litTotalRegistrations;
         protected global::System.Web.UI.WebControls.Literal litFillRate;
-        protected global::System.Web.UI.WebControls.Literal litStudentCount;
+        protected global::System.Web.UI.WebControls.Literal litTotalAttendees;
         protected global::System.Web.UI.WebControls.Repeater rptEvents;
         protected global::System.Web.UI.WebControls.Panel pnlNoEvents;
     }

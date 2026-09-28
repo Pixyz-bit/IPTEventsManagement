@@ -391,7 +391,13 @@
                 </svg>
                 <span>DB Diagnostic</span>
             </a>
-            <a href="#events-roster" class="btn-action-primary">
+            <a href="<%= ResolveUrl("~/Frontend/Admin/CheckIn.aspx") %>" class="btn-action-secondary">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
+                </svg>
+                <span>QR Scanner</span>
+            </a>
+            <a href="<%= ResolveUrl("~/Frontend/Admin/CreateEvent.aspx") %>" class="btn-action-primary">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -401,11 +407,12 @@
         </div>
     </div>
 
-    <!-- 4 Key Metric Cards -->
+    <!-- 4 Key Metric Cards (Events, Registrations, Attendees, Fill Rate) -->
     <div class="metrics-grid">
+        <!-- 1. Total Events -->
         <div class="metric-card">
             <div class="metric-top">
-                <span class="metric-label">Total Events</span>
+                <span class="metric-label">Events</span>
                 <div class="metric-icon-wrap">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -419,10 +426,11 @@
                 <asp:Literal ID="litTotalEvents" runat="server" Text="0" />
             </div>
             <div class="metric-hint">
-                <span class="hint-positive"><asp:Literal ID="litUpcomingCount" runat="server" Text="0" /></span> active / upcoming
+                <span class="hint-positive"><asp:Literal ID="litUpcomingCount" runat="server" Text="0" /></span> active & upcoming
             </div>
         </div>
 
+        <!-- 2. Registrations -->
         <div class="metric-card">
             <div class="metric-top">
                 <span class="metric-label">Registrations</span>
@@ -439,14 +447,35 @@
                 <asp:Literal ID="litTotalRegistrations" runat="server" Text="0" />
             </div>
             <div class="metric-hint">
-                Seats booked across all venues
+                Seats booked across venues
             </div>
         </div>
 
+        <!-- 3. Attendees -->
         <div class="metric-card">
             <div class="metric-top">
-                <span class="metric-label">Avg Fill Rate</span>
+                <span class="metric-label">Attendees</span>
                 <div class="metric-icon-wrap" style="background-color: rgba(245, 158, 11, 0.1); color: #fbbf24;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <polyline points="17 11 19 13 23 9"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <div class="metric-value">
+                <asp:Literal ID="litTotalAttendees" runat="server" Text="0" />
+            </div>
+            <div class="metric-hint">
+                Verified door check-ins
+            </div>
+        </div>
+
+        <!-- 4. Fill Rate -->
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Fill Rate</span>
+                <div class="metric-icon-wrap" style="background-color: rgba(168, 85, 247, 0.1); color: #c084fc;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                         <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
                         <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
@@ -457,25 +486,7 @@
                 <asp:Literal ID="litFillRate" runat="server" Text="0%" />
             </div>
             <div class="metric-hint">
-                Of total institutional capacity
-            </div>
-        </div>
-
-        <div class="metric-card">
-            <div class="metric-top">
-                <span class="metric-label">Total Students</span>
-                <div class="metric-icon-wrap" style="background-color: rgba(168, 85, 247, 0.1); color: #c084fc;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    </svg>
-                </div>
-            </div>
-            <div class="metric-value">
-                <asp:Literal ID="litStudentCount" runat="server" Text="0" />
-            </div>
-            <div class="metric-hint">
-                Registered profiles in matrix
+                Of total venue capacity
             </div>
         </div>
     </div>
@@ -639,20 +650,26 @@
                 </div>
 
                 <div class="quick-links-list">
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/CheckIn.aspx") %>" class="quick-link-item">
+                        <span>QR Attendance Desk</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventAttendees.aspx") %>" class="quick-link-item">
+                        <span>Attendee Roster</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/StudentList.aspx") %>" class="quick-link-item">
+                        <span>Student Directory</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
                     <a href="<%= ResolveUrl("~/Frontend/Admin/TestConnection.aspx") %>" class="quick-link-item">
                         <span>Database Diagnostic Tool</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </a>
-                    <a href="<%= ResolveUrl("~/Frontend/AccessDenied.aspx?reason=preview") %>" class="quick-link-item">
-                        <span>Access Denied Warning Preview</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </a>
-                    <a href="<%= ResolveUrl("~/Frontend/Login/Login.aspx") %>" class="quick-link-item">
-                        <span>Authentication Gateway Preview</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
