@@ -298,8 +298,11 @@
         .cell-event-title {
             font-weight: 700;
             color: var(--text-heading);
-            font-size: 0.88rem;
+            font-size: 0.86rem;
             margin-bottom: 0.2rem;
+            max-width: 220px;
+            word-wrap: break-word;
+            line-height: 1.35;
         }
 
         .cell-event-venue {
@@ -392,28 +395,89 @@
             white-space: nowrap;
         }
 
-        .status-upcoming {
-            background-color: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
-        }
-
-        .status-ongoing {
+        .status-open {
             background-color: #ecfdf5;
             color: #047857;
             border: 1px solid #a7f3d0;
         }
 
-        .status-completed {
+        .status-soon {
+            background-color: #fefce8;
+            color: #a16207;
+            border: 1px solid #fef08a;
+        }
+
+        .status-close {
             background-color: #f1f5f9;
             color: #475569;
             border: 1px solid #cbd5e1;
         }
 
-        .status-cancelled {
-            background-color: #fef2f2;
-            color: #b91c1c;
-            border: 1px solid #fecaca;
+        /* ─── Wireframe Matrix Elements ─── */
+        .cell-event-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            line-height: 1.35;
+        }
+
+        .cell-venue-text {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            line-height: 1.25;
+            margin-bottom: 0.2rem;
+        }
+
+        .cell-date-text {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-weight: 600;
+        }
+
+        .cell-reg-deadline {
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font-mono);
+        }
+
+        .cell-reg-deadline .reg-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            line-height: 1.2;
+        }
+
+        .cell-reg-deadline .reg-date {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            line-height: 1.25;
+        }
+
+        .cell-occupancy-text {
+            font-size: 0.9rem;
+            font-weight: 800;
+            font-family: var(--font-mono);
+            color: var(--text-heading);
+        }
+
+        .link-matrix-view {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            transition: color 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .link-matrix-view:hover {
+            color: var(--brand-primary-hover);
         }
 
         /* Row Actions */
@@ -656,36 +720,35 @@
                 </svg>
             </div>
             <div class="summary-kpi-info">
-                <span class="summary-kpi-label">Active / Upcoming</span>
-                <span class="summary-kpi-value"><asp:Literal ID="litUpcomingCount" runat="server" Text="0" /></span>
+                <span class="summary-kpi-label">Open</span>
+                <span class="summary-kpi-value"><asp:Literal ID="litOpenCount" runat="server" Text="0" /></span>
             </div>
         </div>
 
         <div class="summary-kpi-card">
-            <div class="summary-kpi-icon" style="background-color: #fffbeb; color: #d97706;">
+            <div class="summary-kpi-icon" style="background-color: #fefce8; color: #a16207;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
             </div>
             <div class="summary-kpi-info">
-                <span class="summary-kpi-label">Total Registrations</span>
-                <span class="summary-kpi-value"><asp:Literal ID="litTotalRegistrations" runat="server" Text="0" /></span>
+                <span class="summary-kpi-label">Soon</span>
+                <span class="summary-kpi-value"><asp:Literal ID="litSoonCount" runat="server" Text="0" /></span>
             </div>
         </div>
 
         <div class="summary-kpi-card">
-            <div class="summary-kpi-icon" style="background-color: #f5f3ff; color: #7c3aed;">
+            <div class="summary-kpi-icon" style="background-color: #f1f5f9; color: #475569;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
                 </svg>
             </div>
             <div class="summary-kpi-info">
-                <span class="summary-kpi-label">Avg Fill Rate</span>
-                <span class="summary-kpi-value"><asp:Literal ID="litAvgFillRate" runat="server" Text="0%" /></span>
+                <span class="summary-kpi-label">Close</span>
+                <span class="summary-kpi-value"><asp:Literal ID="litCloseCount" runat="server" Text="0" /></span>
             </div>
         </div>
     </div>
@@ -697,21 +760,17 @@
                 <span>All Events</span>
                 <span class="tab-badge"><asp:Literal ID="litBadgeAll" runat="server" Text="0" /></span>
             </asp:LinkButton>
-            <asp:LinkButton ID="btnTabUpcoming" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Upcoming" CausesValidation="false">
-                <span>Upcoming</span>
-                <span class="tab-badge"><asp:Literal ID="litBadgeUpcoming" runat="server" Text="0" /></span>
+            <asp:LinkButton ID="btnTabOpen" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Open" CausesValidation="false">
+                <span>Open</span>
+                <span class="tab-badge"><asp:Literal ID="litBadgeOpen" runat="server" Text="0" /></span>
             </asp:LinkButton>
-            <asp:LinkButton ID="btnTabOngoing" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Ongoing" CausesValidation="false">
-                <span>Ongoing</span>
-                <span class="tab-badge"><asp:Literal ID="litBadgeOngoing" runat="server" Text="0" /></span>
+            <asp:LinkButton ID="btnTabSoon" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Soon" CausesValidation="false">
+                <span>Soon</span>
+                <span class="tab-badge"><asp:Literal ID="litBadgeSoon" runat="server" Text="0" /></span>
             </asp:LinkButton>
-            <asp:LinkButton ID="btnTabCompleted" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Completed" CausesValidation="false">
-                <span>Completed</span>
-                <span class="tab-badge"><asp:Literal ID="litBadgeCompleted" runat="server" Text="0" /></span>
-            </asp:LinkButton>
-            <asp:LinkButton ID="btnTabCancelled" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Cancelled" CausesValidation="false">
-                <span>Cancelled</span>
-                <span class="tab-badge"><asp:Literal ID="litBadgeCancelled" runat="server" Text="0" /></span>
+            <asp:LinkButton ID="btnTabClose" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Close" CausesValidation="false">
+                <span>Close</span>
+                <span class="tab-badge"><asp:Literal ID="litBadgeClose" runat="server" Text="0" /></span>
             </asp:LinkButton>
         </div>
 
@@ -742,111 +801,56 @@
                     <table class="matrix-table">
                         <thead>
                             <tr>
-                                <th>Event & Venue</th>
-                                <th>Target Cohort Matrix</th>
-                                <th>Schedule</th>
-                                <th>Registration Window</th>
-                                <th>Occupancy</th>
-                                <th>Status</th>
-                                <th style="text-align: right;">Operations</th>
+                                <th style="width: 95px;">Status</th>
+                                <th style="width: 230px; max-width: 250px;">Event Title</th>
+                                <th>Venue and Date</th>
+                                <th>Reg. Deadline</th>
+                                <th style="width: 130px;">Occupancy</th>
+                                <th style="text-align: right; width: 85px;"></th>
                             </tr>
                         </thead>
                         <tbody>
                 </HeaderTemplate>
                 <ItemTemplate>
                     <tr>
-                        <!-- 1. Event & Venue -->
+                        <!-- 1. Status: Close, Open, Soon -->
                         <td>
-                            <div class="cell-event-title"><%# Eval("Title") %></div>
-                            <div class="cell-event-venue">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                                <span><%# Eval("VenueLocation") %></span>
-                            </div>
-                        </td>
-
-                        <!-- 2. 4-Tier Target Cohort Matrix -->
-                        <td>
-                            <div class="cohort-matrix-wrap">
-                                <div class="cohort-badge-row">
-                                    <span class="badge-dept"><%# string.IsNullOrWhiteSpace((string)Eval("TargetDepartment")) ? "All Colleges" : Eval("TargetDepartment") %></span>
-                                    <span class="badge-branch"><%# string.IsNullOrWhiteSpace((string)Eval("TargetBranch")) ? "All Branches" : Eval("TargetBranch") %></span>
-                                </div>
-                                <div class="cohort-badge-row" style="color: var(--text-muted); font-size: 0.7rem;">
-                                    <span>Program: <strong><%# string.IsNullOrWhiteSpace((string)Eval("TargetProgram")) ? "All" : Eval("TargetProgram") %></strong></span>
-                                    <span>&bull;</span>
-                                    <span>Year: <strong><%# Eval("TargetYearLevel") == null ? "All" : Eval("TargetYearLevel") + " Year" %></strong></span>
-                                </div>
-                            </div>
-                        </td>
-
-                        <!-- 3. Schedule -->
-                        <td>
-                            <div style="font-weight: 700; color: var(--text-heading);"><%# Eval("EventStart", "{0:MMM dd, yyyy}") %></div>
-                            <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">
-                                <%# Eval("EventStart", "{0:hh:mm tt}") %> - <%# Eval("EventEnd", "{0:hh:mm tt}") %>
-                            </div>
-                        </td>
-
-                        <!-- 4. Registration Window -->
-                        <td>
-                            <div style="font-size: 0.75rem; color: var(--text-heading); font-weight: 600;">
-                                <%# Eval("RegStart", "{0:MMM dd}") %> &rarr; <%# Eval("RegEnd", "{0:MMM dd, yyyy}") %>
-                            </div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted);">
-                                <%# Convert.ToBoolean(Eval("IsRegistrationOpen")) ? "<span style='color:#059669; font-weight:700;'>&bull; Open</span>" : "<span style='color:#64748b;'>&bull; Closed</span>" %>
-                            </div>
-                        </td>
-
-                        <!-- 5. Occupancy & Progress -->
-                        <td>
-                            <div class="capacity-bar-wrap">
-                                <div class="capacity-bar-track">
-                                    <div class="capacity-bar-fill" style='width: <%# GetCapacityPercentage(Eval("CurrentRegistrations"), Eval("MaxCapacity")) %>%;'></div>
-                                </div>
-                                <div class="capacity-text">
-                                    <%# Eval("CurrentRegistrations") %> / <%# Eval("MaxCapacity") %> (<%# GetCapacityPercentage(Eval("CurrentRegistrations"), Eval("MaxCapacity")) %>%)
-                                </div>
-                            </div>
-                        </td>
-
-                        <!-- 6. Status -->
-                        <td>
-                            <span class='status-pill <%# GetStatusClass(Eval("Status")) %>'>
-                                <%# Eval("Status") %>
+                            <span class='status-pill <%# GetMatrixStatusClass(Eval("MatrixStatus")) %>'>
+                                <%# Eval("MatrixStatus") %>
                             </span>
                         </td>
 
-                        <!-- 7. Management Operations -->
-                        <td style="text-align: right;">
-                            <div class="row-actions-group" style="justify-content: flex-end;">
-                                <a href='<%# ResolveUrl("~/Frontend/Admin/EditEvent.aspx?id=" + Eval("EventId")) %>' class="btn-table-action action-edit" title="Edit Event Specifications">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                    </svg>
-                                </a>
-                                <a href='<%# ResolveUrl("~/Frontend/Admin/EventAttendees.aspx?eventId=" + Eval("EventId")) %>' class="btn-table-action" title="View Attendee Roster">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="9" cy="7" r="4"></circle>
-                                    </svg>
-                                </a>
-                                <a href='<%# ResolveUrl("~/Frontend/Admin/CheckIn.aspx?eventId=" + Eval("EventId")) %>' class="btn-table-action" title="Door QR Scanner">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
-                                    </svg>
-                                </a>
-                                <asp:LinkButton ID="btnCancelEventTrigger" runat="server" CssClass="btn-table-action action-cancel" CommandName="RequestCancel" CommandArgument='<%# Eval("EventId") %>' ToolTip="Cancel Event" Visible='<%# Eval("Status").ToString() != "Cancelled" && Eval("Status").ToString() != "Completed" %>' CausesValidation="false">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                                    </svg>
-                                </asp:LinkButton>
+                        <!-- 2. Event Title -->
+                        <td>
+                            <div class="cell-event-title"><%# Eval("Title") %></div>
+                        </td>
+
+                        <!-- 3. Venue and Date (Venue on top, Event Start date below) -->
+                        <td>
+                            <div class="cell-venue-text"><%# Eval("VenueLocation") %></div>
+                            <div class="cell-date-text"><%# Eval("EventStart", "{0:M/d/yyyy}") %></div>
+                        </td>
+
+                        <!-- 4. Reg. Deadline (From: [date], To: [date]) -->
+                        <td>
+                            <div class="cell-reg-deadline">
+                                <span class="reg-label">From:</span>
+                                <span class="reg-date"><%# Eval("RegStart", "{0:M/d/yyyy}") %></span>
+                                <span class="reg-label" style="margin-top: 0.25rem;">To:</span>
+                                <span class="reg-date"><%# Eval("RegEnd", "{0:M/d/yyyy}") %></span>
                             </div>
+                        </td>
+
+                        <!-- 5. Occupancy ([CurrentRegistrations]/[MaxCapacity]) -->
+                        <td>
+                            <div class="cell-occupancy-text">
+                                <%# Eval("CurrentRegistrations") %>/<%# Eval("MaxCapacity") %>
+                            </div>
+                        </td>
+
+                        <!-- 6. View Action -->
+                        <td style="text-align: right;">
+                            <a href='<%# ResolveUrl("~/Frontend/Admin/EditEvent.aspx?id=" + Eval("EventId")) %>' class="link-matrix-view">View &gt;</a>
                         </td>
                     </tr>
                 </ItemTemplate>

@@ -64,10 +64,9 @@ To ensure the interface reflects human craftsmanship shipped for a university pr
    * Body Text: `Plus Jakarta Sans`, 400 or 500 font-weight, 1.5 line-height.
    * Monospace Tokens: Use `JetBrains Mono` for Student IDs, capacity ratios (`142 / 200`), dates, and timestamps.
 2. **Status Badges & Pills:**
-   * **Upcoming:** Muted blue background (`rgba(37, 99, 235, 0.15)`), blue border and text (`#93c5fd`).
-   * **Ongoing / Present:** Emerald background (`rgba(16, 185, 129, 0.15)`), green text (`#6ee7b7`).
-   * **Completed:** Slate background (`rgba(100, 116, 139, 0.15)`), gray text (`#cbd5e1`).
-   * **Cancelled:** Rose background (`rgba(244, 63, 94, 0.15)`), red text (`#fca5a5`).
+   * **Open:** Fresh emerald background (`#ecfdf5`), border (`#a7f3d0`), and green text (`#047857`).
+   * **Soon:** Warm amber/gold background (`#fefce8`), border (`#fef08a`), and amber text (`#a16207`).
+   * **Close:** Slate neutral background (`#f1f5f9`), border (`#cbd5e1`), and dark muted text (`#475569`).
 
 ---
 

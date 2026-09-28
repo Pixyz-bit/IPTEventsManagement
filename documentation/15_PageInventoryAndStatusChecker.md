@@ -20,8 +20,8 @@
 | **P-06** | User | **Student Profile & Security** | `Frontend/User/Profile.aspx` | `/Frontend/User/Profile.aspx` | `[ ] NOT YET STARTED` | `StudentRepository`, `UserRepository`, `PasswordHelper` |
 | **P-07** | Admin | **Admin Master Layout** | [`Frontend/Admin/Admin.Master`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/Admin.Master) | *(Master Shell for Admin Views)* | `[x] COMPLETED` | `SessionHelper`, Navigation Sidebar Component |
 | **P-08** | Admin | **Executive Dashboard** | [`Frontend/Admin/Dashboard.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/Dashboard.aspx) | `/Frontend/Admin/Dashboard.aspx` | `[-] POLISH PENDING` | `EventRepository`, `RegistrationRepository`, KPI Metrics Engine |
-| **P-09** | Admin | **Campus Events Matrix** | `Frontend/Admin/AdminEvents.aspx` | `/Frontend/Admin/AdminEvents.aspx` | `[ ] NOT YET STARTED` | `EventRepository`, `SponsorRepository` |
-| **P-10** | Admin | **Create Event Form** | `Frontend/Admin/CreateEvent.aspx` | `/Frontend/Admin/CreateEvent.aspx` | `[ ] NOT YET STARTED` | `EventRepository`, `SponsorRepository`, File Upload Handler |
+| **P-09** | Admin | **Campus Events Matrix** | [`Frontend/Admin/AdminEvents.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/AdminEvents.aspx) | `/Frontend/Admin/AdminEvents.aspx` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository` |
+| **P-10** | Admin | **Create Event Form** | [`Frontend/Admin/CreateEvent.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/CreateEvent.aspx) | `/Frontend/Admin/CreateEvent.aspx` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository`, 5-Step Guided Wizard |
 | **P-11** | Admin | **Edit & Manage Event** | `Frontend/Admin/EditEvent.aspx` | `/Frontend/Admin/EditEvent.aspx?eventId={id}` | `[ ] NOT YET STARTED` | `EventRepository`, `SponsorRepository`, Audit Logger |
 | **P-12** | Admin | **Check-In / QR Scanner** | `Frontend/Admin/CheckIn.aspx` | `/Frontend/Admin/CheckIn.aspx` | `[ ] NOT YET STARTED` | `RegistrationRepository`, Camera Scanner API, Sound Synthesis |
 | **P-13** | Admin | **Event Attendees Roster** | `Frontend/Admin/EventAttendees.aspx` | `/Frontend/Admin/EventAttendees.aspx?eventId={id}` | `[ ] NOT YET STARTED` | `RegistrationRepository`, `StudentRepository`, CSV Export Helper |
@@ -65,7 +65,8 @@
 3. **`AdminEvents.aspx` (`[x] COMPLETED`):**
    - Campus events matrix with status tabs, search, 4-tier audience tags, and centralized operations.
 4. **`CreateEvent.aspx` (`[x] COMPLETED`):**
-   - Event publishing form with breadcrumbs, 4-tier audience targeting, and multi-sponsor association.
+   - 5-step guided wizard (Core Specs -> Single Date Schedule & Times -> Multi-Course Audience Targeting -> Sponsors -> Summary & Confirm).
+   - Dynamic real-time preview sidebar and live summary review card before publishing.
 5. **`EditEvent.aspx` (`[ ] NOT YET STARTED`):**
    - Edit event details, manage attached sponsors, quota adjustments, and cancellations.
 6. **`CheckIn.aspx` (`[ ] NOT YET STARTED`):**

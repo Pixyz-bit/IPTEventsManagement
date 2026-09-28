@@ -133,11 +133,11 @@
 
         .procedure-step-tab {
             flex: 1;
-            min-width: 175px;
+            min-width: 140px;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.65rem 0.9rem;
+            gap: 0.65rem;
+            padding: 0.65rem 0.75rem;
             border-radius: 7px;
             cursor: pointer;
             background: transparent;
@@ -252,7 +252,7 @@
         /* ─── Two-Column Layout ─── */
         .create-form-layout {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) 330px;
+            grid-template-columns: minmax(0, 1fr) 350px;
             gap: 1.5rem;
             align-items: flex-start;
         }
@@ -413,10 +413,13 @@
             align-items: center;
             justify-content: center;
             transition: color 0.15s ease;
+            text-decoration: none !important;
         }
 
-        .btn-remove-chip:hover {
+        .btn-remove-chip:hover,
+        .btn-remove-chip:focus {
             color: #ef4444;
+            text-decoration: none !important;
         }
 
         .preset-sponsors-row {
@@ -476,12 +479,12 @@
             flex-shrink: 0;
         }
 
-        /* ─── Preview Card ─── */
+        /* ─── Preview Ticket Pass Card (Mockup Format) ─── */
         .preview-summary-card {
             background-color: #ffffff;
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
-            padding: 1.25rem;
+            padding: 1.15rem;
             box-shadow: var(--shadow-subtle);
             position: sticky;
             top: calc(var(--topbar-height) + 1.5rem);
@@ -510,47 +513,135 @@
             text-transform: uppercase;
         }
 
-        .preview-event-box {
-            background-color: #f8fafc;
-            border: 1px solid var(--border-subtle);
+        .ticket-pass-card {
+            background-color: #18181b;
+            border: 1px dashed #3f3f46;
+            border-radius: 10px;
+            color: #e4e4e7;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1.15rem;
+        }
+
+        .ticket-header-section {
+            padding: 0.9rem;
+            border-bottom: 1px dashed #3f3f46;
+        }
+
+        .ticket-promo-image-box {
+            background: #27272a;
+            border: 1px dashed #52525b;
             border-radius: 6px;
-            padding: 1rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .preview-event-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-heading);
-            margin-bottom: 0.35rem;
-            line-height: 1.3;
-        }
-
-        .preview-event-venue {
-            font-size: 0.78rem;
-            color: var(--text-muted);
+            height: 95px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.35rem;
+            justify-content: center;
+            color: #a1a1aa;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
             margin-bottom: 0.75rem;
         }
 
-        .preview-meta-row {
+        .ticket-event-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.35;
+            font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+            word-break: break-word;
+        }
+
+        .ticket-section {
+            padding: 0.8rem 0.9rem;
+            border-bottom: 1px dashed #3f3f46;
+        }
+
+        .ticket-section-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #a1a1aa;
+            margin-bottom: 0.5rem;
+        }
+
+        .ticket-kv-grid {
             display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            padding: 0.35rem 0;
-            border-top: 1px solid #e2e8f0;
-            color: var(--text-body);
+            flex-direction: column;
+            gap: 0.35rem;
         }
 
-        .preview-meta-row span:first-child {
-            color: var(--text-muted);
+        .ticket-kv-row {
+            display: flex;
+            font-size: 0.74rem;
+            line-height: 1.35;
         }
 
-        .preview-meta-row span:last-child {
-            font-weight: 600;
-            font-family: var(--font-mono), var(--font-sans);
+        .ticket-kv-key {
+            width: 76px;
+            flex-shrink: 0;
+            color: #a1a1aa;
+        }
+
+        .ticket-kv-val {
+            flex: 1;
+            color: #fafafa;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .ticket-status-badge {
+            display: inline-block;
+            color: #34d399;
+            font-weight: 700;
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+        }
+
+        .ticket-qr-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.1rem 0.9rem;
+            text-align: center;
+        }
+
+        .ticket-qr-frame {
+            padding: 6px;
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+            margin-bottom: 0.65rem;
+            display: inline-block;
+        }
+
+        .ticket-qr-instruction {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: #e4e4e7;
+            margin-bottom: 0.2rem;
+        }
+
+        .ticket-qr-ref {
+            font-size: 0.68rem;
+            color: #a1a1aa;
+            letter-spacing: 0.04em;
+        }
+
+        .ticket-footer-section {
+            padding: 0.75rem 0.9rem;
+            font-size: 0.71rem;
+            color: #a1a1aa;
+            line-height: 1.5;
+            background: #18181b;
+        }
+
+        .ticket-bullet-item {
+            margin-bottom: 0.15rem;
         }
 
         /* ─── Feedback Alerts ─── */
@@ -577,6 +668,264 @@
             border: 1px solid #fecaca;
         }
 
+        /* Course Picker Grid & Micro Buttons */
+        .course-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 0.65rem;
+            margin-top: 0.5rem;
+        }
+
+        .course-picker-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            padding: 0.75rem 0.85rem;
+            background-color: #f8fafc;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .course-picker-card:hover {
+            background-color: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .course-picker-card.selected {
+            background-color: #eff6ff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px #2563eb;
+        }
+
+        .course-picker-card input[type="checkbox"] {
+            margin-top: 0.2rem;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--brand-primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .course-picker-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-code {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-heading);
+        }
+
+        .course-name {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        .btn-micro {
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-heading);
+            padding: 0.25rem 0.65rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-micro:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+            color: var(--brand-primary);
+        }
+
+        /* Step 5 Summary Review Card Styles */
+        .summary-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.15rem;
+        }
+
+        .summary-section-box {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1.15rem;
+        }
+
+        .summary-section-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-heading);
+            margin-bottom: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.85rem 1.25rem;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .summary-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .summary-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .summary-value {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-heading);
+            word-break: break-word;
+        }
+
+        .summary-value.highlight {
+            color: var(--brand-primary);
+            font-family: var(--font-mono), var(--font-sans);
+        }
+
+        /* Schedule & Timeline 2-Column Split */
+        .summary-schedule-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+
+        .summary-schedule-left {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .summary-schedule-right {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .reg-window-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.85rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            height: 100%;
+            justify-content: center;
+        }
+
+        .reg-window-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .reg-window-tag {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+            min-width: 65px;
+            text-align: center;
+        }
+
+        .reg-window-tag.opens {
+            background-color: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+
+        .reg-window-tag.deadline {
+            background-color: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .reg-window-val {
+            font-size: 0.86rem;
+            font-weight: 600;
+            color: #1e293b;
+            font-family: var(--font-mono), monospace;
+        }
+
+        .summary-chips-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.2rem;
+        }
+
+        .summary-chip-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background-color: #ffffff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            font-size: 0.74rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+        }
+
+        .summary-confirm-callout {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 1rem 1.15rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .summary-confirm-callout svg {
+            color: #16a34a;
+            flex-shrink: 0;
+            margin-top: 0.15rem;
+        }
+
+        .summary-confirm-text h4 {
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: #166534;
+            margin-bottom: 0.2rem;
+        }
+
+        .summary-confirm-text p {
+            font-size: 0.76rem;
+            color: #15803d;
+            line-height: 1.4;
+            margin: 0;
+        }
+
         @media (max-width: 1024px) {
             .create-form-layout {
                 grid-template-columns: 1fr;
@@ -591,7 +940,7 @@
                 grid-template-columns: 1fr;
             }
             .procedure-step-tab {
-                min-width: 130px;
+                min-width: 110px;
                 padding: 0.5rem;
             }
             .procedure-step-tab .step-number {
@@ -644,9 +993,9 @@
     <div class="page-header-row">
         <div class="header-title-block">
             <h2>Publish New Campus Event</h2>
-            <p>Complete the guided 4-step procedure to register specifications, schedules, audience criteria, and partner sponsors.</p>
+            <!--<p>Complete the guided 4-step procedure to register specifications, schedules, audience criteria, and partner sponsors.</p>-->
         </div>
-        <div class="header-actions">
+        <!--<div class="header-actions">
             <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="btn-action-secondary">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -655,7 +1004,7 @@
                 <span>Back to Events Matrix</span>
             </a>
             <asp:Button ID="btnPublishTop" runat="server" Text="Publish Event" CssClass="btn-action-primary" OnClick="btnPublishEvent_Click" />
-        </div>
+        </div>-->
     </div>
 
     <!-- Step-by-Step Procedure Breadcrumb Tabs -->
@@ -710,7 +1059,22 @@
             <div class="step-badge">4</div>
             <div class="step-meta">
                 <span class="step-number">Step 04</span>
-                <span class="step-name">Sponsors & Review</span>
+                <span class="step-name">Sponsors</span>
+            </div>
+        </div>
+
+        <div class="step-separator">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </div>
+
+        <!-- Step 5 Tab -->
+        <div class="procedure-step-tab" id="tab-step-5" data-step="5" onclick="switchStep(5)" role="tab" aria-selected="false">
+            <div class="step-badge">5</div>
+            <div class="step-meta">
+                <span class="step-number">Step 05</span>
+                <span class="step-name">Summary & Confirm</span>
             </div>
         </div>
     </div>
@@ -746,31 +1110,31 @@
                             </svg>
                             <span>Step 1: Core Event Specifications</span>
                         </div>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">1 of 4</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">1 of 5</span>
                     </div>
                     <div class="card-body">
                         <div class="form-group">
                             <label class="form-label" for="<%= txtTitle.ClientID %>">Event Title <span class="required-mark">*</span></label>
                             <asp:TextBox ID="txtTitle" runat="server" CssClass="form-input" placeholder="e.g. Annual University Tech Symposium 2026" MaxLength="200" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                            <span class="form-hint">A clear, descriptive title visible across student portals and institutional calendars.</span>
+                        <!--<span class="form-hint">A clear, descriptive title visible across student portals and institutional calendars.</span>-->
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="<%= txtDescription.ClientID %>">Description & Agenda</label>
+                            <label class="form-label" for="<%= txtDescription.ClientID %>">Event Description</label>
                             <asp:TextBox ID="txtDescription" runat="server" TextMode="MultiLine" CssClass="form-textarea" placeholder="Detail the event objectives, keynote topics, speaker profiles, or student prerequisites..." />
                         </div>
 
                         <div class="form-grid-2">
                             <div class="form-group">
-                                <label class="form-label" for="<%= txtVenueLocation.ClientID %>">Venue / Room Location <span class="required-mark">*</span></label>
+                                <label class="form-label" for="<%= txtVenueLocation.ClientID %>">Venue Location <span class="required-mark">*</span></label>
                                 <asp:TextBox ID="txtVenueLocation" runat="server" CssClass="form-input" placeholder="e.g. Central Auditorium, Hall A" MaxLength="200" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                                <span class="form-hint">Physical room, auditorium, or laboratory venue.</span>
+                            <!--<span class="form-hint">Physical room, auditorium, or laboratory venue.</span>-->
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="<%= txtMaxCapacity.ClientID %>">Max Capacity (Seats) <span class="required-mark">*</span></label>
                                 <asp:TextBox ID="txtMaxCapacity" runat="server" TextMode="Number" CssClass="form-input" Text="150" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                                <span class="form-hint">Enforces strict atomic concurrency lock against overbooking.</span>
+                                <!--<span class="form-hint">Enforces strict atomic concurrency lock against overbooking.</span>-->
                             </div>
                         </div>
 
@@ -801,7 +1165,7 @@
                             </svg>
                             <span>Step 2: Schedule & Registration Timeline</span>
                         </div>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">2 of 4</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">2 of 5</span>
                     </div>
                     <div class="card-body">
                         <div class="info-callout">
@@ -810,28 +1174,44 @@
                                 <line x1="12" y1="16" x2="12" y2="12"></line>
                                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
                             </svg>
-                            <span><strong>Policy Directive:</strong> Registration period must conclude before or at event kickoff. Cancellations are strictly locked after the registration deadline.</span>
+                            <span><strong>Policy Directive:</strong> Events take place on a designated calendar date. Registration period must conclude before or at event kickoff.</span>
                         </div>
 
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtEventStart.ClientID %>">Event Start Date & Time <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtEventStart" runat="server" TextMode="DateTimeLocal" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtEventEnd.ClientID %>">Event End Date & Time <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtEventEnd" runat="server" TextMode="DateTimeLocal" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                            </div>
+                        <!-- Single Event Date Picker -->
+                        <div class="form-group">
+                            <label class="form-label" for="<%= txtEventDate.ClientID %>">Event Date <span class="required-mark">*</span></label>
+                            <asp:TextBox ID="txtEventDate" runat="server" TextMode="Date" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                            <span class="form-hint">The single designated calendar date on which the event takes place.</span>
                         </div>
 
+                        <!-- Start and End Time Pickers -->
                         <div class="form-grid-2" style="margin-top: 1rem;">
                             <div class="form-group">
-                                <label class="form-label" for="<%= txtRegStart.ClientID %>">Registration Open Date & Time <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtRegStart" runat="server" TextMode="DateTimeLocal" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                <label class="form-label" for="<%= txtEventStartTime.ClientID %>">Event Start Time <span class="required-mark">*</span></label>
+                                <asp:TextBox ID="txtEventStartTime" runat="server" TextMode="Time" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                <span class="form-hint">Kickoff time (e.g. 09:00)</span>
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="<%= txtRegEnd.ClientID %>">Registration Deadline <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtRegEnd" runat="server" TextMode="DateTimeLocal" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                <label class="form-label" for="<%= txtEventEndTime.ClientID %>">Event End Time <span class="required-mark">*</span></label>
+                                <asp:TextBox ID="txtEventEndTime" runat="server" TextMode="Time" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                <span class="form-hint">Conclusion time (e.g. 17:00)</span>
+                            </div>
+                        </div>
+
+                        <!-- Registration Availability Window -->
+                        <div style="margin-top: 1.25rem; padding-top: 1.15rem; border-top: 1px dashed var(--border-subtle);">
+                            <label class="form-label" style="font-size:0.8rem; color:var(--brand-primary); margin-bottom:0.75rem;">
+                                Registration Availability Window
+                            </label>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label" for="<%= txtRegStart.ClientID %>">Registration Open Date & Time <span class="required-mark">*</span></label>
+                                    <asp:TextBox ID="txtRegStart" runat="server" TextMode="DateTimeLocal" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="<%= txtRegEnd.ClientID %>">Registration Deadline <span class="required-mark">*</span></label>
+                                    <asp:TextBox ID="txtRegEnd" runat="server" TextMode="DateTimeLocal" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                </div>
                             </div>
                         </div>
 
@@ -867,7 +1247,7 @@
                             </svg>
                             <span>Step 3: 4-Tier Academic Audience Targeting</span>
                         </div>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">3 of 4</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">3 of 5</span>
                     </div>
                     <div class="card-body">
                         <div class="info-callout">
@@ -902,29 +1282,76 @@
                             </div>
                         </div>
 
-                        <div class="form-grid-2" style="margin-top: 1rem;">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= ddlProgram.ClientID %>">3. Academic Program</label>
-                                <asp:DropDownList ID="ddlProgram" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
-                                    <asp:ListItem Value="" Text="All Academic Programs (Open)" />
-                                    <asp:ListItem Value="BSIT" Text="BS Information Technology (BSIT)" />
-                                    <asp:ListItem Value="BSCS" Text="BS Computer Science (BSCS)" />
-                                    <asp:ListItem Value="BSIE" Text="BS Industrial Engineering (BSIE)" />
-                                    <asp:ListItem Value="BSBA" Text="BS Business Administration (BSBA)" />
-                                    <asp:ListItem Value="BSA" Text="BS Accountancy (BSA)" />
-                                </asp:DropDownList>
+                        <!-- Multi-Select Academic Degree Programs / Courses -->
+                        <div class="form-group" style="margin-top: 1.25rem;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.4rem; flex-wrap:wrap; gap:0.5rem;">
+                                <label class="form-label" style="margin-bottom:0;">
+                                    3. Academic Degree Programs / Courses (Multi-Select)
+                                </label>
+                                <div style="display:flex; gap:0.4rem;">
+                                    <button type="button" class="btn-micro" onclick="selectAllPrograms(true)">Select All</button>
+                                    <button type="button" class="btn-micro" onclick="selectAllPrograms(false)">Clear (Open to All)</button>
+                                </div>
                             </div>
+                            <span class="form-hint" style="margin-bottom:0.6rem;">Leave all unchecked to keep open to all programs. Select one or more specific courses (e.g. BSIT and BSCS) to restrict eligibility.</span>
+                            
+                            <div class="course-picker-grid">
+                                <label class="course-picker-card" id="card_BSIT">
+                                    <input type="checkbox" name="courseFilter" value="BSIT" id="chk_BSIT" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BSIT</span>
+                                        <span class="course-name">BS Information Technology</span>
+                                    </div>
+                                </label>
+                                <label class="course-picker-card" id="card_BSCS">
+                                    <input type="checkbox" name="courseFilter" value="BSCS" id="chk_BSCS" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BSCS</span>
+                                        <span class="course-name">BS Computer Science</span>
+                                    </div>
+                                </label>
+                                <label class="course-picker-card" id="card_BSIE">
+                                    <input type="checkbox" name="courseFilter" value="BSIE" id="chk_BSIE" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BSIE</span>
+                                        <span class="course-name">BS Industrial Engineering</span>
+                                    </div>
+                                </label>
+                                <label class="course-picker-card" id="card_BSBA">
+                                    <input type="checkbox" name="courseFilter" value="BSBA" id="chk_BSBA" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BSBA</span>
+                                        <span class="course-name">BS Business Administration</span>
+                                    </div>
+                                </label>
+                                <label class="course-picker-card" id="card_BSA">
+                                    <input type="checkbox" name="courseFilter" value="BSA" id="chk_BSA" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BSA</span>
+                                        <span class="course-name">BS Accountancy</span>
+                                    </div>
+                                </label>
+                                <label class="course-picker-card" id="card_BSEd">
+                                    <input type="checkbox" name="courseFilter" value="BSEd" id="chk_BSEd" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BSEd</span>
+                                        <span class="course-name">BS Secondary Education</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <asp:HiddenField ID="hfSelectedPrograms" runat="server" Value="" />
+                        </div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="<%= ddlYearLevel.ClientID %>">4. Year Level</label>
-                                <asp:DropDownList ID="ddlYearLevel" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
-                                    <asp:ListItem Value="" Text="All Year Levels (1st - 4th)" />
-                                    <asp:ListItem Value="1" Text="1st Year Students Only" />
-                                    <asp:ListItem Value="2" Text="2nd Year Students Only" />
-                                    <asp:ListItem Value="3" Text="3rd Year Students Only" />
-                                    <asp:ListItem Value="4" Text="4th Year Graduating Seniors Only" />
-                                </asp:DropDownList>
-                            </div>
+                        <!-- Year Level Selection -->
+                        <div class="form-group" style="margin-top: 1.25rem;">
+                            <label class="form-label" for="<%= ddlYearLevel.ClientID %>">4. Year Level Eligibility</label>
+                            <asp:DropDownList ID="ddlYearLevel" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed" style="max-width:320px;">
+                                <asp:ListItem Value="" Text="All Year Levels (1st - 4th)" />
+                                <asp:ListItem Value="1" Text="1st Year Students Only" />
+                                <asp:ListItem Value="2" Text="2nd Year Students Only" />
+                                <asp:ListItem Value="3" Text="3rd Year Students Only" />
+                                <asp:ListItem Value="4" Text="4th Year Graduating Seniors Only" />
+                            </asp:DropDownList>
                         </div>
 
                         <!-- Step 3 Footer Navigation -->
@@ -935,8 +1362,8 @@
                                 </svg>
                                 <span>Back: Schedule</span>
                             </button>
-                            <button type="button" class="btn-action-primary" onclick="switchStep(4)">
-                                <span>Next: Sponsors & Review</span>
+                            <button type="button" class="btn-action-primary" onclick="validateAndGoStep(4)">
+                                <span>Next: Sponsors</span>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
@@ -946,7 +1373,7 @@
                 </div>
             </div>
 
-            <!-- STEP 4 PANEL: Multi-Sponsor Association & Final Review -->
+            <!-- STEP 4 PANEL: Multi-Sponsor Associations -->
             <div id="step-panel-4" class="step-panel">
                 <div class="form-section-card">
                     <div class="card-header">
@@ -954,9 +1381,9 @@
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
                             </svg>
-                            <span>Step 4: Multi-Sponsor Association & Final Review</span>
+                            <span>Step 4: Multi-Sponsor Associations</span>
                         </div>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">4 of 4</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">4 of 5</span>
                     </div>
                     <div class="card-body">
                         <div class="form-group">
@@ -972,9 +1399,6 @@
                             <asp:Repeater ID="rptSponsors" runat="server" OnItemCommand="rptSponsors_ItemCommand">
                                 <ItemTemplate>
                                     <span class="sponsor-chip">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
-                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                                        </svg>
                                         <span><%# Container.DataItem %></span>
                                         <asp:LinkButton ID="btnRemove" runat="server" CssClass="btn-remove-chip" CommandName="Remove" CommandArgument='<%# Container.DataItem %>' CausesValidation="false" ToolTip="Remove Sponsor">&times;</asp:LinkButton>
                                     </span>
@@ -1004,11 +1428,11 @@
                             </div>
                             <div class="checklist-item">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                <span>Registration deadline verified prior to event kickoff</span>
+                                <span>Event single date, start time, and end time verified</span>
                             </div>
                             <div class="checklist-item">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                <span>4-tier demographic eligibility filters mapped</span>
+                                <span>Audience demographic and multi-course eligibility mapped</span>
                             </div>
                             <div class="checklist-item">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -1024,7 +1448,157 @@
                                 </svg>
                                 <span>Back: Audience Targeting</span>
                             </button>
-                            <asp:Button ID="btnPublishBottom" runat="server" Text="Publish Event to Matrix" CssClass="btn-action-primary" OnClick="btnPublishEvent_Click" />
+                            <button type="button" class="btn-action-primary" onclick="validateAndGoStep(5)">
+                                <span>Next: Summary & Confirmation</span>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5 PANEL: Summary & Final Confirmation -->
+            <div id="step-panel-5" class="step-panel">
+                <div class="form-section-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"></path>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                            <span>Step 5: Event Specifications Summary & Confirmation</span>
+                        </div>
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">5 of 5</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-callout">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            <span>Please review all event specifications below carefully before publishing. Clicking <strong>Confirm &amp; Publish Event</strong> will register this event into the database and make it live in the matrix.</span>
+                        </div>
+
+                        <!-- Summary Review Container -->
+                        <div class="summary-container">
+                            <!-- 1. Core Specifications Summary -->
+                            <div class="summary-section-box">
+                                <div class="summary-section-title">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    <span>Core Specifications</span>
+                                </div>
+                                <div class="summary-grid">
+                                    <div class="summary-item full-width">
+                                        <span class="summary-label">Event Title</span>
+                                        <span id="sumTitle" class="summary-value" style="font-size:1.05rem; font-weight:800; color:var(--brand-primary);">-</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Venue Location</span>
+                                        <span id="sumVenue" class="summary-value">-</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Max Seat Capacity</span>
+                                        <span id="sumCapacity" class="summary-value highlight">-</span>
+                                    </div>
+                                    <div class="summary-item full-width">
+                                        <span class="summary-label">Event Description</span>
+                                        <div id="sumDesc" class="summary-value" style="font-size:0.8rem; font-weight:400; color:var(--text-body); white-space:pre-wrap;">-</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Schedule & Timeline Summary -->
+                            <div class="summary-section-box">
+                                <div class="summary-section-title">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    <span>Event Schedule &amp; Timeline</span>
+                                </div>
+                                <div class="summary-schedule-split">
+                                    <!-- Left side: Date at top, Time below -->
+                                    <div class="summary-schedule-left">
+                                        <div class="summary-item">
+                                            <span class="summary-label">Designated Event Date</span>
+                                            <span id="sumEventDate" class="summary-value highlight">-</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Event Time Window</span>
+                                            <span id="sumEventHours" class="summary-value highlight">-</span>
+                                        </div>
+                                    </div>
+                                    <!-- Right side: Registration Availability Window -->
+                                    <div class="summary-schedule-right">
+                                        <span class="summary-label">Registration Availability Window</span>
+                                        <div class="reg-window-card">
+                                            <div class="reg-window-row">
+                                                <span class="reg-window-tag opens">OPENS</span>
+                                                <span id="sumRegOpen" class="reg-window-val">-</span>
+                                            </div>
+                                            <div class="reg-window-row">
+                                                <span class="reg-window-tag deadline">DEADLINE</span>
+                                                <span id="sumRegDeadline" class="reg-window-val">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Demographic Targeting Summary -->
+                            <div class="summary-section-box">
+                                <div class="summary-section-title">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                    <span>Audience Eligibility Targeting</span>
+                                </div>
+                                <div class="summary-grid">
+                                    <div class="summary-item">
+                                        <span class="summary-label">Campus Branch</span>
+                                        <span id="sumBranch" class="summary-value">-</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Academic College</span>
+                                        <span id="sumDept" class="summary-value">-</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Year Level</span>
+                                        <span id="sumYearLevel" class="summary-value">-</span>
+                                    </div>
+                                    <div class="summary-item full-width">
+                                        <span class="summary-label">Target Degree Programs / Courses</span>
+                                        <div id="sumPrograms" class="summary-chips-wrap"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. Sponsor Associations Summary -->
+                            <div class="summary-section-box">
+                                <div class="summary-section-title">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                                    <span>Partner &amp; Sponsor Associations</span>
+                                </div>
+                                <div id="sumSponsors" class="summary-chips-wrap"></div>
+                            </div>
+
+                            <!-- Policy Confirmation Callout -->
+                            <div class="summary-confirm-callout">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                <div class="summary-confirm-text">
+                                    <h4>Final Confirmation Required</h4>
+                                    <p>By publishing, you confirm that all specifications, reservation limits, and eligibility cohorts comply with university event policies.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 5 Footer Navigation -->
+                        <div class="step-nav-footer">
+                            <button type="button" class="btn-action-secondary" onclick="switchStep(4)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                                <span>Back: Sponsors</span>
+                            </button>
+                            <asp:Button ID="btnConfirmPublish" runat="server" Text="Confirm & Publish Event" CssClass="btn-action-primary" OnClick="btnPublishEvent_Click" />
                         </div>
                     </div>
                 </div>
@@ -1039,38 +1613,127 @@
                     <span class="preview-badge-status">Upcoming</span>
                 </div>
 
-                <div class="preview-event-box">
-                    <div class="preview-event-title">
-                        <asp:Literal ID="litPreviewTitle" runat="server" Text="Event Title Preview" />
-                    </div>
-                    <div class="preview-event-venue">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        <span><asp:Literal ID="litPreviewVenue" runat="server" Text="Central Auditorium, Hall A" /></span>
+                <!-- Live Digital Ticket Pass Preview -->
+                <div class="ticket-pass-card">
+                    <!-- Promotional Image Header -->
+                    <div class="ticket-header-section">
+                        <div class="ticket-promo-image-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="1.8" style="margin-bottom:0.25rem;">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <span>*Promotional Image*</span>
+                        </div>
+                        <div class="ticket-event-title" id="ticketEventTitle">
+                            <asp:Literal ID="litPreviewTitle" runat="server" Text="Event Title Preview" />
+                        </div>
                     </div>
 
-                    <div class="preview-meta-row" onclick="switchStep(1)" style="cursor:pointer;" title="Click to edit Core Information">
-                        <span>Max Capacity</span>
-                        <span><asp:Literal ID="litPreviewCapacity" runat="server" Text="150 seats" /></span>
+                    <!-- Section 1: Event Details -->
+                    <div class="ticket-section" onclick="switchStep(2)" style="cursor:pointer;" title="Click to edit Schedule & Venue">
+                        <div class="ticket-section-label">EVENT DETAILS</div>
+                        <div class="ticket-kv-grid">
+                            <div class="ticket-kv-row">
+                                <span class="ticket-kv-key">Date:</span>
+                                <span class="ticket-kv-val" id="ticketEventDate"><asp:Literal ID="litPreviewDate" runat="server" Text="Wednesday, October 28, 2026" /></span>
+                            </div>
+                            <div class="ticket-kv-row">
+                                <span class="ticket-kv-key">Time:</span>
+                                <span class="ticket-kv-val" id="ticketEventTime"><asp:Literal ID="litPreviewTime" runat="server" Text="09:00 AM - 04:00 PM (Gates Open: 08:15 AM)" /></span>
+                            </div>
+                            <div class="ticket-kv-row">
+                                <span class="ticket-kv-key">Venue:</span>
+                                <span class="ticket-kv-val" id="ticketEventVenue"><asp:Literal ID="litPreviewVenue" runat="server" Text="University Grand Auditorium" /></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="preview-meta-row" onclick="switchStep(3)" style="cursor:pointer;" title="Click to edit Audience Targeting">
-                        <span>Target Branch</span>
-                        <span><asp:Literal ID="litPreviewBranch" runat="server" Text="All Branches" /></span>
+
+                    <!-- Section 2: Attendee Details -->
+                    <div class="ticket-section" onclick="switchStep(3)" style="cursor:pointer;" title="Click to edit Audience Eligibility">
+                        <div class="ticket-section-label">ATTENDEE DETAILS</div>
+                        <div class="ticket-kv-grid">
+                            <div class="ticket-kv-row">
+                                <span class="ticket-kv-key">Name:</span>
+                                <span class="ticket-kv-val" id="ticketAttendeeName">Alice M. Mendoza</span>
+                            </div>
+                            <div class="ticket-kv-row">
+                                <span class="ticket-kv-key">Student ID:</span>
+                                <span class="ticket-kv-val" id="ticketAttendeeId">2024-1611</span>
+                            </div>
+                            <div class="ticket-kv-row">
+                                <span class="ticket-kv-key">Program:</span>
+                                <span class="ticket-kv-val" id="ticketAttendeeProgram"><asp:Literal ID="litPreviewPrograms" runat="server" Text="BS Information Technology (SBIT3C)" /></span>
+                            </div>
+                            <div class="ticket-kv-row">
+                                <span class="ticket-kv-key">Status:</span>
+                                <span class="ticket-kv-val"><span class="ticket-status-badge">PRE-REGISTERED</span></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="preview-meta-row" onclick="switchStep(3)" style="cursor:pointer;" title="Click to edit Audience Targeting">
-                        <span>Target College</span>
-                        <span><asp:Literal ID="litPreviewDept" runat="server" Text="All Colleges" /></span>
+
+                    <!-- Section 3: QR Code Section -->
+                    <div class="ticket-section ticket-qr-section">
+                        <div class="ticket-qr-frame">
+                            <svg width="88" height="88" viewBox="0 0 33 33" shape-rendering="crispEdges">
+                                <rect width="33" height="33" fill="#ffffff" rx="2" />
+                                <!-- Corner 1 (Top Left) -->
+                                <rect x="3" y="3" width="7" height="7" fill="#0f172a" />
+                                <rect x="4" y="4" width="5" height="5" fill="#ffffff" />
+                                <rect x="5" y="5" width="3" height="3" fill="#0f172a" />
+                                <!-- Corner 2 (Top Right) -->
+                                <rect x="23" y="3" width="7" height="7" fill="#0f172a" />
+                                <rect x="24" y="4" width="5" height="5" fill="#ffffff" />
+                                <rect x="25" y="5" width="3" height="3" fill="#0f172a" />
+                                <!-- Corner 3 (Bottom Left) -->
+                                <rect x="3" y="23" width="7" height="7" fill="#0f172a" />
+                                <rect x="4" y="24" width="5" height="5" fill="#ffffff" />
+                                <rect x="5" y="25" width="3" height="3" fill="#0f172a" />
+                                <!-- Timing & Matrix Elements -->
+                                <rect x="11" y="5" width="1" height="1" fill="#0f172a" />
+                                <rect x="13" y="5" width="1" height="1" fill="#0f172a" />
+                                <rect x="15" y="5" width="1" height="1" fill="#0f172a" />
+                                <rect x="17" y="5" width="1" height="1" fill="#0f172a" />
+                                <rect x="19" y="5" width="1" height="1" fill="#0f172a" />
+                                <rect x="5" y="11" width="1" height="1" fill="#0f172a" />
+                                <rect x="5" y="13" width="1" height="1" fill="#0f172a" />
+                                <rect x="5" y="15" width="1" height="1" fill="#0f172a" />
+                                <rect x="5" y="17" width="1" height="1" fill="#0f172a" />
+                                <rect x="5" y="19" width="1" height="1" fill="#0f172a" />
+                                <rect x="12" y="12" width="2" height="2" fill="#0f172a" />
+                                <rect x="16" y="12" width="1" height="3" fill="#0f172a" />
+                                <rect x="19" y="11" width="2" height="1" fill="#0f172a" />
+                                <rect x="14" y="16" width="3" height="1" fill="#0f172a" />
+                                <rect x="12" y="18" width="1" height="2" fill="#0f172a" />
+                                <rect x="18" y="17" width="2" height="2" fill="#0f172a" />
+                                <rect x="14" y="20" width="2" height="1" fill="#0f172a" />
+                                <rect x="23" y="12" width="2" height="2" fill="#0f172a" />
+                                <rect x="26" y="15" width="1" height="3" fill="#0f172a" />
+                                <rect x="24" y="19" width="3" height="1" fill="#0f172a" />
+                                <rect x="12" y="24" width="3" height="1" fill="#0f172a" />
+                                <rect x="16" y="23" width="2" height="2" fill="#0f172a" />
+                                <rect x="13" y="27" width="1" height="2" fill="#0f172a" />
+                                <rect x="19" y="26" width="3" height="1" fill="#0f172a" />
+                                <rect x="24" y="23" width="2" height="2" fill="#0f172a" />
+                                <rect x="23" y="27" width="3" height="1" fill="#0f172a" />
+                                <rect x="27" y="26" width="2" height="2" fill="#0f172a" />
+                            </svg>
+                        </div>
+                        <div class="ticket-qr-instruction">SCAN FOR GATE CHECK-IN</div>
+                        <div class="ticket-qr-ref" id="ticketQrRef">REF: TCK-2026-8841-OCT28</div>
                     </div>
-                    <div class="preview-meta-row" onclick="switchStep(4)" style="cursor:pointer;" title="Click to edit Sponsors">
-                        <span>Attached Sponsors</span>
-                        <span><asp:Literal ID="litPreviewSponsorCount" runat="server" Text="0 Partners" /></span>
+
+                    <!-- Section 4: Rules / Bullets -->
+                    <div class="ticket-footer-section">
+                        <div class="ticket-bullet-item">&bull; Bring valid student ID for gate inspection</div>
+                        <div class="ticket-bullet-item">&bull; Single scan only; non-transferable pass</div>
                     </div>
                 </div>
 
                 <div style="display:flex; flex-direction:column; gap:0.65rem;">
-                    <asp:Button ID="btnPublishCard" runat="server" Text="Publish Event to Matrix" CssClass="btn-action-primary" Style="width:100%; justify-content:center;" OnClick="btnPublishEvent_Click" />
+                    <button type="button" class="btn-action-primary" style="width:100%; justify-content:center;" onclick="validateAndGoStep(5)">
+                        Proceed to Summary & Confirm
+                    </button>
                     <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="btn-action-secondary" style="width:100%; justify-content:center;">
                         Cancel & Discard
                     </a>
@@ -1083,10 +1746,10 @@
     <script type="text/javascript">
         function switchStep(stepNumber) {
             stepNumber = parseInt(stepNumber);
-            if (isNaN(stepNumber) || stepNumber < 1 || stepNumber > 4) stepNumber = 1;
+            if (isNaN(stepNumber) || stepNumber < 1 || stepNumber > 5) stepNumber = 1;
 
             // 1. Update Step Panels
-            for (var i = 1; i <= 4; i++) {
+            for (var i = 1; i <= 5; i++) {
                 var panel = document.getElementById('step-panel-' + i);
                 if (panel) {
                     if (i === stepNumber) {
@@ -1098,7 +1761,7 @@
             }
 
             // 2. Update Breadcrumb Tabs
-            for (var s = 1; s <= 4; s++) {
+            for (var s = 1; s <= 5; s++) {
                 var tab = document.getElementById('tab-step-' + s);
                 if (tab) {
                     tab.classList.remove('active', 'completed');
@@ -1119,43 +1782,390 @@
             if (hf) {
                 hf.value = stepNumber;
             }
+
+            // 4. If switching to Step 5, populate all summary fields
+            if (stepNumber === 5) {
+                populateSummary();
+            }
         }
 
         function validateAndGoStep(targetStep) {
-            if (targetStep === 2) {
+            // Validate Step 1 if moving forward past Step 1
+            if (targetStep > 1) {
                 var title = document.getElementById('<%= txtTitle.ClientID %>');
                 var venue = document.getElementById('<%= txtVenueLocation.ClientID %>');
                 var cap = document.getElementById('<%= txtMaxCapacity.ClientID %>');
 
                 if (title && !title.value.trim()) {
                     alert('Please enter the Event Title before proceeding.');
+                    switchStep(1);
                     title.focus();
                     return;
                 }
                 if (venue && !venue.value.trim()) {
                     alert('Please specify the Venue / Room Location.');
+                    switchStep(1);
                     venue.focus();
                     return;
                 }
                 if (cap && (!cap.value.trim() || parseInt(cap.value) <= 0)) {
-                    alert('Please enter a valid seat capacity.');
+                    alert('Please enter a valid seat capacity greater than 0.');
+                    switchStep(1);
                     cap.focus();
                     return;
                 }
             }
+
+            // Validate Step 2 if moving forward past Step 2
+            if (targetStep > 2) {
+                var evDate = document.getElementById('<%= txtEventDate.ClientID %>');
+                var startTime = document.getElementById('<%= txtEventStartTime.ClientID %>');
+                var endTime = document.getElementById('<%= txtEventEndTime.ClientID %>');
+                var regStart = document.getElementById('<%= txtRegStart.ClientID %>');
+                var regEnd = document.getElementById('<%= txtRegEnd.ClientID %>');
+
+                if (evDate && !evDate.value) {
+                    alert('Please select the Event Date.');
+                    switchStep(2);
+                    evDate.focus();
+                    return;
+                }
+                if (startTime && !startTime.value) {
+                    alert('Please specify the Event Start Time.');
+                    switchStep(2);
+                    startTime.focus();
+                    return;
+                }
+                if (endTime && !endTime.value) {
+                    alert('Please specify the Event End Time.');
+                    switchStep(2);
+                    endTime.focus();
+                    return;
+                }
+                if (startTime && endTime && startTime.value >= endTime.value) {
+                    alert('Event Start Time must be earlier than Event End Time.');
+                    switchStep(2);
+                    startTime.focus();
+                    return;
+                }
+                if (regStart && !regStart.value) {
+                    alert('Please specify the Registration Opening Date & Time.');
+                    switchStep(2);
+                    regStart.focus();
+                    return;
+                }
+                if (regEnd && !regEnd.value) {
+                    alert('Please specify the Registration Deadline.');
+                    switchStep(2);
+                    regEnd.focus();
+                    return;
+                }
+                if (regStart && regEnd && new Date(regStart.value) >= new Date(regEnd.value)) {
+                    alert('Registration Open Date & Time must be earlier than Registration Deadline.');
+                    switchStep(2);
+                    regStart.focus();
+                    return;
+                }
+                if (regEnd && evDate && startTime) {
+                    var kickoff = new Date(evDate.value + 'T' + startTime.value);
+                    var deadline = new Date(regEnd.value);
+                    if (deadline > kickoff) {
+                        alert('Registration Deadline must conclude before or at the Event Kickoff time.');
+                        switchStep(2);
+                        regEnd.focus();
+                        return;
+                    }
+                }
+            }
+
             switchStep(targetStep);
+        }
+
+        // ─── Multi-Course Selection Helpers ───
+        function onCourseSelectionChanged() {
+            var checkboxes = document.querySelectorAll('input[name="courseFilter"]');
+            var selected = [];
+            checkboxes.forEach(function (cb) {
+                var card = document.getElementById('card_' + cb.value);
+                if (cb.checked) {
+                    selected.push(cb.value);
+                    if (card) card.classList.add('selected');
+                } else {
+                    if (card) card.classList.remove('selected');
+                }
+            });
+
+            var hf = document.getElementById('<%= hfSelectedPrograms.ClientID %>');
+            if (hf) {
+                hf.value = selected.join(', ');
+            }
+
+            // Update preview card Target Courses
+            var previewProg = document.getElementById('<%= litPreviewPrograms.ClientID %>');
+            if (previewProg) {
+                previewProg.innerText = selected.length > 0 ? selected.join(', ') : 'All Programs';
+            }
+        }
+
+        function selectAllPrograms(selectAll) {
+            var checkboxes = document.querySelectorAll('input[name="courseFilter"]');
+            checkboxes.forEach(function (cb) {
+                cb.checked = selectAll;
+            });
+            onCourseSelectionChanged();
+        }
+
+        function restoreCourseSelection() {
+            var hf = document.getElementById('<%= hfSelectedPrograms.ClientID %>');
+            if (hf && hf.value) {
+                var selected = hf.value.split(',').map(function (s) { return s.trim(); });
+                var checkboxes = document.querySelectorAll('input[name="courseFilter"]');
+                checkboxes.forEach(function (cb) {
+                    var match = selected.indexOf(cb.value) !== -1;
+                    cb.checked = match;
+                    var card = document.getElementById('card_' + cb.value);
+                    if (card) {
+                        if (match) card.classList.add('selected');
+                        else card.classList.remove('selected');
+                    }
+                });
+            }
+        }
+
+        // ─── Step 5 Live Summary Generation ───
+        function formatDateTimePretty(isoStr) {
+            if (!isoStr) return '-';
+            var d = new Date(isoStr);
+            if (isNaN(d.getTime())) return isoStr;
+            return d.toLocaleDateString('en-US', {
+                month: 'short',
+                day: '2-digit',
+                year: 'numeric'
+            }) + ' ' + d.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        function formatDateOnlyPretty(dateStr) {
+            if (!dateStr) return '-';
+            var parts = dateStr.split('-');
+            if (parts.length === 3) {
+                var d = new Date(parts[0], parseInt(parts[1]) - 1, parts[2]);
+                return d.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+            }
+            return dateStr;
+        }
+
+        function formatTime12h(timeStr) {
+            if (!timeStr) return '';
+            var parts = timeStr.split(':');
+            if (parts.length >= 2) {
+                var h = parseInt(parts[0]);
+                var m = parts[1];
+                var ampm = h >= 12 ? 'PM' : 'AM';
+                h = h % 12;
+                if (h === 0) h = 12;
+                return (h < 10 ? '0' + h : h) + ':' + m + ' ' + ampm;
+            }
+            return timeStr;
+        }
+
+        function calculateGatesOpenTime(timeStr) {
+            if (!timeStr) return '08:15 AM';
+            var parts = timeStr.split(':');
+            if (parts.length >= 2) {
+                var h = parseInt(parts[0], 10);
+                var m = parseInt(parts[1], 10);
+                var totalMin = (h * 60 + m) - 45;
+                if (totalMin < 0) totalMin += 24 * 60;
+                var gh = Math.floor(totalMin / 60);
+                var gm = totalMin % 60;
+                var gAmpm = gh >= 12 ? 'PM' : 'AM';
+                gh = gh % 12;
+                if (gh === 0) gh = 12;
+                return (gh < 10 ? '0' + gh : gh) + ':' + (gm < 10 ? '0' + gm : gm) + ' ' + gAmpm;
+            }
+            return '08:15 AM';
+        }
+
+        function updateTicketPreview() {
+            var title = document.getElementById('<%= txtTitle.ClientID %>');
+            var venue = document.getElementById('<%= txtVenueLocation.ClientID %>');
+            var evDate = document.getElementById('<%= txtEventDate.ClientID %>');
+            var startTime = document.getElementById('<%= txtEventStartTime.ClientID %>');
+            var endTime = document.getElementById('<%= txtEventEndTime.ClientID %>');
+            var hfProg = document.getElementById('<%= hfSelectedPrograms.ClientID %>');
+
+            var ticketTitle = document.getElementById('ticketEventTitle');
+            var ticketDate = document.getElementById('ticketEventDate');
+            var ticketTime = document.getElementById('ticketEventTime');
+            var ticketVenue = document.getElementById('ticketEventVenue');
+            var ticketProgram = document.getElementById('ticketAttendeeProgram');
+
+            if (ticketTitle) {
+                ticketTitle.innerText = (title && title.value.trim()) ? title.value.trim() : 'Event Title Preview';
+            }
+            if (ticketVenue) {
+                ticketVenue.innerText = (venue && venue.value.trim()) ? venue.value.trim() : 'University Grand Auditorium';
+            }
+            if (ticketDate) {
+                ticketDate.innerText = (evDate && evDate.value) ? formatDateOnlyPretty(evDate.value) : 'Wednesday, October 28, 2026';
+            }
+            if (ticketTime) {
+                var sTime = (startTime && startTime.value) ? formatTime12h(startTime.value) : '09:00 AM';
+                var eTime = (endTime && endTime.value) ? formatTime12h(endTime.value) : '04:00 PM';
+                var gates = (startTime && startTime.value) ? calculateGatesOpenTime(startTime.value) : '08:15 AM';
+                ticketTime.innerText = sTime + ' - ' + eTime + ' (Gates Open: ' + gates + ')';
+            }
+            if (ticketProgram) {
+                var prog = (hfProg && hfProg.value.trim()) ? hfProg.value.trim() : 'BS Information Technology (SBIT3C)';
+                ticketProgram.innerText = prog;
+            }
+        }
+
+        function populateSummary() {
+            // Core Specs
+            var title = document.getElementById('<%= txtTitle.ClientID %>');
+            var venue = document.getElementById('<%= txtVenueLocation.ClientID %>');
+            var cap = document.getElementById('<%= txtMaxCapacity.ClientID %>');
+            var desc = document.getElementById('<%= txtDescription.ClientID %>');
+
+            var sumTitle = document.getElementById('sumTitle');
+            var sumVenue = document.getElementById('sumVenue');
+            var sumCapacity = document.getElementById('sumCapacity');
+            var sumDesc = document.getElementById('sumDesc');
+
+            if (sumTitle) sumTitle.innerText = (title && title.value.trim()) ? title.value.trim() : 'Untitled Event';
+            if (sumVenue) sumVenue.innerText = (venue && venue.value.trim()) ? venue.value.trim() : 'Location TBD';
+            if (sumCapacity) sumCapacity.innerText = (cap && cap.value) ? (cap.value + ' Seats allocated') : '150 Seats allocated';
+            if (sumDesc) sumDesc.innerText = (desc && desc.value.trim()) ? desc.value.trim() : '(No description provided)';
+
+            // Schedule & Timeline
+            var evDate = document.getElementById('<%= txtEventDate.ClientID %>');
+            var startTime = document.getElementById('<%= txtEventStartTime.ClientID %>');
+            var endTime = document.getElementById('<%= txtEventEndTime.ClientID %>');
+            var regStart = document.getElementById('<%= txtRegStart.ClientID %>');
+            var regEnd = document.getElementById('<%= txtRegEnd.ClientID %>');
+
+            var sumEventDate = document.getElementById('sumEventDate');
+            var sumEventHours = document.getElementById('sumEventHours');
+            var sumRegOpen = document.getElementById('sumRegOpen');
+            var sumRegDeadline = document.getElementById('sumRegDeadline');
+
+            if (sumEventDate) {
+                sumEventDate.innerText = (evDate && evDate.value) ? formatDateOnlyPretty(evDate.value) : '-';
+            }
+            if (sumEventHours) {
+                var sFormatted = startTime ? formatTime12h(startTime.value) : '';
+                var eFormatted = endTime ? formatTime12h(endTime.value) : '';
+                sumEventHours.innerText = (sFormatted && eFormatted) ? (sFormatted + ' — ' + eFormatted) : '-';
+            }
+            if (sumRegOpen) {
+                sumRegOpen.innerText = (regStart && regStart.value) ? formatDateTimePretty(regStart.value) : '-';
+            }
+            if (sumRegDeadline) {
+                sumRegDeadline.innerText = (regEnd && regEnd.value) ? formatDateTimePretty(regEnd.value) : '-';
+            }
+
+            // Audience Eligibility
+            var branch = document.getElementById('<%= ddlBranch.ClientID %>');
+            var dept = document.getElementById('<%= ddlDepartment.ClientID %>');
+            var yl = document.getElementById('<%= ddlYearLevel.ClientID %>');
+            var hfProg = document.getElementById('<%= hfSelectedPrograms.ClientID %>');
+
+            var sumBranch = document.getElementById('sumBranch');
+            var sumDept = document.getElementById('sumDept');
+            var sumYearLevel = document.getElementById('sumYearLevel');
+            var sumPrograms = document.getElementById('sumPrograms');
+
+            if (sumBranch) {
+                sumBranch.innerText = (branch && branch.selectedIndex > 0) ? branch.options[branch.selectedIndex].text : 'All University Branches (Open)';
+            }
+            if (sumDept) {
+                sumDept.innerText = (dept && dept.selectedIndex > 0) ? dept.options[dept.selectedIndex].text : 'All Colleges / Open to All';
+            }
+            if (sumYearLevel) {
+                sumYearLevel.innerText = (yl && yl.selectedIndex > 0) ? yl.options[yl.selectedIndex].text : 'All Year Levels (1st - 4th)';
+            }
+
+            if (sumPrograms) {
+                sumPrograms.innerHTML = '';
+                var progStr = hfProg ? hfProg.value.trim() : '';
+                if (progStr) {
+                    var list = progStr.split(',').map(function (s) { return s.trim(); });
+                    list.forEach(function (code) {
+                        var chip = document.createElement('span');
+                        chip.className = 'summary-chip-badge';
+                        chip.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg> ' + code;
+                        sumPrograms.appendChild(chip);
+                    });
+                } else {
+                    sumPrograms.innerHTML = '<span style="color:#64748b; font-size:0.8rem; font-style:italic;">All Academic Programs (Open to all majors)</span>';
+                }
+            }
+
+            // Sponsors Summary (No star icon)
+            var sumSponsors = document.getElementById('sumSponsors');
+            if (sumSponsors) {
+                sumSponsors.innerHTML = '';
+                var sponsorChips = document.querySelectorAll('.sponsor-chip span');
+                if (sponsorChips && sponsorChips.length > 0) {
+                    sponsorChips.forEach(function (s) {
+                        var chip = document.createElement('span');
+                        chip.className = 'summary-chip-badge';
+                        chip.innerText = s.innerText;
+                        sumSponsors.appendChild(chip);
+                    });
+                } else {
+                    sumSponsors.innerHTML = '<span style="color:#64748b; font-size:0.8rem; font-style:italic;">No external partner sponsors attached (Institutional event).</span>';
+                }
+            }
+
+            // Also keep ticket preview in sync
+            updateTicketPreview();
+        }
+
+        function initLiveTicketListeners() {
+            var inputs = [
+                document.getElementById('<%= txtTitle.ClientID %>'),
+                document.getElementById('<%= txtVenueLocation.ClientID %>'),
+                document.getElementById('<%= txtEventDate.ClientID %>'),
+                document.getElementById('<%= txtEventStartTime.ClientID %>'),
+                document.getElementById('<%= txtEventEndTime.ClientID %>')
+            ];
+
+            inputs.forEach(function (el) {
+                if (el) {
+                    el.addEventListener('input', updateTicketPreview);
+                    el.addEventListener('change', updateTicketPreview);
+                    el.addEventListener('keyup', updateTicketPreview);
+                }
+            });
         }
 
         // Initialize state on page load
         document.addEventListener('DOMContentLoaded', function () {
+            restoreCourseSelection();
+            initLiveTicketListeners();
+            updateTicketPreview();
             var hf = document.getElementById('<%= hfActiveStep.ClientID %>');
             var initialStep = (hf && hf.value) ? parseInt(hf.value) : 1;
             switchStep(initialStep);
         });
 
-        // Re-apply step state after partial or full postback
+        // Re-apply step state, ticket preview, and course selections after partial or full postback
         if (typeof (Sys) !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
             Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+                restoreCourseSelection();
+                initLiveTicketListeners();
+                updateTicketPreview();
                 var hf = document.getElementById('<%= hfActiveStep.ClientID %>');
                 var initialStep = (hf && hf.value) ? parseInt(hf.value) : 1;
                 switchStep(initialStep);

@@ -62,14 +62,19 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.TextBox txtMaxCapacity;
 
         /// <summary>
-        /// txtEventStart control.
+        /// txtEventDate control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtEventStart;
+        protected global::System.Web.UI.WebControls.TextBox txtEventDate;
 
         /// <summary>
-        /// txtEventEnd control.
+        /// txtEventStartTime control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtEventEnd;
+        protected global::System.Web.UI.WebControls.TextBox txtEventStartTime;
+
+        /// <summary>
+        /// txtEventEndTime control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtEventEndTime;
 
         /// <summary>
         /// txtRegStart control.
@@ -92,9 +97,9 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.DropDownList ddlDepartment;
 
         /// <summary>
-        /// ddlProgram control.
+        /// hfSelectedPrograms control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.DropDownList ddlProgram;
+        protected global::System.Web.UI.WebControls.HiddenField hfSelectedPrograms;
 
         /// <summary>
         /// ddlYearLevel control.
@@ -157,9 +162,24 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litPreviewVenue;
 
         /// <summary>
+        /// litPreviewDate control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Literal litPreviewDate;
+
+        /// <summary>
+        /// litPreviewTime control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Literal litPreviewTime;
+
+        /// <summary>
         /// litPreviewCapacity control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Literal litPreviewCapacity;
+
+        /// <summary>
+        /// litPreviewSchedule control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Literal litPreviewSchedule;
 
         /// <summary>
         /// litPreviewBranch control.
@@ -172,19 +192,19 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litPreviewDept;
 
         /// <summary>
+        /// litPreviewPrograms control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Literal litPreviewPrograms;
+
+        /// <summary>
         /// litPreviewSponsorCount control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Literal litPreviewSponsorCount;
 
         /// <summary>
-        /// btnPublishBottom control.
+        /// btnConfirmPublish control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.Button btnPublishBottom;
-
-        /// <summary>
-        /// btnPublishCard control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Button btnPublishCard;
+        protected global::System.Web.UI.WebControls.Button btnConfirmPublish;
 
         /// <summary>
         /// Master property.

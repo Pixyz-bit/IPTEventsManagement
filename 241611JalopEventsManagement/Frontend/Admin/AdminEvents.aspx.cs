@@ -32,13 +32,29 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
         }
 
+        public class AdminEventRowViewModel
+        {
+            public int EventId { get; set; }
+            public string Title { get; set; }
+            public string VenueLocation { get; set; }
+            public DateTime EventStart { get; set; }
+            public DateTime EventEnd { get; set; }
+            public DateTime RegStart { get; set; }
+            public DateTime RegEnd { get; set; }
+            public int CurrentRegistrations { get; set; }
+            public int MaxCapacity { get; set; }
+            public string MatrixStatus { get; set; }
+            public string TargetDepartment { get; set; }
+        }
+
         private void BindEventsMatrix()
         {
-            List<EventModel> allEvents;
+            DateTime now = DateTime.Now;
+            List<EventModel> allEvents = null;
 
             try
             {
-                allEvents = _eventRepository.GetAllEvents();
+                allEvents = _eventRepository.GetAllUpcomingEvents();
                 if (allEvents == null || allEvents.Count == 0)
                 {
                     allEvents = GetDemonstrationEvents();
@@ -50,37 +66,37 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 allEvents = GetDemonstrationEvents();
             }
 
-            // 1. Update Matrix Top KPI Counters
+            // Strictly filter to active upcoming events (never cancelled or completed)
+            allEvents = allEvents
+                .Where(ev => string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase) && ev.EventEnd >= now)
+                .ToList();
+
+            // 1. Evaluate 3 Statuses: Close, Open, Soon
             int totalCount = allEvents.Count;
-            int upcomingCount = allEvents.Count(ev => string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase));
-            int ongoingCount = allEvents.Count(ev => string.Equals(ev.Status, "Ongoing", StringComparison.OrdinalIgnoreCase));
-            int completedCount = allEvents.Count(ev => string.Equals(ev.Status, "Completed", StringComparison.OrdinalIgnoreCase));
-            int cancelledCount = allEvents.Count(ev => string.Equals(ev.Status, "Cancelled", StringComparison.OrdinalIgnoreCase));
+            int openCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Open");
+            int soonCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Soon");
+            int closeCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Close");
 
-            int totalRegistrations = allEvents.Sum(ev => ev.CurrentRegistrations);
-            int totalCapacity = allEvents.Sum(ev => ev.MaxCapacity);
-            int avgFillRate = totalCapacity > 0 ? (int)Math.Round((double)totalRegistrations / totalCapacity * 100) : 0;
-
+            // Update Summary KPI Cards
             litTotalMatrixCount.Text = totalCount.ToString();
-            litUpcomingCount.Text = upcomingCount.ToString();
-            litTotalRegistrations.Text = totalRegistrations.ToString("N0");
-            litAvgFillRate.Text = avgFillRate + "%";
+            litOpenCount.Text = openCount.ToString();
+            litSoonCount.Text = soonCount.ToString();
+            litCloseCount.Text = closeCount.ToString();
 
             // 2. Update Status Filter Badges
             litBadgeAll.Text = totalCount.ToString();
-            litBadgeUpcoming.Text = upcomingCount.ToString();
-            litBadgeOngoing.Text = ongoingCount.ToString();
-            litBadgeCompleted.Text = completedCount.ToString();
-            litBadgeCancelled.Text = cancelledCount.ToString();
+            litBadgeOpen.Text = openCount.ToString();
+            litBadgeSoon.Text = soonCount.ToString();
+            litBadgeClose.Text = closeCount.ToString();
 
             // 3. Highlight Active Tab
             UpdateTabStyles();
 
-            // 4. Apply Tab Filter
+            // 4. Apply Tab Filter (All, Open, Soon, Close)
             IEnumerable<EventModel> filtered = allEvents;
             if (!string.Equals(CurrentStatusFilter, "All", StringComparison.OrdinalIgnoreCase))
             {
-                filtered = filtered.Where(ev => string.Equals(ev.Status, CurrentStatusFilter, StringComparison.OrdinalIgnoreCase));
+                filtered = filtered.Where(ev => string.Equals(GetEventMatrixStatus(ev), CurrentStatusFilter, StringComparison.OrdinalIgnoreCase));
             }
 
             // 5. Apply Department Filter
@@ -100,22 +116,41 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     (ev.TargetDepartment != null && ev.TargetDepartment.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0));
             }
 
-            List<EventModel> resultList = filtered.OrderBy(ev => ev.EventStart).ToList();
+            // 7. Chronological Ordering: From the most upcoming to the furthest out
+            // Rows naturally arrange in Close, Open, Soon based on which event happens sooner
+            List<EventModel> resultList = filtered
+                .OrderBy(ev => ev.EventStart)
+                .ToList();
 
-            rptEventsMatrix.DataSource = resultList;
+            // 8. Project to wireframe row model
+            var rowViewModels = resultList.Select(ev => new AdminEventRowViewModel
+            {
+                EventId = ev.EventId,
+                Title = ev.Title,
+                VenueLocation = ev.VenueLocation,
+                EventStart = ev.EventStart,
+                EventEnd = ev.EventEnd,
+                RegStart = ev.RegStart,
+                RegEnd = ev.RegEnd,
+                CurrentRegistrations = ev.CurrentRegistrations,
+                MaxCapacity = ev.MaxCapacity,
+                MatrixStatus = GetEventMatrixStatus(ev),
+                TargetDepartment = ev.TargetDepartment
+            }).ToList();
+
+            rptEventsMatrix.DataSource = rowViewModels;
             rptEventsMatrix.DataBind();
 
-            pnlNoEvents.Visible = resultList.Count == 0;
-            rptEventsMatrix.Visible = resultList.Count > 0;
+            pnlNoEvents.Visible = rowViewModels.Count == 0;
+            rptEventsMatrix.Visible = rowViewModels.Count > 0;
         }
 
         private void UpdateTabStyles()
         {
             btnTabAll.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("All", StringComparison.OrdinalIgnoreCase) ? " active" : "");
-            btnTabUpcoming.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Upcoming", StringComparison.OrdinalIgnoreCase) ? " active" : "");
-            btnTabOngoing.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Ongoing", StringComparison.OrdinalIgnoreCase) ? " active" : "");
-            btnTabCompleted.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Completed", StringComparison.OrdinalIgnoreCase) ? " active" : "");
-            btnTabCancelled.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) ? " active" : "");
+            btnTabOpen.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Open", StringComparison.OrdinalIgnoreCase) ? " active" : "");
+            btnTabSoon.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Soon", StringComparison.OrdinalIgnoreCase) ? " active" : "");
+            btnTabClose.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Close", StringComparison.OrdinalIgnoreCase) ? " active" : "");
         }
 
         protected void FilterTab_Click(object sender, EventArgs e)
@@ -234,132 +269,126 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             return 0;
         }
 
-        public static string GetStatusClass(object statusObj)
+        public static string GetEventMatrixStatus(EventModel ev)
+        {
+            if (ev == null) return "Close";
+            DateTime now = DateTime.Now;
+
+            // 1. If cancelled or completed, it's Close
+            if (string.Equals(ev.Status, "Cancelled", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(ev.Status, "Completed", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Close";
+            }
+
+            // 2. If registration deadline passed, or event already started/ended, or fully booked
+            if (now > ev.RegEnd || ev.CurrentRegistrations >= ev.MaxCapacity || now >= ev.EventEnd)
+            {
+                return "Close";
+            }
+
+            // 3. If registration has not yet opened
+            if (now < ev.RegStart)
+            {
+                return "Soon";
+            }
+
+            // 4. Otherwise, registration is actively open
+            return "Open";
+        }
+
+        public static string GetMatrixStatusClass(object statusObj)
         {
             string status = statusObj?.ToString()?.Trim() ?? string.Empty;
             switch (status.ToLowerInvariant())
             {
-                case "upcoming":
-                    return "status-upcoming";
-                case "ongoing":
-                    return "status-ongoing";
-                case "completed":
-                    return "status-completed";
-                case "cancelled":
-                    return "status-cancelled";
+                case "open":
+                    return "status-open";
+                case "soon":
+                    return "status-soon";
+                case "close":
                 default:
-                    return "status-completed";
+                    return "status-close";
             }
         }
 
         private List<EventModel> GetDemonstrationEvents()
         {
+            DateTime now = DateTime.Now;
+
             return new List<EventModel>
             {
+                // 1. Closest upcoming event (Starts in 1 day) -> Reg Deadline passed yesterday -> Status: Close
                 new EventModel
                 {
                     EventId = 1,
-                    Title = "Annual University Tech Symposium 2026",
-                    Description = "Flagship conference on distributed systems, AI architectures, and cloud security.",
-                    VenueLocation = "Central Auditorium, Hall A",
-                    MaxCapacity = 350,
-                    CurrentRegistrations = 280,
-                    EventStart = DateTime.Now.AddDays(3).AddHours(9),
-                    EventEnd = DateTime.Now.AddDays(3).AddHours(16),
-                    RegStart = DateTime.Now.AddDays(-10),
-                    RegEnd = DateTime.Now.AddDays(2),
+                    Title = "AI & Cloud Architecture Workshop",
+                    Description = "Deep dive into serverless cloud infrastructure and production container scaling.",
+                    VenueLocation = "QCU San Bartolome - Tech Lab 3",
+                    MaxCapacity = 50,
+                    CurrentRegistrations = 42,
+                    EventStart = now.AddDays(1).AddHours(9),
+                    EventEnd = now.AddDays(1).AddHours(16),
+                    RegStart = now.AddDays(-10),
+                    RegEnd = now.AddDays(-1), // Registration closed yesterday
                     Status = "Upcoming",
                     TargetBranch = "San Bartolome",
                     TargetDepartment = "College of Computer Studies",
                     TargetProgram = "BSIT",
                     TargetYearLevel = 3
                 },
+                // 2. Next upcoming event (Starts in 6 days) -> Currently in registration window -> Status: Open
                 new EventModel
                 {
                     EventId = 2,
-                    Title = "Inter-Campus Engineering Hackathon",
-                    Description = "48-hour hardware design and IoT embedded firmware challenge.",
-                    VenueLocation = "Makerspace Innovation Lab",
-                    MaxCapacity = 150,
+                    Title = "Annual University Tech & Innovation Summit",
+                    Description = "Flagship academic conference bringing together university students and tech sponsors.",
+                    VenueLocation = "QCU Main Campus - University Hall",
+                    MaxCapacity = 200,
                     CurrentRegistrations = 142,
-                    EventStart = DateTime.Now.AddDays(7).AddHours(8),
-                    EventEnd = DateTime.Now.AddDays(8).AddHours(18),
-                    RegStart = DateTime.Now.AddDays(-12),
-                    RegEnd = DateTime.Now.AddDays(5),
+                    EventStart = now.AddDays(6).AddHours(8).AddMinutes(30),
+                    EventEnd = now.AddDays(6).AddHours(16).AddMinutes(30),
+                    RegStart = now.AddDays(-5),
+                    RegEnd = now.AddDays(4), // Registration closes in 4 days
                     Status = "Upcoming",
-                    TargetBranch = "San Bartolome",
-                    TargetDepartment = "College of Engineering",
-                    TargetProgram = "BSIE",
+                    TargetBranch = null,
+                    TargetDepartment = "College of Computer Studies",
+                    TargetProgram = "BSIT, BSCS",
                     TargetYearLevel = null
                 },
+                // 3. Furthest out event (Starts in 14 days) -> Registration opens in 3 days -> Status: Soon
                 new EventModel
                 {
                     EventId = 3,
-                    Title = "FinTech & Business Case Competition",
-                    Description = "National case challenge addressing digital payment rails and micro-finance.",
-                    VenueLocation = "Business College Lecture Theater 1",
-                    MaxCapacity = 120,
-                    CurrentRegistrations = 120,
-                    EventStart = DateTime.Now.AddDays(14).AddHours(10),
-                    EventEnd = DateTime.Now.AddDays(14).AddHours(15),
-                    RegStart = DateTime.Now.AddDays(-5),
-                    RegEnd = DateTime.Now.AddDays(10),
+                    Title = "National Cybersecurity & Ethical Hacking Forum",
+                    Description = "Interactive conference on penetration testing, offensive security, and student defense drills.",
+                    VenueLocation = "Main Campus - University Gymnasium",
+                    MaxCapacity = 100,
+                    CurrentRegistrations = 0,
+                    EventStart = now.AddDays(14).AddHours(8),
+                    EventEnd = now.AddDays(14).AddHours(17),
+                    RegStart = now.AddDays(3), // Opens in 3 days
+                    RegEnd = now.AddDays(12),
                     Status = "Upcoming",
-                    TargetBranch = null, // Open to all branches
-                    TargetDepartment = "College of Business & Acctg",
-                    TargetProgram = "BSBA",
+                    TargetBranch = "San Bartolome",
+                    TargetDepartment = "College of Computer Studies",
+                    TargetProgram = "BSIT",
                     TargetYearLevel = null
                 },
+                // 4. Furthest out event (Starts in 21 days) -> Registration opens in 7 days -> Status: Soon
                 new EventModel
                 {
                     EventId = 4,
-                    Title = "General University Assembly & Convocation",
-                    Description = "Annual academic address by the University President and administrative staff.",
-                    VenueLocation = "University Grand Gymnasium",
-                    MaxCapacity = 800,
-                    CurrentRegistrations = 745,
-                    EventStart = DateTime.Now.AddHours(-2),
-                    EventEnd = DateTime.Now.AddHours(3),
-                    RegStart = DateTime.Now.AddDays(-20),
-                    RegEnd = DateTime.Now.AddDays(-1),
-                    Status = "Ongoing",
-                    TargetBranch = null,
-                    TargetDepartment = null,
-                    TargetProgram = null,
-                    TargetYearLevel = null
-                },
-                new EventModel
-                {
-                    EventId = 5,
-                    Title = "Career Readiness & Resume Masterclass",
-                    Description = "HR interview preparation and mock screening for graduating seniors.",
-                    VenueLocation = "Student Center Pavilion",
-                    MaxCapacity = 200,
-                    CurrentRegistrations = 195,
-                    EventStart = DateTime.Now.AddDays(-10).AddHours(13),
-                    EventEnd = DateTime.Now.AddDays(-10).AddHours(17),
-                    RegStart = DateTime.Now.AddDays(-25),
-                    RegEnd = DateTime.Now.AddDays(-11),
-                    Status = "Completed",
-                    TargetBranch = "San Bartolome",
-                    TargetDepartment = null,
-                    TargetProgram = null,
-                    TargetYearLevel = 4
-                },
-                new EventModel
-                {
-                    EventId = 6,
                     Title = "Inter-University Robotics Invitational",
-                    Description = "Autonomous robot maze-solving and combat competition.",
+                    Description = "Autonomous robot maze-solving and combat competition across campus branches.",
                     VenueLocation = "Central Grounds & Covered Court",
                     MaxCapacity = 300,
-                    CurrentRegistrations = 85,
-                    EventStart = DateTime.Now.AddDays(25).AddHours(9),
-                    EventEnd = DateTime.Now.AddDays(25).AddHours(18),
-                    RegStart = DateTime.Now.AddDays(-3),
-                    RegEnd = DateTime.Now.AddDays(20),
-                    Status = "Cancelled",
-                    CancellationReason = "Facility maintenance and roof restoration scheduling overlap.",
+                    CurrentRegistrations = 0,
+                    EventStart = now.AddDays(21).AddHours(9),
+                    EventEnd = now.AddDays(21).AddHours(18),
+                    RegStart = now.AddDays(7), // Opens in 7 days
+                    RegEnd = now.AddDays(19),
+                    Status = "Upcoming",
                     TargetBranch = "San Bartolome",
                     TargetDepartment = "College of Engineering",
                     TargetProgram = null,

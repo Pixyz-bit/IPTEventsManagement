@@ -43,6 +43,8 @@ namespace _241611JalopEventsManagement.Frontend.User
             public string CategoryColorClass { get; set; } = "cat-pill-cyan";
             public string BannerClass { get; set; } = "banner-gradient-1";
             public string BannerImageUrl { get; set; } = "";
+            public string RegStatusBadgeHtml { get; set; } = "";
+            public string RegSpotsHintHtml { get; set; } = "";
         }
 
         public class StudentRegistrationViewModel
@@ -232,7 +234,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 bannerImg = ResolveUrl("~/Frontend/Assets/campus-clean.jpg");
             }
 
-            return new EventCardViewModel
+            var vm = new EventCardViewModel
             {
                 EventId = ev.EventId,
                 Title = ev.Title,
@@ -245,12 +247,47 @@ namespace _241611JalopEventsManagement.Frontend.User
                 RegStart = ev.RegStart,
                 RegEnd = ev.RegEnd,
                 Status = ev.Status,
-                IsRegistrationOpen = isOpen,
                 FormattedSchedule = schedule,
                 CategoryTag = catTag,
                 CategoryFilterKey = filterKey,
                 BannerImageUrl = bannerImg
             };
+
+            PopulateRegistrationPresentation(vm);
+            return vm;
+        }
+
+        private void PopulateRegistrationPresentation(EventCardViewModel model)
+        {
+            DateTime now = DateTime.Now;
+            bool isUpcoming = string.Equals(model.Status, "Upcoming", StringComparison.OrdinalIgnoreCase);
+            bool isBeforeReg = isUpcoming && now < model.RegStart;
+            bool isOpen = isUpcoming && now >= model.RegStart && now <= model.RegEnd && model.CurrentRegistrations < model.MaxCapacity;
+            bool isFullyBooked = isUpcoming && now >= model.RegStart && now <= model.RegEnd && model.CurrentRegistrations >= model.MaxCapacity;
+
+            model.IsRegistrationOpen = isOpen;
+
+            if (isBeforeReg)
+            {
+                // Strict rule: Display "SOON" (never "opens soon")
+                model.RegStatusBadgeHtml = "<div class=\"card-status-pill card-status-soon\"><span class=\"status-dot-amber\"></span> SOON</div>";
+                model.RegSpotsHintHtml = $"<div class=\"spots-left-hint soon\"><svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"></circle><polyline points=\"12 6 12 12 16 14\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"></polyline></svg><span>OPENS {model.RegStart:MMM dd}</span></div>";
+            }
+            else if (isOpen)
+            {
+                model.RegStatusBadgeHtml = "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> OPEN</div>";
+                model.RegSpotsHintHtml = $"<div class=\"spots-left-hint\"><svg viewBox=\"0 0 24 24\"><path d=\"M13 2L3 14h9l-1 8 10-12h-9l1-8z\" /></svg><span>{model.RemainingCapacity} SPOTS LEFT</span></div>";
+            }
+            else if (isFullyBooked)
+            {
+                model.RegStatusBadgeHtml = "<div class=\"card-status-pill card-status-closed\">CLOSED</div>";
+                model.RegSpotsHintHtml = "<div class=\"spots-left-hint closed\"><svg viewBox=\"0 0 24 24\"><path d=\"M13 2L3 14h9l-1 8 10-12h-9l1-8z\" /></svg><span>FULLY BOOKED</span></div>";
+            }
+            else
+            {
+                model.RegStatusBadgeHtml = "<div class=\"card-status-pill card-status-closed\">CLOSED</div>";
+                model.RegSpotsHintHtml = "<div class=\"spots-left-hint closed\"><svg viewBox=\"0 0 24 24\"><path d=\"M13 2L3 14h9l-1 8 10-12h-9l1-8z\" /></svg><span>REGISTRATION CLOSED</span></div>";
+            }
         }
 
         private string BuildSponsorBadgesHtml(IEnumerable<string> sponsors)
@@ -349,10 +386,10 @@ namespace _241611JalopEventsManagement.Frontend.User
                     CurrentRegistrations = 210,
                     EventStart = DateTime.Today.AddDays(25).AddHours(8),
                     EventEnd = DateTime.Today.AddDays(25).AddHours(18),
-                    RegStart = DateTime.Today.AddDays(-10),
+                    RegStart = DateTime.Today.AddDays(3),
                     RegEnd = DateTime.Today.AddDays(20),
                     Status = "Upcoming",
-                    IsRegistrationOpen = true,
+                    IsRegistrationOpen = false,
                     FormattedSchedule = "Nov 20, 2026 | 08:00 AM - 06:00 PM",
                     CategoryTag = "#SportsFest",
                     CategoryFilterKey = "sportsfest",
@@ -361,6 +398,11 @@ namespace _241611JalopEventsManagement.Frontend.User
                     SponsorBadgesHtml = "<span class=\"sponsor-pill\">Red Bull</span> <span class=\"sponsor-pill\">Smart</span> <span class=\"sponsor-pill\">GCash</span>"
                 }
             };
+
+            foreach (var item in list)
+            {
+                PopulateRegistrationPresentation(item);
+            }
 
             return list;
         }
@@ -507,9 +549,32 @@ namespace _241611JalopEventsManagement.Frontend.User
 
                 litModalSponsors.Text = BuildSponsorBadgesHtml(sponsorNames);
 
-                bool isRegistrationOpen = ev.IsRegistrationOpen;
-                btnConfirmRegistration.Enabled = isRegistrationOpen;
-                btnConfirmRegistration.Text = isRegistrationOpen ? "Register For Event" : (ev.CurrentRegistrations >= ev.MaxCapacity ? "Fully Booked" : "Registration Closed");
+                DateTime now = DateTime.Now;
+                bool isUpcoming = string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase);
+                bool isBeforeReg = isUpcoming && now < ev.RegStart;
+                bool isOpen = isUpcoming && now >= ev.RegStart && now <= ev.RegEnd && ev.CurrentRegistrations < ev.MaxCapacity;
+                bool isFullyBooked = isUpcoming && now >= ev.RegStart && now <= ev.RegEnd && ev.CurrentRegistrations >= ev.MaxCapacity;
+
+                if (isBeforeReg)
+                {
+                    btnConfirmRegistration.Enabled = false;
+                    btnConfirmRegistration.Text = $"Registration Opens on {ev.RegStart:MMM dd, h:mm tt}";
+                }
+                else if (isOpen)
+                {
+                    btnConfirmRegistration.Enabled = true;
+                    btnConfirmRegistration.Text = "Register For Event";
+                }
+                else if (isFullyBooked)
+                {
+                    btnConfirmRegistration.Enabled = false;
+                    btnConfirmRegistration.Text = "Fully Booked";
+                }
+                else
+                {
+                    btnConfirmRegistration.Enabled = false;
+                    btnConfirmRegistration.Text = "Registration Closed";
+                }
             }
             else
             {
@@ -521,11 +586,35 @@ namespace _241611JalopEventsManagement.Frontend.User
                 litModalVenue.Text = Server.HtmlEncode(demo.VenueLocation);
                 litModalSchedule.Text = demo.FormattedSchedule;
                 litModalCapacity.Text = $"{demo.CurrentRegistrations} / {demo.MaxCapacity} ({demo.MaxCapacity - demo.CurrentRegistrations} slots remaining)";
-                litModalRegPeriod.Text = $"{DateTime.Today.AddDays(-2):MMM dd} - {DateTime.Today.AddDays(5):MMM dd, yyyy}";
+                litModalRegPeriod.Text = $"{demo.RegStart:MMM dd} - {demo.RegEnd:MMM dd, yyyy}";
                 litModalSponsors.Text = demo.SponsorBadgesHtml;
 
-                btnConfirmRegistration.Enabled = true;
-                btnConfirmRegistration.Text = "Register For Event";
+                DateTime now = DateTime.Now;
+                bool isUpcoming = string.Equals(demo.Status, "Upcoming", StringComparison.OrdinalIgnoreCase);
+                bool isBeforeReg = isUpcoming && now < demo.RegStart;
+                bool isOpen = isUpcoming && now >= demo.RegStart && now <= demo.RegEnd && demo.CurrentRegistrations < demo.MaxCapacity;
+                bool isFullyBooked = isUpcoming && now >= demo.RegStart && now <= demo.RegEnd && demo.CurrentRegistrations >= demo.MaxCapacity;
+
+                if (isBeforeReg)
+                {
+                    btnConfirmRegistration.Enabled = false;
+                    btnConfirmRegistration.Text = $"Registration Opens on {demo.RegStart:MMM dd, h:mm tt}";
+                }
+                else if (isOpen)
+                {
+                    btnConfirmRegistration.Enabled = true;
+                    btnConfirmRegistration.Text = "Register For Event";
+                }
+                else if (isFullyBooked)
+                {
+                    btnConfirmRegistration.Enabled = false;
+                    btnConfirmRegistration.Text = "Fully Booked";
+                }
+                else
+                {
+                    btnConfirmRegistration.Enabled = false;
+                    btnConfirmRegistration.Text = "Registration Closed";
+                }
             }
 
             pnlModalDetails.Visible = true;

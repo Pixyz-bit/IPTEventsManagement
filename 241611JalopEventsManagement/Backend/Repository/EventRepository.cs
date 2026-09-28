@@ -149,7 +149,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 WHERE Status = 'Upcoming'
                   AND (TargetBranch IS NULL OR TargetBranch = @Branch)
                   AND (TargetDepartment IS NULL OR TargetDepartment = @Department)
-                  AND (TargetProgram IS NULL OR TargetProgram = @Program)
+                  AND (TargetProgram IS NULL OR TargetProgram = '' OR @Program IS NULL OR @Program = '' OR ',' + REPLACE(TargetProgram, ' ', '') + ',' LIKE '%,' + @Program + ',%')
                   AND (TargetYearLevel IS NULL OR TargetYearLevel = @YearLevel)
                 ORDER BY EventStart ASC;";
 

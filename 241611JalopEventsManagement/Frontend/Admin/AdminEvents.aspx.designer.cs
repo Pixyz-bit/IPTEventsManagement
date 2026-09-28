@@ -16,20 +16,18 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.LinkButton btnCloseFeedback;
 
         protected global::System.Web.UI.WebControls.Literal litTotalMatrixCount;
-        protected global::System.Web.UI.WebControls.Literal litUpcomingCount;
-        protected global::System.Web.UI.WebControls.Literal litTotalRegistrations;
-        protected global::System.Web.UI.WebControls.Literal litAvgFillRate;
+        protected global::System.Web.UI.WebControls.Literal litOpenCount;
+        protected global::System.Web.UI.WebControls.Literal litSoonCount;
+        protected global::System.Web.UI.WebControls.Literal litCloseCount;
 
         protected global::System.Web.UI.WebControls.LinkButton btnTabAll;
         protected global::System.Web.UI.WebControls.Literal litBadgeAll;
-        protected global::System.Web.UI.WebControls.LinkButton btnTabUpcoming;
-        protected global::System.Web.UI.WebControls.Literal litBadgeUpcoming;
-        protected global::System.Web.UI.WebControls.LinkButton btnTabOngoing;
-        protected global::System.Web.UI.WebControls.Literal litBadgeOngoing;
-        protected global::System.Web.UI.WebControls.LinkButton btnTabCompleted;
-        protected global::System.Web.UI.WebControls.Literal litBadgeCompleted;
-        protected global::System.Web.UI.WebControls.LinkButton btnTabCancelled;
-        protected global::System.Web.UI.WebControls.Literal litBadgeCancelled;
+        protected global::System.Web.UI.WebControls.LinkButton btnTabOpen;
+        protected global::System.Web.UI.WebControls.Literal litBadgeOpen;
+        protected global::System.Web.UI.WebControls.LinkButton btnTabSoon;
+        protected global::System.Web.UI.WebControls.Literal litBadgeSoon;
+        protected global::System.Web.UI.WebControls.LinkButton btnTabClose;
+        protected global::System.Web.UI.WebControls.Literal litBadgeClose;
 
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
         protected global::System.Web.UI.WebControls.DropDownList ddlDepartmentFilter;

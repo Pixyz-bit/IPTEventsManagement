@@ -718,6 +718,12 @@
             color: #F87171;
         }
 
+        .card-status-soon {
+            border-color: rgba(234, 179, 8, 0.45);
+            background: rgba(234, 179, 8, 0.18);
+            color: #FDE047;
+        }
+
         .status-dot-green {
             width: 7px;
             height: 7px;
@@ -725,6 +731,15 @@
             background-color: var(--accent-emerald);
             display: inline-block;
             box-shadow: 0 0 8px var(--accent-emerald);
+        }
+
+        .status-dot-amber {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: #FACC15;
+            display: inline-block;
+            box-shadow: 0 0 8px #FACC15;
         }
 
         /* Capacity Indicator (Bottom-Right of Banner in Photo 2) */
@@ -862,6 +877,12 @@
             background: rgba(239, 68, 68, 0.1);
             border-color: rgba(239, 68, 68, 0.25);
             color: #F87171;
+        }
+
+        .spots-left-hint.soon {
+            background: rgba(234, 179, 8, 0.12);
+            border-color: rgba(234, 179, 8, 0.35);
+            color: #FDE047;
         }
 
         .spots-left-hint svg {
@@ -1477,9 +1498,7 @@
                                         </div>
 
                                         <!-- Status Indicator (Top-Right in Photo 2) -->
-                                        <%# Convert.ToBoolean(Eval("IsRegistrationOpen")) 
-                                            ? "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> OPEN</div>" 
-                                            : "<div class=\"card-status-pill card-status-closed\">CLOSED</div>" %>
+                                        <%# Eval("RegStatusBadgeHtml") %>
 
                                         <!-- Capacity Indicator (Bottom-Right in Photo 2) -->
                                         <div class="card-capacity-pill">
@@ -1521,12 +1540,7 @@
 
                                         <!-- Bottom Action Row (Photo 2) -->
                                         <div class="card-action-row">
-                                            <div class='<%# Convert.ToBoolean(Eval("IsRegistrationOpen")) ? "spots-left-hint" : "spots-left-hint closed" %>'>
-                                                <svg viewBox="0 0 24 24">
-                                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                                                </svg>
-                                                <span><%# Convert.ToBoolean(Eval("IsRegistrationOpen")) ? Eval("RemainingCapacity") + " SPOTS LEFT" : "REGISTRATION CLOSED" %></span>
-                                            </div>
+                                            <%# Eval("RegSpotsHintHtml") %>
 
                                             <asp:LinkButton ID="btnViewDetails" runat="server" 
                                                 CssClass="btn-view-details" 

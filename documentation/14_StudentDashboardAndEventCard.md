@@ -47,14 +47,16 @@ Both the **Portal Login** and **User Dashboard** were refactored into a **Neo-Br
 3. **Contrasting Neon Category Filter Pills**:
    - Instant client-side filtering for `#All Events`, `#Seminar`, `#Hackathon`, `#Workshop`, `#SportsFest`, and `#OrgFair`.
 4. **Sharp Geometric Event Cards**:
-   - Alternating vibrant header banners with category tags, live status capsule with green pulse dot, and monospace capacity meters.
+   - Alternating vibrant header banners with category tags, monospace capacity meters, and **Registration Lifecycle Pills**:
+     - **`SOON`**: Active when `DateTime.Now < RegStart` (warm amber/yellow fill `#FEF08A` with `#854D0E` text, solid black outline). Footer displays `⚡ OPENS [DATE]` (e.g. `⚡ OPENS OCT 15`). Modal registration button is disabled with text `"Registration Opens on [Date/Time]"`.
+     - **`OPEN`**: Active when `RegStart <= DateTime.Now <= RegEnd` and capacity is available (green capsule with pulsing dot). Footer displays `⚡ [REMAINING] SPOTS LEFT`. Modal registration button is enabled with text `"Register For Event"`.
+     - **`CLOSED`**: Active when `DateTime.Now > RegEnd` or event is not Upcoming (dark slate pill). Footer displays `REGISTRATION CLOSED`. Modal registration button is disabled with text `"Registration Closed"`.
    - Passive Neo-Brutalist sponsor chips (AWS, Microsoft, Google, LESIT).
-   - Real-time spots remaining chip (`⚡ 8 SPOTS LEFT`).
    - Tactile `View Details →` button launching the registration modal.
 5. **My Registered Events Electronic Passes**:
    - Bold Neo-Brutalist table with black header bar, monospace uppercase tags, attendance status badge (`● REGISTERED (NOSHOW)`, `● PRESENT`, `✕ CANCELLED`), and tactile `Cancel Pass` action.
 6. **Registration & Details Modal**:
-   - Geometric modal with 2.5px black border, 8px drop shadow, comprehensive itinerary grid, and tactile `Register For Event` confirmation.
+   - Geometric modal with 2.5px black border, 8px drop shadow, comprehensive itinerary grid, and responsive action button reflecting the exact registration timeline state (`SOON` / `OPEN` / `CLOSED` / `FULLY BOOKED`).
 
 ---
 
