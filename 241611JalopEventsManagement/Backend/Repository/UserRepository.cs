@@ -38,7 +38,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
             return null;
         }
 
-        /// Retrieves a user record by either their Student ID or Email address.
+        /// <summary>
+        /// Retrieves a user record strictly by their Email address (Student and Admin login).
+        /// </summary>
         public UserModel GetUserByIdentifier(string identifier)
         {
             if (string.IsNullOrWhiteSpace(identifier))
@@ -51,7 +53,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                        s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, s.CampusBranch, s.Department, s.Program
                 FROM dbo.UserTable u
                 LEFT JOIN dbo.StudentTable s ON u.UserId = s.UserId
-                WHERE u.Email = @Identifier OR s.StudentId = @Identifier;";
+                WHERE u.Email = @Identifier;";
 
             var param = new SqlParameter("@Identifier", SqlDbType.NVarChar, 150) { Value = identifier.Trim() };
             DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);

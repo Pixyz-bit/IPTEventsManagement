@@ -31,9 +31,9 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 | **P-06** | User | **Student Profile & Security** | `Frontend/User/Profile.aspx` | `/Frontend/User/Profile.aspx` | `[ ] NOT YET STARTED` | `StudentRepository`, `UserRepository`, `PasswordHelper` |
 | **P-07** | Admin | **Admin Master Layout** | [`Frontend/Admin/Admin.Master`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/Admin.Master) | *(Master Shell for Admin Views)* | `[x] COMPLETED` | `SessionHelper`, Navigation Sidebar Component |
 | **P-08** | Admin | **Executive Dashboard** | [`Frontend/Admin/Dashboard.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/Dashboard.aspx) | `/Frontend/Admin/Dashboard.aspx` | `[-] POLISH PENDING` | `EventRepository`, `RegistrationRepository`, KPI Metrics Engine |
-| **P-09** | Admin | **Campus Events Matrix** | `Frontend/Admin/AdminEvents.aspx` | `/Frontend/Admin/AdminEvents.aspx` | `[ ] NOT YET STARTED` | `EventRepository`, `SponsorRepository` |
-| **P-10** | Admin | **Create Event Form** | `Frontend/Admin/CreateEvent.aspx` | `/Frontend/Admin/CreateEvent.aspx` | `[ ] NOT YET STARTED` | `EventRepository`, `SponsorRepository`, File Upload Handler |
-| **P-11** | Admin | **Edit & Manage Event** | `Frontend/Admin/EditEvent.aspx` | `/Frontend/Admin/EditEvent.aspx?eventId={id}` | `[ ] NOT YET STARTED` | `EventRepository`, `SponsorRepository`, Audit Logger |
+| **P-09** | Admin | **Campus Events Matrix** | [`Frontend/Admin/AdminEvents.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/AdminEvents.aspx) | `/Frontend/Admin/AdminEvents.aspx` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository` |
+| **P-10** | Admin | **Create Event Form** | [`Frontend/Admin/CreateEvent.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/CreateEvent.aspx) | `/Frontend/Admin/CreateEvent.aspx` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository`, File Upload Handler |
+| **P-11** | Admin | **Event Details** | [`Frontend/Admin/EventDetails.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventDetails.aspx) | `/Frontend/Admin/EventDetails.aspx?eventId={id}` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository`, Audit Logger |
 | **P-12** | Admin | **Check-In / QR Scanner** | `Frontend/Admin/CheckIn.aspx` | `/Frontend/Admin/CheckIn.aspx` | `[ ] NOT YET STARTED` | `RegistrationRepository`, Camera Scanner API, Sound Synthesis |
 | **P-13** | Admin | **Event Attendees Roster** | `Frontend/Admin/EventAttendees.aspx` | `/Frontend/Admin/EventAttendees.aspx?eventId={id}` | `[ ] NOT YET STARTED` | `RegistrationRepository`, `StudentRepository`, CSV Export Helper |
 | **P-14** | Admin | **Student Directory & Accounts** | `Frontend/Admin/StudentList.aspx` | `/Frontend/Admin/StudentList.aspx` | `[ ] NOT YET STARTED` | `StudentRepository`, `UserRepository`, CSV Bulk Import Parser |
@@ -168,47 +168,54 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 
 ---
 
-#### [ ] P-09: All Events Management Matrix (`AdminEvents.aspx`)
-- **Planned File Location:** `Frontend/Admin/AdminEvents.aspx`
+#### [x] P-09: All Events Management Matrix (`AdminEvents.aspx`)
+- **Physical File Location:** [`Frontend/Admin/AdminEvents.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/AdminEvents.aspx)
 - **Access Rule:** Administrator.
-- **Visual Design:** Searchable and filterable data grid with status pill filters (`All`, `Upcoming`, `Ongoing`, `Closed`, `Completed`).
+- **Primary Objective:** Serves as the central operational cockpit exclusively for `Closed`, `Open`, and `Upcoming` events. Concluded or cancelled events are explicitly excluded and deferred to Events History.
+- **Parent Hub Role:** Acts as the single entry gateway to the four event-level sub-modules. Selecting an event (`View >`) routes the admin into the sub-module pipeline:
+  $$\text{Event Details (EventDetails.aspx)} \longrightarrow \text{Event PreRegistered} \longrightarrow \text{Event Scanner \& Attendance} \longrightarrow \text{Event Analytics}$$
+- **Operational Monitoring:** Allows administrators to track live registration windows (open, closing, or scheduled) and real-time seat occupancy before launching event gates.
+- **Visual Design:** Clean searchable table with real-time occupancy KPI summaries, status pill filters (`All`, `Open`, `Soon`, `Close`), and department filtering dropdown.
 - **Key Capabilities:**
-  - Comprehensive listing of all campus events with quick-glance metrics (Registered / Capacity ratio bar).
-  - Status management: Publish, Close Registration, Mark Completed, Archive.
-  - Action shortcuts per event row:
-    - `[View Public Page]`
-    - `[Edit Details]`
-    - `[View Attendees Roster]`
-    - `[Launch QR Scanner]`
-- **Status:** `[ ] NOT YET STARTED`.
+  - Comprehensive listing of active/upcoming campus events with occupancy ratios (`CurrentRegistrations/MaxCapacity`).
+  - Status management: Tab filtering for `Open`, `Soon`, and `Close` registration windows.
+  - Action shortcuts per event row: `View >` link navigating to [`EventDetails.aspx?eventId={id}`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventDetails.aspx).
+  - Quick event cancellation modal with reason capture.
+- **Status:** `[x] COMPLETED`.
 
 ---
 
-#### [ ] P-10: Create Event Page (`CreateEvent.aspx`)
-- **Planned File Location:** `Frontend/Admin/CreateEvent.aspx`
+#### [x] P-10: Create Event Page (`CreateEvent.aspx`)
+- **Physical File Location:** [`Frontend/Admin/CreateEvent.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/CreateEvent.aspx)
 - **Access Rule:** Administrator.
-- **Visual Design:** Clean multi-section form with input groups: Basic Info, Schedule & Venue, Capacity & Quotas, Audience Matrix, and Sponsors.
+- **Visual Design:** 5-step guided wizard (Core Specs -> Single Date Schedule & Times -> Multi-Course Audience Targeting -> Sponsors -> Summary & Confirm) with dynamic real-time ticket preview sidebar.
 - **Key Capabilities:**
-  - Fields for Title, Description, Category, Venue, Start/End DateTime, and Registration Start/End Deadlines.
-  - Seat capacity caps (`MaxCapacity`) with auto-validation against room limits.
-  - **4-Tier Audience Targeting Selector:** Allows restricting events to specific Departments, Year Levels, or Sections (or leaving `NULL` for campus-wide open events).
-  - **Sponsors Association:** Dynamic selector to attach multiple corporate/academic sponsors (`dbo.EventSponsorsTable`) to the event.
-  - Banner image file uploader with preview.
-- **Status:** `[ ] NOT YET STARTED`.
+  - Fields for Title, Description, Venue, Single Date, Start/End Time, and Registration Start/End Deadlines.
+  - Seat capacity validation with auto-focus error alerts.
+  - **4-Tier Audience Targeting Selector:** Branch, Department, Multi-Program checkboxes, and Year Levelstanding (NULL = campus-wide open).
+  - **Sponsors Association:** Dynamic repeater to attach/remove multiple partner sponsors.
+  - Step 5 interactive summary review and live ticket pass preview.
+- **Status:** `[x] COMPLETED`.
 
 ---
 
-#### [ ] P-11: Edit Event Page (`EditEvent.aspx`)
-- **Planned File Location:** `Frontend/Admin/EditEvent.aspx`
+#### [x] P-11: Event Details (`EventDetails.aspx`)
+- **Physical File Location:** [`Frontend/Admin/EventDetails.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventDetails.aspx)
+- **Target URL:** `/Frontend/Admin/EventDetails.aspx?eventId={id}`
 - **Access Rule:** Administrator.
-- **Visual Design:** Tabbed administrative form pre-populated with active event data, change diff indicators, and danger zone actions.
-- **Key Capabilities:**
-  - Update event titles, dates, descriptions, and venue information.
-  - Capacity adjustment logic: prevents reducing capacity below current active registrations without warning.
-  - Registration deadline extension tools.
-  - Manage attached sponsors (add new sponsors, remove existing).
-  - Cancellation / Archival triggers: cancels event and logs action to audit logs.
-- **Status:** `[ ] NOT YET STARTED`.
+- **Purpose:** Serves as the authoritative configuration console and single source of truth for individual event metadata, scheduling windows, physical venue capacity, media assets, and demographic eligibility rules.
+- **Core Data & UI Components:**
+  - **General Information:** Form inputs for Event Title, Detailed Description, Venue/Location, and Maximum Seating Capacity.
+  - **Event Execution Schedule:** Discrete controls for Event Date (strict `MM/dd/yyyy`), Start Time, and End Time.
+  - **Registration Lifecycle Window:** Separate timestamp selectors for Registration Start Date & Time and Registration End Date & Time (`MM/dd/yyyy hh:mm tt`) to enforce automated opening and closing of attendee signups.
+  - **Dual-Ratio Banner Upload:** Media upload module requiring two distinct image formats/ratios (wide desktop banner vs. square/portrait mobile card view) to guarantee responsive rendering across web and mobile student portals.
+  - **Target Demographics (Audience Restrictions):** Institutional targeting rules configurable by Target Branch, Target Department, Target Course, and Target Year Level to restrict or permit registration eligibility.
+  - **Sponsor Configuration:** Attachment and management of corporate and academic partner sponsors.
+- **Actions & Operational Directives:**
+  - Toggle inline Edit Mode to modify active metadata, capacity limits, or schedules.
+  - Enforce logical timestamp rules (`RegEnd` <= `EventEnd`; `RegStart` < `RegEnd`; `StartTime` < `EndTime`).
+  - Enforce access rules: Registration engine must cross-check incoming student registration attempts against configured Target Demographics before issuing a pass.
+- **Status:** `[x] COMPLETED`.
 
 ---
 

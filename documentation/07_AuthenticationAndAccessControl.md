@@ -82,10 +82,10 @@ Upon successful credential validation, the following session keys are populated:
 ---
 
 ### 4.3 `UserRepository.GetUserByIdentifier`
-* **Purpose:** Performs a unified lookup across both `UserTable.Email` and `StudentTable.StudentId`.
+* **Purpose:** Performs a strict user lookup using `UserTable.Email` (Student ID login is explicitly disabled; students can only log in through their institutional email).
 * **Signature & Contracts:**
-  - Input: `string identifier` (Email address or Student ID).
-  - Output: `UserModel` (Populated with user credentials and student demographics).
-* **When it is used:** Triggered immediately when the user clicks "Sign In to Portal" on `Login.aspx`.
-* **Why:** Enables students to sign in using either their matriculation number or email, while resolving the associated User entity in a single query:
-  * `[UserTable.Email, StudentTable.StudentId, UserTable.UserId]`
+  - Input: `string identifier` (Email address).
+  - Output: `UserModel` (Populated with user credentials and joined student demographics).
+* **When it is used:** Triggered immediately when the user clicks "Sign In to Portal" on [`Login.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Login/Login.aspx).
+* **Why:** Enforces the institutional security rule where students must authenticate using their registered institutional email address:
+  * `[UserTable.Email, UserTable.UserId, StudentTable.StudentId]`

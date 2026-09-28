@@ -89,7 +89,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             if (DateTime.TryParse(txtEventDate.Text, out DateTime evDate))
             {
-                litPreviewDate.Text = evDate.ToString("dddd, MMMM dd, yyyy");
+                litPreviewDate.Text = evDate.ToString("MM/dd/yyyy");
 
                 TimeSpan sTimeSpan = new TimeSpan(9, 0, 0);
                 TimeSpan eTimeSpan = new TimeSpan(16, 0, 0);
@@ -105,7 +105,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
             else
             {
-                litPreviewDate.Text = "Wednesday, October 28, 2026";
+                litPreviewDate.Text = "10/28/2026";
                 litPreviewTime.Text = "09:00 AM - 04:00 PM (Gates Open: 08:15 AM)";
             }
 

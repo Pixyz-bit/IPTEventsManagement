@@ -31,7 +31,14 @@ namespace _241611JalopEventsManagement.Frontend.Login
             // UI Boundary Validation
             if (string.IsNullOrWhiteSpace(identifier))
             {
-                ShowError("Please enter your Student ID or Email address.");
+                ShowError("Please enter your registered Email address.");
+                txtIdentifier.Focus();
+                return;
+            }
+
+            if (!identifier.Contains("@") || !identifier.Contains("."))
+            {
+                ShowError("Portal login requires a valid institutional email address (e.g., student@qcu.edu.ph). Student ID login is not permitted.");
                 txtIdentifier.Focus();
                 return;
             }
@@ -45,12 +52,12 @@ namespace _241611JalopEventsManagement.Frontend.Login
 
             try
             {
-                // Authenticate via Student ID or Email
+                // Authenticate strictly via registered institutional Email address
                 UserModel user = _userRepository.GetUserByIdentifier(identifier);
 
                 if (user == null)
                 {
-                    ShowError("Invalid credentials. Please verify your Student ID/Email and password.");
+                    ShowError("Invalid credentials. Please verify your Email address and password.");
                     return;
                 }
 

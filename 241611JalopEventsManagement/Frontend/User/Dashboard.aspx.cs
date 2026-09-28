@@ -195,7 +195,7 @@ namespace _241611JalopEventsManagement.Frontend.User
             DateTime now = DateTime.Now;
             bool isOpen = ev.Status == "Upcoming" && now >= ev.RegStart && now <= ev.RegEnd && ev.CurrentRegistrations < ev.MaxCapacity;
 
-            string schedule = $"{ev.EventStart:MMM dd, yyyy} | {ev.EventStart:hh:mm tt} - {ev.EventEnd:hh:mm tt}";
+            string schedule = $"{ev.EventStart:MM/dd/yyyy} | {ev.EventStart:hh:mm tt} - {ev.EventEnd:hh:mm tt}";
 
             // Modern category & banner image derivation
             string combined = ((ev.Title ?? "") + " " + (ev.Description ?? "")).ToLowerInvariant();
@@ -429,7 +429,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                             EventId = reg.EventId,
                             EventTitle = reg.EventTitle,
                             VenueLocation = reg.VenueLocation,
-                            EventDateFormatted = reg.EventStart.HasValue ? reg.EventStart.Value.ToString("MMM dd, yyyy • hh:mm tt") : "TBA",
+                            EventDateFormatted = reg.EventStart.HasValue ? reg.EventStart.Value.ToString("MM/dd/yyyy • hh:mm tt") : "TBA",
                             Status = reg.Status,
                             CanCancel = reg.CanCancel
                         });

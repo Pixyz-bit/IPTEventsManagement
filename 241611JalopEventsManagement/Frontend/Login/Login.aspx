@@ -374,14 +374,14 @@
                         </div>
                     </asp:Panel>
 
-                    <!-- Identifier Input (Student ID or Email) -->
+                    <!-- Email Address Input -->
                     <div class="form-group">
                         <div class="form-label-row">
-                            <label for="txtIdentifier" class="form-label">Student ID or Email</label>
-                            <span class="form-tag-hint">2024-XXXXX</span>
+                            <label for="txtIdentifier" class="form-label">Email Address</label>
+                            <span class="form-tag-hint">EMAIL LOGIN</span>
                         </div>
-                        <asp:TextBox ID="txtIdentifier" runat="server" CssClass="form-control"
-                            placeholder="e.g. 2024-00101 or student@qcu.edu.ph" autocomplete="username"></asp:TextBox>
+                        <asp:TextBox ID="txtIdentifier" runat="server" CssClass="form-control" TextMode="Email"
+                            placeholder="e.g. student@qcu.edu.ph or admin@gmail.com" autocomplete="email"></asp:TextBox>
                     </div>
 
                     <!-- Password Input -->

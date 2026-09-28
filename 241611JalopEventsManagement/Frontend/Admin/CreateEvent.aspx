@@ -1937,28 +1937,25 @@
             if (!isoStr) return '-';
             var d = new Date(isoStr);
             if (isNaN(d.getTime())) return isoStr;
-            return d.toLocaleDateString('en-US', {
-                month: 'short',
-                day: '2-digit',
-                year: 'numeric'
-            }) + ' ' + d.toLocaleTimeString('en-US', {
+            var mm = ('0' + (d.getMonth() + 1)).slice(-2);
+            var dd = ('0' + d.getDate()).slice(-2);
+            var yyyy = d.getFullYear();
+            var time = d.toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true
             });
+            return mm + '/' + dd + '/' + yyyy + ' ' + time;
         }
 
         function formatDateOnlyPretty(dateStr) {
             if (!dateStr) return '-';
             var parts = dateStr.split('-');
             if (parts.length === 3) {
-                var d = new Date(parts[0], parseInt(parts[1]) - 1, parts[2]);
-                return d.toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric'
-                });
+                var mm = ('0' + parts[1]).slice(-2);
+                var dd = ('0' + parts[2]).slice(-2);
+                var yyyy = parts[0];
+                return mm + '/' + dd + '/' + yyyy;
             }
             return dateStr;
         }
@@ -2016,7 +2013,7 @@
                 ticketVenue.innerText = (venue && venue.value.trim()) ? venue.value.trim() : 'University Grand Auditorium';
             }
             if (ticketDate) {
-                ticketDate.innerText = (evDate && evDate.value) ? formatDateOnlyPretty(evDate.value) : 'Wednesday, October 28, 2026';
+                ticketDate.innerText = (evDate && evDate.value) ? formatDateOnlyPretty(evDate.value) : '10/28/2026';
             }
             if (ticketTime) {
                 var sTime = (startTime && startTime.value) ? formatTime12h(startTime.value) : '09:00 AM';

@@ -562,7 +562,7 @@
                                 </div>
                             </td>
                             <td>
-                                <div style="font-weight: 500; color: var(--text-heading);"><%# Eval("EventStart", "{0:MMM dd, yyyy}") %></div>
+                                <div style="font-weight: 500; color: var(--text-heading);"><%# Eval("EventStart", "{0:MM/dd/yyyy}") %></div>
                                 <div style="color: var(--text-muted); font-size: 0.72rem; font-family: var(--font-mono);"><%# Eval("EventStart", "{0:hh:mm tt}") %></div>
                             </td>
                             <td>

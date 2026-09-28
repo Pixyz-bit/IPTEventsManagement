@@ -119,16 +119,22 @@ Capacity enforcement requires distinct, coordinated responsibilities between the
 
 ## 5. Campus Events Matrix Display, Columns & Sorting Contract (`AdminEvents.aspx`)
 
+### Operational Context & Role
+- **Primary Objective:** Serves as the central operational cockpit exclusively for `Closed`, `Open`, and `Upcoming` events. Concluded or cancelled events are explicitly excluded and deferred to Events History.
+- **Parent Hub Role:** Acts as the single entry gateway to the four event-level sub-modules. Selecting an event (`View >`) routes the admin into the sub-module pipeline:
+  $$\text{Event Details (EventDetails.aspx)} \longrightarrow \text{Event PreRegistered} \longrightarrow \text{Event Scanner \& Attendance} \longrightarrow \text{Event Analytics}$$
+- **Operational Monitoring:** Allows administrators to track live registration windows (open, closing, or scheduled) and real-time seat occupancy before launching event gates.
+
 ### A. 3-Status Lifecycle Standard
 The administrative Events Matrix strictly recognizes only **three (3)** display and filter statuses:
 1. **`Open`**: The event registration is actively open (`DateTime.Now >= RegStart && DateTime.Now <= RegEnd && Status == 'Upcoming' && CurrentRegistrations < MaxCapacity`).
 2. **`Soon`**: The event is scheduled in the future, but registration has not yet opened (`DateTime.Now < RegStart && Status == 'Upcoming'`).
-3. **`Close`**: The registration period has expired (`DateTime.Now > RegEnd`), capacity is saturated (`CurrentRegistrations >= MaxCapacity`), or the event is cancelled/completed (`Status IN ('Cancelled', 'Completed')`).
+3. **`Close`**: The registration period has expired (`DateTime.Now > RegEnd`), capacity is saturated (`CurrentRegistrations >= MaxCapacity`), or the event is closed.
 
 ### B. Chronological Row Sorting Rule
 * Rows must be ordered **from the most upcoming to the furthest out**:
   * Active and upcoming events appear first, sorted ascending by `EventStart` (the event happening soonest is at the top).
-  * Past or concluded events appear afterward, maintaining clean forward-looking operational focus.
+  * Past or concluded events are deferred to historical views, maintaining clean forward-looking operational focus.
 
 ### C. Column Structure & Arrangement
 The matrix table columns must adhere to this exact left-to-right order:
@@ -141,4 +147,4 @@ The matrix table columns must adhere to this exact left-to-right order:
    * `From:` followed by `RegStart` date (e.g., `9/8/2026`)
    * `To:` followed by `RegEnd` date (e.g., `9/10/2026`)
 5. **`Occupancy`**: Ratio format `CurrentRegistrations/MaxCapacity` (e.g., `150/200`).
-6. **Action**: `View >` link navigating to event management.
+6. **Action**: `View >` link navigating to [`EventDetails.aspx?eventId={id}`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventDetails.aspx).

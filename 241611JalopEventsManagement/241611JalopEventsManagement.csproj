@@ -75,6 +75,7 @@
     <Content Include="Frontend\Admin\AdminEvents.aspx" />
     <Content Include="Frontend\Admin\CreateEvent.aspx" />
     <Content Include="Frontend\Admin\Dashboard.aspx" />
+    <Content Include="Frontend\Admin\EventDetails.aspx" />
     <Content Include="Frontend\Admin\TestConnection.aspx" />
     <Content Include="Frontend\Assets\QCU Background.png" />
     <Content Include="Frontend\Assets\QCU Logo.png" />
@@ -130,6 +131,13 @@
     </Compile>
     <Compile Include="Frontend\Admin\Dashboard.aspx.designer.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend\Admin\EventDetails.aspx.cs">
+      <DependentUpon>EventDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\Admin\EventDetails.aspx.designer.cs">
+      <DependentUpon>EventDetails.aspx</DependentUpon>
     </Compile>
     <Compile Include="Frontend\Admin\TestConnection.aspx.cs">
       <DependentUpon>TestConnection.aspx</DependentUpon>

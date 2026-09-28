@@ -670,7 +670,7 @@
     <div class="page-header-row">
         <div class="header-title-block">
             <h2>Campus Events Matrix</h2>
-            <p>Comprehensive institutional schedule, 4-tier cohort criteria, and centralized operations.</p>
+            <p>Central operational cockpit for Closed, Open, and Upcoming events &bull; Single entry gateway to event-level sub-modules.</p>
         </div>
         <div class="header-actions">
             <a href="<%= ResolveUrl("~/Frontend/Admin/CheckIn.aspx") %>" class="btn-action-secondary">
@@ -828,16 +828,16 @@
                         <!-- 3. Venue and Date (Venue on top, Event Start date below) -->
                         <td>
                             <div class="cell-venue-text"><%# Eval("VenueLocation") %></div>
-                            <div class="cell-date-text"><%# Eval("EventStart", "{0:M/d/yyyy}") %></div>
+                            <div class="cell-date-text"><%# Eval("EventStart", "{0:MM/dd/yyyy}") %></div>
                         </td>
 
                         <!-- 4. Reg. Deadline (From: [date], To: [date]) -->
                         <td>
                             <div class="cell-reg-deadline">
                                 <span class="reg-label">From:</span>
-                                <span class="reg-date"><%# Eval("RegStart", "{0:M/d/yyyy}") %></span>
+                                <span class="reg-date"><%# Eval("RegStart", "{0:MM/dd/yyyy}") %></span>
                                 <span class="reg-label" style="margin-top: 0.25rem;">To:</span>
-                                <span class="reg-date"><%# Eval("RegEnd", "{0:M/d/yyyy}") %></span>
+                                <span class="reg-date"><%# Eval("RegEnd", "{0:MM/dd/yyyy}") %></span>
                             </div>
                         </td>
 
@@ -848,9 +848,9 @@
                             </div>
                         </td>
 
-                        <!-- 6. View Action -->
+                        <!-- 6. View Action (Routes to Event Details in sub-module pipeline) -->
                         <td style="text-align: right;">
-                            <a href='<%# ResolveUrl("~/Frontend/Admin/EditEvent.aspx?id=" + Eval("EventId")) %>' class="link-matrix-view">View &gt;</a>
+                            <a href='<%# ResolveUrl("~/Frontend/Admin/EventDetails.aspx?eventId=" + Eval("EventId")) %>' class="link-matrix-view">View &gt;</a>
                         </td>
                     </tr>
                 </ItemTemplate>
