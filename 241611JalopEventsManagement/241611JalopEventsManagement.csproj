@@ -72,6 +72,8 @@
     <Content Include="Backend\Database\Migration\01_DatabaseSchema.sql" />
     <Content Include="Frontend\AccessDenied.aspx" />
     <Content Include="Frontend\Admin\Admin.Master" />
+    <Content Include="Frontend\Admin\AdminEvents.aspx" />
+    <Content Include="Frontend\Admin\CreateEvent.aspx" />
     <Content Include="Frontend\Admin\Dashboard.aspx" />
     <Content Include="Frontend\Admin\TestConnection.aspx" />
     <Content Include="Frontend\Assets\QCU Background.png" />
@@ -107,6 +109,20 @@
     </Compile>
     <Compile Include="Frontend\Admin\Admin.Master.designer.cs">
       <DependentUpon>Admin.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend\Admin\AdminEvents.aspx.cs">
+      <DependentUpon>AdminEvents.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\Admin\AdminEvents.aspx.designer.cs">
+      <DependentUpon>AdminEvents.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend\Admin\CreateEvent.aspx.cs">
+      <DependentUpon>CreateEvent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\Admin\CreateEvent.aspx.designer.cs">
+      <DependentUpon>CreateEvent.aspx</DependentUpon>
     </Compile>
     <Compile Include="Frontend\Admin\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>

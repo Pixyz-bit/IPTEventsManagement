@@ -57,15 +57,15 @@
 4. **`Profile.aspx` (`[ ] NOT YET STARTED`):**
    - Student academic demographics from `dbo.StudentTable`, password change form, and attendance history ledger.
 
-### Administrative Module (2 / 10 Completed - 20%)
+### Administrative Module (4 / 10 Completed - 40%)
 1. **`Admin.Master` (`[x] COMPLETED`):**
    - Shared shell with responsive navigation rail, role verification, and admin header.
 2. **`Dashboard.aspx` (`[x] COMPLETED`):**
-   - KPI metrics (Events, Registrations, Attendees, Fill Rate) with modern dark theme alignment.
-3. **`AdminEvents.aspx` (`[ ] NOT YET STARTED`):**
-   - Campus events matrix with status tabs and management actions.
-4. **`CreateEvent.aspx` (`[ ] NOT YET STARTED`):**
-   - Event publishing form with 4-tier audience targeting and multi-sponsor association.
+   - KPI metrics (Events, Registrations, Attendees, Fill Rate) with professional enterprise light theme.
+3. **`AdminEvents.aspx` (`[x] COMPLETED`):**
+   - Campus events matrix with status tabs, search, 4-tier audience tags, and centralized operations.
+4. **`CreateEvent.aspx` (`[x] COMPLETED`):**
+   - Event publishing form with breadcrumbs, 4-tier audience targeting, and multi-sponsor association.
 5. **`EditEvent.aspx` (`[ ] NOT YET STARTED`):**
    - Edit event details, manage attached sponsors, quota adjustments, and cancellations.
 6. **`CheckIn.aspx` (`[ ] NOT YET STARTED`):**
