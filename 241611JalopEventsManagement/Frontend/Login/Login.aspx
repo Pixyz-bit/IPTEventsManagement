@@ -9,22 +9,30 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
     <style>
         :root {
-            /* User Restricted Palette */
-            --nb-black: #000000;
-            --nb-canvas: #FAF7EE;
-            --nb-card-bg: #FFFFFF;
-            --nb-input-bg: #FFFDF7;
-            --nb-yellow: #FFDE59;
-            --nb-yellow-hover: #FACC15;
-            --nb-lime: #A6F4C5;
-            --nb-lime-hover: #86EFAC;
-            --nb-border: 2px solid #000000;
+            /* Cinematic Modern Dark Palette */
+            --bg-canvas: #090D16;
+            --bg-surface: #101626;
+            --bg-surface-elevated: #161F33;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-medium: rgba(255, 255, 255, 0.14);
+            --border-focus: rgba(59, 130, 246, 0.6);
+            
+            --text-primary: #FFFFFF;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            
+            --accent-gold: #FFDE59;
+            --accent-gold-gradient: linear-gradient(135deg, #FFDE59 0%, #F59E0B 100%);
+            --accent-emerald: #10B981;
+            
             --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
+            
+            --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.06);
         }
 
         * {
@@ -36,17 +44,16 @@
         body {
             font-family: var(--font-sans);
             min-height: 100vh;
-            background-color: var(--nb-canvas);
+            background-color: var(--bg-canvas);
             background-image: 
-                radial-gradient(rgba(0, 0, 0, 0.12) 1.25px, transparent 1.25px),
-                radial-gradient(rgba(0, 0, 0, 0.06) 1.25px, var(--nb-canvas) 1.25px);
-            background-size: 24px 24px;
-            background-position: 0 0, 12px 12px;
+                radial-gradient(circle at 50% 15%, rgba(37, 99, 235, 0.09) 0%, transparent 60%),
+                radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.04) 0%, transparent 40%);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 2.5rem 1.25rem;
-            color: var(--nb-black);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
         }
 
         .auth-container {
@@ -57,10 +64,10 @@
             align-items: center;
         }
 
-        /* ─── Top Brand Header (No box shadows on small tags/seals) ─── */
+        /* ─── Top Brand Header ─── */
         .brand-block {
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
             width: 100%;
         }
 
@@ -68,77 +75,75 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background-color: #000000;
-            color: #FFFFFF;
-            padding: 0.3rem 0.85rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: #CBD5E1;
+            padding: 0.35rem 0.95rem;
             border-radius: 9999px;
             font-family: var(--font-mono);
             font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            margin-bottom: 0.85rem;
+            margin-bottom: 1.15rem;
+            backdrop-filter: blur(8px);
         }
 
         .ticker-dot {
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background-color: var(--nb-lime);
+            background-color: var(--accent-emerald);
             display: inline-block;
+            box-shadow: 0 0 8px var(--accent-emerald);
         }
 
         .brand-seal-wrapper {
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.85rem;
             display: inline-block;
         }
 
         .brand-seal-img {
-            width: 68px;
-            height: 68px;
-            border-radius: 14px;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
             object-fit: cover;
-            border: var(--nb-border);
+            border: 1px solid var(--border-medium);
             background-color: #FFFFFF;
-            padding: 3px;
+            padding: 2px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
         }
 
         .brand-title {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--nb-black);
-            letter-spacing: -0.035em;
-            line-height: 1.1;
-            text-transform: uppercase;
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
             margin-bottom: 0.35rem;
         }
 
         .brand-subtitle {
-            font-size: 0.82rem;
-            font-family: var(--font-mono);
-            color: #000000;
-            font-weight: 700;
-            background: #FFFFFF;
-            display: inline-block;
-            padding: 0.2rem 0.7rem;
-            border: 1.5px solid #000000;
-            border-radius: 6px;
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        /* ─── Structural Card (Only container has box-shadow: 4px 4px 0px #000) ─── */
+        /* ─── Structural Auth Card ─── */
         .auth-card {
             width: 100%;
-            background: var(--nb-card-bg);
-            border: var(--nb-border);
-            border-radius: 16px;
-            box-shadow: 4px 4px 0px #000000;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-medium);
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
             overflow: hidden;
+            backdrop-filter: blur(12px);
         }
 
         .card-topbar {
-            background-color: var(--nb-yellow);
-            border-bottom: var(--nb-border);
-            padding: 0.7rem 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0.85rem 1.4rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -146,68 +151,73 @@
 
         .card-topbar-label {
             font-family: var(--font-mono);
-            font-size: 0.76rem;
-            font-weight: 800;
+            font-size: 0.74rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
+        }
+
+        .card-topbar-label svg {
+            color: var(--accent-gold);
         }
 
         .card-inner {
-            padding: 1.85rem 1.65rem;
+            padding: 2rem 1.75rem;
         }
 
-        /* ─── Form Inputs (No box shadows on fields) ─── */
+        /* ─── Form Inputs ─── */
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.35rem;
         }
 
         .form-label-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.5rem;
         }
 
         .form-label {
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: var(--nb-black);
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: 0.01em;
         }
 
         .form-tag-hint {
             font-family: var(--font-mono);
             font-size: 0.7rem;
-            color: #000000;
-            font-weight: 700;
+            color: var(--text-muted);
+            font-weight: 600;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.8rem 0.95rem;
+            padding: 0.85rem 1.05rem;
             font-size: 0.92rem;
             font-family: var(--font-sans);
-            font-weight: 600;
-            color: var(--nb-black);
-            background-color: var(--nb-input-bg);
-            border: var(--nb-border);
-            border-radius: 8px;
+            font-weight: 500;
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
             outline: none;
-            transition: background-color 0.12s ease;
+            transition: all 0.15s ease;
         }
 
         .form-control:focus {
-            background-color: #FFFFFF;
-            border-color: #000000;
+            background: rgba(255, 255, 255, 0.07);
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
         .form-control::placeholder {
-            color: #71717a;
-            font-weight: 500;
+            color: var(--text-muted);
+            font-weight: 400;
             font-size: 0.85rem;
         }
 
@@ -215,71 +225,70 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.65rem;
         }
 
         .checkbox-label {
             display: inline-flex;
             align-items: center;
-            gap: 0.55rem;
-            color: var(--nb-black);
-            font-size: 0.8rem;
-            font-family: var(--font-mono);
-            font-weight: 700;
+            gap: 0.6rem;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-weight: 500;
             cursor: pointer;
             user-select: none;
         }
 
         .checkbox-label input[type="checkbox"] {
-            width: 17px;
-            height: 17px;
-            border: 1.5px solid #000000;
-            border-radius: 3px;
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--border-medium);
+            border-radius: 4px;
             cursor: pointer;
-            accent-color: #000000;
+            accent-color: var(--accent-gold);
         }
 
-        /* ─── Tactile Submit Button (Box shadow strictly on action CTA) ─── */
+        /* ─── Modern Submit Button ─── */
         .btn-submit {
             width: 100%;
-            padding: 0.9rem 1.25rem;
-            font-size: 0.95rem;
-            font-weight: 900;
+            padding: 0.85rem 1.25rem;
+            font-size: 0.92rem;
+            font-weight: 800;
             font-family: var(--font-sans);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #000000;
-            background-color: var(--nb-yellow);
-            border: var(--nb-border);
-            border-radius: 8px;
+            letter-spacing: 0.03em;
+            color: #090D16;
+            background: var(--accent-gold-gradient);
+            border: none;
+            border-radius: 10px;
             cursor: pointer;
-            box-shadow: 3px 3px 0px #000000;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.1s ease;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .btn-submit:hover {
-            background-color: var(--nb-yellow-hover);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+            transform: translateY(-2px);
         }
 
-        /* Depress into shadow on click */
         .btn-submit:active {
-            transform: translate(3px, 3px);
-            box-shadow: 0px 0px 0px #000000;
+            transform: translateY(1px);
+            box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
         }
 
-        /* ─── Clean Alert Box (No box shadow) ─── */
+        /* ─── Clean Alert Box ─── */
         .alert-error {
-            background-color: var(--nb-input-bg);
-            border: var(--nb-border);
-            border-radius: 8px;
-            padding: 0.8rem 0.95rem;
-            margin-bottom: 1.25rem;
-            color: #000000;
-            font-size: 0.82rem;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+            margin-bottom: 1.35rem;
+            color: #FCA5A5;
+            font-size: 0.84rem;
             line-height: 1.4;
             display: flex;
             align-items: center;
@@ -287,36 +296,37 @@
         }
 
         .alert-error-tag {
-            background: #000000;
+            background: rgba(239, 68, 68, 0.25);
             color: #FFFFFF;
             font-family: var(--font-mono);
             font-size: 0.7rem;
             font-weight: 800;
             padding: 0.15rem 0.45rem;
-            border-radius: 3px;
+            border-radius: 4px;
             flex-shrink: 0;
         }
 
         .alert-error-msg {
-            font-weight: 700;
+            font-weight: 600;
         }
 
         /* ─── Footer ─── */
         .auth-footer {
-            margin-top: 1.5rem;
+            margin-top: 1.75rem;
             text-align: center;
             font-family: var(--font-mono);
-            font-size: 0.74rem;
-            color: #000000;
-            font-weight: 700;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.03em;
         }
 
         @media (max-width: 480px) {
             .brand-title {
-                font-size: 1.7rem;
+                font-size: 1.65rem;
             }
             .card-inner {
-                padding: 1.35rem 1.15rem;
+                padding: 1.5rem 1.25rem;
             }
         }
     </style>
@@ -337,22 +347,22 @@
                     </div>
                 </div>
 
-                <h1 class="brand-title">CAMPUS EVENTS</h1>
-                <div class="brand-subtitle">[ DISCOVER &bull; RESERVE &bull; ATTEND ]</div>
+                <h1 class="brand-title">Campus Event Portal</h1>
+                <div class="brand-subtitle">Quezon City University &bull; Student Gateway</div>
             </div>
 
-            <!-- Neo-Brutalism Card Container (4px 4px 0px #000 shadow) -->
+            <!-- Cinematic Modern Auth Card Container -->
             <div class="auth-card">
                 <!-- Card Window Top Header Bar -->
                 <div class="card-topbar">
                     <div class="card-topbar-label">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.5">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
                         <span>STUDENT GATEWAY</span>
                     </div>
-                    <span style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 800;">v2.6</span>
+                    <span style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; color: var(--text-muted);">v2.6</span>
                 </div>
 
                 <div class="card-inner">
@@ -392,8 +402,8 @@
                         </label>
                     </div>
 
-                    <!-- Tactile Submit Button -->
-                    <asp:Button ID="btnLogin" runat="server" Text="Sign In to Portal →" CssClass="btn-submit"
+                    <!-- Modern Gold Accent Submit Button -->
+                    <asp:Button ID="btnLogin" runat="server" Text="Sign In to Portal &rarr;" CssClass="btn-submit"
                         OnClick="btnLogin_Click" />
                 </div>
             </div>

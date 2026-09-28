@@ -5,27 +5,48 @@
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QCU Campus Events | Student Portal</title>
+    <title>University Event Portal | Quezon City University</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
     <style>
         :root {
-            /* User Restricted Palette */
-            --nb-black: #000000;
-            --nb-canvas: #FAF7EE;
-            --nb-card-bg: #FFFFFF;
-            --nb-surface-subtle: #FFFDF7;
-            --nb-yellow: #FFDE59;
-            --nb-yellow-hover: #FACC15;
-            --nb-lime: #A6F4C5;
-            --nb-lime-hover: #86EFAC;
-            --nb-border: 2px solid #000000;
-            --nb-border-sm: 1.5px solid #000000;
+            /* Cinematic Modern Dark Palette */
+            --bg-canvas: #090D16;
+            --bg-surface: #101626;
+            --bg-surface-elevated: #161F33;
+            --bg-surface-hover: #1E293B;
+            --bg-glass: rgba(16, 22, 38, 0.85);
+            --bg-glass-subtle: rgba(255, 255, 255, 0.04);
+            
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-medium: rgba(255, 255, 255, 0.14);
+            --border-hover: rgba(255, 255, 255, 0.25);
+            
+            --text-primary: #FFFFFF;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            
+            --accent-gold: #FFDE59;
+            --accent-gold-hover: #FACC15;
+            --accent-gold-gradient: linear-gradient(135deg, #FFDE59 0%, #F59E0B 100%);
+            
+            --accent-emerald: #10B981;
+            --accent-emerald-glow: rgba(16, 185, 129, 0.25);
+            --emerald-badge-bg: rgba(16, 185, 129, 0.12);
+            --emerald-badge-border: rgba(16, 185, 129, 0.3);
+            --emerald-badge-text: #34D399;
+            
+            --accent-blue: #3B82F6;
+            
             --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
+            
+            --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+            --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+            --shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(59, 130, 246, 0.15);
         }
 
         * {
@@ -35,34 +56,109 @@
         }
 
         body {
-            background-color: var(--nb-canvas);
-            color: var(--nb-black);
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
             font-family: var(--font-sans);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             -webkit-font-smoothing: antialiased;
             background-image: 
-                radial-gradient(rgba(0, 0, 0, 0.12) 1.25px, transparent 1.25px),
-                radial-gradient(rgba(0, 0, 0, 0.05) 1.25px, var(--nb-canvas) 1.25px);
-            background-size: 24px 24px;
-            background-position: 0 0, 12px 12px;
+                radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 100% 20%, rgba(245, 158, 11, 0.04) 0%, transparent 40%);
+            background-attachment: fixed;
         }
 
-        /* ─── Top Navigation Bar (Flat, no small shadows) ─── */
-        .portal-nav {
-            background-color: #FFFFFF;
-            border-bottom: var(--nb-border);
+        /* ─── Preview Notification Banner (when in demo mode) ─── */
+        .preview-banner {
+            background: rgba(245, 158, 11, 0.12);
+            border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+            color: #FDE68A;
+            padding: 0.65rem 1.75rem;
+            font-size: 0.84rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            position: relative;
+            z-index: 60;
+            backdrop-filter: blur(8px);
+        }
+
+        .preview-banner a {
+            color: #000000;
+            font-family: var(--font-sans);
+            font-weight: 800;
+            font-size: 0.76rem;
+            background: var(--accent-gold);
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+            transition: all 0.15s ease;
+        }
+
+        .preview-banner a:hover {
+            background: var(--accent-gold-hover);
+            transform: translateY(-1px);
+        }
+
+        /* ─── Main Portal Wrapper ─── */
+        .portal-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.75rem 2rem 5rem 2rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* ─── Toast Feedback Notification ─── */
+        .toast-banner {
+            padding: 0.9rem 1.4rem;
+            border-radius: 12px;
+            margin-bottom: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            backdrop-filter: blur(12px);
+        }
+
+        .toast-success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #6EE7B7;
+        }
+
+        .toast-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #FCA5A5;
+        }
+
+        /* ════════════════════════════════════════════════════════════════
+           TOP NAVIGATION BAR (MATCHING USER SPECIFICATION)
+           ════════════════════════════════════════════════════════════════ */
+        .portal-navbar {
+            width: 100%;
+            background: rgba(9, 13, 22, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
             position: sticky;
             top: 0;
             z-index: 50;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
         }
 
-        .nav-inner {
-            max-width: 1360px;
+        .navbar-inner {
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 1.5rem;
-            height: 72px;
+            padding: 0.85rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -72,931 +168,742 @@
         .nav-brand {
             display: flex;
             align-items: center;
-            gap: 0.85rem;
+            gap: 0.9rem;
             text-decoration: none;
-            color: var(--nb-black);
+            color: #FFFFFF;
         }
 
         .nav-logo-img {
             width: 44px;
             height: 44px;
-            border-radius: 10px;
+            border-radius: 50%;
             object-fit: cover;
-            border: var(--nb-border);
             background: #FFFFFF;
             padding: 2px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
         }
 
         .nav-brand-title {
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: var(--nb-black);
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-            text-transform: uppercase;
-        }
-
-        .nav-brand-badge {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: 0.68rem;
-            background-color: var(--nb-yellow);
-            color: #000000;
+            font-size: 1.22rem;
             font-weight: 800;
-            padding: 0.1rem 0.45rem;
-            border: 1.5px solid #000000;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .nav-center-menu {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-            list-style: none;
-        }
-
-        .nav-menu-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            padding: 0.45rem 0.95rem;
-            background-color: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 8px;
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: #000000;
-            text-decoration: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: background-color 0.1s ease;
-        }
-
-        .nav-menu-btn:hover {
-            background-color: var(--nb-canvas);
-        }
-
-        .nav-menu-btn.active {
-            background-color: var(--nb-yellow);
-        }
-
-        /* ─── Student Profile Chip in Navbar (Flat, no shadow) ─── */
-        .nav-user-chip {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.3rem 0.6rem 0.3rem 0.4rem;
-            background-color: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 10px;
-        }
-
-        .user-avatar-circle {
-            width: 34px;
-            height: 34px;
-            background-color: var(--nb-yellow);
-            color: #000000;
-            font-weight: 900;
-            font-size: 0.85rem;
-            border-radius: 6px;
-            border: 1.5px solid #000000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-details {
-            display: flex;
-            flex-direction: column;
+            letter-spacing: -0.02em;
             line-height: 1.15;
-        }
-
-        .user-fullname {
-            font-size: 0.82rem;
-            font-weight: 800;
-            color: #000000;
-            text-transform: uppercase;
-        }
-
-        .user-meta {
-            font-size: 0.68rem;
-            color: #000000;
-            font-family: var(--font-mono);
-            font-weight: 700;
-        }
-
-        .btn-signout {
-            background: var(--nb-canvas);
-            border: 1.5px solid #000000;
-            color: #000000;
-            cursor: pointer;
-            padding: 0.35rem;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.1s ease;
-        }
-
-        .btn-signout:hover {
-            background-color: var(--nb-yellow);
-        }
-
-        /* ─── Preview Notification Banner (Flat) ─── */
-        .preview-banner {
-            background-color: var(--nb-yellow);
-            border-bottom: var(--nb-border);
-            color: #000000;
-            padding: 0.6rem 1.5rem;
-            font-size: 0.82rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .preview-banner a {
-            color: #000000;
-            font-family: var(--font-mono);
-            font-weight: 800;
-            background: #FFFFFF;
-            padding: 0.2rem 0.6rem;
-            border: 1.5px solid #000000;
-            border-radius: 6px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        /* ─── Main Content Canvas ─── */
-        .portal-main {
-            max-width: 1360px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem 4.5rem 1.5rem;
-            width: 100%;
-            flex: 1;
-        }
-
-        /* ─── Toast Feedback Notification (Only structural 3px shadow) ─── */
-        .toast-banner {
-            padding: 0.85rem 1.15rem;
-            border: var(--nb-border);
-            border-radius: 10px;
-            margin-bottom: 1.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.88rem;
-            font-weight: 800;
-            box-shadow: 3px 3px 0px #000000;
-        }
-
-        .toast-success {
-            background-color: var(--nb-lime);
-            color: #000000;
-        }
-
-        .toast-error {
-            background-color: var(--nb-surface-subtle);
-            color: #000000;
-        }
-
-        /* ════════════════════════════════════════════════════════════════
-           HERO SECTION: EDITORIAL CAMPUS GALLERY
-           ════════════════════════════════════════════════════════════════ */
-        .hero-gallery-section {
-            margin-bottom: 2.75rem;
-        }
-
-        .gallery-top-badge-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.85rem;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-        }
-
-        .ticker-pill-main {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background-color: #000000;
             color: #FFFFFF;
-            padding: 0.3rem 0.85rem;
-            border-radius: 9999px;
-            font-family: var(--font-mono);
-            font-size: 0.74rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
         }
 
-        .ticker-pill-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: var(--nb-lime);
-        }
-
-        .gallery-controls-nav {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .gallery-nav-btn {
-            background-color: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 6px;
-            padding: 0.3rem 0.75rem;
-            font-family: var(--font-mono);
-            font-size: 0.74rem;
-            font-weight: 800;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: background-color 0.1s ease;
-        }
-
-        .gallery-nav-btn:hover {
-            background-color: var(--nb-yellow);
-        }
-
-        /* ─── Hero Spotlight Card (Container has 4px 4px 0px #000) ─── */
-        .hero-spotlight-card {
-            background: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 16px;
-            box-shadow: 4px 4px 0px #000000;
-            overflow: hidden;
-            display: grid;
-            grid-template-columns: 1.15fr 1fr;
-            margin-bottom: 1.25rem;
-            position: relative;
-        }
-
-        @media (max-width: 900px) {
-            .hero-spotlight-card {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .spotlight-banner-area {
-            background-color: var(--nb-yellow);
-            border-right: var(--nb-border);
-            padding: 2rem 2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            min-height: 300px;
-            transition: background-color 0.2s ease;
-        }
-
-        @media (max-width: 900px) {
-            .spotlight-banner-area {
-                border-right: none;
-                border-bottom: var(--nb-border);
-                min-height: auto;
-            }
-        }
-
-        .spotlight-top-tags {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.25rem;
-        }
-
-        .spotlight-category-badge {
-            background-color: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 9999px;
-            padding: 0.3rem 0.85rem;
-            font-family: var(--font-mono);
+        .nav-brand-subtitle {
             font-size: 0.78rem;
-            font-weight: 800;
-            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 600;
+            letter-spacing: 0.01em;
         }
 
-        .spotlight-live-tag {
-            background-color: #000000;
-            color: #FFFFFF;
-            border-radius: 9999px;
-            padding: 0.3rem 0.75rem;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            font-weight: 800;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .spotlight-center-art {
-            margin: auto 0;
-            text-align: left;
-        }
-
-        .spotlight-subheading {
-            font-family: var(--font-mono);
-            font-size: 0.78rem;
-            font-weight: 800;
-            color: #000000;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.35rem;
-        }
-
-        .spotlight-title {
-            font-size: 2.15rem;
-            font-weight: 900;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-            color: var(--nb-black);
-            margin-bottom: 0.65rem;
-            text-transform: uppercase;
-        }
-
-        .spotlight-bottom-chips {
+        .nav-user-bar {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-
-        .spotlight-chip {
-            background-color: #FFFFFF;
-            border: 1.5px solid #000000;
-            border-radius: 6px;
-            padding: 0.2rem 0.55rem;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #000000;
-        }
-
-        /* ─── Right Details Area in Spotlight ─── */
-        .spotlight-details-area {
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background-color: #FFFFFF;
-        }
-
-        .spotlight-desc {
-            font-size: 0.92rem;
-            color: #000000;
-            line-height: 1.55;
-            margin-bottom: 1.25rem;
-            font-weight: 500;
-        }
-
-        .spotlight-meta-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .meta-box {
-            background-color: var(--nb-surface-subtle);
-            border: 1.5px solid #000000;
-            border-radius: 8px;
-            padding: 0.65rem 0.8rem;
-        }
-
-        .meta-box-label {
-            font-family: var(--font-mono);
-            font-size: 0.66rem;
-            font-weight: 800;
-            color: #000000;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin-bottom: 0.15rem;
-        }
-
-        .meta-box-val {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: var(--nb-black);
-            line-height: 1.25;
-        }
-
-        .spotlight-actions-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
-            padding-top: 1rem;
-            border-top: 1.5px dashed #000000;
-        }
-
-        .spotlight-capacity-pill {
-            background-color: var(--nb-lime);
-            border: 1.5px solid #000000;
-            border-radius: 9999px;
-            padding: 0.3rem 0.75rem;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            font-weight: 800;
-        }
-
-        /* ─── Tactile Button Interactions (Box shadow strictly on action buttons) ─── */
-        .btn-tactile-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background-color: var(--nb-yellow);
-            color: #000000;
-            font-family: var(--font-sans);
-            font-size: 0.88rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            padding: 0.75rem 1.35rem;
-            border: var(--nb-border);
-            border-radius: 8px;
-            box-shadow: 3px 3px 0px #000000;
-            cursor: pointer;
-            text-decoration: none;
-            transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.1s ease;
-        }
-
-        .btn-tactile-action:hover {
-            background-color: var(--nb-yellow-hover);
-        }
-
-        .btn-tactile-action:active {
-            transform: translate(3px, 3px);
-            box-shadow: 0px 0px 0px #000000;
-        }
-
-        /* ─── Gallery Thumbnail Selector Rail (Flat, no shadow on cards) ─── */
-        .gallery-rail-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
             gap: 0.85rem;
         }
 
-        @media (max-width: 992px) {
-            .gallery-rail-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 550px) {
-            .gallery-rail-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .gallery-thumb-card {
-            background: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 12px;
-            padding: 0.85rem;
-            cursor: pointer;
-            transition: background-color 0.12s ease;
-        }
-
-        .gallery-thumb-card:hover {
-            background-color: var(--nb-canvas);
-        }
-
-        .gallery-thumb-card.active-slide {
-            background-color: var(--nb-yellow);
-        }
-
-        .gallery-thumb-badge {
-            font-family: var(--font-mono);
-            font-size: 0.66rem;
-            font-weight: 800;
-            padding: 0.12rem 0.45rem;
-            border-radius: 9999px;
-            border: 1.5px solid #000000;
-            display: inline-block;
-            margin-bottom: 0.4rem;
-            background: #FFFFFF;
-        }
-
-        .gallery-thumb-title {
-            font-size: 0.84rem;
-            font-weight: 800;
-            line-height: 1.25;
-            color: #000000;
-            margin-bottom: 0.25rem;
-            text-transform: uppercase;
-        }
-
-        .gallery-thumb-meta {
-            font-family: var(--font-mono);
-            font-size: 0.68rem;
-            color: #000000;
-            font-weight: 700;
-        }
-
-        /* ─── Demographic Identity Matrix Strip (Flat) ─── */
-        .student-matrix-strip {
-            margin-top: 1.25rem;
+        .nav-user-badge {
             display: flex;
             align-items: center;
-            gap: 0.55rem;
+            gap: 0.75rem;
+            background: rgba(16, 22, 38, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.35rem 0.95rem;
+            border-radius: 9999px;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 100%);
+            color: #0F172A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.8rem;
+        }
+
+        .nav-user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .nav-user-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .nav-user-id {
+            font-size: 0.68rem;
+            font-family: var(--font-mono);
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .nav-btn-signout {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(16, 22, 38, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #94A3B8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .nav-btn-signout:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #F87171;
+            transform: scale(1.05);
+        }
+
+        /* ════════════════════════════════════════════════════════════════
+           HERO SECTION: CONSISTENT DIMENSIONS & RESPONSIVE BEHAVIOR
+           ════════════════════════════════════════════════════════════════ */
+        .hero-showcase-container {
+            width: 100%;
+            height: 480px; /* Fixed consistent desktop height */
+            border: 1px solid var(--border-medium);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            background-color: #060911;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+            box-sizing: border-box;
+        }
+
+        /* Background Photo Layer has exact 100% width and 100% height of the container */
+        .hero-bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            transition: background-image 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1;
+        }
+
+        .hero-overlay-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(180deg, rgba(6, 9, 17, 0.6) 0%, rgba(6, 9, 17, 0.45) 45%, rgba(6, 9, 17, 0.95) 100%),
+                linear-gradient(90deg, rgba(6, 9, 17, 0.85) 0%, rgba(6, 9, 17, 0.45) 55%, rgba(6, 9, 17, 0.25) 100%);
+            z-index: 2;
+        }
+
+        /* Hero Content Area */
+        .hero-body-content {
+            position: relative;
+            z-index: 10;
+            padding: 3rem 2.5rem 1rem 2.5rem;
+            max-width: 820px;
+        }
+
+        .hero-title {
+            font-size: 3.1rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.12;
+            color: #FFFFFF;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+            max-width: 780px;
+        }
+
+        .hero-description {
+            font-size: 1.08rem;
+            line-height: 1.6;
+            color: #CBD5E1;
+            font-weight: 400;
+            margin-bottom: 1.75rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            max-width: 680px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .hero-meta-list {
+            display: flex;
             flex-wrap: wrap;
-            background: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 12px;
-            padding: 0.65rem 0.85rem;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #E2E8F0;
+            background: rgba(16, 22, 38, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 0.45rem 0.9rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-meta-item svg {
+            width: 18px;
+            height: 18px;
+            color: var(--accent-gold);
+            flex-shrink: 0;
+        }
+
+        /* Bottom Horizontal Thumbnail Carousel Rail */
+        .hero-gallery-rail {
+            position: relative;
+            z-index: 10;
+            padding: 1rem 2.25rem 1.75rem 2.25rem;
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .hero-gallery-rail::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hero-thumb-card {
+            flex: 0 0 190px;
+            height: 105px;
+            border-radius: 14px;
+            border: 2px solid transparent;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-thumb-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+        }
+
+        .hero-thumb-card.active-thumb {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 20px rgba(255, 222, 89, 0.4), 0 8px 24px rgba(0, 0, 0, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .thumb-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(6, 9, 17, 0.2) 0%, rgba(6, 9, 17, 0.88) 100%);
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .thumb-title {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .thumb-meta {
+            font-size: 0.68rem;
+            font-family: var(--font-mono);
+            color: var(--accent-gold);
+            margin-top: 0.2rem;
+            font-weight: 600;
+        }
+
+        /* ─── Cohort Demographic Strip ─── */
+        .student-matrix-strip {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            padding: 0.75rem 1.4rem;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            margin-bottom: 2.25rem;
+            font-size: 0.82rem;
         }
 
         .matrix-title {
             font-family: var(--font-mono);
-            font-size: 0.72rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            background-color: #000000;
-            color: #FFFFFF;
-            padding: 0.2rem 0.55rem;
-            border-radius: 4px;
+            font-weight: 800;
+            font-size: 0.74rem;
+            letter-spacing: 0.05em;
+            color: var(--accent-gold);
         }
 
         .matrix-chip {
-            background-color: var(--nb-surface-subtle);
-            border: 1.5px solid #000000;
-            border-radius: 5px;
-            padding: 0.2rem 0.55rem;
-            font-family: var(--font-mono);
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: #000000;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            padding: 0.25rem 0.75rem;
+            border-radius: 8px;
+            color: #CBD5E1;
+            font-weight: 600;
+            font-size: 0.78rem;
         }
 
         /* ════════════════════════════════════════════════════════════════
-           TAB-LIKE TOGGLE & EVENT DISCOVERY SECTION
+           TAB-LIKE TOGGLE & SECTION HEADER
            ════════════════════════════════════════════════════════════════ */
         .events-view-section {
-            margin-top: 3rem;
+            display: flex;
+            flex-direction: column;
         }
 
         .section-header-row {
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             justify-content: space-between;
-            gap: 1.25rem;
             flex-wrap: wrap;
-            margin-bottom: 1.25rem;
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
         }
 
         .section-title-block h2 {
-            font-size: 1.85rem;
-            font-weight: 900;
-            color: var(--nb-black);
-            letter-spacing: -0.03em;
-            text-transform: uppercase;
-            line-height: 1.1;
-            margin-bottom: 0.25rem;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: #FFFFFF;
+            line-height: 1.2;
         }
 
         .section-title-block p {
-            font-family: var(--font-mono);
-            font-size: 0.82rem;
-            color: #000000;
-            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
         }
 
-        /* ─── Segmented Tab-Like Toggle (Container has 3px 3px 0px #000) ─── */
+        /* Sleek Modern Segmented Tab Toggle */
         .tab-toggle-container {
             display: inline-flex;
-            background: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 10px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-medium);
+            border-radius: 9999px;
             padding: 4px;
-            box-shadow: 3px 3px 0px #000000;
-            gap: 4px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
         }
 
         .tab-btn {
             background: transparent;
-            border: 1.5px solid transparent;
-            border-radius: 6px;
-            padding: 0.55rem 1.2rem;
+            border: none;
+            color: var(--text-secondary);
             font-family: var(--font-sans);
+            font-weight: 700;
             font-size: 0.85rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            color: #000000;
+            padding: 0.55rem 1.25rem;
+            border-radius: 9999px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: background-color 0.1s ease;
+            gap: 0.55rem;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .tab-btn:hover {
-            background-color: var(--nb-canvas);
+        .tab-btn:hover:not(.active) {
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .tab-btn.active {
-            background-color: var(--nb-yellow);
-            border: 1.5px solid #000000;
+            background: #FFFFFF;
+            color: #090D16;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
         }
 
         .tab-count-pill {
-            background-color: #000000;
-            color: #FFFFFF;
+            background: rgba(0, 0, 0, 0.12);
+            color: inherit;
             font-family: var(--font-mono);
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 800;
-            padding: 0.12rem 0.45rem;
+            padding: 0.15rem 0.55rem;
             border-radius: 9999px;
         }
 
-        /* ─── Category Filter Pills Bar (Flat, no shadows) ─── */
+        .tab-btn:not(.active) .tab-count-pill {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+        }
+
+        /* Category Filter Tags */
         .category-filter-bar {
             display: flex;
             align-items: center;
-            gap: 0.55rem;
+            gap: 0.65rem;
             flex-wrap: wrap;
-            margin-bottom: 1.75rem;
-            padding: 0.65rem 0.85rem;
-            background: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 12px;
+            margin-bottom: 2rem;
         }
 
         .filter-label {
             font-family: var(--font-mono);
-            font-size: 0.74rem;
-            font-weight: 900;
+            font-size: 0.76rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: #000000;
-            margin-right: 0.2rem;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-right: 0.25rem;
         }
 
-        /* Contrasting Category Pills (Flat, clean borders) */
         .cat-pill {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 0.3rem 0.85rem;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.4rem 1rem;
             border-radius: 9999px;
-            border: 1.5px solid #000000;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-secondary);
             cursor: pointer;
             text-decoration: none;
-            color: #000000;
             display: inline-flex;
             align-items: center;
-            gap: 0.3rem;
-            transition: background-color 0.08s ease;
+            gap: 0.35rem;
+            transition: all 0.2s ease;
             user-select: none;
         }
 
         .cat-pill:hover {
-            opacity: 0.9;
+            color: #FFFFFF;
+            border-color: var(--border-hover);
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-1px);
         }
 
         .cat-pill.active {
-            background-color: #000000 !important;
-            color: #FFFFFF !important;
+            background: #FFFFFF !important;
+            color: #090D16 !important;
+            border-color: #FFFFFF !important;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
         }
 
-        .cat-pill-all { background-color: var(--nb-surface-subtle); }
-        .cat-pill-lime { background-color: var(--nb-lime); }
-        .cat-pill-yellow { background-color: var(--nb-yellow); }
-        .cat-pill-neutral { background-color: #FFFFFF; }
-
-        /* ─── Event Cards Grid (Only card shell has 4px 4px 0px #000) ─── */
+        /* ════════════════════════════════════════════════════════════════
+           EVENT CARDS GRID: EXACT ELEMENT ORGANIZATION (PHOTO 2)
+           STYLING: PROFESSIONAL CINEMATIC (MATCHING HERO SECTION)
+           ════════════════════════════════════════════════════════════════ */
         .events-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2rem;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 500px) {
             .events-grid {
                 grid-template-columns: 1fr;
             }
         }
 
         .event-card {
-            background-color: var(--nb-card-bg);
-            border: var(--nb-border);
-            border-radius: 16px;
-            box-shadow: 4px 4px 0px #000000;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
         }
 
-        /* Card Banner Area */
+        .event-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Top Half: Promotional Banner Area (Photo 2) */
         .event-promo-banner {
-            height: 135px;
-            padding: 0.95rem 1.15rem;
+            height: 160px;
+            padding: 1.15rem 1.25rem;
             position: relative;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            border-bottom: var(--nb-border);
         }
 
-        .banner-lime { background-color: var(--nb-lime); }
-        .banner-yellow { background-color: var(--nb-yellow); }
-        .banner-warm { background-color: var(--nb-canvas); }
+        .event-promo-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(9, 13, 22, 0.35) 0%, rgba(9, 13, 22, 0.85) 100%);
+            z-index: 1;
+        }
 
-        /* Status Badge on Top-Right (Flat, no shadow) */
-        .badge-status {
+        /* Category Tag Pill (Top-Left in Photo 2) */
+        .card-tag-pill {
+            position: relative;
+            z-index: 2;
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            padding: 0.25rem 0.65rem;
+            padding: 0.32rem 0.9rem;
             border-radius: 9999px;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(9, 13, 22, 0.65);
+            backdrop-filter: blur(8px);
+            font-family: var(--font-sans);
             font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            border: 1.5px solid #000000;
-        }
-
-        .badge-status-open {
-            background-color: #FFFFFF;
-            color: #000000;
-        }
-
-        .badge-status-closed {
-            background-color: #000000;
+            font-size: 0.76rem;
             color: #FFFFFF;
+            letter-spacing: 0.02em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
-        .badge-pulse-dot {
+        /* Status Badge (Top-Right in Photo 2) */
+        .card-status-pill {
+            position: relative;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.32rem 0.85rem;
+            border-radius: 9999px;
+            border: 1px solid var(--emerald-badge-border);
+            background: rgba(16, 185, 129, 0.16);
+            backdrop-filter: blur(8px);
+            font-family: var(--font-sans);
+            font-weight: 800;
+            font-size: 0.74rem;
+            color: var(--emerald-badge-text);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .card-status-closed {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.16);
+            color: #F87171;
+        }
+
+        .status-dot-green {
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background-color: #16a34a;
+            background-color: var(--accent-emerald);
             display: inline-block;
+            box-shadow: 0 0 8px var(--accent-emerald);
         }
 
-        /* Capacity Pill Bottom-Right (Flat, no shadow) */
-        .capacity-pill {
+        /* Capacity Indicator (Bottom-Right of Banner in Photo 2) */
+        .card-capacity-pill {
             position: absolute;
-            bottom: 0.75rem;
+            z-index: 2;
+            bottom: 0.9rem;
             right: 1.15rem;
-            background-color: #FFFFFF;
-            border: 1.5px solid #000000;
+            background: rgba(9, 13, 22, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 9999px;
-            padding: 0.25rem 0.65rem;
+            padding: 0.3rem 0.8rem;
             font-family: var(--font-mono);
-            font-size: 0.72rem;
-            font-weight: 800;
-            color: #000000;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: #F1F5F9;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
         }
 
-        /* ─── Card Body ─── */
+        /* Bottom Half: Event Details (Photo 2) */
         .event-card-body {
-            padding: 1.35rem 1.25rem;
+            padding: 1.45rem 1.4rem 1.35rem 1.4rem;
             display: flex;
             flex-direction: column;
             flex: 1;
+            background-color: var(--bg-surface);
         }
 
+        /* Title: Prominent, Crisp, High-Contrast */
         .card-event-name {
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: var(--nb-black);
-            line-height: 1.3;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.02em;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            line-height: 1.28;
+            margin-bottom: 0.95rem;
+            letter-spacing: -0.015em;
             text-transform: uppercase;
         }
 
+        /* Location Line with Pin Icon (Photo 2) */
         .card-meta-line {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-family: var(--font-mono);
-            font-size: 0.76rem;
-            font-weight: 700;
-            color: #000000;
-            margin-bottom: 0.35rem;
+            gap: 0.6rem;
+            font-size: 0.84rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.45rem;
             line-height: 1.4;
         }
 
         .card-meta-line svg {
-            width: 15px;
-            height: 15px;
-            color: #000000;
+            width: 16px;
+            height: 16px;
+            color: var(--accent-gold);
             flex-shrink: 0;
         }
 
-        /* Sponsors Section */
+        /* Sponsors Row (Photo 2) */
         .card-sponsors-row {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.4rem;
+            gap: 0.45rem;
             margin-top: 0.85rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .sponsor-label {
             font-family: var(--font-mono);
-            font-size: 0.68rem;
+            font-size: 0.72rem;
             font-weight: 800;
-            color: #000000;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.03em;
-            margin-right: 0.15rem;
+            letter-spacing: 0.05em;
+            margin-right: 0.2rem;
         }
 
-        /* Sponsor Badges (Flat, no shadow) */
         .sponsor-pill {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            font-weight: 800;
-            border-radius: 5px;
-            padding: 0.15rem 0.5rem;
+            font-family: var(--font-sans);
+            font-size: 0.74rem;
+            font-weight: 700;
+            border-radius: 6px;
+            padding: 0.2rem 0.6rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border: 1.5px solid #000000;
-            background-color: var(--nb-surface-subtle);
-            color: #000000;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255, 255, 255, 0.04);
+            color: #E2E8F0;
             line-height: 1.2;
+            transition: all 0.15s ease;
         }
 
+        .sponsor-pill:hover {
+            border-color: var(--border-hover);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Crisp Divider Line (Photo 2) */
         .card-divider {
             border: none;
-            border-top: 1.5px solid #000000;
+            border-top: 1px solid var(--border-subtle);
             margin-top: auto;
-            margin-bottom: 0.95rem;
+            margin-bottom: 1.15rem;
         }
 
+        /* Bottom Action Row (Photo 2) */
         .card-action-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 0.75rem;
+            gap: 0.85rem;
         }
 
+        /* Spots Left Pill: Mint/Emerald glow (Photo 2) */
         .spots-left-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
             font-family: var(--font-mono);
-            font-size: 0.74rem;
+            font-size: 0.76rem;
             font-weight: 800;
-            color: #000000;
-            background: var(--nb-lime);
-            padding: 0.2rem 0.55rem;
-            border: 1.5px solid #000000;
-            border-radius: 5px;
+            color: var(--emerald-badge-text);
+            background: var(--emerald-badge-bg);
+            padding: 0.45rem 0.85rem;
+            border: 1px solid var(--emerald-badge-border);
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
         }
 
         .spots-left-hint.closed {
-            background: #FFFFFF;
-            color: #000000;
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.25);
+            color: #F87171;
         }
 
-        /* Tactile Details Button (Box shadow on action button) */
+        .spots-left-hint svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* Tactile Details Button: Gold Gradient with Hover Elevation (Photo 2) */
         .btn-view-details {
             display: inline-flex;
             align-items: center;
-            gap: 0.45rem;
-            background-color: var(--nb-yellow);
-            color: #000000;
+            gap: 0.5rem;
+            background: var(--accent-gold-gradient);
+            color: #090D16;
             font-family: var(--font-sans);
             font-size: 0.82rem;
-            font-weight: 900;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.03em;
-            padding: 0.55rem 1.05rem;
-            border: var(--nb-border);
-            border-radius: 6px;
-            box-shadow: 3px 3px 0px #000000;
+            padding: 0.65rem 1.25rem;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
             text-decoration: none;
             cursor: pointer;
-            transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.1s ease;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .btn-view-details:hover {
-            background-color: var(--nb-yellow-hover);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+            transform: translateY(-2px);
         }
 
         .btn-view-details:active {
-            transform: translate(3px, 3px);
-            box-shadow: 0px 0px 0px #000000;
+            transform: translateY(1px);
+            box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
         }
 
         /* ════════════════════════════════════════════════════════════════
-           MY REGISTERED EVENTS & SCHEDULE VIEW (TAB 2)
+           TAB 2 VIEW: MY REGISTERED EVENTS & PASSES
            ════════════════════════════════════════════════════════════════ */
         .registered-section-content {
             display: none;
@@ -1014,14 +921,13 @@
             display: none;
         }
 
-        /* ─── Pass Table (Container has 4px 4px 0px #000) ─── */
         .registered-table-wrapper {
-            background: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 14px;
-            box-shadow: 4px 4px 0px #000000;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 18px;
+            box-shadow: var(--shadow-card);
             overflow: hidden;
-            margin-top: 0.75rem;
+            margin-top: 1rem;
         }
 
         .registered-table {
@@ -1031,99 +937,106 @@
         }
 
         .registered-table th {
-            background-color: #000000;
-            color: #FFFFFF;
-            padding: 1rem 1.15rem;
+            background: rgba(255, 255, 255, 0.025);
+            color: var(--text-muted);
+            padding: 1.1rem 1.35rem;
             font-family: var(--font-mono);
-            font-size: 0.76rem;
+            font-size: 0.74rem;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: var(--nb-border);
+            letter-spacing: 0.06em;
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .registered-table td {
-            padding: 1rem 1.15rem;
+            padding: 1.25rem 1.35rem;
+            border-bottom: 1px solid var(--border-subtle);
             font-size: 0.88rem;
-            border-bottom: 1.5px solid #000000;
-            color: #000000;
-            vertical-align: middle;
+            color: var(--text-secondary);
         }
 
         .registered-table tr:last-child td {
             border-bottom: none;
         }
 
-        .registered-table tr:nth-child(even) {
-            background-color: var(--nb-surface-subtle);
+        .registered-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
         }
 
-        /* Attendance status badge (Flat, no shadow) */
-        .status-badge {
+        .pass-event-title {
+            font-weight: 800;
+            color: #FFFFFF;
+            font-size: 0.95rem;
+        }
+
+        .status-badge-reg {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            padding: 0.25rem 0.7rem;
+            gap: 0.45rem;
+            padding: 0.3rem 0.85rem;
             border-radius: 9999px;
             font-family: var(--font-mono);
             font-size: 0.72rem;
             font-weight: 800;
             text-transform: uppercase;
-            border: 1.5px solid #000000;
         }
 
         .status-badge-noshow {
-            background-color: #FFFFFF;
-            color: #000000;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-subtle);
+            color: #CBD5E1;
         }
 
         .status-badge-present {
-            background-color: var(--nb-lime);
-            color: #000000;
+            background: var(--emerald-badge-bg);
+            border: 1px solid var(--emerald-badge-border);
+            color: var(--emerald-badge-text);
         }
 
         .status-badge-cancelled {
-            background-color: var(--nb-canvas);
-            color: #000000;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #F87171;
         }
 
-        /* Tactile Cancel Button */
         .btn-cancel-reg {
-            background-color: #FFFFFF;
-            color: #000000;
-            border: 1.5px solid #000000;
-            padding: 0.4rem 0.85rem;
-            border-radius: 6px;
-            font-family: var(--font-mono);
-            font-size: 0.74rem;
-            font-weight: 800;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #FCA5A5;
+            padding: 0.45rem 0.95rem;
+            border-radius: 8px;
+            font-family: var(--font-sans);
+            font-size: 0.76rem;
+            font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
-            transition: background-color 0.1s ease;
+            transition: all 0.15s ease;
         }
 
         .btn-cancel-reg:hover:not(:disabled) {
-            background-color: var(--nb-yellow);
+            background: rgba(239, 68, 68, 0.2);
+            color: #FFFFFF;
+            border-color: rgba(239, 68, 68, 0.4);
+            transform: translateY(-1px);
         }
 
         .btn-cancel-reg:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
-            border-color: #000000;
         }
 
         .empty-passes-box {
-            background: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 14px;
-            box-shadow: 4px 4px 0px #000000;
-            padding: 2.75rem 2rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 18px;
+            box-shadow: var(--shadow-card);
+            padding: 3.5rem 2rem;
             text-align: center;
-            margin-top: 0.75rem;
+            margin-top: 1rem;
         }
 
         /* ════════════════════════════════════════════════════════════════
-           MODAL: REGISTRATION DIALOG (Box shadow on modal: 6px 6px 0px #000)
+           MODAL: REGISTRATION & INSPECTION DIALOG
            ════════════════════════════════════════════════════════════════ */
         .modal-overlay {
             display: none;
@@ -1132,7 +1045,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(4, 7, 14, 0.75);
+            backdrop-filter: blur(12px);
             z-index: 100;
             align-items: center;
             justify-content: center;
@@ -1144,61 +1058,61 @@
         }
 
         .modal-box {
-            background-color: #FFFFFF;
-            border: var(--nb-border);
-            border-radius: 16px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-medium);
+            border-radius: 20px;
             width: 100%;
             max-width: 620px;
-            box-shadow: 6px 6px 0px #000000;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 1px 1px rgba(255, 255, 255, 0.1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
         .modal-header {
-            background-color: var(--nb-yellow);
-            color: #000000;
-            border-bottom: var(--nb-border);
-            padding: 0.85rem 1.35rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1.25rem 1.75rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .modal-header h4 {
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            font-weight: 900;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+            font-family: var(--font-sans);
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: #FFFFFF;
         }
 
         .modal-close-btn {
-            background: #FFFFFF;
-            border: 1.5px solid #000000;
-            border-radius: 6px;
-            width: 28px;
-            height: 28px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.15rem;
-            font-weight: 900;
-            color: #000000;
-            line-height: 1;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-secondary);
             cursor: pointer;
             text-decoration: none;
+            transition: all 0.15s ease;
         }
 
         .modal-close-btn:hover {
-            background: var(--nb-canvas);
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.12);
         }
 
         .modal-body {
-            padding: 1.5rem;
+            padding: 1.75rem;
             display: flex;
             flex-direction: column;
-            gap: 1.15rem;
+            gap: 1.25rem;
             max-height: 75vh;
             overflow-y: auto;
         }
@@ -1206,7 +1120,7 @@
         .modal-detail-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            gap: 0.85rem;
         }
 
         @media (max-width: 500px) {
@@ -1216,169 +1130,194 @@
         }
 
         .modal-meta-box {
-            background-color: var(--nb-surface-subtle);
-            border: 1.5px solid #000000;
-            border-radius: 8px;
-            padding: 0.7rem;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 0.85rem;
         }
 
         .modal-meta-box-label {
             font-family: var(--font-mono);
-            font-size: 0.66rem;
-            font-weight: 800;
-            color: #000000;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin-bottom: 0.15rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
         }
 
         .modal-meta-box-val {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: #000000;
-            line-height: 1.25;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            line-height: 1.3;
         }
 
         .modal-notice-banner {
-            background-color: var(--nb-canvas);
-            border: 1.5px solid #000000;
-            padding: 0.75rem 0.9rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #000000;
-            line-height: 1.4;
+            background-color: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            padding: 0.85rem 1rem;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #FDE68A;
+            line-height: 1.45;
         }
 
         .modal-footer {
-            background-color: var(--nb-surface-subtle);
-            border-top: var(--nb-border);
-            padding: 1rem 1.35rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid var(--border-subtle);
+            padding: 1.15rem 1.75rem;
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 0.75rem;
+            gap: 0.85rem;
         }
 
         .btn-modal-cancel {
-            background-color: #FFFFFF;
-            color: #000000;
-            border: 1.5px solid #000000;
-            padding: 0.65rem 1.15rem;
-            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
             font-family: var(--font-sans);
             font-size: 0.85rem;
-            font-weight: 800;
-            text-transform: uppercase;
+            font-weight: 700;
             cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-modal-cancel:hover {
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .btn-register-action {
-            background-color: var(--nb-lime);
-            color: #000000;
+            background: var(--accent-gold-gradient);
+            color: #090D16;
             font-family: var(--font-sans);
             font-size: 0.88rem;
-            font-weight: 900;
+            font-weight: 800;
             text-transform: uppercase;
-            border: var(--nb-border);
-            box-shadow: 3px 3px 0px #000000;
-            padding: 0.65rem 1.35rem;
-            border-radius: 6px;
+            border: none;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+            padding: 0.65rem 1.5rem;
+            border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.08s ease, box-shadow 0.08s ease;
+            transition: all 0.15s ease;
         }
 
         .btn-register-action:hover:not(:disabled) {
-            background-color: var(--nb-lime-hover);
-        }
-
-        .btn-register-action:active:not(:disabled) {
-            transform: translate(3px, 3px);
-            box-shadow: 0px 0px 0px #000000;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+            transform: translateY(-1px);
         }
 
         .btn-register-action:disabled {
-            background-color: #FFFFFF;
-            color: #000000;
-            opacity: 0.5;
-            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
             box-shadow: none;
+            cursor: not-allowed;
         }
 
-        /* Responsive Layouts */
+        /* ─── Responsive Adjustments for Navbar and Consistent Hero ─── */
+        @media (max-width: 1024px) {
+            .hero-showcase-container {
+                height: 460px; /* Tablet consistent height */
+            }
+            .hero-body-content {
+                padding: 2.25rem 2rem 1rem 2rem;
+            }
+            .hero-title {
+                font-size: 2.45rem;
+            }
+            .hero-gallery-rail {
+                padding: 0.75rem 2rem 1.5rem 2rem;
+            }
+        }
+
         @media (max-width: 768px) {
-            .nav-inner {
-                height: auto;
-                padding: 1rem;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 1rem;
+            .navbar-inner {
+                padding: 0.75rem 1.25rem;
             }
-            .nav-center-menu {
-                justify-content: center;
-                flex-wrap: wrap;
+            .nav-brand-title {
+                font-size: 1.05rem;
             }
-            .nav-user-chip {
-                justify-content: space-between;
+            .nav-brand-subtitle {
+                font-size: 0.7rem;
             }
-            .section-header-row {
-                flex-direction: column;
-                align-items: flex-start;
+            .nav-user-name, .nav-user-id {
+                display: none;
             }
-            .tab-toggle-container {
-                width: 100%;
+            .portal-main {
+                padding: 1.25rem 1.25rem 4rem 1.25rem;
             }
-            .tab-btn {
-                flex: 1;
-                justify-content: center;
+            .hero-showcase-container {
+                height: 520px; /* Mobile consistent height accommodating stacked content */
+                border-radius: 18px;
+            }
+            .hero-body-content {
+                padding: 1.75rem 1.25rem 1rem 1.25rem;
+            }
+            .hero-title {
+                font-size: 1.85rem;
+            }
+            .hero-description {
+                font-size: 0.92rem;
+                margin-bottom: 1.25rem;
+            }
+            .hero-meta-list {
+                gap: 0.65rem;
+            }
+            .hero-meta-item {
+                font-size: 0.8rem;
+                padding: 0.35rem 0.65rem;
+            }
+            .hero-gallery-rail {
+                padding: 0.75rem 1.25rem 1.25rem 1.25rem;
+                gap: 0.75rem;
+            }
+            .hero-thumb-card {
+                flex: 0 0 150px;
+                height: 85px;
             }
         }
     </style>
 </head>
 <body>
     <form id="studentDashboardForm" runat="server">
-        <!-- Top Navigation -->
-        <header class="portal-nav">
-            <div class="nav-inner">
+        <!-- Preview Notification Banner (Shown when evaluating without authenticated session) -->
+        <asp:Panel ID="pnlPreviewBanner" runat="server" CssClass="preview-banner" Visible="false">
+            <div>
+                <strong>DEMO PREVIEW:</strong> Viewing active student profile for <em>Martin Jalop (BSIT 3rd Year &bull; San Bartolome)</em>.
+            </div>
+            <div>
+                <a href="<%= ResolveUrl("~/Frontend/Login/Login.aspx") %>">LOGIN WITH ACTIVE ACCOUNT &rarr;</a>
+            </div>
+        </asp:Panel>
+        <!-- Top Standalone Navigation Bar -->
+        <header class="portal-navbar">
+            <div class="navbar-inner">
                 <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="nav-brand">
-                    <img src="<%= ResolveUrl("~/Frontend/Assets/QCU Logo.png") %>" alt="QCU Seal" class="nav-logo-img" />
+                    <img src="<%= ResolveUrl("~/Frontend/Assets/QCU Logo.png") %>" alt="University Emblem" class="nav-logo-img" />
                     <div>
-                        <div class="nav-brand-title">QCU EVENTS</div>
-                        <span class="nav-brand-badge">STUDENT PORTAL</span>
+                        <div class="nav-brand-title">University Event Portal</div>
+                        <div class="nav-brand-subtitle">Quezon City University</div>
                     </div>
                 </a>
 
-                <div class="nav-center-menu">
-                    <a href="javascript:void(0)" onclick="switchTab('catalog')" class="nav-menu-btn active" id="navBtnCatalog">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <span>Browse Events</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="switchTab('registered')" class="nav-menu-btn" id="navBtnRegistered">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                        </svg>
-                        <span>My Passes</span>
-                    </a>
-                </div>
+                <div class="nav-user-bar">
+                    <div class="nav-user-badge">
+                        <div class="nav-user-avatar">
+                            <asp:Literal ID="litAvatarInitials" runat="server" Text="MJ" />
+                        </div>
+                        <div class="nav-user-info">
+                            <span class="nav-user-name"><asp:Literal ID="litStudentName" runat="server" Text="Martin Jalop" /></span>
+                            <span class="nav-user-id">[ <asp:Literal ID="litStudentId" runat="server" Text="2024-00101" /> ]</span>
+                        </div>
+                    </div>
 
-                <div class="nav-user-chip">
-                    <div class="user-avatar-circle">
-                        <asp:Literal ID="litAvatarInitials" runat="server" Text="MJ" />
-                    </div>
-                    <div class="user-details">
-                        <span class="user-fullname"><asp:Literal ID="litStudentName" runat="server" Text="Martin Jalop" /></span>
-                        <span class="user-meta">[ <asp:Literal ID="litStudentId" runat="server" Text="2024-00101" /> ]</span>
-                    </div>
-                    <asp:LinkButton ID="btnSignOut" runat="server" CssClass="btn-signout" OnClick="btnSignOut_Click" ToolTip="Sign Out" CausesValidation="false">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <asp:LinkButton ID="btnSignOut" runat="server" CssClass="nav-btn-signout" OnClick="btnSignOut_Click" ToolTip="Sign Out" CausesValidation="false">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
                             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -1388,16 +1327,6 @@
             </div>
         </header>
 
-        <!-- Preview Notification Banner -->
-        <asp:Panel ID="pnlPreviewBanner" runat="server" CssClass="preview-banner" Visible="false">
-            <div>
-                <strong>DEMO PREVIEW:</strong> Viewing active student profile for <em>Martin Jalop (BSIT 3rd Year &bull; San Bartolome)</em>.
-            </div>
-            <div>
-                <a href="<%= ResolveUrl("~/Frontend/Login/Login.aspx") %>">LOGIN WITH ACTIVE ACCOUNT →</a>
-            </div>
-        </asp:Panel>
-
         <!-- Main Workspace -->
         <main class="portal-main">
             <!-- Toast Feedback Notification -->
@@ -1406,115 +1335,93 @@
             </asp:Panel>
 
             <!-- ══════════════════════════════════════════════════════════════
-                 HERO SECTION: EDITORIAL CAMPUS GALLERY
+                 HERO SECTION: MATCHING PHOTO 1 (CINEMATIC GALLERY STAGE)
                  ══════════════════════════════════════════════════════════════ -->
-            <section class="hero-gallery-section" id="gallery-hero">
-                <div class="gallery-top-badge-row">
-                    <div class="ticker-pill-main">
-                        <span class="ticker-pill-dot"></span>
-                        <span>FEATURED CAMPUS EXHIBITION</span>
-                    </div>
-                    <div class="gallery-controls-nav">
-                        <button type="button" class="gallery-nav-btn" onclick="prevSlide()">← PREV</button>
-                        <button type="button" class="gallery-nav-btn" onclick="nextSlide()">NEXT →</button>
-                    </div>
-                </div>
+            <section class="hero-showcase-container" id="heroGallery">
+                <!-- Background Image Layer & Dark Vignette Overlay -->
+                <div class="hero-bg-layer" id="heroBgImage" style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>');"></div>
+                <div class="hero-overlay-layer"></div>
 
-                <!-- Main Hero Spotlight Stage Card (4px 4px 0px #000 shadow) -->
-                <div class="hero-spotlight-card" id="spotlightCard">
-                    <!-- Left Banner Artwork -->
-                    <div class="spotlight-banner-area" id="spotlightBannerArea">
-                        <div class="spotlight-top-tags">
-                            <span class="spotlight-category-badge" id="spotlightBadge">#Hackathon</span>
-                            <span class="spotlight-live-tag">● FEATURED NOW</span>
+                <!-- Main Hero Headline & Metadata (Matching Photo 1) -->
+                <div class="hero-body-content">
+                    <h1 class="hero-title" id="heroTitle">Cybersecurity and AI Convention</h1>
+                    <p class="hero-description" id="heroDescription">
+                        Flagship cybersecurity conference and defensive hacking competition with enterprise penetration testers and student defense drills.
+                    </p>
+
+                    <div class="hero-meta-list">
+                        <div class="hero-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span id="heroVenue">QCU Auditorium</span>
                         </div>
 
-                        <div class="spotlight-center-art">
-                            <div class="spotlight-subheading" id="spotlightDateTag">OCT 24, 2026 // 09:00 AM - 04:00 PM</div>
-                            <h1 class="spotlight-title" id="spotlightTitle">National Cybersecurity Forum</h1>
+                        <div class="hero-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <span id="heroDate">Oct 09, 2026</span>
                         </div>
 
-                        <div class="spotlight-bottom-chips">
-                            <span class="spotlight-chip" id="spotlightVenue">📍 University Gymnasium</span>
-                            <span class="spotlight-chip">QCU Tech Division</span>
-                        </div>
-                    </div>
-
-                    <!-- Right Details Content Area -->
-                    <div class="spotlight-details-area">
-                        <div>
-                            <p class="spotlight-desc" id="spotlightDesc">
-                                Flagship academic conference and offensive security competition bringing together students, industry tech mentors, and enterprise partners for live defensive cyber drills.
-                            </p>
-
-                            <div class="spotlight-meta-grid">
-                                <div class="meta-box">
-                                    <div class="meta-box-label">Target Audience</div>
-                                    <div class="meta-box-val">College of Computer Studies</div>
-                                </div>
-                                <div class="meta-box">
-                                    <div class="meta-box-label">Seat Availability</div>
-                                    <div class="meta-box-val" id="spotlightSeats">86 / 100 Seats Booked</div>
-                                </div>
-                                <div class="meta-box">
-                                    <div class="meta-box-label">Registration Window</div>
-                                    <div class="meta-box-val">Open until Event Eve</div>
-                                </div>
-                                <div class="meta-box">
-                                    <div class="meta-box-label">Official Sponsors</div>
-                                    <div class="meta-box-val" id="spotlightSponsors">Microsoft, LESIT</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="spotlight-actions-bar">
-                            <div class="spotlight-capacity-pill" id="spotlightRemaining">
-                                ⚡ 14 SPOTS LEFT
-                            </div>
-
-                            <a href="#events-section" class="btn-tactile-action" onclick="focusAndInspectCard(102)">
-                                <span>INSPECT & RESERVE →</span>
-                            </a>
+                        <div class="hero-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span id="heroTime">10:00 AM - 03:00 PM</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Gallery Thumbnail Selector Rail (Flat, no card shadows) -->
-                <div class="gallery-rail-grid">
-                    <div class="gallery-thumb-card active-slide" id="thumb-0" onclick="selectSlide(0)">
-                        <span class="gallery-thumb-badge">#Hackathon</span>
-                        <div class="gallery-thumb-title">Cybersecurity Forum</div>
-                        <div class="gallery-thumb-meta">Oct 24 &bull; Gymnasium</div>
+                <!-- Bottom Horizontal Thumbnail Gallery Rail (Matching Photo 1) -->
+                <div class="hero-gallery-rail">
+                    <div class="hero-thumb-card active-thumb" id="heroThumb-0" onclick="selectHeroSlide(0)" 
+                         style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>');">
+                        <div class="thumb-overlay">
+                            <div class="thumb-title">Cybersecurity & AI Convention</div>
+                            <div class="thumb-meta">Oct 09 &bull; Auditorium</div>
+                        </div>
                     </div>
 
-                    <div class="gallery-thumb-card" id="thumb-1" onclick="selectSlide(1)">
-                        <span class="gallery-thumb-badge">#Workshop</span>
-                        <div class="gallery-thumb-title">AI & Cloud Architecture</div>
-                        <div class="gallery-thumb-meta">Oct 09 &bull; Tech Lab 3</div>
+                    <div class="hero-thumb-card" id="heroThumb-1" onclick="selectHeroSlide(1)"
+                         style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg") %>');">
+                        <div class="thumb-overlay">
+                            <div class="thumb-title">AI & Cloud Architecture</div>
+                            <div class="thumb-meta">Oct 09 &bull; Tech Lab 3</div>
+                        </div>
                     </div>
 
-                    <div class="gallery-thumb-card" id="thumb-2" onclick="selectSlide(2)">
-                        <span class="gallery-thumb-badge">#Seminar</span>
-                        <div class="gallery-thumb-title">Tech & Innovation Summit</div>
-                        <div class="gallery-thumb-meta">Nov 12 &bull; University Hall</div>
+                    <div class="hero-thumb-card" id="heroThumb-2" onclick="selectHeroSlide(2)"
+                         style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/campus-clean.jpg") %>');">
+                        <div class="thumb-overlay">
+                            <div class="thumb-title">Tech & Innovation Summit</div>
+                            <div class="thumb-meta">Nov 12 &bull; University Hall</div>
+                        </div>
                     </div>
 
-                    <div class="gallery-thumb-card" id="thumb-3" onclick="selectSlide(3)">
-                        <span class="gallery-thumb-badge">#SportsFest</span>
-                        <div class="gallery-thumb-title">Org Fair & SportsFest</div>
-                        <div class="gallery-thumb-meta">Nov 20 &bull; Main Plaza</div>
+                    <div class="hero-thumb-card" id="heroThumb-3" onclick="selectHeroSlide(3)"
+                         style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/QCU Background.png") %>');">
+                        <div class="thumb-overlay">
+                            <div class="thumb-title">Grand Org Fair & SportsFest</div>
+                            <div class="thumb-meta">Nov 20 &bull; Main Plaza</div>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Student Demographic Identity Matrix Bar -->
-                <div class="student-matrix-strip">
-                    <span class="matrix-title">COHORT MATRIX:</span>
-                    <span class="matrix-chip">BRANCH: <asp:Literal ID="litCampusBranch" runat="server" Text="San Bartolome" /></span>
-                    <span class="matrix-chip">DEPT: <asp:Literal ID="litDepartment" runat="server" Text="College of Computer Studies" /></span>
-                    <span class="matrix-chip">PROGRAM: <asp:Literal ID="litProgram" runat="server" Text="BSIT" /></span>
-                    <span class="matrix-chip">STANDING: <asp:Literal ID="litYearLevel" runat="server" Text="3rd Year" /></span>
                 </div>
             </section>
+
+            <!-- Student Demographic Identity Matrix Bar -->
+            <div class="student-matrix-strip">
+                <span class="matrix-title">COHORT MATRIX:</span>
+                <span class="matrix-chip">BRANCH: <asp:Literal ID="litCampusBranch" runat="server" Text="San Bartolome" /></span>
+                <span class="matrix-chip">DEPT: <asp:Literal ID="litDepartment" runat="server" Text="College of Computer Studies" /></span>
+                <span class="matrix-chip">PROGRAM: <asp:Literal ID="litProgram" runat="server" Text="BSIT" /></span>
+                <span class="matrix-chip">STANDING: <asp:Literal ID="litYearLevel" runat="server" Text="3rd Year" /></span>
+            </div>
 
             <!-- ══════════════════════════════════════════════════════════════
                  VIEW ALL EVENTS & TAB-LIKE TOGGLE SECTION
@@ -1527,7 +1434,7 @@
                         <p id="viewSectionSubtitle">Explore open registrations or inspect your booked electronic passes.</p>
                     </div>
 
-                    <!-- Tab-like Toggle (3px 3px 0px #000 shadow) -->
+                    <!-- Tab-like Toggle (Modern Segmented Control) -->
                     <div class="tab-toggle-container">
                         <button type="button" class="tab-btn active" id="tabCatalogBtn" onclick="switchTab('catalog')">
                             <span>All Open Events</span>
@@ -1544,44 +1451,48 @@
                      TAB 1 VIEW: ALL OPEN EVENTS CATALOG
                      ──────────────────────────────────────────────────────────── -->
                 <div class="events-catalog-content" id="catalogContentArea">
-                    <!-- Category Filter Pills Bar (Flat, clean borders) -->
+                    <!-- Category Filter Pills Bar -->
                     <div class="category-filter-bar">
                         <span class="filter-label">Filter Tags:</span>
-                        <a href="javascript:void(0)" class="cat-pill cat-pill-all active" onclick="filterByCategory('all', this)">#All Events</a>
-                        <a href="javascript:void(0)" class="cat-pill cat-pill-yellow" onclick="filterByCategory('seminar', this)">#Seminar</a>
-                        <a href="javascript:void(0)" class="cat-pill cat-pill-lime" onclick="filterByCategory('hackathon', this)">#Hackathon</a>
-                        <a href="javascript:void(0)" class="cat-pill cat-pill-yellow" onclick="filterByCategory('workshop', this)">#Workshop</a>
-                        <a href="javascript:void(0)" class="cat-pill cat-pill-neutral" onclick="filterByCategory('sportsfest', this)">#SportsFest</a>
-                        <a href="javascript:void(0)" class="cat-pill cat-pill-lime" onclick="filterByCategory('orgfair', this)">#OrgFair</a>
+                        <a href="javascript:void(0)" class="cat-pill active" onclick="filterByCategory('all', this)">#All Events</a>
+                        <a href="javascript:void(0)" class="cat-pill" onclick="filterByCategory('seminar', this)">#Seminar</a>
+                        <a href="javascript:void(0)" class="cat-pill" onclick="filterByCategory('hackathon', this)">#Hackathon</a>
+                        <a href="javascript:void(0)" class="cat-pill" onclick="filterByCategory('workshop', this)">#Workshop</a>
+                        <a href="javascript:void(0)" class="cat-pill" onclick="filterByCategory('sportsfest', this)">#SportsFest</a>
+                        <a href="javascript:void(0)" class="cat-pill" onclick="filterByCategory('orgfair', this)">#OrgFair</a>
                     </div>
 
-                    <!-- Raw Geometric Event Cards Grid (Cards have 4px 4px 0px #000 shadow) -->
+                    <!-- ────────────────────────────────────────────────────────────
+                         EVENT CARDS GRID: ORGANIZATION OF PHOTO 2 WITH CINEMATIC STYLING
+                         ──────────────────────────────────────────────────────────── -->
                     <div class="events-grid" id="eventsGridContainer">
                         <asp:Repeater ID="rptEventCards" runat="server" OnItemCommand="rptEventCards_ItemCommand">
                             <ItemTemplate>
                                 <div class="event-card" data-category='<%# Eval("CategoryFilterKey") %>' id='card-<%# Eval("EventId") %>'>
-                                    <!-- Top Half: Promotional Banner Area -->
-                                    <div class='event-promo-banner <%# Eval("BannerClass") %>'>
-                                        <!-- Category Pill Badge Top-Left -->
-                                        <span class='cat-pill <%# Eval("CategoryColorClass") %>'>
+                                    <!-- Top Half: Promotional Banner Area (Photo 2) -->
+                                    <div class="event-promo-banner" style='background-image: url("<%# Eval("BannerImageUrl") %>");'>
+                                        <!-- Category Tag Pill (Top-Left in Photo 2) -->
+                                        <div class="card-tag-pill">
                                             <%# Eval("CategoryTag") %>
-                                        </span>
+                                        </div>
 
-                                        <!-- Status Indicator Top-Right -->
+                                        <!-- Status Indicator (Top-Right in Photo 2) -->
                                         <%# Convert.ToBoolean(Eval("IsRegistrationOpen")) 
-                                            ? "<span class=\"badge-status badge-status-open\"><span class=\"badge-pulse-dot\"></span> OPEN</span>" 
-                                            : "<span class=\"badge-status badge-status-closed\">CLOSED</span>" %>
+                                            ? "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> OPEN</div>" 
+                                            : "<div class=\"card-status-pill card-status-closed\">CLOSED</div>" %>
 
-                                        <!-- Bottom-Right Capacity Indicator -->
-                                        <div class="capacity-pill">
-                                            <span><%# Eval("CurrentRegistrations") %>/<%# Eval("MaxCapacity") %> SEATS</span>
+                                        <!-- Capacity Indicator (Bottom-Right in Photo 2) -->
+                                        <div class="card-capacity-pill">
+                                            <%# Eval("CurrentRegistrations") %>/<%# Eval("MaxCapacity") %> SEATS
                                         </div>
                                     </div>
 
-                                    <!-- Bottom Half: Event Details & Sponsors -->
+                                    <!-- Bottom Half: Event Details (Photo 2) -->
                                     <div class="event-card-body">
+                                        <!-- Event Title: Prominent, Crisp, High-Contrast -->
                                         <h3 class="card-event-name"><%# Eval("Title") %></h3>
                                         
+                                        <!-- Location Line with Pin Icon (Photo 2) -->
                                         <div class="card-meta-line">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -1590,6 +1501,7 @@
                                             <span><%# Eval("VenueLocation") %></span>
                                         </div>
 
+                                        <!-- Schedule Line with Clock Icon (Photo 2) -->
                                         <div class="card-meta-line">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                                 <circle cx="12" cy="12" r="10"></circle>
@@ -1598,27 +1510,30 @@
                                             <span><%# Eval("FormattedSchedule") %></span>
                                         </div>
 
-                                        <!-- Sponsors Row -->
+                                        <!-- Sponsors Row (Photo 2) -->
                                         <div class="card-sponsors-row">
-                                            <span class="sponsor-label">Sponsors:</span>
+                                            <span class="sponsor-label">SPONSORS:</span>
                                             <%# Eval("SponsorBadgesHtml") %>
                                         </div>
 
-                                        <!-- Divider Line -->
+                                        <!-- Subtle Divider Line (Photo 2) -->
                                         <hr class="card-divider" />
 
-                                        <!-- Bottom Action Row with Tactile Button -->
+                                        <!-- Bottom Action Row (Photo 2) -->
                                         <div class="card-action-row">
-                                            <span class='<%# Convert.ToBoolean(Eval("IsRegistrationOpen")) ? "spots-left-hint" : "spots-left-hint closed" %>'>
-                                                <%# Convert.ToBoolean(Eval("IsRegistrationOpen")) ? "⚡ " + Eval("RemainingCapacity") + " SPOTS LEFT" : "REGISTRATION CLOSED" %>
-                                            </span>
+                                            <div class='<%# Convert.ToBoolean(Eval("IsRegistrationOpen")) ? "spots-left-hint" : "spots-left-hint closed" %>'>
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                                                </svg>
+                                                <span><%# Convert.ToBoolean(Eval("IsRegistrationOpen")) ? Eval("RemainingCapacity") + " SPOTS LEFT" : "REGISTRATION CLOSED" %></span>
+                                            </div>
 
                                             <asp:LinkButton ID="btnViewDetails" runat="server" 
                                                 CssClass="btn-view-details" 
                                                 CommandName="ViewDetails" 
                                                 CommandArgument='<%# Eval("EventId") %>'
                                                 CausesValidation="false">
-                                                <span>View Details →</span>
+                                                <span>VIEW DETAILS &rarr;</span>
                                             </asp:LinkButton>
                                         </div>
                                     </div>
@@ -1629,288 +1544,261 @@
                 </div>
 
                 <!-- ────────────────────────────────────────────────────────────
-                     TAB 2 VIEW: MY REGISTERED EVENTS & ELECTRONIC PASSES
+                     TAB 2 VIEW: MY REGISTERED EVENTS & PASSES
                      ──────────────────────────────────────────────────────────── -->
                 <div class="registered-section-content" id="registeredContentArea">
+                    <asp:Repeater ID="rptMyRegistrations" runat="server" OnItemCommand="rptMyRegistrations_ItemCommand">
+                        <HeaderTemplate>
+                            <div class="registered-table-wrapper">
+                                <table class="registered-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Event Title</th>
+                                            <th>Venue Location</th>
+                                            <th>Event Date & Time</th>
+                                            <th>Attendance Status</th>
+                                            <th style="text-align: right;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <tr>
+                                <td>
+                                    <div class="pass-event-title"><%# Eval("EventTitle") %></div>
+                                </td>
+                                <td><%# Eval("VenueLocation") %></td>
+                                <td style="font-family: var(--font-mono); font-size: 0.82rem;"><%# Eval("EventDateFormatted") %></td>
+                                <td>
+                                    <span class='status-badge-reg <%# GetStatusBadgeCss(Eval("Status")?.ToString()) %>'>
+                                        <%# Eval("Status") %>
+                                    </span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <asp:LinkButton ID="btnCancelRegistration" runat="server" 
+                                        CssClass="btn-cancel-reg"
+                                        CommandName="CancelRegistration" 
+                                        CommandArgument='<%# Eval("EventRegistrationId") %>'
+                                        Visible='<%# Eval("CanCancel") %>'
+                                        OnClientClick="return confirm('Confirm cancellation of your attendance pass for this event?');"
+                                        CausesValidation="false">
+                                        CANCEL PASS
+                                    </asp:LinkButton>
+                                </td>
+                            </tr>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </FooterTemplate>
+                    </asp:Repeater>
+
+                    <!-- Empty State for Registered Passes -->
                     <asp:Panel ID="pnlNoRegistrations" runat="server" Visible="false" CssClass="empty-passes-box">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" style="margin-bottom: 0.65rem;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.75" style="margin-bottom: 1rem;">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
-                        <h3 style="font-size: 1.25rem; font-weight: 900; margin-bottom: 0.35rem; text-transform: uppercase;">NO ACTIVE PASSES YET</h3>
-                        <p style="font-family: var(--font-mono); font-size: 0.82rem; color: #000000; margin-bottom: 1.25rem;">
-                            You have not enrolled in any upcoming campus events yet. Browse open events to reserve your electronic seat.
+                        <h4 style="font-size: 1.15rem; font-weight: 800; color: #FFFFFF; margin-bottom: 0.5rem;">No Active Event Registrations</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 440px; margin: 0 auto 1.5rem auto;">
+                            You have not booked electronic passes for any upcoming campus events yet. Explore open events above to register.
                         </p>
-                        <button type="button" class="btn-tactile-action" onclick="switchTab('catalog')">
-                            BROWSE OPEN CAMPUS EVENTS →
+                        <button type="button" class="btn-view-details" onclick="switchTab('catalog')">
+                            BROWSE OPEN EVENTS &rarr;
                         </button>
                     </asp:Panel>
-
-                    <div class="registered-table-wrapper">
-                        <asp:Repeater ID="rptMyRegistrations" runat="server" OnItemCommand="rptMyRegistrations_ItemCommand">
-                            <HeaderTemplate>
-                                <table class="registered-table">
-                                    <thead>
-                                        <tr>
-                                            <th>EVENT TITLE</th>
-                                            <th>VENUE LOCATION</th>
-                                            <th>EVENT DATE & TIME</th>
-                                            <th>ATTENDANCE STATUS</th>
-                                            <th>ACTIONS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                            </HeaderTemplate>
-                            <ItemTemplate>
-                                <tr>
-                                    <td><strong style="text-transform: uppercase;"><%# Eval("EventTitle") %></strong></td>
-                                    <td><%# Eval("VenueLocation") %></td>
-                                    <td><span style="font-family: var(--font-mono); font-weight: 700;"><%# Eval("EventDateFormatted") %></span></td>
-                                    <td>
-                                        <%# GetStatusBadgeHtml(Eval("Status")?.ToString()) %>
-                                    </td>
-                                    <td>
-                                        <asp:Button ID="btnCancelReg" runat="server" 
-                                            Text="Cancel Pass" 
-                                            CssClass="btn-cancel-reg" 
-                                            CommandName="CancelRegistration" 
-                                            CommandArgument='<%# Eval("EventRegistrationId") %>'
-                                            Enabled='<%# Convert.ToBoolean(Eval("CanCancel")) %>'
-                                            OnClientClick="return confirm('Cancel this registration? Your seat will be released back to the event capacity.');" />
-                                    </td>
-                                </tr>
-                            </ItemTemplate>
-                            <FooterTemplate>
-                                    </tbody>
-                                </table>
-                            </FooterTemplate>
-                        </asp:Repeater>
-                    </div>
                 </div>
             </section>
         </main>
 
         <!-- ══════════════════════════════════════════════════════════════
-             MODAL: EVENT DETAILS & REGISTRATION CONFIRMATION
+             REGISTRATION & EVENT DETAILS MODAL DIALOG
              ══════════════════════════════════════════════════════════════ -->
         <asp:Panel ID="pnlModalDetails" runat="server" CssClass="modal-overlay" Visible="false">
-            <div class="modal-box">
+            <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalEventTitle">
                 <div class="modal-header">
-                    <h4>[ EVENT ITINERARY & RESERVATION ]</h4>
+                    <h4 id="modalEventTitle">Event Registration Details</h4>
                     <asp:LinkButton ID="btnCloseModal" runat="server" CssClass="modal-close-btn" OnClick="btnCloseModal_Click" CausesValidation="false">&times;</asp:LinkButton>
                 </div>
 
                 <div class="modal-body">
                     <div>
-                        <h3 style="font-size: 1.35rem; font-weight: 900; color: #000000; margin-bottom: 0.45rem; text-transform: uppercase;">
+                        <h3 style="font-size: 1.35rem; font-weight: 800; color: #FFFFFF; margin-bottom: 0.5rem; text-transform: uppercase;">
                             <asp:Literal ID="litModalTitle" runat="server" />
                         </h3>
-                        <p style="font-size: 0.9rem; color: #000000; line-height: 1.5; font-weight: 500;">
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.55;">
                             <asp:Literal ID="litModalDescription" runat="server" />
                         </p>
                     </div>
 
                     <div class="modal-detail-grid">
                         <div class="modal-meta-box">
-                            <div class="modal-meta-box-label">📍 Venue Location</div>
-                            <div class="modal-meta-box-val"><asp:Literal ID="litModalVenue" runat="server" /></div>
-                        </div>
-
-                        <div class="modal-meta-box">
-                            <div class="modal-meta-box-label">📅 Schedule Time</div>
+                            <div class="modal-meta-box-label">SCHEDULE & TIME</div>
                             <div class="modal-meta-box-val"><asp:Literal ID="litModalSchedule" runat="server" /></div>
                         </div>
 
                         <div class="modal-meta-box">
-                            <div class="modal-meta-box-label">👤 Seat Availability</div>
+                            <div class="modal-meta-box-label">VENUE LOCATION</div>
+                            <div class="modal-meta-box-val"><asp:Literal ID="litModalVenue" runat="server" /></div>
+                        </div>
+
+                        <div class="modal-meta-box">
+                            <div class="modal-meta-box-label">AVAILABLE SEATS</div>
                             <div class="modal-meta-box-val"><asp:Literal ID="litModalCapacity" runat="server" /></div>
                         </div>
 
                         <div class="modal-meta-box">
-                            <div class="modal-meta-box-label">⏱ Registration Window</div>
+                            <div class="modal-meta-box-label">REGISTRATION WINDOW</div>
                             <div class="modal-meta-box-val"><asp:Literal ID="litModalRegPeriod" runat="server" /></div>
                         </div>
-                    </div>
 
-                    <!-- Sponsors display inside modal -->
-                    <div>
-                        <div class="modal-meta-box-label" style="margin-bottom: 0.4rem;">Official Event Sponsors:</div>
-                        <div class="card-sponsors-row">
-                            <asp:Literal ID="litModalSponsors" runat="server" />
+                        <div class="modal-meta-box" style="grid-column: 1 / -1;">
+                            <div class="modal-meta-box-label">OFFICIAL SPONSORS</div>
+                            <div class="modal-meta-box-val"><asp:Literal ID="litModalSponsors" runat="server" Text="AWS, Microsoft" /></div>
                         </div>
-                    </div>
-
-                    <div class="modal-notice-banner">
-                        <strong>ATTENDANCE NOTICE:</strong> Default status upon reservation is <em>NoShow</em> until verified via electronic attendance check-in on event day. Reservations can be cancelled anytime prior to registration close.
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <asp:HiddenField ID="hfSelectedEventId" runat="server" />
-                    <asp:Button ID="btnCancelModal" runat="server" Text="Close Window" CssClass="btn-modal-cancel" OnClick="btnCloseModal_Click" CausesValidation="false" />
-                    <asp:Button ID="btnConfirmRegistration" runat="server" Text="Confirm Registration →" CssClass="btn-register-action" OnClick="btnConfirmRegistration_Click" />
+                    <asp:Button ID="btnCancelModal" runat="server" Text="CLOSE" CssClass="btn-modal-cancel" OnClick="btnCloseModal_Click" CausesValidation="false" />
+                    <asp:Button ID="btnConfirmRegistration" runat="server" Text="CONFIRM PASS REGISTRATION &rarr;" CssClass="btn-register-action" OnClick="btnConfirmRegistration_Click" />
                 </div>
             </div>
         </asp:Panel>
     </form>
 
-    <!-- Client-Side Script for Disciplined Palette & Interactions -->
+    <!-- Client-Side Scripting: Slide Switcher, Segmented Tabs, Category Filtering -->
     <script type="text/javascript">
-        // Gallery exhibition data restricted to yellow (#FFDE59), lime (#A6F4C5), warm canvas (#FAF7EE)
-        var gallerySlides = [
+        // ─── Hero Gallery Slide Carousel Data ───
+        var heroSlides = [
             {
-                id: 102,
-                title: "National Cybersecurity & Hacking Forum",
-                category: "#Hackathon",
-                bgClass: "#FFDE59",
-                date: "OCT 24, 2026 // 09:00 AM - 04:00 PM",
-                venue: "📍 Main Campus - University Gymnasium",
-                desc: "Flagship cybersecurity conference and defensive hacking competition with enterprise penetration testers and student defense drills.",
-                seats: "86 / 100 Seats Booked",
-                remaining: "⚡ 14 SPOTS LEFT",
-                sponsors: "Microsoft, LESIT"
+                title: "Cybersecurity and AI Convention",
+                description: "Flagship cybersecurity conference and defensive hacking competition with enterprise penetration testers and student defense drills.",
+                venue: "QCU Auditorium",
+                date: "Oct 09, 2026",
+                time: "10:00 AM - 03:00 PM",
+                bgUrl: '<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>'
             },
             {
-                id: 101,
                 title: "AI & Cloud Architecture Workshop",
-                category: "#Workshop",
-                bgClass: "#A6F4C5",
-                date: "OCT 09, 2026 // 10:00 AM - 03:00 PM",
-                venue: "📍 QCU San Bartolome - Tech Lab 3",
-                desc: "Deep dive into serverless cloud infrastructure, neural network deployments, and production container scaling with industry guest speakers.",
-                seats: "42 / 50 Seats Booked",
-                remaining: "⚡ 8 SPOTS LEFT",
-                sponsors: "AWS, Google"
+                description: "Deep dive into serverless cloud infrastructure, neural network deployments, and production container scaling with industry guest speakers.",
+                venue: "QCU San Bartolome - Tech Lab 3",
+                date: "Oct 09, 2026",
+                time: "10:00 AM - 03:00 PM",
+                bgUrl: '<%= ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg") %>'
             },
             {
-                id: 103,
-                title: "Annual Tech & Innovation Summit",
-                category: "#Seminar",
-                bgClass: "#FFDE59",
-                date: "NOV 12, 2026 // 08:30 AM - 04:30 PM",
-                venue: "📍 QCU Main Campus - University Hall",
-                desc: "Flagship university conference gathering faculty, researchers, and student engineering developers to demonstrate emerging hardware and AI inventions.",
-                seats: "142 / 200 Seats Booked",
-                remaining: "⚡ 58 SPOTS LEFT",
-                sponsors: "AWS, Microsoft"
+                title: "Tech & Innovation Summit",
+                description: "Annual academic showcase bringing together university students and tech sponsors for student capstone demonstrations and keynote sessions.",
+                venue: "QCU Main Campus - University Hall",
+                date: "Nov 12, 2026",
+                time: "08:30 AM - 04:30 PM",
+                bgUrl: '<%= ResolveUrl("~/Frontend/Assets/campus-clean.jpg") %>'
             },
             {
-                id: 104,
-                title: "Grand Org Fair & SportsFest Kickoff",
-                category: "#SportsFest",
-                bgClass: "#FAF7EE",
-                date: "NOV 20, 2026 // 08:00 AM - 06:00 PM",
-                venue: "📍 QCU Main Plaza & Athletic Grounds",
-                desc: "Annual student organization recruitment showcase, intramural games opening ceremony, and campus-wide creative exhibition with live performances.",
-                seats: "210 / 350 Seats Booked",
-                remaining: "⚡ 140 SPOTS LEFT",
-                sponsors: "LESIT, Google"
+                title: "Grand Org Fair & SportsFest",
+                description: "Campus-wide student organization recruitment showcase, intramural games opening ceremony, and student creative exhibition.",
+                venue: "QCU Main Plaza & Athletic Grounds",
+                date: "Nov 20, 2026",
+                time: "08:00 AM - 06:00 PM",
+                bgUrl: '<%= ResolveUrl("~/Frontend/Assets/QCU Background.png") %>'
             }
         ];
 
-        var currentSlideIndex = 0;
+        function selectHeroSlide(index) {
+            if (index < 0 || index >= heroSlides.Length) {
+                if (index < 0 || index >= heroSlides.length) return;
+            }
+            var data = heroSlides[index];
 
-        function selectSlide(index) {
-            currentSlideIndex = index;
-            var item = gallerySlides[index];
+            var bg = document.getElementById("heroBgImage");
+            if (bg) bg.style.backgroundImage = "url('" + data.bgUrl + "')";
 
-            document.getElementById('spotlightBannerArea').style.backgroundColor = item.bgClass;
-            document.getElementById('spotlightBadge').textContent = item.category;
-            document.getElementById('spotlightDateTag').textContent = item.date;
-            document.getElementById('spotlightTitle').textContent = item.title;
-            document.getElementById('spotlightVenue').textContent = item.venue;
-            document.getElementById('spotlightDesc').textContent = item.desc;
-            document.getElementById('spotlightSeats').textContent = item.seats;
-            document.getElementById('spotlightRemaining').textContent = item.remaining;
-            document.getElementById('spotlightSponsors').textContent = item.sponsors;
+            var t = document.getElementById("heroTitle");
+            if (t) t.textContent = data.title;
 
-            for (var i = 0; i < gallerySlides.length; i++) {
-                var thumb = document.getElementById('thumb-' + i);
+            var d = document.getElementById("heroDescription");
+            if (d) d.textContent = data.description;
+
+            var v = document.getElementById("heroVenue");
+            if (v) v.textContent = data.venue;
+
+            var dt = document.getElementById("heroDate");
+            if (dt) dt.textContent = data.date;
+
+            var tm = document.getElementById("heroTime");
+            if (tm) tm.textContent = data.time;
+
+            for (var i = 0; i < heroSlides.length; i++) {
+                var thumb = document.getElementById("heroThumb-" + i);
                 if (thumb) {
                     if (i === index) {
-                        thumb.classList.add('active-slide');
+                        thumb.classList.add("active-thumb");
                     } else {
-                        thumb.classList.remove('active-slide');
+                        thumb.classList.remove("active-thumb");
                     }
                 }
             }
         }
 
-        function nextSlide() {
-            var next = (currentSlideIndex + 1) % gallerySlides.length;
-            selectSlide(next);
-        }
+        // ─── Segmented Tab Switcher ───
+        function switchTab(viewName) {
+            var catalogArea = document.getElementById("catalogContentArea");
+            var registeredArea = document.getElementById("registeredContentArea");
+            var tabCatalogBtn = document.getElementById("tabCatalogBtn");
+            var tabRegisteredBtn = document.getElementById("tabRegisteredBtn");
+            var titleElem = document.getElementById("viewSectionTitle");
+            var subtitleElem = document.getElementById("viewSectionSubtitle");
 
-        function prevSlide() {
-            var prev = (currentSlideIndex - 1 + gallerySlides.length) % gallerySlides.length;
-            selectSlide(prev);
-        }
+            if (viewName === "registered") {
+                if (catalogArea) catalogArea.classList.add("hidden-view");
+                if (registeredArea) registeredArea.classList.add("active-view");
 
-        function focusAndInspectCard(eventId) {
-            switchTab('catalog');
-            var card = document.getElementById('card-' + eventId);
-            if (card) {
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
+                if (tabCatalogBtn) tabCatalogBtn.classList.remove("active");
+                if (tabRegisteredBtn) tabRegisteredBtn.classList.add("active");
 
-        // Tab Switching between "All Open Events" and "My Registered Events"
-        function switchTab(tabKey) {
-            var catalogArea = document.getElementById('catalogContentArea');
-            var registeredArea = document.getElementById('registeredContentArea');
-            var tabCatalogBtn = document.getElementById('tabCatalogBtn');
-            var tabRegisteredBtn = document.getElementById('tabRegisteredBtn');
-            var navBtnCatalog = document.getElementById('navBtnCatalog');
-            var navBtnRegistered = document.getElementById('navBtnRegistered');
-            var title = document.getElementById('viewSectionTitle');
-            var subtitle = document.getElementById('viewSectionSubtitle');
-
-            if (tabKey === 'registered') {
-                catalogArea.classList.add('hidden-view');
-                registeredArea.classList.add('active-view');
-                tabCatalogBtn.classList.remove('active');
-                tabRegisteredBtn.classList.add('active');
-                if (navBtnCatalog) navBtnCatalog.classList.remove('active');
-                if (navBtnRegistered) navBtnRegistered.classList.add('active');
-                if (title) title.textContent = "My Registered Events & Passes";
-                if (subtitle) subtitle.textContent = "Inspect your enrolled passes and verified event schedules.";
+                if (titleElem) titleElem.textContent = "My Registered Events & Passes";
+                if (subtitleElem) subtitleElem.textContent = "Inspect your enrolled passes and verified event schedules.";
             } else {
-                catalogArea.classList.remove('hidden-view');
-                registeredArea.classList.remove('active-view');
-                tabCatalogBtn.classList.add('active');
-                tabRegisteredBtn.classList.remove('active');
-                if (navBtnCatalog) navBtnCatalog.classList.add('active');
-                if (navBtnRegistered) navBtnRegistered.classList.remove('active');
-                if (title) title.textContent = "Campus Event Matrix";
-                if (subtitle) subtitle.textContent = "Explore open registrations or inspect your booked electronic passes.";
+                if (catalogArea) catalogArea.classList.remove("hidden-view");
+                if (registeredArea) registeredArea.classList.remove("active-view");
+
+                if (tabCatalogBtn) tabCatalogBtn.classList.add("active");
+                if (tabRegisteredBtn) tabRegisteredBtn.classList.remove("active");
+
+                if (titleElem) titleElem.textContent = "Campus Event Matrix";
+                if (subtitleElem) subtitleElem.textContent = "Explore open registrations or inspect your booked electronic passes.";
             }
         }
 
-        // Category Filter Function
-        function filterByCategory(category, pillEl) {
-            var pills = document.querySelectorAll('.cat-pill');
-            pills.forEach(function(p) { p.classList.remove('active'); });
-            if (pillEl) pillEl.classList.add('active');
+        // ─── Category Filter Pills ───
+        function filterByCategory(categoryKey, pillElem) {
+            var pills = document.querySelectorAll(".cat-pill");
+            pills.forEach(function (p) { p.classList.remove("active"); });
+            if (pillElem) pillElem.classList.add("active");
 
-            var cards = document.querySelectorAll('.events-grid .event-card');
-            cards.forEach(function(card) {
-                var cardCat = card.getAttribute('data-category');
-                if (category === 'all' || cardCat === category) {
-                    card.style.display = 'flex';
+            var cards = document.querySelectorAll(".event-card");
+            var visibleCount = 0;
+
+            cards.forEach(function (card) {
+                var cardCat = card.getAttribute("data-category") || "";
+                if (categoryKey === "all" || cardCat.toLowerCase() === categoryKey.toLowerCase()) {
+                    card.style.display = "flex";
+                    visibleCount++;
                 } else {
-                    card.style.display = 'none';
+                    card.style.display = "none";
                 }
             });
-        }
 
-        // Handle URL Hash on load
-        window.addEventListener('DOMContentLoaded', function() {
-            if (window.location.hash === '#my-registrations') {
-                switchTab('registered');
+            var countElem = document.getElementById("openEventsCount");
+            if (countElem) {
+                countElem.textContent = visibleCount + " OPEN";
             }
-        });
+        }
     </script>
 </body>
 </html>

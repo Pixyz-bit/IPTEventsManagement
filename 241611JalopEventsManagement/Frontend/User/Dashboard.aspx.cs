@@ -37,11 +37,12 @@ namespace _241611JalopEventsManagement.Frontend.User
             public List<string> Sponsors { get; set; } = new List<string>();
             public int RemainingCapacity => Math.Max(0, MaxCapacity - CurrentRegistrations);
 
-            // Neo-Brutalism Category Badging
+            // Category & Imagery
             public string CategoryTag { get; set; } = "#Seminar";
             public string CategoryFilterKey { get; set; } = "seminar";
-            public string CategoryColorClass { get; set; } = "cat-pill-lime";
-            public string BannerClass { get; set; } = "banner-lime";
+            public string CategoryColorClass { get; set; } = "cat-pill-cyan";
+            public string BannerClass { get; set; } = "banner-gradient-1";
+            public string BannerImageUrl { get; set; } = "";
         }
 
         public class StudentRegistrationViewModel
@@ -194,47 +195,41 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             string schedule = $"{ev.EventStart:MMM dd, yyyy} | {ev.EventStart:hh:mm tt} - {ev.EventEnd:hh:mm tt}";
 
-            // Disciplined Neo-Brutalist Category derivation (strictly yellow, lime, neutral)
+            // Modern category & banner image derivation
             string combined = ((ev.Title ?? "") + " " + (ev.Description ?? "")).ToLowerInvariant();
             string catTag = "#Seminar";
             string filterKey = "seminar";
-            string colorClass = "cat-pill-lime";
-            string bannerClass = "banner-lime";
+            string bannerImg = ResolveUrl("~/Frontend/Assets/campus-clean.jpg");
 
             if (combined.Contains("hack") || combined.Contains("cyber") || combined.Contains("security") || combined.Contains("code"))
             {
                 catTag = "#Hackathon";
                 filterKey = "hackathon";
-                colorClass = "cat-pill-yellow";
-                bannerClass = "banner-yellow";
+                bannerImg = ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg");
             }
             else if (combined.Contains("workshop") || combined.Contains("lab") || combined.Contains("cloud") || combined.Contains("ai "))
             {
                 catTag = "#Workshop";
                 filterKey = "workshop";
-                colorClass = "cat-pill-yellow";
-                bannerClass = "banner-yellow";
+                bannerImg = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg");
             }
             else if (combined.Contains("sport") || combined.Contains("fest") || combined.Contains("game") || combined.Contains("tournament"))
             {
                 catTag = "#SportsFest";
                 filterKey = "sportsfest";
-                colorClass = "cat-pill-neutral";
-                bannerClass = "banner-warm";
+                bannerImg = ResolveUrl("~/Frontend/Assets/QCU Background.png");
             }
             else if (combined.Contains("org") || combined.Contains("fair") || combined.Contains("club") || combined.Contains("expo"))
             {
                 catTag = "#OrgFair";
                 filterKey = "orgfair";
-                colorClass = "cat-pill-lime";
-                bannerClass = "banner-lime";
+                bannerImg = ResolveUrl("~/Frontend/Assets/QCU Background.png");
             }
             else if (combined.Contains("summit") || combined.Contains("innovation") || combined.Contains("conference"))
             {
                 catTag = "#TechSummit";
                 filterKey = "seminar";
-                colorClass = "cat-pill-yellow";
-                bannerClass = "banner-yellow";
+                bannerImg = ResolveUrl("~/Frontend/Assets/campus-clean.jpg");
             }
 
             return new EventCardViewModel
@@ -254,8 +249,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 FormattedSchedule = schedule,
                 CategoryTag = catTag,
                 CategoryFilterKey = filterKey,
-                CategoryColorClass = colorClass,
-                BannerClass = bannerClass
+                BannerImageUrl = bannerImg
             };
         }
 
@@ -299,8 +293,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                     FormattedSchedule = "Oct 09, 2026 | 10:00 AM - 03:00 PM",
                     CategoryTag = "#Workshop",
                     CategoryFilterKey = "workshop",
-                    CategoryColorClass = "cat-pill-yellow",
-                    BannerClass = "banner-yellow",
+                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg"),
                     Sponsors = new List<string> { "AWS", "Google" },
                     SponsorBadgesHtml = "<span class=\"sponsor-pill\">AWS</span> <span class=\"sponsor-pill\">Google</span>"
                 },
@@ -321,8 +314,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                     FormattedSchedule = "Oct 24, 2026 | 09:00 AM - 04:00 PM",
                     CategoryTag = "#Hackathon",
                     CategoryFilterKey = "hackathon",
-                    CategoryColorClass = "cat-pill-lime",
-                    BannerClass = "banner-lime",
+                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg"),
                     Sponsors = new List<string> { "Microsoft", "LESIT" },
                     SponsorBadgesHtml = "<span class=\"sponsor-pill\">Microsoft</span> <span class=\"sponsor-pill\">LESIT</span>"
                 },
@@ -343,8 +335,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                     FormattedSchedule = "Nov 12, 2026 | 08:30 AM - 04:30 PM",
                     CategoryTag = "#Seminar",
                     CategoryFilterKey = "seminar",
-                    CategoryColorClass = "cat-pill-yellow",
-                    BannerClass = "banner-yellow",
+                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/campus-clean.jpg"),
                     Sponsors = new List<string> { "AWS", "Microsoft" },
                     SponsorBadgesHtml = "<span class=\"sponsor-pill\">AWS</span> <span class=\"sponsor-pill\">Microsoft</span>"
                 },
@@ -358,17 +349,16 @@ namespace _241611JalopEventsManagement.Frontend.User
                     CurrentRegistrations = 210,
                     EventStart = DateTime.Today.AddDays(25).AddHours(8),
                     EventEnd = DateTime.Today.AddDays(25).AddHours(18),
-                    RegStart = DateTime.Today.AddDays(-1),
+                    RegStart = DateTime.Today.AddDays(-10),
                     RegEnd = DateTime.Today.AddDays(20),
                     Status = "Upcoming",
                     IsRegistrationOpen = true,
                     FormattedSchedule = "Nov 20, 2026 | 08:00 AM - 06:00 PM",
                     CategoryTag = "#SportsFest",
                     CategoryFilterKey = "sportsfest",
-                    CategoryColorClass = "cat-pill-neutral",
-                    BannerClass = "banner-warm",
-                    Sponsors = new List<string> { "LESIT", "Google" },
-                    SponsorBadgesHtml = "<span class=\"sponsor-pill\">LESIT</span> <span class=\"sponsor-pill\">Google</span>"
+                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/QCU Background.png"),
+                    Sponsors = new List<string> { "Red Bull", "Smart", "GCash" },
+                    SponsorBadgesHtml = "<span class=\"sponsor-pill\">Red Bull</span> <span class=\"sponsor-pill\">Smart</span> <span class=\"sponsor-pill\">GCash</span>"
                 }
             };
 
@@ -442,17 +432,24 @@ namespace _241611JalopEventsManagement.Frontend.User
         {
             if (string.Equals(status, "Present", StringComparison.OrdinalIgnoreCase))
             {
-                return "<span class=\"status-badge status-badge-present\">● PRESENT</span>";
+                return "<span class=\"status-badge-reg status-badge-present\">● PRESENT</span>";
             }
             else if (string.Equals(status, "Cancelled", StringComparison.OrdinalIgnoreCase))
             {
-                return "<span class=\"status-badge status-badge-cancelled\">✕ CANCELLED</span>";
+                return "<span class=\"status-badge-reg status-badge-cancelled\">✕ CANCELLED</span>";
             }
             else
             {
                 // Default: NoShow
-                return "<span class=\"status-badge status-badge-noshow\">● REGISTERED (NOSHOW)</span>";
+                return "<span class=\"status-badge-reg status-badge-noshow\">● REGISTERED (NOSHOW)</span>";
             }
+        }
+
+        public string GetStatusBadgeCss(string status)
+        {
+            if (string.Equals(status, "Present", StringComparison.OrdinalIgnoreCase)) return "status-badge-present";
+            if (string.Equals(status, "Cancelled", StringComparison.OrdinalIgnoreCase)) return "status-badge-cancelled";
+            return "status-badge-noshow";
         }
 
         #endregion

@@ -14,6 +14,7 @@ This directory contains the authoritative engineering standards, UI/UX design pr
 | **[`02_UIUXDesignPrinciples.md`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/Dev%20Rules/02_UIUXDesignPrinciples.md)** | UI/UX & Design System | Dark slate palette tokens (`#090d16`, `#0d1322`), typography scales (`Plus Jakarta Sans`), 1.8px monoline SVGs, master page shells, preview mode fallback. |
 | **[`03_BusinessRulesAndStateMachines.md`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/Dev%20Rules/03_BusinessRulesAndStateMachines.md)** | Business Rules & Logic | 4-tier audience matrix (NULL = Open to All), registration `'NoShow'` state machine, `RegEnd` cancellation deadline, atomic slot release. |
 | **[`04_DevelopmentWorkflow.md`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/Dev%20Rules/04_DevelopmentWorkflow.md)** | Workflow & Verification | 4-part response breakdown, living documentation "When It Is Used" template, MSBuild verification, IIS Express port 51717 testing. |
+| **[`05_PageInventoryAndStatusChecker.md`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/Dev%20Rules/05_PageInventoryAndStatusChecker.md)** | Page Inventory & Status Checker | Master matrix of all 16 project pages across modules, architectural dependencies, current completion state, and roadmap. |
 
 ---
 
