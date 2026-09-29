@@ -118,7 +118,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 }
                 else
                 {
-                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background:rgba(56,189,248,0.15); border-color:rgba(56,189,248,0.3); color:#38bdf8;\">&#9679; " + Server.HtmlEncode(statusText.ToUpper()) + "</span>";
+                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">&#9679; " + Server.HtmlEncode(statusText.ToUpper()) + "</span>";
                 }
             }
             else
@@ -127,17 +127,18 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 litEventDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
                 litEventVenue.Text = "Main Academic Amphitheater";
                 litEventCapacitySummary.Text = "0 / 100";
-                litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background:rgba(56,189,248,0.15); border-color:rgba(56,189,248,0.3); color:#38bdf8;\">&#9679; UPCOMING</span>";
+                litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">&#9679; UPCOMING</span>";
             }
 
             // Load Attendees for this event
             var registrations = _registrationRepo.GetRegistrationsByEvent(CurrentEventId);
 
-            // Triage into dual-sheet cohorts
-            // Pre-Registered: Active registrations awaiting scan (Status == 'NoShow' or not cancelled/present)
-            var preRegisteredList = registrations.Where(r => !string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase) && !string.Equals(r.Status, "Present", StringComparison.OrdinalIgnoreCase)).ToList();
+            // Triage into dual-sheet cohorts:
+            // 1. Expected Attendees: All active registrations (includes Reserved/NoShow and Present).
+            //    RULE: Once scanned, an attendee's row remains in EventPreRegistered and changes status to 'Present'.
+            var preRegisteredList = registrations.Where(r => !string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase)).ToList();
             
-            // Cancelled: Revoked passes
+            // 2. Revoked Passes: Cancelled registrations
             var cancelledList = registrations.Where(r => string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase)).ToList();
 
             // Populate KPIs
@@ -167,6 +168,23 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             // Populate Filter Dropdowns dynamically
             PopulateFilterOptions(registrations);
+        }
+
+        public string GetStatusBadgeHtml(object statusObj)
+        {
+            string status = statusObj?.ToString() ?? "Reserved";
+            if (string.Equals(status, "Present", StringComparison.OrdinalIgnoreCase))
+            {
+                return "<span class=\"status-pill status-pill-present\"><span class=\"status-dot status-dot-present\"></span>Present</span>";
+            }
+            else if (string.Equals(status, "Cancelled", StringComparison.OrdinalIgnoreCase))
+            {
+                return "<span class=\"status-pill status-pill-cancelled\"><span class=\"status-dot status-dot-cancelled\"></span>Cancelled</span>";
+            }
+            else
+            {
+                return "<span class=\"status-pill status-pill-reserved\"><span class=\"status-dot status-dot-reserved\"></span>Reserved</span>";
+            }
         }
 
         private void PopulateFilterOptions(List<EventRegistrationModel> list)
@@ -213,6 +231,23 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             if (ddlFilterCourse.Items.FindByValue(selectedCourse) != null)
             {
                 ddlFilterCourse.SelectedValue = selectedCourse;
+            }
+        }
+
+        protected void btnModalCancelPass_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(hfModalEventRegId.Value, out int regId) && regId > 0)
+            {
+                bool success = _registrationRepo.AdminVoidRegistration(regId);
+                if (success)
+                {
+                    ShowAlert("Attendee registration pass successfully voided. 1 seat has been released back to the event capacity pool in real time.", true);
+                    LoadEventData();
+                }
+                else
+                {
+                    ShowAlert("Unable to void registration. The pass may already be cancelled or invalid.", false);
+                }
             }
         }
 

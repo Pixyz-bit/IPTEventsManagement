@@ -62,6 +62,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.TextBox txtMaxCapacity;
 
         /// <summary>
+        /// fuEventPhoto control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.FileUpload fuEventPhoto;
+
+        /// <summary>
         /// txtEventDate control.
         /// </summary>
         protected global::System.Web.UI.WebControls.TextBox txtEventDate;
@@ -151,55 +156,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         /// </summary>
         protected global::System.Web.UI.WebControls.LinkButton btnPreset5;
 
-        /// <summary>
-        /// litPreviewTitle control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPreviewTitle;
 
-        /// <summary>
-        /// litPreviewVenue control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPreviewVenue;
-
-        /// <summary>
-        /// litPreviewDate control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPreviewDate;
-
-        /// <summary>
-        /// litPreviewTime control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPreviewTime;
-
-        /// <summary>
-        /// litPreviewCapacity control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPreviewCapacity;
-
-        /// <summary>
-        /// litPreviewSchedule control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPreviewSchedule;
-
-        /// <summary>
-        /// litPreviewBranch control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPreviewBranch;
-
-        /// <summary>
-        /// litPreviewDept control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPreviewDept;
-
-        /// <summary>
-        /// litPreviewPrograms control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPreviewPrograms;
-
-        /// <summary>
-        /// litPreviewSponsorCount control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPreviewSponsorCount;
 
         /// <summary>
         /// btnConfirmPublish control.

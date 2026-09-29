@@ -8,7 +8,7 @@
     <style>
         /* ==========================================================================
            Event Pre-Registered Roster Styling System
-           Adheres to Enterprise Dark Slate Palette & Strict MM/dd/yyyy Date Standards
+           Institutional Clean White Palette (#ffffff surfaces, #2563eb primary)
            ========================================================================== */
         
         .prereg-container {
@@ -18,28 +18,18 @@
             width: 100%;
         }
 
-        /* Context Header Banner */
+        /* Context Header Banner (Pure White Card) */
         .event-context-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
-            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--brand-primary);
             border-radius: var(--radius-lg);
             padding: 1.5rem 1.75rem;
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-card);
             position: relative;
-            overflow: hidden;
-        }
-
-        .event-context-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--brand-primary), var(--brand-secondary));
         }
 
         .event-context-top {
@@ -51,11 +41,11 @@
         }
 
         .event-title-group h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-main);
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--text-heading);
             letter-spacing: -0.02em;
-            margin: 0 0 0.35rem 0;
+            margin: 0 0 0.45rem 0;
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -65,24 +55,26 @@
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.75rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
+            gap: 0.65rem;
+            font-size: 0.825rem;
+            color: var(--text-body);
         }
 
         .meta-chip {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0.25rem 0.65rem;
-            border-radius: 9999px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: var(--text-muted);
+            gap: 0.4rem;
+            background-color: var(--bg-subtle);
+            padding: 0.3rem 0.75rem;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-body);
+            font-size: 0.8rem;
         }
 
         .meta-chip strong {
-            color: var(--text-main);
+            color: var(--text-heading);
+            font-weight: 700;
         }
 
         .event-switcher {
@@ -94,27 +86,28 @@
         .event-switcher label {
             font-size: 0.825rem;
             color: var(--text-muted);
-            font-weight: 600;
+            font-weight: 700;
             white-space: nowrap;
         }
 
         .event-dropdown-select {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 0.45rem 0.85rem;
+            background-color: #ffffff;
+            border: 1px solid var(--border-medium);
+            color: var(--text-heading);
+            padding: 0.5rem 0.85rem;
             border-radius: var(--radius-md);
             font-size: 0.85rem;
             font-family: inherit;
             outline: none;
             cursor: pointer;
-            min-width: 240px;
+            min-width: 250px;
+            box-shadow: var(--shadow-subtle);
             transition: all 0.15s ease;
         }
 
         .event-dropdown-select:focus {
             border-color: var(--brand-primary);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+            box-shadow: 0 0 0 3px var(--brand-focus-ring);
         }
 
         /* Sub-module Pipeline Tabs */
@@ -122,7 +115,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid var(--border-subtle);
             padding-top: 1rem;
             overflow-x: auto;
         }
@@ -131,31 +124,33 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.45rem 0.95rem;
+            padding: 0.45rem 1rem;
             border-radius: var(--radius-md);
             font-size: 0.825rem;
             font-weight: 600;
             color: var(--text-muted);
             text-decoration: none;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.2s ease;
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-subtle);
+            transition: all 0.15s ease;
             white-space: nowrap;
         }
 
         .pipeline-tab-item:hover {
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.15);
+            color: var(--brand-primary);
+            border-color: var(--brand-border);
+            background-color: var(--brand-subtle);
         }
 
         .pipeline-tab-item.active {
-            color: #38bdf8;
-            background: rgba(56, 189, 248, 0.12);
-            border-color: rgba(56, 189, 248, 0.3);
+            color: var(--brand-primary);
+            background-color: var(--brand-subtle);
+            border-color: var(--brand-border);
+            font-weight: 700;
         }
 
-        /* KPI Metric Cards */
+        /* KPI Metric Cards (Crisp White with High-Contrast Text) */
         .kpi-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -163,19 +158,20 @@
         }
 
         .kpi-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.15rem 1.25rem;
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem 1.35rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
         .kpi-card:hover {
             transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: var(--shadow-elevated);
         }
 
         .kpi-details {
@@ -185,17 +181,17 @@
         }
 
         .kpi-label {
-            font-size: 0.775rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-muted);
         }
 
         .kpi-value {
-            font-size: 1.65rem;
-            font-weight: 700;
-            color: var(--text-main);
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-heading);
             line-height: 1.2;
         }
 
@@ -207,45 +203,47 @@
         .kpi-icon-badge {
             width: 44px;
             height: 44px;
-            border-radius: 10px;
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .kpi-icon-blue {
-            background: rgba(56, 189, 248, 0.12);
-            color: #38bdf8;
-            border: 1px solid rgba(56, 189, 248, 0.25);
+            background-color: var(--brand-subtle);
+            color: var(--brand-primary);
+            border: 1px solid var(--brand-border);
         }
 
         .kpi-icon-amber {
-            background: rgba(251, 191, 36, 0.12);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.25);
+            background-color: var(--accent-amber-subtle);
+            color: var(--accent-amber);
+            border: 1px solid var(--accent-amber-border);
         }
 
         .kpi-icon-red {
-            background: rgba(244, 63, 94, 0.12);
-            color: #f43f5e;
-            border: 1px solid rgba(244, 63, 94, 0.25);
+            background-color: var(--accent-rose-subtle);
+            color: var(--accent-rose);
+            border: 1px solid var(--accent-rose-border);
         }
 
         .kpi-icon-emerald {
-            background: rgba(52, 211, 153, 0.12);
-            color: #34d399;
-            border: 1px solid rgba(52, 211, 153, 0.25);
+            background-color: var(--accent-emerald-subtle);
+            color: var(--accent-emerald);
+            border: 1px solid var(--accent-emerald-border);
         }
 
         /* Multi-Filter & Search Controls Bar */
         .controls-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.15rem 1.25rem;
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.15rem 1.35rem;
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            box-shadow: var(--shadow-card);
         }
 
         .controls-row {
@@ -259,7 +257,7 @@
         .search-box-wrapper {
             position: relative;
             flex: 1 1 280px;
-            max-width: 420px;
+            max-width: 440px;
         }
 
         .search-box-icon {
@@ -267,17 +265,17 @@
             left: 0.85rem;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-muted);
+            color: var(--text-light);
             pointer-events: none;
         }
 
         .search-input {
             width: 100%;
-            background-color: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            border: 1px solid var(--border-medium);
             border-radius: var(--radius-md);
             padding: 0.55rem 0.85rem 0.55rem 2.4rem;
-            color: var(--text-main);
+            color: var(--text-heading);
             font-size: 0.85rem;
             font-family: inherit;
             outline: none;
@@ -286,8 +284,7 @@
 
         .search-input:focus {
             border-color: var(--brand-primary);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
-            background-color: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 0 0 3px var(--brand-focus-ring);
         }
 
         .filter-dropdowns-group {
@@ -298,20 +295,22 @@
         }
 
         .filter-select {
-            background-color: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 0.5rem 0.8rem;
+            background-color: #ffffff;
+            border: 1px solid var(--border-medium);
+            color: var(--text-heading);
+            padding: 0.5rem 0.85rem;
             border-radius: var(--radius-md);
             font-size: 0.825rem;
             font-family: inherit;
             outline: none;
             cursor: pointer;
+            box-shadow: var(--shadow-subtle);
             transition: all 0.15s ease;
         }
 
         .filter-select:focus {
             border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px var(--brand-focus-ring);
         }
 
         .actions-group {
@@ -324,38 +323,40 @@
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
-            background: rgba(16, 185, 129, 0.15);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 0.5rem 0.95rem;
+            background-color: var(--accent-emerald-subtle);
+            color: var(--accent-emerald-text);
+            border: 1px solid var(--accent-emerald-border);
+            padding: 0.5rem 1rem;
             border-radius: var(--radius-md);
             font-size: 0.825rem;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
-            transition: all 0.2s ease;
+            box-shadow: var(--shadow-subtle);
+            transition: all 0.15s ease;
         }
 
         .btn-export-csv:hover {
-            background: rgba(16, 185, 129, 0.25);
-            border-color: rgba(16, 185, 129, 0.5);
-            color: #ffffff;
+            background-color: #d1fae5;
+            color: var(--accent-emerald);
         }
 
         .btn-clear-filters {
-            background: transparent;
+            background-color: #ffffff;
             color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem 0.85rem;
+            border: 1px solid var(--border-medium);
+            padding: 0.5rem 0.95rem;
             border-radius: var(--radius-md);
             font-size: 0.825rem;
+            font-weight: 500;
             cursor: pointer;
+            box-shadow: var(--shadow-subtle);
             transition: all 0.15s ease;
         }
 
         .btn-clear-filters:hover {
-            color: var(--text-main);
-            border-color: rgba(255, 255, 255, 0.2);
+            background-color: var(--bg-hover);
+            color: var(--text-heading);
         }
 
         /* Dual-Sheet Tabbed Roster Navigation */
@@ -363,8 +364,8 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 0.25rem;
+            border-bottom: 2px solid var(--border-subtle);
+            margin-bottom: 0.5rem;
         }
 
         .sheet-tab-btn {
@@ -381,47 +382,51 @@
             font-weight: 600;
             font-family: inherit;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
         }
 
         .sheet-tab-btn:hover {
-            color: var(--text-main);
+            color: var(--text-heading);
         }
 
         .sheet-tab-btn.active {
-            color: #38bdf8;
-            border-bottom-color: #38bdf8;
+            color: var(--brand-primary);
+            border-bottom-color: var(--brand-primary);
+            font-weight: 700;
         }
 
         .sheet-tab-btn.active-cancelled {
-            color: #f43f5e;
-            border-bottom-color: #f43f5e;
+            color: var(--accent-rose);
+            border-bottom-color: var(--accent-rose);
+            font-weight: 700;
         }
 
         .sheet-badge {
             font-size: 0.725rem;
-            padding: 0.15rem 0.5rem;
-            border-radius: 9999px;
+            padding: 0.2rem 0.55rem;
+            border-radius: var(--radius-full);
             font-weight: 700;
         }
 
         .sheet-badge-primary {
-            background: rgba(56, 189, 248, 0.18);
-            color: #38bdf8;
+            background-color: var(--brand-subtle);
+            color: var(--brand-primary);
+            border: 1px solid var(--brand-border);
         }
 
         .sheet-badge-cancelled {
-            background: rgba(244, 63, 94, 0.18);
-            color: #f43f5e;
+            background-color: var(--accent-rose-subtle);
+            color: var(--accent-rose);
+            border: 1px solid var(--accent-rose-border);
         }
 
-        /* Roster Table Card */
+        /* Roster Table Card (Pure White with Crisp High-Contrast) */
         .roster-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-card);
         }
 
         .table-responsive {
@@ -437,21 +442,21 @@
         }
 
         .roster-table th {
-            background-color: rgba(15, 23, 42, 0.6);
+            background-color: #fafbfc;
             color: var(--text-muted);
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            padding: 0.9rem 1rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 0.9rem 1.15rem;
+            border-bottom: 1px solid var(--border-subtle);
             white-space: nowrap;
         }
 
         .roster-table td {
-            padding: 0.95rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            color: var(--text-main);
+            padding: 0.95rem 1.15rem;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-body);
             vertical-align: middle;
         }
 
@@ -459,19 +464,36 @@
             transition: background-color 0.15s ease;
         }
 
-        .roster-table tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.025);
+        .roster-table tbody tr:hover td {
+            background-color: var(--bg-hover);
         }
 
         .ticket-code {
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-mono);
             font-weight: 700;
-            color: #38bdf8;
-            background: rgba(56, 189, 248, 0.08);
-            padding: 0.2rem 0.45rem;
-            border-radius: 4px;
-            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: var(--brand-primary);
+            background-color: var(--brand-subtle);
+            padding: 0.25rem 0.6rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--brand-border);
             font-size: 0.8rem;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .ticket-code-cancelled {
+            color: var(--accent-rose);
+            background-color: var(--accent-rose-subtle);
+            border-color: var(--accent-rose-border);
+        }
+
+        .student-id-text {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            letter-spacing: -0.01em;
+            white-space: nowrap;
         }
 
         .student-name-block {
@@ -481,8 +503,9 @@
         }
 
         .student-name-text {
-            font-weight: 600;
-            color: var(--text-main);
+            font-weight: 700;
+            color: var(--text-heading);
+            font-size: 0.875rem;
         }
 
         .student-email-text {
@@ -490,86 +513,136 @@
             color: var(--text-muted);
         }
 
-        .academic-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 0.25rem 0.55rem;
-            border-radius: 6px;
-            font-size: 0.775rem;
-            color: var(--text-muted);
+        /* Stacked Department (small on top) & Course (bold below) - Matches Student Directory */
+        .dept-course-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
         }
 
+        .dept-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+
+        .course-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        /* Stacked Year Level & Section */
+        .year-section-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .year-text {
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        .section-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Status Pills (Present, Reserved, Cancelled) */
         .status-pill {
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.72rem;
+            font-weight: 700;
             padding: 0.25rem 0.65rem;
-            border-radius: 9999px;
+            border-radius: var(--radius-full);
             white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
         }
 
-        .status-pill-noshow {
-            background: rgba(251, 191, 36, 0.12);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.25);
-        }
-
-        .status-pill-cancelled {
-            background: rgba(244, 63, 94, 0.12);
-            color: #f43f5e;
-            border: 1px solid rgba(244, 63, 94, 0.25);
+        .status-pill-reserved {
+            background-color: var(--brand-subtle);
+            color: var(--brand-primary);
+            border: 1px solid var(--brand-border);
         }
 
         .status-pill-present {
-            background: rgba(52, 211, 153, 0.12);
-            color: #34d399;
-            border: 1px solid rgba(52, 211, 153, 0.25);
+            background-color: var(--accent-emerald-subtle);
+            color: var(--accent-emerald-text);
+            border: 1px solid var(--accent-emerald-border);
         }
 
-        .row-action-btns {
-            display: flex;
-            align-items: center;
-            gap: 0.45rem;
+        .status-pill-cancelled {
+            background-color: var(--accent-rose-subtle);
+            color: var(--accent-rose-text);
+            border: 1px solid var(--accent-rose-border);
         }
 
-        .btn-tbl-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.35rem 0.65rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.775rem;
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot-present {
+            background-color: var(--accent-emerald);
+        }
+
+        .status-dot-reserved {
+            background-color: var(--brand-primary);
+        }
+
+        .status-dot-cancelled {
+            background-color: var(--accent-rose);
+        }
+
+        /* View > Link (Underlined text link per Student Directory reference) */
+        .btn-view-link {
+            font-size: 0.875rem;
             font-weight: 600;
+            color: var(--text-heading);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            background: none;
             border: none;
             cursor: pointer;
+            padding: 0;
+            font-family: inherit;
+            transition: color 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-view-link:hover {
+            color: var(--brand-primary);
+        }
+
+        .btn-modal-cancel {
+            background-color: var(--accent-rose-subtle);
+            color: var(--accent-rose);
+            border: 1px solid var(--accent-rose-border);
+            padding: 0.5rem 1.15rem;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow-subtle);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
             transition: all 0.15s ease;
         }
 
-        .btn-tbl-view {
-            background: rgba(56, 189, 248, 0.1);
-            color: #38bdf8;
-            border: 1px solid rgba(56, 189, 248, 0.25);
-        }
-
-        .btn-tbl-view:hover {
-            background: rgba(56, 189, 248, 0.2);
-            color: #ffffff;
-        }
-
-        .btn-tbl-cancel {
-            background: rgba(244, 63, 94, 0.1);
-            color: #f43f5e;
-            border: 1px solid rgba(244, 63, 94, 0.25);
-        }
-
-        .btn-tbl-cancel:hover {
-            background: rgba(244, 63, 94, 0.22);
-            color: #ffffff;
+        .btn-modal-cancel:hover {
+            background-color: #fee2e2;
+            color: var(--accent-rose-hover);
         }
 
         .empty-roster-state {
@@ -583,18 +656,17 @@
         }
 
         .empty-roster-state svg {
-            color: var(--text-muted);
-            opacity: 0.6;
+            color: var(--text-light);
         }
 
-        /* Modal Pop-Up Dialog Styling */
+        /* Modal Pop-Up Dialog Styling (Clean White) */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75);
+            background-color: rgba(15, 23, 42, 0.55);
             backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
@@ -611,14 +683,14 @@
         }
 
         .modal-dialog {
-            background: #0f172a;
-            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
             border-radius: var(--radius-lg);
             width: 90%;
             max-width: 580px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-modal);
             overflow: hidden;
-            transform: scale(0.95);
+            transform: scale(0.96);
             transition: transform 0.2s ease;
         }
 
@@ -628,18 +700,18 @@
 
         .modal-header {
             padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(30, 41, 59, 0.4);
+            background-color: #ffffff;
         }
 
         .modal-header h3 {
             margin: 0;
             font-size: 1.15rem;
             font-weight: 700;
-            color: var(--text-main);
+            color: var(--text-heading);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -655,12 +727,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
         }
 
         .modal-close-btn:hover {
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-heading);
+            background-color: var(--bg-hover);
         }
 
         .modal-body {
@@ -668,6 +740,7 @@
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
+            background-color: #ffffff;
         }
 
         .profile-summary-header {
@@ -675,33 +748,34 @@
             align-items: center;
             gap: 1rem;
             padding-bottom: 1.25rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .profile-avatar-placeholder {
             width: 54px;
             height: 54px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-            color: #ffffff;
+            background-color: var(--brand-subtle);
+            color: var(--brand-primary);
             font-size: 1.25rem;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid rgba(255, 255, 255, 0.15);
+            border: 2px solid var(--brand-border);
         }
 
         .profile-name-title h4 {
             margin: 0 0 0.25rem 0;
             font-size: 1.1rem;
-            color: var(--text-main);
+            font-weight: 700;
+            color: var(--text-heading);
         }
 
         .profile-name-title p {
             margin: 0;
             font-size: 0.825rem;
-            color: #38bdf8;
+            color: var(--brand-primary);
             font-weight: 600;
         }
 
@@ -714,49 +788,52 @@
         .profile-field-block {
             display: flex;
             flex-direction: column;
-            gap: 0.2rem;
+            gap: 0.25rem;
         }
 
         .profile-field-label {
             font-size: 0.725rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.05em;
             color: var(--text-muted);
         }
 
         .profile-field-value {
             font-size: 0.875rem;
-            color: var(--text-main);
-            font-weight: 500;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 0.4rem 0.65rem;
+            color: var(--text-heading);
+            font-weight: 600;
+            background-color: var(--bg-subtle);
+            border: 1px solid var(--border-subtle);
+            padding: 0.45rem 0.75rem;
             border-radius: var(--radius-sm);
         }
 
         .modal-footer {
             padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border-color);
-            background: rgba(30, 41, 59, 0.2);
+            border-top: 1px solid var(--border-subtle);
+            background-color: #ffffff;
             display: flex;
             justify-content: flex-end;
             gap: 0.75rem;
         }
 
         .btn-modal-close {
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 0.45rem 1rem;
+            background-color: #ffffff;
+            color: var(--text-body);
+            border: 1px solid var(--border-medium);
+            padding: 0.5rem 1.15rem;
             border-radius: var(--radius-md);
             font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
+            box-shadow: var(--shadow-subtle);
             transition: all 0.15s ease;
         }
 
         .btn-modal-close:hover {
-            background: rgba(255, 255, 255, 0.12);
+            background-color: var(--bg-hover);
+            color: var(--text-heading);
         }
 
         /* Alert Toast */
@@ -768,18 +845,19 @@
             align-items: center;
             gap: 0.65rem;
             margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-subtle);
         }
 
         .alert-toast-success {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.35);
-            color: #34d399;
+            background-color: var(--accent-emerald-subtle);
+            border: 1px solid var(--accent-emerald-border);
+            color: var(--accent-emerald-text);
         }
 
         .alert-toast-danger {
-            background: rgba(244, 63, 94, 0.15);
-            border: 1px solid rgba(244, 63, 94, 0.35);
-            color: #f43f5e;
+            background-color: var(--accent-rose-subtle);
+            border: 1px solid var(--accent-rose-border);
+            color: var(--accent-rose-text);
         }
     </style>
 </asp:Content>
@@ -804,7 +882,7 @@
         <div class="event-context-top">
             <div class="event-title-group">
                 <h1>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
                         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -846,33 +924,43 @@
 
         <!-- Sub-Module Pipeline Progression Tabs -->
         <div class="pipeline-tabs-wrapper">
-            <a href="<%= ResolveUrl("~/Frontend/Admin/EventDetails.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab-item">
+            <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
-                <span>1. Event Details</span>
+                <span>1. Event Matrix</span>
             </a>
-            <a href="<%= ResolveUrl("~/Frontend/Admin/EventPreRegistered.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab-item active">
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventPreRegistered.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item active">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <polyline points="17 11 19 13 23 9"></polyline>
                 </svg>
-                <span>2. Event Pre-Registered (Active)</span>
+                <span>2. Pre-Registered</span>
             </a>
-            <a href="<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab-item">
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/AttendanceScanner.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
                 </svg>
-                <span>3. Event Scanner and Attendance</span>
+                <span>3. Attendance Scanner</span>
             </a>
-            <a href="<%= ResolveUrl("~/Frontend/Admin/Reports.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab-item">
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventAttendance.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                <span>4. Event Attendance</span>
+            </a>
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventAnalytics.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="14"></line>
                 </svg>
-                <span>4. Event Turnout Analytics</span>
+                <span>5. Event Analytics</span>
             </a>
         </div>
     </div>
@@ -1016,15 +1104,13 @@
             <table class="roster-table" id="tblPreRegistered">
                 <thead>
                     <tr>
-                        <th>Ticket Ref</th>
-                        <th>Student ID</th>
-                        <th>Attendee Name</th>
-                        <th>Department</th>
-                        <th>Program / Course</th>
-                        <th>Year & Section</th>
-                        <th>Date Registered</th>
-                        <th>Status</th>
-                        <th style="text-align:right;">Actions</th>
+                        <th style="width: 14%;">Ticket Ref</th>
+                        <th style="width: 13%;">Student ID</th>
+                        <th style="width: 22%;">Student Name</th>
+                        <th style="width: 26%;">Department &amp; Course</th>
+                        <th style="width: 12%;">Year &amp; Section</th>
+                        <th style="width: 8%;">Status</th>
+                        <th style="width: 5%; text-align: right;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1040,7 +1126,7 @@
                                     <span class="ticket-code"><%# Eval("TicketReference") %></span>
                                 </td>
                                 <td>
-                                    <strong><%# Eval("StudentId") %></strong>
+                                    <span class="student-id-text"><%# Eval("StudentId") %></span>
                                 </td>
                                 <td>
                                     <div class="student-name-block">
@@ -1049,48 +1135,25 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span><%# Eval("StudentDepartment") %></span>
-                                </td>
-                                <td>
-                                    <span><%# Eval("StudentProgram") %></span>
-                                </td>
-                                <td>
-                                    <span class="academic-pill">
-                                        Year <%# Eval("CurrentYearLvl") %> - <%# Eval("CurrentSection") %>
-                                    </span>
-                                </td>
-                                <td>
-                                    <!-- Strict MM/dd/yyyy format -->
-                                    <span><%# FormatRegistrationDate(Eval("RegistrationTimestamp"), Eval("RegStart")) %></span>
-                                </td>
-                                <td>
-                                    <span class="status-pill status-pill-noshow">
-                                        &bull; Expected Attendee
-                                    </span>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="row-action-btns" style="justify-content:flex-end;">
-                                        <button type="button" class="btn-tbl-action btn-tbl-view" 
-                                            onclick='openStudentModal("<%# Eval("StudentId") %>", "<%# Eval("StudentFullName") %>", "<%# Eval("StudentEmail") %>", "<%# Eval("StudentCampusBranch") %>", "<%# Eval("StudentDepartment") %>", "<%# Eval("StudentProgram") %>", "<%# Eval("CurrentYearLvl") %>", "<%# Eval("CurrentSection") %>", "<%# Eval("TicketReference") %>", "<%# FormatRegistrationDate(Eval("RegistrationTimestamp"), Eval("RegStart")) %>")'>
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                <circle cx="12" cy="12" r="3"></circle>
-                                            </svg>
-                                            <span>View</span>
-                                        </button>
-                                        
-                                        <asp:LinkButton ID="btnCancelRow" runat="server" CssClass="btn-tbl-action btn-tbl-cancel"
-                                            CommandArgument='<%# Eval("EventRegistrationId") %>'
-                                            OnCommand="btnCancelRow_Command"
-                                            OnClientClick="return confirm('Are you sure you want to void this student registration pass? This slot will immediately be released back to the event capacity pool.');">
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <line x1="15" y1="9" x2="9" y2="15"></line>
-                                                <line x1="9" y1="9" x2="15" y2="15"></line>
-                                            </svg>
-                                            <span>Cancel Pass</span>
-                                        </asp:LinkButton>
+                                    <div class="dept-course-cell">
+                                        <span class="dept-text"><%# Eval("StudentDepartment") %></span>
+                                        <span class="course-text"><%# Eval("StudentProgram") %></span>
                                     </div>
+                                </td>
+                                <td>
+                                    <div class="year-section-cell">
+                                        <span class="year-text">Year <%# Eval("CurrentYearLvl") %></span>
+                                        <span class="section-text"><%# Eval("CurrentSection") %></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <%# GetStatusBadgeHtml(Eval("Status")) %>
+                                </td>
+                                <td style="text-align: right;">
+                                    <a href="javascript:void(0);" class="btn-view-link" 
+                                        onclick='openStudentModal("<%# Eval("StudentId") %>", "<%# Eval("StudentFullName") %>", "<%# Eval("StudentEmail") %>", "<%# Eval("StudentCampusBranch") %>", "<%# Eval("StudentDepartment") %>", "<%# Eval("StudentProgram") %>", "<%# Eval("CurrentYearLvl") %>", "<%# Eval("CurrentSection") %>", "<%# Eval("TicketReference") %>", "<%# FormatRegistrationDate(Eval("RegistrationTimestamp"), Eval("RegStart")) %>", "<%# Eval("Status") %>", "<%# Eval("EventRegistrationId") %>")'>
+                                        View &gt;
+                                    </a>
                                 </td>
                             </tr>
                         </ItemTemplate>
@@ -1103,7 +1166,7 @@
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                 </svg>
-                <div style="font-size:1rem; font-weight:600; color:var(--text-main);">No Pre-Registered Attendees Found</div>
+                <div style="font-size:1rem; font-weight:600; color:var(--text-heading);">No Pre-Registered Attendees Found</div>
                 <div style="font-size:0.825rem;">There are currently no active pre-registered students awaiting gate scanning for this event.</div>
             </asp:Panel>
         </div>
@@ -1115,14 +1178,13 @@
             <table class="roster-table" id="tblCancelled">
                 <thead>
                     <tr>
-                        <th>Ticket Ref</th>
-                        <th>Student ID</th>
-                        <th>Revoked Attendee Name</th>
-                        <th>Department</th>
-                        <th>Program / Course</th>
-                        <th>Year & Section</th>
-                        <th>Status</th>
-                        <th style="text-align:right;">Actions</th>
+                        <th style="width: 14%;">Ticket Ref</th>
+                        <th style="width: 13%;">Student ID</th>
+                        <th style="width: 22%;">Student Name</th>
+                        <th style="width: 26%;">Department &amp; Course</th>
+                        <th style="width: 12%;">Year &amp; Section</th>
+                        <th style="width: 8%;">Status</th>
+                        <th style="width: 5%; text-align: right;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1135,10 +1197,10 @@
                                 data-course='<%# Eval("StudentProgram") %>' 
                                 data-year='<%# Eval("CurrentYearLvl") %>'>
                                 <td>
-                                    <span class="ticket-code" style="color:#f43f5e; border-color:rgba(244,63,94,0.3);"><%# Eval("TicketReference") %></span>
+                                    <span class="ticket-code ticket-code-cancelled"><%# Eval("TicketReference") %></span>
                                 </td>
                                 <td>
-                                    <strong><%# Eval("StudentId") %></strong>
+                                    <span class="student-id-text"><%# Eval("StudentId") %></span>
                                 </td>
                                 <td>
                                     <div class="student-name-block">
@@ -1147,32 +1209,25 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span><%# Eval("StudentDepartment") %></span>
-                                </td>
-                                <td>
-                                    <span><%# Eval("StudentProgram") %></span>
-                                </td>
-                                <td>
-                                    <span class="academic-pill">
-                                        Year <%# Eval("CurrentYearLvl") %> - <%# Eval("CurrentSection") %>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="status-pill status-pill-cancelled">
-                                        &bull; Pass Revoked / Cancelled
-                                    </span>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="row-action-btns" style="justify-content:flex-end;">
-                                        <button type="button" class="btn-tbl-action btn-tbl-view" 
-                                            onclick='openStudentModal("<%# Eval("StudentId") %>", "<%# Eval("StudentFullName") %>", "<%# Eval("StudentEmail") %>", "<%# Eval("StudentCampusBranch") %>", "<%# Eval("StudentDepartment") %>", "<%# Eval("StudentProgram") %>", "<%# Eval("CurrentYearLvl") %>", "<%# Eval("CurrentSection") %>", "<%# Eval("TicketReference") %>", "<%# FormatRegistrationDate(Eval("RegistrationTimestamp"), Eval("RegStart")) %>")'>
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                <circle cx="12" cy="12" r="3"></circle>
-                                            </svg>
-                                            <span>View Profile</span>
-                                        </button>
+                                    <div class="dept-course-cell">
+                                        <span class="dept-text"><%# Eval("StudentDepartment") %></span>
+                                        <span class="course-text"><%# Eval("StudentProgram") %></span>
                                     </div>
+                                </td>
+                                <td>
+                                    <div class="year-section-cell">
+                                        <span class="year-text">Year <%# Eval("CurrentYearLvl") %></span>
+                                        <span class="section-text"><%# Eval("CurrentSection") %></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-pill status-pill-cancelled"><span class="status-dot status-dot-cancelled"></span>Cancelled</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <a href="javascript:void(0);" class="btn-view-link" 
+                                        onclick='openStudentModal("<%# Eval("StudentId") %>", "<%# Eval("StudentFullName") %>", "<%# Eval("StudentEmail") %>", "<%# Eval("StudentCampusBranch") %>", "<%# Eval("StudentDepartment") %>", "<%# Eval("StudentProgram") %>", "<%# Eval("CurrentYearLvl") %>", "<%# Eval("CurrentSection") %>", "<%# Eval("TicketReference") %>", "<%# FormatRegistrationDate(Eval("RegistrationTimestamp"), Eval("RegStart")) %>", "<%# Eval("Status") %>", "<%# Eval("EventRegistrationId") %>")'>
+                                        View &gt;
+                                    </a>
                                 </td>
                             </tr>
                         </ItemTemplate>
@@ -1186,7 +1241,7 @@
                     <line x1="15" y1="9" x2="9" y2="15"></line>
                     <line x1="9" y1="9" x2="15" y2="15"></line>
                 </svg>
-                <div style="font-size:1rem; font-weight:600; color:var(--text-main);">No Cancelled Registrations</div>
+                <div style="font-size:1rem; font-weight:600; color:var(--text-heading);">No Cancelled Registrations</div>
                 <div style="font-size:0.825rem;">There are no revoked registration entries recorded for this event.</div>
             </asp:Panel>
         </div>
@@ -1199,7 +1254,7 @@
     <div class="modal-dialog" onclick="event.stopPropagation()">
         <div class="modal-header">
             <h3>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
@@ -1242,12 +1297,27 @@
                     <span class="profile-field-value" id="modalYearSection">--</span>
                 </div>
                 <div class="profile-field-block">
+                    <span class="profile-field-label">Current Status</span>
+                    <span class="profile-field-value" id="modalStatusText">--</span>
+                </div>
+                <div class="profile-field-block" style="grid-column: span 2;">
                     <span class="profile-field-label">Registration Date</span>
                     <span class="profile-field-value" id="modalRegDate">--/--/----</span>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <asp:HiddenField ID="hfModalEventRegId" runat="server" ClientIDMode="Static" />
+                <asp:LinkButton ID="btnModalCancelPass" runat="server" CssClass="btn-modal-cancel" OnClick="btnModalCancelPass_Click" OnClientClick="return confirm('Are you sure you want to void this student registration pass? This slot will immediately be released back to the event capacity pool.');">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    <span>Void / Cancel Pass</span>
+                </asp:LinkButton>
+            </div>
             <button type="button" class="btn-modal-close" onclick="closeStudentModal()">Dismiss</button>
         </div>
     </div>
@@ -1318,7 +1388,7 @@
     }
 
     // Pop-Up Modal Controls
-    function openStudentModal(studentId, fullName, email, branch, dept, course, year, section, ticketRef, regDate) {
+    function openStudentModal(studentId, fullName, email, branch, dept, course, year, section, ticketRef, regDate, status, eventRegId) {
         document.getElementById('modalStudentId').innerText = studentId || '--';
         document.getElementById('modalFullName').innerText = fullName || 'Student Attendee';
         document.getElementById('modalEmail').innerText = email || 'No email provided';
@@ -1328,6 +1398,21 @@
         document.getElementById('modalYearSection').innerText = 'Year ' + year + ' - ' + section;
         document.getElementById('modalTicketRef').innerText = ticketRef || '--';
         document.getElementById('modalRegDate').innerText = regDate || '--/--/----';
+        document.getElementById('modalStatusText').innerText = status || 'Reserved';
+
+        const hf = document.getElementById('hfModalEventRegId');
+        if (hf) {
+            hf.value = eventRegId || '';
+        }
+
+        const btnCancel = document.getElementById('<%= btnModalCancelPass.ClientID %>');
+        if (btnCancel) {
+            if (status && status.toLowerCase() === 'cancelled') {
+                btnCancel.style.display = 'none';
+            } else {
+                btnCancel.style.display = 'inline-flex';
+            }
+        }
 
         // Set avatar initials
         let initials = 'ST';

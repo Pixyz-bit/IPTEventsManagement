@@ -78,11 +78,16 @@
     <Content Include="Frontend\Admin\EventDetails.aspx" />
     <Content Include="Frontend\Admin\EventPreRegistered.aspx" />
     <Content Include="Frontend\Admin\AttendanceScanner.aspx" />
+    <Content Include="Frontend\Admin\EventAttendance.aspx" />
+    <Content Include="Frontend\Admin\EventAnalytics.aspx" />
+    <Content Include="Frontend\Admin\StudentList.aspx" />
     <Content Include="Frontend\Admin\TestConnection.aspx" />
     <Content Include="Frontend\Assets\QCU Background.png" />
     <Content Include="Frontend\Assets\QCU Logo.png" />
     <Content Include="Frontend\Login\Login.aspx" />
     <Content Include="Frontend\User\Dashboard.aspx" />
+    <Content Include="Frontend\Assets\css\global.css" />
+    <Content Include="Frontend\global.css" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -154,6 +159,27 @@
     </Compile>
     <Compile Include="Frontend\Admin\AttendanceScanner.aspx.designer.cs">
       <DependentUpon>AttendanceScanner.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend\Admin\EventAttendance.aspx.cs">
+      <DependentUpon>EventAttendance.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\Admin\EventAttendance.aspx.designer.cs">
+      <DependentUpon>EventAttendance.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend\Admin\EventAnalytics.aspx.cs">
+      <DependentUpon>EventAnalytics.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\Admin\EventAnalytics.aspx.designer.cs">
+      <DependentUpon>EventAnalytics.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend\Admin\StudentList.aspx.cs">
+      <DependentUpon>StudentList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\Admin\StudentList.aspx.designer.cs">
+      <DependentUpon>StudentList.aspx</DependentUpon>
     </Compile>
     <Compile Include="Frontend\Admin\TestConnection.aspx.cs">
       <DependentUpon>TestConnection.aspx</DependentUpon>

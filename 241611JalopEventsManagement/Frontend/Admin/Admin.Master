@@ -11,415 +11,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-    <style>
-        :root {
-            /* Surfaces & Canvases - Professional Light Mode */
-            --bg-canvas: #f8fafc;
-            --bg-sidebar: #ffffff;
-            --bg-card: #ffffff;
-            --bg-input: #f1f5f9;
-            
-            /* Borders & Dividers */
-            --border-subtle: #e2e8f0;
-            --border-medium: #cbd5e1;
-            --border-focus: #2563eb;
-            
-            /* Typography Colors */
-            --text-heading: #0f172a;
-            --text-body: #334155;
-            --text-muted: #64748b;
-            
-            /* Institutional Brand Colors */
-            --brand-primary: #1d4ed8;
-            --brand-primary-hover: #1e40af;
-            --brand-subtle: #eff6ff;
-            
-            /* Semantic Accents */
-            --accent-emerald: #059669;
-            --accent-amber: #d97706;
-            --accent-rose: #e11d48;
-            
-            /* Stacks & Dimensions */
-            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --sidebar-width: 260px;
-            --topbar-height: 64px;
-            
-            /* Shadows */
-            --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 6px -1px rgba(0, 0, 0, 0.03);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: var(--bg-canvas);
-            color: var(--text-body);
-            font-family: var(--font-sans);
-            min-height: 100vh;
-            display: flex;
-            overflow-x: hidden;
-        }
-
-        /* ─── Layout Shell ─── */
-        .admin-layout {
-            display: flex;
-            width: 100%;
-            min-height: 100vh;
-        }
-
-        /* ─── Sidebar ─── */
-        .admin-sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--bg-sidebar);
-            border-right: 1px solid var(--border-subtle);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 40;
-            box-shadow: 1px 0 3px rgba(0, 0, 0, 0.02);
-            transition: transform 0.25s ease;
-        }
-
-        .sidebar-brand {
-            height: var(--topbar-height);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0 1.25rem;
-            border-bottom: 1px solid var(--border-subtle);
-            text-decoration: none;
-            background-color: #ffffff;
-        }
-
-        .brand-logo-img {
-            width: 36px;
-            height: 36px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.2));
-            flex-shrink: 0;
-        }
-
-        .brand-text h1 {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-heading);
-            letter-spacing: -0.01em;
-            line-height: 1.2;
-        }
-
-        .brand-text span {
-            font-size: 0.7rem;
-            color: var(--brand-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            font-weight: 700;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 1.25rem 0.75rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .nav-group-title {
-            font-size: 0.68rem;
-            font-weight: 700;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            padding: 0 0.75rem;
-            margin-bottom: 0.35rem;
-        }
-
-        .nav-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .nav-item a {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.6rem 0.75rem;
-            border-radius: 6px;
-            color: var(--text-body);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.15s ease;
-        }
-
-        .nav-item a:hover {
-            background-color: #f1f5f9;
-            color: var(--text-heading);
-        }
-
-        .nav-item.active a {
-            background-color: #eff6ff;
-            color: #1d4ed8;
-            font-weight: 600;
-            border-left: 3px solid #2563eb;
-        }
-
-        .nav-icon {
-            width: 18px;
-            height: 18px;
-            stroke-width: 1.7;
-            color: var(--text-muted);
-            flex-shrink: 0;
-            transition: color 0.15s ease;
-        }
-
-        .nav-item a:hover .nav-icon,
-        .nav-item.active a .nav-icon {
-            color: #1d4ed8;
-        }
-
-        .nav-badge {
-            margin-left: auto;
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 0.15rem 0.45rem;
-            border-radius: 9999px;
-            background-color: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
-        }
-
-        /* ─── Sidebar Footer ─── */
-        .sidebar-footer {
-            padding: 1rem 0.85rem;
-            border-top: 1px solid var(--border-subtle);
-            background-color: #f8fafc;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1d4ed8;
-            font-weight: 700;
-            font-size: 0.85rem;
-            flex-shrink: 0;
-        }
-
-        .user-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .user-name {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text-heading);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .user-role {
-            font-size: 0.7rem;
-            color: #059669;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .role-dot {
-            width: 6px;
-            height: 6px;
-            background-color: #10b981;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .btn-logout {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 0.4rem;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.15s ease, background 0.15s ease;
-        }
-
-        .btn-logout:hover {
-            color: var(--accent-rose);
-            background-color: #ffe4e6;
-        }
-
-        /* ─── Main Content Container ─── */
-        .admin-main-wrapper {
-            margin-left: var(--sidebar-width);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            min-width: 0;
-        }
-
-        /* ─── Topbar ─── */
-        .admin-topbar {
-            height: var(--topbar-height);
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-subtle);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.75rem;
-            position: sticky;
-            top: 0;
-            z-index: 30;
-        }
-
-        .topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .topbar-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-heading);
-            letter-spacing: -0.01em;
-        }
-
-        .topbar-campus-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.25rem 0.65rem;
-            background-color: #f1f5f9;
-            border: 1px solid var(--border-subtle);
-            border-radius: 4px;
-            font-size: 0.72rem;
-            color: #475569;
-            font-weight: 500;
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .topbar-portal-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.35rem 0.75rem;
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #1d4ed8;
-            text-decoration: none;
-            transition: all 0.15s ease;
-        }
-
-        .topbar-portal-link:hover {
-            background-color: #dbeafe;
-            color: #1e40af;
-            border-color: #93c5fd;
-        }
-
-        .system-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.25rem 0.65rem;
-            border-radius: 9999px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            background-color: #ecfdf5;
-            color: #047857;
-            border: 1px solid #a7f3d0;
-        }
-
-        .system-pill-dot {
-            width: 6px;
-            height: 6px;
-            background-color: #10b981;
-            border-radius: 50%;
-        }
-
-        /* ─── Page Workspace ─── */
-        .admin-workspace {
-            flex: 1;
-            padding: 1.75rem;
-            max-width: 1440px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        /* ─── Preview Mode Banner ─── */
-        .preview-banner {
-            background-color: #fffbeb;
-            border-bottom: 1px solid #fde68a;
-            padding: 0.65rem 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.82rem;
-            color: #92400e;
-        }
-
-        .preview-banner a {
-            color: #b45309;
-            font-weight: 700;
-            text-decoration: underline;
-        }
-
-        @media (max-width: 1024px) {
-            :root {
-                --sidebar-width: 72px;
-            }
-            .brand-text, .nav-group-title, .user-info, .nav-item a span, .nav-badge {
-                display: none;
-            }
-            .sidebar-brand {
-                justify-content: center;
-                padding: 0;
-            }
-            .nav-item a {
-                justify-content: center;
-                padding: 0.75rem 0;
-            }
-            .sidebar-footer {
-                justify-content: center;
-                padding: 0.75rem 0;
-            }
-        }
-    </style>
+    <!-- Enterprise Global Stylesheet & Design Tokens -->
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css") %>" />
 
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
@@ -498,6 +91,15 @@
                                     <span>Attendance Scanner</span>
                                 </a>
                             </li>
+                            <li class="nav-item <%= Request.Path.EndsWith("EventAttendance.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
+                                <a href="<%= ResolveUrl("~/Frontend/Admin/EventAttendance.aspx") %>">
+                                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M9 11l3 3L22 4"></path>
+                                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                    </svg>
+                                    <span>Event Attendance</span>
+                                </a>
+                            </li>
                             <li class="nav-item <%= Request.Path.EndsWith("StudentList.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
                                 <a href="<%= ResolveUrl("~/Frontend/Admin/StudentList.aspx") %>">
                                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -516,14 +118,14 @@
                     <div>
                         <div class="nav-group-title">Analytics & System</div>
                         <ul class="nav-list">
-                            <li class="nav-item <%= Request.Path.EndsWith("Reports.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
-                                <a href="<%= ResolveUrl("~/Frontend/Admin/Reports.aspx") %>">
+                            <li class="nav-item <%= Request.Path.EndsWith("EventAnalytics.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
+                                <a href="<%= ResolveUrl("~/Frontend/Admin/EventAnalytics.aspx") %>">
                                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <line x1="18" y1="20" x2="18" y2="10"></line>
                                         <line x1="12" y1="20" x2="12" y2="4"></line>
                                         <line x1="6" y1="20" x2="6" y2="14"></line>
                                     </svg>
-                                    <span>Turnout Analytics</span>
+                                    <span>Event Analytics</span>
                                 </a>
                             </li>
                             <li class="nav-item <%= Request.Path.EndsWith("AuditLogs.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
@@ -581,13 +183,13 @@
                 <header class="admin-topbar">
                     <div class="topbar-left">
                         <span class="topbar-title">University Event Management</span>
-                        <div class="topbar-campus-tag">
+                        <!--<div class="topbar-campus-tag">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
                             <span>Main Campus • Central Portal</span>
-                        </div>
+                        </div>-->
                     </div>
 
                     <div class="topbar-right">

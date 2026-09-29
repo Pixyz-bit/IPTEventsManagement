@@ -39,12 +39,14 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 INSERT INTO dbo.EventsTable (
                     Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
                     CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                    CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel
+                    CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
+                    EventPhotoPath
                 )
                 VALUES (
                     @Title, @Description, @VenueLocation, @MaxCapacity, 0, 
                     @CreatedByUserId, @EventStart, @EventEnd, @RegStart, @RegEnd, @Status, 
-                    @CancellationReason, @TargetBranch, @TargetDepartment, @TargetProgram, @TargetYearLevel
+                    @CancellationReason, @TargetBranch, @TargetDepartment, @TargetProgram, @TargetYearLevel,
+                    @EventPhotoPath
                 );
                 SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
@@ -64,7 +66,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@TargetBranch", SqlDbType.NVarChar, 100) { Value = (object)ev.TargetBranch ?? DBNull.Value },
                 new SqlParameter("@TargetDepartment", SqlDbType.NVarChar, 100) { Value = (object)ev.TargetDepartment ?? DBNull.Value },
                 new SqlParameter("@TargetProgram", SqlDbType.NVarChar, 100) { Value = (object)ev.TargetProgram ?? DBNull.Value },
-                new SqlParameter("@TargetYearLevel", SqlDbType.Int) { Value = ev.TargetYearLevel.HasValue ? (object)ev.TargetYearLevel.Value : DBNull.Value }
+                new SqlParameter("@TargetYearLevel", SqlDbType.Int) { Value = ev.TargetYearLevel.HasValue ? (object)ev.TargetYearLevel.Value : DBNull.Value },
+                new SqlParameter("@EventPhotoPath", SqlDbType.NVarChar, 500) { Value = (object)ev.EventPhotoPath ?? DBNull.Value }
             };
 
             object result = DatabaseConnection.ExecuteScalar(sql, parameters);
@@ -87,7 +90,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
                        CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel 
+                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
+                       EventPhotoPath
                 FROM dbo.EventsTable 
                 WHERE EventId = @EventId;";
 
@@ -110,7 +114,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
                        CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel 
+                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
+                       EventPhotoPath
                 FROM dbo.EventsTable 
                 WHERE Status = 'Upcoming'
                 ORDER BY EventStart ASC;";
@@ -127,7 +132,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
                        CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel 
+                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
+                       EventPhotoPath
                 FROM dbo.EventsTable 
                 ORDER BY EventStart DESC;";
 
@@ -144,7 +150,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
                        CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel 
+                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
+                       EventPhotoPath
                 FROM dbo.EventsTable 
                 WHERE Status = 'Upcoming'
                   AND (TargetBranch IS NULL OR TargetBranch = @Branch)
@@ -178,7 +185,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
                        CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel 
+                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
+                       EventPhotoPath
                 FROM dbo.EventsTable 
                 WHERE CreatedByUserId = @CreatedByUserId
                 ORDER BY EventStart DESC;";
@@ -213,7 +221,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     TargetBranch = @TargetBranch,
                     TargetDepartment = @TargetDepartment,
                     TargetProgram = @TargetProgram,
-                    TargetYearLevel = @TargetYearLevel
+                    TargetYearLevel = @TargetYearLevel,
+                    EventPhotoPath = @EventPhotoPath
                 WHERE EventId = @EventId;";
 
             var parameters = new[]
@@ -232,6 +241,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@TargetDepartment", SqlDbType.NVarChar, 100) { Value = (object)ev.TargetDepartment ?? DBNull.Value },
                 new SqlParameter("@TargetProgram", SqlDbType.NVarChar, 100) { Value = (object)ev.TargetProgram ?? DBNull.Value },
                 new SqlParameter("@TargetYearLevel", SqlDbType.Int) { Value = ev.TargetYearLevel.HasValue ? (object)ev.TargetYearLevel.Value : DBNull.Value },
+                new SqlParameter("@EventPhotoPath", SqlDbType.NVarChar, 500) { Value = (object)ev.EventPhotoPath ?? DBNull.Value },
                 new SqlParameter("@EventId", SqlDbType.Int) { Value = ev.EventId }
             };
 
@@ -331,7 +341,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 TargetBranch = row["TargetBranch"] != DBNull.Value ? row["TargetBranch"].ToString() : null,
                 TargetDepartment = row["TargetDepartment"] != DBNull.Value ? row["TargetDepartment"].ToString() : null,
                 TargetProgram = row["TargetProgram"] != DBNull.Value ? row["TargetProgram"].ToString() : null,
-                TargetYearLevel = row["TargetYearLevel"] != DBNull.Value ? Convert.ToInt32(row["TargetYearLevel"]) : (int?)null
+                TargetYearLevel = row["TargetYearLevel"] != DBNull.Value ? Convert.ToInt32(row["TargetYearLevel"]) : (int?)null,
+                EventPhotoPath = row.Table.Columns.Contains("EventPhotoPath") && row["EventPhotoPath"] != DBNull.Value ? row["EventPhotoPath"].ToString() : null
             };
         }
 

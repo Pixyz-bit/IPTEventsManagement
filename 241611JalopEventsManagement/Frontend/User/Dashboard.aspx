@@ -1333,7 +1333,7 @@
                         </div>
                         <div class="nav-user-info">
                             <span class="nav-user-name"><asp:Literal ID="litStudentName" runat="server" Text="Martin Jalop" /></span>
-                            <span class="nav-user-id">[ <asp:Literal ID="litStudentId" runat="server" Text="2024-00101" /> ]</span>
+                            <span class="nav-user-id">[ <asp:Literal ID="litStudentId" runat="server" Text="24-1611" /> ]</span>
                         </div>
                     </div>
 

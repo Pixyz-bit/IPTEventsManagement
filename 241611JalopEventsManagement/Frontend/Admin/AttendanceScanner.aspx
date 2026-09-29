@@ -11,6 +11,7 @@
     <style>
         /* ==========================================================================
            Event Attendance Scanner & Terminal Styling System
+           Institutional Clean White Palette (#ffffff surfaces, #2563eb primary)
            Strict MM/dd/yyyy Date Standard & Real-Time Operational Cockpit
            ========================================================================== */
         
@@ -21,28 +22,18 @@
             width: 100%;
         }
 
-        /* Context Header Banner */
+        /* Context Header Banner (Pure White Card) */
         .event-context-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
-            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--brand-primary);
             border-radius: var(--radius-lg);
             padding: 1.5rem 1.75rem;
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-card);
             position: relative;
-            overflow: hidden;
-        }
-
-        .event-context-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, #38bdf8, #818cf8);
         }
 
         .event-context-top {
@@ -54,11 +45,11 @@
         }
 
         .event-title-group h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-main);
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--text-heading);
             letter-spacing: -0.02em;
-            margin: 0 0 0.35rem 0;
+            margin: 0 0 0.45rem 0;
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -68,24 +59,26 @@
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.75rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
+            gap: 0.65rem;
+            font-size: 0.825rem;
+            color: var(--text-body);
         }
 
         .meta-chip {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0.25rem 0.65rem;
-            border-radius: 9999px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: var(--text-muted);
+            gap: 0.4rem;
+            background-color: var(--bg-subtle);
+            padding: 0.3rem 0.75rem;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-body);
+            font-size: 0.8rem;
         }
 
         .meta-chip strong {
-            color: var(--text-main);
+            color: var(--text-heading);
+            font-weight: 700;
         }
 
         .event-switcher {
@@ -97,27 +90,28 @@
         .event-switcher label {
             font-size: 0.825rem;
             color: var(--text-muted);
-            font-weight: 600;
+            font-weight: 700;
             white-space: nowrap;
         }
 
         .event-dropdown-select {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 0.45rem 0.85rem;
+            background-color: #ffffff;
+            border: 1px solid var(--border-medium);
+            color: var(--text-heading);
+            padding: 0.5rem 0.85rem;
             border-radius: var(--radius-md);
             font-size: 0.85rem;
             font-family: inherit;
             outline: none;
             cursor: pointer;
-            min-width: 240px;
+            min-width: 250px;
+            box-shadow: var(--shadow-subtle);
             transition: all 0.15s ease;
         }
 
         .event-dropdown-select:focus {
             border-color: var(--brand-primary);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+            box-shadow: 0 0 0 3px var(--brand-focus-ring);
         }
 
         /* Sub-module Pipeline Tabs */
@@ -125,7 +119,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid var(--border-subtle);
             padding-top: 1rem;
             overflow-x: auto;
         }
@@ -134,28 +128,30 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.45rem 0.95rem;
+            padding: 0.45rem 1rem;
             border-radius: var(--radius-md);
             font-size: 0.825rem;
             font-weight: 600;
             color: var(--text-muted);
             text-decoration: none;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.2s ease;
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-subtle);
+            transition: all 0.15s ease;
             white-space: nowrap;
         }
 
         .pipeline-tab-item:hover {
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.15);
+            color: var(--brand-primary);
+            border-color: var(--brand-border);
+            background-color: var(--brand-subtle);
         }
 
         .pipeline-tab-item.active {
-            color: #38bdf8;
-            background: rgba(56, 189, 248, 0.12);
-            border-color: rgba(56, 189, 248, 0.3);
+            color: var(--brand-primary);
+            background-color: var(--brand-subtle);
+            border-color: var(--brand-border);
+            font-weight: 700;
         }
 
         /* Live Gate Headcount Metric Bar */
@@ -166,13 +162,20 @@
         }
 
         .gate-stat-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1rem 1.25rem;
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.15rem 1.25rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .gate-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-elevated);
         }
 
         .gate-stat-info {
@@ -183,28 +186,28 @@
 
         .gate-stat-label {
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-muted);
         }
 
         .gate-stat-value {
-            font-size: 1.55rem;
-            font-weight: 700;
-            color: var(--text-main);
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-heading);
             line-height: 1.2;
         }
 
         .gate-stat-subtext {
-            font-size: 0.725rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
 
         /* Operational Grid: Viewfinder Stream vs Staging Panel */
         .terminal-grid {
             display: grid;
-            grid-template-columns: 1.15fr 1.35fr;
+            grid-template-columns: 1.1fr 1.3fr;
             gap: 1.5rem;
             align-items: start;
         }
@@ -223,42 +226,48 @@
         }
 
         .viewfinder-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            box-shadow: var(--shadow-card);
         }
 
         .card-header-bar {
-            padding: 0.85rem 1.15rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 0.95rem 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(15, 23, 42, 0.4);
+            background-color: #fafbfc;
         }
 
         .card-header-title {
             font-size: 0.9rem;
             font-weight: 700;
-            color: var(--text-main);
+            color: var(--text-heading);
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
         .camera-select-control {
-            background-color: rgba(15, 23, 42, 0.7);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 0.3rem 0.65rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.775rem;
+            background-color: #ffffff;
+            border: 1px solid var(--border-medium);
+            color: var(--text-body);
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
             outline: none;
             cursor: pointer;
-            max-width: 180px;
+            max-width: 200px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .camera-select-control:focus {
+            border-color: var(--brand-primary);
         }
 
         /* Interactive Video Stream Viewport */
@@ -302,7 +311,7 @@
         .scanner-hud-reticle {
             width: 220px;
             height: 220px;
-            border: 2px dashed rgba(56, 189, 248, 0.4);
+            border: 2px dashed rgba(56, 189, 248, 0.5);
             border-radius: 14px;
             position: relative;
             box-shadow: 0 0 0 9999px rgba(3, 7, 18, 0.45);
@@ -344,11 +353,12 @@
             position: absolute;
             bottom: 12px;
             font-size: 0.775rem;
-            color: rgba(255, 255, 255, 0.8);
-            background: rgba(0, 0, 0, 0.65);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.75);
+            padding: 0.3rem 0.85rem;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-weight: 500;
         }
 
         .scanner-flash-feedback {
@@ -373,17 +383,18 @@
 
         /* Manual Fallback Console Card */
         .manual-console-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.15rem 1.25rem;
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
             display: flex;
             flex-direction: column;
             gap: 0.85rem;
+            box-shadow: var(--shadow-card);
         }
 
         .manual-console-title {
-            font-size: 0.825rem;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -400,12 +411,12 @@
 
         .manual-input-box {
             flex: 1;
-            background-color: rgba(15, 23, 42, 0.7);
-            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            border: 1px solid var(--border-medium);
             border-radius: var(--radius-md);
             padding: 0.6rem 0.85rem;
             font-size: 0.875rem;
-            color: var(--text-main);
+            color: var(--text-heading);
             font-family: inherit;
             outline: none;
             transition: all 0.15s ease;
@@ -413,13 +424,13 @@
 
         .manual-input-box:focus {
             border-color: var(--brand-primary);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+            box-shadow: 0 0 0 3px var(--brand-focus-ring);
         }
 
         .btn-manual-stage {
-            background: rgba(56, 189, 248, 0.15);
-            color: #38bdf8;
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            background-color: var(--brand-subtle);
+            color: var(--brand-primary);
+            border: 1px solid var(--brand-border);
             border-radius: var(--radius-md);
             padding: 0.6rem 1.15rem;
             font-size: 0.85rem;
@@ -433,27 +444,26 @@
         }
 
         .btn-manual-stage:hover {
-            background: rgba(56, 189, 248, 0.25);
-            color: #ffffff;
-            border-color: rgba(56, 189, 248, 0.5);
+            background-color: #dbeafe;
+            color: var(--brand-primary-hover);
         }
 
         /* Right Column: Auto-Populating Verification Panel (Staging Area) */
         .staging-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             min-height: 480px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-card);
         }
 
         .staging-header-bar {
             padding: 1rem 1.35rem;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(15, 23, 42, 0.5);
+            border-bottom: 1px solid var(--border-subtle);
+            background-color: #fafbfc;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -462,46 +472,46 @@
         .staging-title {
             font-size: 0.95rem;
             font-weight: 700;
-            color: var(--text-main);
+            color: var(--text-heading);
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
         .staging-status-badge {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.04em;
             padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
+            border-radius: var(--radius-full);
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
         }
 
         .badge-awaiting {
-            background: rgba(255, 255, 255, 0.05);
+            background-color: var(--bg-hover);
             color: var(--text-muted);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-medium);
         }
 
         .badge-staged-valid {
-            background: rgba(56, 189, 248, 0.15);
-            color: #38bdf8;
-            border: 1px solid rgba(56, 189, 248, 0.35);
+            background-color: var(--accent-emerald-subtle);
+            color: var(--accent-emerald);
+            border: 1px solid var(--accent-emerald-border);
         }
 
         .badge-warning-duplicate {
-            background: rgba(251, 191, 36, 0.15);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.35);
+            background-color: var(--accent-amber-subtle);
+            color: var(--accent-amber);
+            border: 1px solid var(--accent-amber-border);
         }
 
         .badge-danger-invalid {
-            background: rgba(244, 63, 94, 0.15);
-            color: #f43f5e;
-            border: 1px solid rgba(244, 63, 94, 0.35);
+            background-color: var(--accent-rose-subtle);
+            color: var(--accent-rose);
+            border: 1px solid var(--accent-rose-border);
         }
 
         /* Staging Area Body */
@@ -511,6 +521,7 @@
             flex-direction: column;
             gap: 1.25rem;
             flex: 1;
+            background-color: #ffffff;
         }
 
         /* Notification Banner within Staging */
@@ -524,27 +535,30 @@
         }
 
         .banner-idle {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px dashed rgba(255, 255, 255, 0.1);
+            background-color: var(--bg-subtle);
+            border: 1px dashed var(--border-medium);
             color: var(--text-muted);
         }
 
         .banner-valid {
-            background: rgba(56, 189, 248, 0.12);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            color: #38bdf8;
+            background-color: var(--accent-emerald-subtle);
+            border: 1px solid var(--accent-emerald-border);
+            color: var(--accent-emerald-text);
+            font-weight: 600;
         }
 
         .banner-duplicate {
-            background: rgba(251, 191, 36, 0.12);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            color: #fbbf24;
+            background-color: var(--accent-amber-subtle);
+            border: 1px solid var(--accent-amber-border);
+            color: var(--accent-amber-text);
+            font-weight: 600;
         }
 
         .banner-invalid {
-            background: rgba(244, 63, 94, 0.12);
-            border: 1px solid rgba(244, 63, 94, 0.3);
-            color: #f43f5e;
+            background-color: var(--accent-rose-subtle);
+            border: 1px solid var(--accent-rose-border);
+            color: var(--accent-rose-text);
+            font-weight: 600;
         }
 
         /* Staged Profile Data Display */
@@ -553,35 +567,35 @@
             align-items: center;
             gap: 1.15rem;
             padding-bottom: 1.25rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .attendee-avatar-lg {
             width: 64px;
             height: 64px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #0284c7 0%, #1e40af 100%);
-            color: #ffffff;
+            background-color: var(--brand-subtle);
+            color: var(--brand-primary);
             font-size: 1.4rem;
-            font-weight: 700;
+            font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid var(--brand-border);
             flex-shrink: 0;
         }
 
         .attendee-title-meta h3 {
             margin: 0 0 0.25rem 0;
             font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-main);
+            font-weight: 800;
+            color: var(--text-heading);
         }
 
         .ticket-ref-display {
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-mono);
             font-size: 0.85rem;
-            color: #38bdf8;
+            color: var(--brand-primary);
             font-weight: 700;
         }
 
@@ -594,12 +608,12 @@
         .stage-field-item {
             display: flex;
             flex-direction: column;
-            gap: 0.2rem;
+            gap: 0.25rem;
         }
 
         .stage-field-label {
             font-size: 0.725rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-muted);
@@ -607,19 +621,19 @@
 
         .stage-field-value {
             font-size: 0.875rem;
-            color: var(--text-main);
+            color: var(--text-heading);
             font-weight: 600;
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 0.45rem 0.75rem;
+            background-color: var(--bg-subtle);
+            border: 1px solid var(--border-subtle);
+            padding: 0.5rem 0.85rem;
             border-radius: var(--radius-sm);
         }
 
-        /* Operator Confirmation Controls (No Auto Check-in) */
+        /* Operator Confirmation Controls */
         .staging-actions-container {
             padding: 1.25rem 1.5rem;
-            border-top: 1px solid var(--border-color);
-            background: rgba(15, 23, 42, 0.4);
+            border-top: 1px solid var(--border-subtle);
+            background-color: #ffffff;
             display: flex;
             align-items: center;
             gap: 0.85rem;
@@ -631,7 +645,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            background-color: var(--accent-emerald);
             color: #ffffff;
             border: none;
             padding: 0.85rem 1.5rem;
@@ -640,18 +654,18 @@
             font-weight: 700;
             font-family: inherit;
             cursor: pointer;
-            box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.4);
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+            transition: all 0.15s ease;
         }
 
         .btn-confirm-checkin:hover:not(:disabled) {
             transform: translateY(-1px);
-            box-shadow: 0 6px 18px -2px rgba(16, 185, 129, 0.6);
-            background: linear-gradient(135deg, #047857 0%, #059669 100%);
+            background-color: var(--accent-emerald-hover);
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
         }
 
         .btn-confirm-checkin:disabled {
-            opacity: 0.45;
+            opacity: 0.5;
             cursor: not-allowed;
             box-shadow: none;
         }
@@ -662,50 +676,51 @@
             align-items: center;
             justify-content: center;
             gap: 0.45rem;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            color: var(--text-body);
+            border: 1px solid var(--border-medium);
             padding: 0.85rem 1.15rem;
             border-radius: var(--radius-md);
             font-size: 0.875rem;
             font-weight: 600;
             font-family: inherit;
             cursor: pointer;
+            box-shadow: var(--shadow-subtle);
             transition: all 0.15s ease;
         }
 
         .btn-discard-staging:hover:not(:disabled) {
-            color: #f43f5e;
-            background: rgba(244, 63, 94, 0.1);
-            border-color: rgba(244, 63, 94, 0.3);
+            color: var(--accent-rose);
+            background-color: var(--accent-rose-subtle);
+            border-color: var(--accent-rose-border);
         }
 
         .keyboard-hint-badge {
             font-size: 0.675rem;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             padding: 0.15rem 0.35rem;
             border-radius: 4px;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 600;
+            color: #ffffff;
+            font-weight: 700;
         }
 
         /* Live Checked-In Attendance Roster Table */
         .live-roster-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-card);
         }
 
         .live-roster-header {
             padding: 1.15rem 1.35rem;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(15, 23, 42, 0.4);
+            background-color: #fafbfc;
             flex-wrap: wrap;
             gap: 0.75rem;
         }
@@ -713,7 +728,7 @@
         .live-roster-title {
             font-size: 0.95rem;
             font-weight: 700;
-            color: var(--text-main);
+            color: var(--text-heading);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -722,10 +737,10 @@
         .live-indicator-dot {
             width: 8px;
             height: 8px;
-            background-color: #10b981;
+            background-color: var(--accent-emerald);
             border-radius: 50%;
             display: inline-block;
-            box-shadow: 0 0 8px #10b981;
+            box-shadow: 0 0 8px var(--accent-emerald);
             animation: pulseDot 2s infinite ease-in-out;
         }
 
@@ -742,37 +757,38 @@
         }
 
         .roster-table th {
-            background-color: rgba(15, 23, 42, 0.6);
+            background-color: #fafbfc;
             color: var(--text-muted);
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            padding: 0.9rem 1rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 0.9rem 1.15rem;
+            border-bottom: 1px solid var(--border-subtle);
             white-space: nowrap;
         }
 
         .roster-table td {
-            padding: 0.85rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            color: var(--text-main);
+            padding: 0.95rem 1.15rem;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-body);
             vertical-align: middle;
         }
 
-        .roster-table tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.02);
+        .roster-table tbody tr:hover td {
+            background-color: var(--bg-hover);
         }
 
         .timestamp-badge {
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-mono);
             font-size: 0.8rem;
-            color: #34d399;
-            background: rgba(52, 211, 153, 0.08);
-            border: 1px solid rgba(52, 211, 153, 0.2);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
+            color: var(--accent-emerald-text);
+            background-color: var(--accent-emerald-subtle);
+            border: 1px solid var(--accent-emerald-border);
+            padding: 0.2rem 0.55rem;
+            border-radius: var(--radius-sm);
             white-space: nowrap;
+            font-weight: 600;
         }
 
         .method-pill {
@@ -780,11 +796,12 @@
             align-items: center;
             gap: 0.35rem;
             font-size: 0.75rem;
-            padding: 0.2rem 0.55rem;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: var(--text-muted);
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--radius-sm);
+            background-color: var(--bg-subtle);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-body);
+            font-weight: 600;
         }
 
         .empty-live-roster {
@@ -807,7 +824,7 @@
         <div class="event-context-top">
             <div class="event-title-group">
                 <h1>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
                         <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
                     </svg>
                     <asp:Literal ID="litEventTitle" runat="server" Text="Select an Event"></asp:Literal>
@@ -847,33 +864,43 @@
 
         <!-- Sub-Module Pipeline Tabs -->
         <div class="pipeline-tabs-wrapper">
-            <a href="<%= ResolveUrl("~/Frontend/Admin/EventDetails.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab-item">
+            <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
-                <span>1. Event Details</span>
+                <span>1. Event Matrix</span>
             </a>
-            <a href="<%= ResolveUrl("~/Frontend/Admin/EventPreRegistered.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab-item">
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventPreRegistered.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <polyline points="17 11 19 13 23 9"></polyline>
                 </svg>
-                <span>2. Event Pre-Registered</span>
+                <span>2. Pre-Registered</span>
             </a>
-            <a href="<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab-item active">
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/AttendanceScanner.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item active">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
                 </svg>
-                <span>3. Event Scanner and Attendance (Active)</span>
+                <span>3. Attendance Scanner</span>
             </a>
-            <a href="<%= ResolveUrl("~/Frontend/Admin/Reports.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab-item">
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventAttendance.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                <span>4. Event Attendance</span>
+            </a>
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventAnalytics.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="14"></line>
                 </svg>
-                <span>4. Event Turnout Analytics</span>
+                <span>5. Event Analytics</span>
             </a>
         </div>
     </div>

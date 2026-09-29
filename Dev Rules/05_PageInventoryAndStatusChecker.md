@@ -34,11 +34,12 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 | **P-09** | Admin | **Campus Events Matrix** | [`Frontend/Admin/AdminEvents.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/AdminEvents.aspx) | `/Frontend/Admin/AdminEvents.aspx` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository` |
 | **P-10** | Admin | **Create Event Form** | [`Frontend/Admin/CreateEvent.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/CreateEvent.aspx) | `/Frontend/Admin/CreateEvent.aspx` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository`, File Upload Handler |
 | **P-11** | Admin | **Event Details** | [`Frontend/Admin/EventDetails.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventDetails.aspx) | `/Frontend/Admin/EventDetails.aspx?eventId={id}` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository`, Audit Logger |
-| **P-12** | Admin | **Event Pre-Registered** | [`Frontend/Admin/EventPreRegistered.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventPreRegistered.aspx) | `/Frontend/Admin/EventPreRegistered.aspx?eventId={id}` | `[x] COMPLETED` | `RegistrationRepository`, `StudentRepository`, Dual-Sheet Roster, CSV Export |
+| **P-12** | Admin | **Event Pre-Registered** | [`Frontend/Admin/EventPreRegistered.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventPreRegistered.aspx) | `/Frontend/Admin/EventPreRegistered.aspx?eventId={id}` | `[x] COMPLETED` | `RegistrationRepository`, `StudentRepository`, Directory-Aligned Layout, Persistent Present Rows, CSV Export |
 | **P-13** | Admin | **Event Scanner and Attendance** | [`Frontend/Admin/AttendanceScanner.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/AttendanceScanner.aspx) | `/Frontend/Admin/AttendanceScanner.aspx?eventId={id}` | `[x] COMPLETED` | Optical Camera Viewfinder, Staging Area, Audiovisual Chimes, Live Attendance Roster |
-| **P-14** | Admin | **Student Directory & Accounts** | `Frontend/Admin/StudentList.aspx` | `/Frontend/Admin/StudentList.aspx` | `[ ] NOT YET STARTED` | `StudentRepository`, `UserRepository`, CSV Bulk Import Parser |
+| **P-14** | Admin | **Student Directory & Accounts** | [`Frontend/Admin/StudentList.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/StudentList.aspx) | `/Frontend/Admin/StudentList.aspx` | `[x] COMPLETED` | `StudentRepository`, `UserRepository`, CSV Bulk Import Parser |
 | **P-15** | Admin | **System Audit Logs** | `Frontend/Admin/AuditLogs.aspx` | `/Frontend/Admin/AuditLogs.aspx` | `[ ] NOT YET STARTED` | `AuditRepository`, `dbo.AuditLogsTable` |
-| **P-16** | Admin | **Reports & Analytics** | `Frontend/Admin/Reports.aspx` | `/Frontend/Admin/Reports.aspx` | `[ ] NOT YET STARTED` | Analytics Engine, Chart.js / SVG Visualizer, CSV/PDF Export |
+| **P-16** | Admin | **Event Analytics** | [`Frontend/Admin/EventAnalytics.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventAnalytics.aspx) | `/Frontend/Admin/EventAnalytics.aspx?eventId={id}` | `[x] COMPLETED` | 3-Phase Lifecycle Telemetry Engine (Before, During, After), Official PDF & CSV Export |
+| **P-17** | Admin | **Event Attendance Ledger** | [`Frontend/Admin/EventAttendance.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventAttendance.aspx) | `/Frontend/Admin/EventAttendance.aspx?eventId={id}` | `[x] COMPLETED` | Dedicated Live Checked-In Roster Table, Instant Filter, Spreadsheet Streaming |
 
 ---
 
@@ -264,22 +265,23 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 
 ---
 
-#### [ ] P-14: Student Directory & Accounts Management (`StudentList.aspx`)
-- **Planned File Location:** `Frontend/Admin/StudentList.aspx`
+#### [x] P-14: Student Directory & Accounts Management (`StudentList.aspx`)
+- **Planned File Location:** [`Frontend/Admin/StudentList.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/StudentList.aspx)
 - **Access Rule:** Administrator.
-- **Visual Design:** Two-part management interface: Single Student Creation drawer / modal alongside a filterable student accounts table.
+- **Visual Design:** Authoritative master student directory and credential control center with top metrics ribbon, universal search, multi-filtering (Department, Program, Year Level, Account Status), modal drawers for manual single creation, individual profile updates, password resets, and batch CSV roster import/export.
 - **Key Capabilities:**
   - **Single Student Creation Form (User Requirement #5):**
-    - Input fields: Student Number, First Name, Middle Name, Last Name, Department, Year Level, Section, Email, Birthdate.
-    - Auto-generates initial login account with temporary password convention: `[First letter of Middle Name] + [MMDDYYYY birthdate]` (e.g., `N03242006`).
-  - **Batch Student CSV Import:**
-    - Bulk upload tool accepting student rosters via CSV.
-    - Validates rows, creates user accounts, hashes default passwords, and inserts demographic records.
+    - Input fields: Student Number, First Name, Middle Name, Last Name, Gender, Campus Branch, Department, Academic Program, Year Level, Section, Email, Birthdate (`MM/dd/yyyy`).
+    - Auto-generates initial login account in `dbo.UserTable` with temporary password convention: `[First letter of Middle Name] + [MMDDYYYY birthdate]` (e.g., `N03242006`).
+  - **Batch Student CSV Import & Export:**
+    - Bulk upload tool accepting student rosters via CSV with validation and account provisioning.
+    - Export directory to CSV with complete demographic records.
   - **Directory Roster:**
-    - Filterable table by Department, Year Level, and Account Status.
-    - Administrative password reset trigger (resets password back to default structured password).
+    - Searchable table evaluating Student ID, Full Name, Email, and Section.
+    - Filterable by Department, Academic Program, Year Level, and Account Status.
+    - Administrative password reset trigger (resets password back to structured temporary password or custom input with PBKDF2 salt hashing).
     - Account status toggles (`Active` / `Suspended`).
-- **Status:** `[ ] NOT YET STARTED`.
+- **Status:** `[x] COMPLETED`.
 
 ---
 
@@ -298,33 +300,46 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 
 ---
 
-#### [ ] P-16: Reports & Analytics (`Reports.aspx`)
-- **Planned File Location:** `Frontend/Admin/Reports.aspx`
+#### [x] P-16: Event Analytics (`EventAnalytics.aspx`)
+- **Physical File Location:** [`Frontend/Admin/EventAnalytics.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventAnalytics.aspx)
+- **Target URL:** `/Frontend/Admin/EventAnalytics.aspx?eventId={id}`
 - **Access Rule:** Administrator.
-- **Visual Design:** Analytics dashboard with visual attendance charts, department turnout leaderboards, and report generation controls.
+- **Visual Design:** High-contrast institutional white design system (`#ffffff` surfaces, `#2563eb` primary) with 3 interactive lifecycle phase tabs (`Before`, `During`, `After`), KPI metric grids, and visual distribution tracks.
 - **Key Capabilities:**
-  - Visual metrics:
-    - Attendance Turnout Percentage (`Attended` vs `NoShow`).
-    - Most active departments and year levels.
-    - Peak event registration hours and capacity utilization curves.
-  - Date range filtering and academic semester groupings.
-  - One-click export to CSV and formatted print/PDF reports.
-- **Status:** `[ ] NOT YET STARTED`.
+  - **Phase 1: Pre-Event Analytics (Before):** Capacity saturation gauge (registered vs total venue capacity), available quota pool, countdown to launch, registration velocity timeline, and target demographic breakdowns (Branch, Department, Top 5 Programs, Year Level).
+  - **Phase 2: Live Gate Telemetry (During):** Real-time turnout rate (present vs pre-registered), physical venue occupancy %, unscanned attendee counter, check-in velocity timeline (peak surges grouped by 15-minute intervals), and gate integrity status.
+  - **Phase 3: Post-Event Performance Audit (After):** Turnout audit comparing Pre-Registered vs Actual Attended vs Verified No-Shows vs Voided Cancellations, overall retention rate, and a Comparative Departmental Engagement Audit table.
+  - **Export Operations:** One-click Official University Summary (PDF) formatted for print/accreditation audit via `@media print`, and Detailed Multi-Cohort Excel / CSV spreadsheet export.
+- **Status:** `[x] COMPLETED`.
+
+---
+
+#### [x] P-17: Dedicated Event Attendance Ledger (`EventAttendance.aspx`)
+- **Physical File Location:** [`Frontend/Admin/EventAttendance.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventAttendance.aspx)
+- **Target URL:** `/Frontend/Admin/EventAttendance.aspx?eventId={id}`
+- **Access Rule:** Administrator / Desk Staff.
+- **Visual Design:** Minimalist institutional ledger presenting exclusively the **Live Checked-In Attendance Roster** table with zero distracting clutter.
+- **Key Capabilities:**
+  - 7 standardized compliance columns: `VERIFIED TIMESTAMP` (`MM/dd/yyyy hh:mm:ss tt`), `TICKET REF`, `STUDENT ID`, `ATTENDEE FULL NAME`, `PROGRAM & YEAR / SECTION`, `VERIFICATION METHOD`, and `INSPECTING ADMIN`.
+  - Microsecond-accurate timestamp recording.
+  - Client-side fast search filtering across Ticket Ref, Student ID, Name, and Section.
+  - One-click CSV export streaming.
+- **Status:** `[x] COMPLETED`.
 
 ---
 
 ## 3. Implementation Progress Summary
 
 ```
-Total Identified Pages: 16
-  ├── [x] Completed & Verified:      10  (62.5%)
-  └── [ ] Not Yet Started:            6  (37.5%)
+Total Identified Pages: 17
+  ├── [x] Completed & Verified:      12  (70.6%)
+  └── [ ] Not Yet Started:            5  (29.4%)
 ```
 
 ### Module Breakdown:
 1. **Shared / Public:** 2 / 2 Completed (100%)
 2. **Student / User:** 1 / 4 Completed (25%)
-3. **Administrative:** 7 / 10 Completed (70%)
+3. **Administrative:** 9 / 11 Completed (81.8%)
 
 ---
 

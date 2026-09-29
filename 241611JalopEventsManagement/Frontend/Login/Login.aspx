@@ -352,19 +352,7 @@
             </div>
 
             <!-- Cinematic Modern Auth Card Container -->
-            <div class="auth-card">
-                <!-- Card Window Top Header Bar -->
-                <div class="card-topbar">
-                    <div class="card-topbar-label">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        <span>STUDENT GATEWAY</span>
-                    </div>
-                    <span style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; color: var(--text-muted);">v2.6</span>
-                </div>
-
+            <div class="auth-card">        
                 <div class="card-inner">
                     <!-- Server-Side Error Alert -->
                     <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="alert-error">
@@ -378,27 +366,25 @@
                     <div class="form-group">
                         <div class="form-label-row">
                             <label for="txtIdentifier" class="form-label">Email Address</label>
-                            <span class="form-tag-hint">EMAIL LOGIN</span>
                         </div>
                         <asp:TextBox ID="txtIdentifier" runat="server" CssClass="form-control" TextMode="Email"
-                            placeholder="e.g. student@qcu.edu.ph or admin@gmail.com" autocomplete="email"></asp:TextBox>
+                             autocomplete="email"></asp:TextBox>
                     </div>
 
                     <!-- Password Input -->
                     <div class="form-group">
                         <div class="form-label-row">
                             <label for="txtPassword" class="form-label">Password</label>
-                            <span class="form-tag-hint">SECURE KEY</span>
                         </div>
                         <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password"
-                            placeholder="Enter your portal password" autocomplete="current-password"></asp:TextBox>
+                            autocomplete="current-password"></asp:TextBox>
                     </div>
 
                     <!-- Remember Session Checkbox -->
                     <div class="form-options">
                         <label class="checkbox-label">
                             <asp:CheckBox ID="chkRememberMe" runat="server" />
-                            <span>Keep session remembered</span>
+                            <span>Remember Me</span>
                         </label>
                     </div>
 

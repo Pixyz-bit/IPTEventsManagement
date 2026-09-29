@@ -25,7 +25,7 @@
 | **P-11** | Admin | **Event Details** | [`Frontend/Admin/EventDetails.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventDetails.aspx) | `/Frontend/Admin/EventDetails.aspx?eventId={id}` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository`, Audit Logger |
 | **P-12** | Admin | **Event Pre-Registered** | [`Frontend/Admin/EventPreRegistered.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventPreRegistered.aspx) | `/Frontend/Admin/EventPreRegistered.aspx?eventId={id}` | `[x] COMPLETED` | `RegistrationRepository`, `StudentRepository`, Dual-Sheet Roster, CSV Export |
 | **P-13** | Admin | **Event Scanner and Attendance** | [`Frontend/Admin/AttendanceScanner.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/AttendanceScanner.aspx) | `/Frontend/Admin/AttendanceScanner.aspx?eventId={id}` | `[x] COMPLETED` | Optical Camera Viewfinder, Staging Area, Audiovisual Chimes, Live Attendance Roster |
-| **P-14** | Admin | **Student Directory & Accounts** | `Frontend/Admin/StudentList.aspx` | `/Frontend/Admin/StudentList.aspx` | `[ ] NOT YET STARTED` | `StudentRepository`, `UserRepository`, CSV Bulk Import Parser |
+| **P-14** | Admin | **Student Directory & Accounts** | [`Frontend/Admin/StudentList.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/StudentList.aspx) | `/Frontend/Admin/StudentList.aspx` | `[x] COMPLETED` | `StudentRepository`, `UserRepository`, CSV Bulk Import Parser |
 | **P-15** | Admin | **System Audit Logs** | `Frontend/Admin/AuditLogs.aspx` | `/Frontend/Admin/AuditLogs.aspx` | `[ ] NOT YET STARTED` | `AuditRepository`, `dbo.AuditLogsTable` |
 | **P-16** | Admin | **Reports & Analytics** | `Frontend/Admin/Reports.aspx` | `/Frontend/Admin/Reports.aspx` | `[ ] NOT YET STARTED` | Analytics Engine, Chart.js / SVG Visualizer, CSV/PDF Export |
 
@@ -88,8 +88,11 @@
    - Dual-sheet roster organization (Pre-Registered vs. Cancelled), universal search and multi-filtering (Department, Course, Year Level), student profile inspection modal, ticket cancellation with real-time seat releasing back to capacity, and CSV/Excel export.
 7. **`AttendanceScanner.aspx` (`[x] COMPLETED`):**
    - Real-time entrance gate operations terminal combining optical QR code decoding, instant attendee profile staging area, mandatory administrative inspection review (no auto-checkin), operator confirmation controls ([Confirm & Check-In] vs [Cancel / Discard]), audiovisual chimes, manual fallback console, and live checked-in attendance roster.
-8. **`StudentList.aspx` (`[ ] NOT YET STARTED`):**
-   - Student accounts management: single student form with birthdate-based temporary password generation + CSV batch roster import.
+8. **`StudentList.aspx` (`[x] COMPLETED`):**
+   - Authoritative master directory of all student academic profiles recognized by the university event system (`dbo.StudentTable` + `dbo.UserTable`).
+   - Core capabilities: Universal search (evaluating Student ID, Name, Email, Section) and multi-filtering (Department, Academic Program, Year Level, Account Status).
+   - Single Student Creation Form with automatic structured temporary password generation (`[First letter of Middle Name] + [MMDDYYYY birthdate]`, e.g. `N03242006`).
+   - Profile demographic updates, account status toggle (`Active` / `Suspended`), administrative password reset modal, and batch CSV roster import + export.
 9. **`AuditLogs.aspx` (`[ ] NOT YET STARTED`):**
    - Administrative action history ledger.
 10. **`Reports.aspx` (`[ ] NOT YET STARTED`):**

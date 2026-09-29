@@ -41,5 +41,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected global::System.Web.UI.WebControls.Repeater rptCancelled;
         protected global::System.Web.UI.WebControls.Panel pnlEmptyCancelled;
+
+        protected global::System.Web.UI.WebControls.HiddenField hfModalEventRegId;
+        protected global::System.Web.UI.WebControls.LinkButton btnModalCancelPass;
     }
 }

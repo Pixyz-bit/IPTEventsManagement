@@ -23,6 +23,8 @@ namespace _241611JalopEventsManagement.Backend.Models
         public string TargetProgram { get; set; }
         public int? TargetYearLevel { get; set; }
 
+        public string EventPhotoPath { get; set; }
+
         #region Computed Domain Helpers
 
         public int RemainingCapacity => Math.Max(0, MaxCapacity - CurrentRegistrations);

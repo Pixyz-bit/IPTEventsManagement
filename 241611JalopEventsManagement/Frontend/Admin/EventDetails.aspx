@@ -701,15 +701,22 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
                 </svg>
-                <span>3. Event Scanner and Attendance</span>
+                <span>3. Attendance Scanner</span>
             </a>
-            <a href="<%= ResolveUrl("~/Frontend/Admin/Reports.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab">
+            <a href="<%= ResolveUrl("~/Frontend/Admin/EventAttendance.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                <span>4. Event Attendance</span>
+            </a>
+            <a href="<%= ResolveUrl("~/Frontend/Admin/EventAnalytics.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="14"></line>
                 </svg>
-                <span>4. Event Turnout Analytics</span>
+                <span>5. Event Analytics</span>
             </a>
         </div>
     </div>
@@ -1106,13 +1113,21 @@
                         <span>Launch Event Attendance Scanner</span>
                     </a>
 
-                    <a href="<%= ResolveUrl("~/Frontend/Admin/Reports.aspx?eventId=" + CurrentEventId) %>" class="btn-action-secondary" style="justify-content:center;">
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventAttendance.aspx?eventId=" + CurrentEventId) %>" class="btn-action-secondary" style="justify-content:center;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>View Live Attendance Roster</span>
+                    </a>
+
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventAnalytics.aspx?eventId=" + CurrentEventId) %>" class="btn-action-secondary" style="justify-content:center;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="20" x2="18" y2="10"></line>
                             <line x1="12" y1="20" x2="12" y2="4"></line>
                             <line x1="6" y1="20" x2="6" y2="14"></line>
                         </svg>
-                        <span>View Turnout Analytics</span>
+                        <span>View Event Analytics</span>
                     </a>
                 </div>
             </div>

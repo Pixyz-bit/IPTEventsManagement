@@ -107,7 +107,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 // Preview mode standard as per dev rules
                 pnlPreviewBanner.Visible = true;
                 litStudentName.Text = "Martin Jalop";
-                litStudentId.Text = "2024-00101";
+                litStudentId.Text = "24-1611";
                 litAvatarInitials.Text = "MJ";
                 litCampusBranch.Text = "San Bartolome";
                 litDepartment.Text = "College of Computer Studies";

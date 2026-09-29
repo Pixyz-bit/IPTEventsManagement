@@ -2,6 +2,7 @@
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
+
         /* ─── Standard Breadcrumb Navigation ─── */
         .breadcrumb-nav {
             margin-bottom: 0.85rem;
@@ -947,6 +948,7 @@
                 display: none;
             }
         }
+    
     </style>
 </asp:Content>
 
@@ -1136,6 +1138,12 @@
                                 <asp:TextBox ID="txtMaxCapacity" runat="server" TextMode="Number" CssClass="form-input" Text="150" AutoPostBack="true" OnTextChanged="FormField_Changed" />
                                 <!--<span class="form-hint">Enforces strict atomic concurrency lock against overbooking.</span>-->
                             </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 0.5rem;">
+                            <label class="form-label" for="<%= fuEventPhoto.ClientID %>">Event Promotional Banner / Poster Image</label>
+                            <asp:FileUpload ID="fuEventPhoto" runat="server" CssClass="form-input" accept="image/*" />
+                            <span class="form-hint" style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem; display:block;">Optional. Supported formats: PNG, JPG, JPEG, WEBP. Uploaded asset is stored persistently in the dedicated assets folder.</span>
                         </div>
 
                         <!-- Step 1 Footer Navigation -->
@@ -1605,141 +1613,6 @@
             </div>
         </div>
 
-        <!-- Right Column: Live Publishing Summary Card -->
-        <div>
-            <div class="preview-summary-card">
-                <div class="preview-card-header">
-                    <span>Live Event Card Preview</span>
-                    <span class="preview-badge-status">Upcoming</span>
-                </div>
-
-                <!-- Live Digital Ticket Pass Preview -->
-                <div class="ticket-pass-card">
-                    <!-- Promotional Image Header -->
-                    <div class="ticket-header-section">
-                        <div class="ticket-promo-image-box">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="1.8" style="margin-bottom:0.25rem;">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                            <span>*Promotional Image*</span>
-                        </div>
-                        <div class="ticket-event-title" id="ticketEventTitle">
-                            <asp:Literal ID="litPreviewTitle" runat="server" Text="Event Title Preview" />
-                        </div>
-                    </div>
-
-                    <!-- Section 1: Event Details -->
-                    <div class="ticket-section" onclick="switchStep(2)" style="cursor:pointer;" title="Click to edit Schedule & Venue">
-                        <div class="ticket-section-label">EVENT DETAILS</div>
-                        <div class="ticket-kv-grid">
-                            <div class="ticket-kv-row">
-                                <span class="ticket-kv-key">Date:</span>
-                                <span class="ticket-kv-val" id="ticketEventDate"><asp:Literal ID="litPreviewDate" runat="server" Text="Wednesday, October 28, 2026" /></span>
-                            </div>
-                            <div class="ticket-kv-row">
-                                <span class="ticket-kv-key">Time:</span>
-                                <span class="ticket-kv-val" id="ticketEventTime"><asp:Literal ID="litPreviewTime" runat="server" Text="09:00 AM - 04:00 PM (Gates Open: 08:15 AM)" /></span>
-                            </div>
-                            <div class="ticket-kv-row">
-                                <span class="ticket-kv-key">Venue:</span>
-                                <span class="ticket-kv-val" id="ticketEventVenue"><asp:Literal ID="litPreviewVenue" runat="server" Text="University Grand Auditorium" /></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section 2: Attendee Details -->
-                    <div class="ticket-section" onclick="switchStep(3)" style="cursor:pointer;" title="Click to edit Audience Eligibility">
-                        <div class="ticket-section-label">ATTENDEE DETAILS</div>
-                        <div class="ticket-kv-grid">
-                            <div class="ticket-kv-row">
-                                <span class="ticket-kv-key">Name:</span>
-                                <span class="ticket-kv-val" id="ticketAttendeeName">Alice M. Mendoza</span>
-                            </div>
-                            <div class="ticket-kv-row">
-                                <span class="ticket-kv-key">Student ID:</span>
-                                <span class="ticket-kv-val" id="ticketAttendeeId">2024-1611</span>
-                            </div>
-                            <div class="ticket-kv-row">
-                                <span class="ticket-kv-key">Program:</span>
-                                <span class="ticket-kv-val" id="ticketAttendeeProgram"><asp:Literal ID="litPreviewPrograms" runat="server" Text="BS Information Technology (SBIT3C)" /></span>
-                            </div>
-                            <div class="ticket-kv-row">
-                                <span class="ticket-kv-key">Status:</span>
-                                <span class="ticket-kv-val"><span class="ticket-status-badge">PRE-REGISTERED</span></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section 3: QR Code Section -->
-                    <div class="ticket-section ticket-qr-section">
-                        <div class="ticket-qr-frame">
-                            <svg width="88" height="88" viewBox="0 0 33 33" shape-rendering="crispEdges">
-                                <rect width="33" height="33" fill="#ffffff" rx="2" />
-                                <!-- Corner 1 (Top Left) -->
-                                <rect x="3" y="3" width="7" height="7" fill="#0f172a" />
-                                <rect x="4" y="4" width="5" height="5" fill="#ffffff" />
-                                <rect x="5" y="5" width="3" height="3" fill="#0f172a" />
-                                <!-- Corner 2 (Top Right) -->
-                                <rect x="23" y="3" width="7" height="7" fill="#0f172a" />
-                                <rect x="24" y="4" width="5" height="5" fill="#ffffff" />
-                                <rect x="25" y="5" width="3" height="3" fill="#0f172a" />
-                                <!-- Corner 3 (Bottom Left) -->
-                                <rect x="3" y="23" width="7" height="7" fill="#0f172a" />
-                                <rect x="4" y="24" width="5" height="5" fill="#ffffff" />
-                                <rect x="5" y="25" width="3" height="3" fill="#0f172a" />
-                                <!-- Timing & Matrix Elements -->
-                                <rect x="11" y="5" width="1" height="1" fill="#0f172a" />
-                                <rect x="13" y="5" width="1" height="1" fill="#0f172a" />
-                                <rect x="15" y="5" width="1" height="1" fill="#0f172a" />
-                                <rect x="17" y="5" width="1" height="1" fill="#0f172a" />
-                                <rect x="19" y="5" width="1" height="1" fill="#0f172a" />
-                                <rect x="5" y="11" width="1" height="1" fill="#0f172a" />
-                                <rect x="5" y="13" width="1" height="1" fill="#0f172a" />
-                                <rect x="5" y="15" width="1" height="1" fill="#0f172a" />
-                                <rect x="5" y="17" width="1" height="1" fill="#0f172a" />
-                                <rect x="5" y="19" width="1" height="1" fill="#0f172a" />
-                                <rect x="12" y="12" width="2" height="2" fill="#0f172a" />
-                                <rect x="16" y="12" width="1" height="3" fill="#0f172a" />
-                                <rect x="19" y="11" width="2" height="1" fill="#0f172a" />
-                                <rect x="14" y="16" width="3" height="1" fill="#0f172a" />
-                                <rect x="12" y="18" width="1" height="2" fill="#0f172a" />
-                                <rect x="18" y="17" width="2" height="2" fill="#0f172a" />
-                                <rect x="14" y="20" width="2" height="1" fill="#0f172a" />
-                                <rect x="23" y="12" width="2" height="2" fill="#0f172a" />
-                                <rect x="26" y="15" width="1" height="3" fill="#0f172a" />
-                                <rect x="24" y="19" width="3" height="1" fill="#0f172a" />
-                                <rect x="12" y="24" width="3" height="1" fill="#0f172a" />
-                                <rect x="16" y="23" width="2" height="2" fill="#0f172a" />
-                                <rect x="13" y="27" width="1" height="2" fill="#0f172a" />
-                                <rect x="19" y="26" width="3" height="1" fill="#0f172a" />
-                                <rect x="24" y="23" width="2" height="2" fill="#0f172a" />
-                                <rect x="23" y="27" width="3" height="1" fill="#0f172a" />
-                                <rect x="27" y="26" width="2" height="2" fill="#0f172a" />
-                            </svg>
-                        </div>
-                        <div class="ticket-qr-instruction">SCAN FOR GATE CHECK-IN</div>
-                        <div class="ticket-qr-ref" id="ticketQrRef">REF: TCK-2026-8841-OCT28</div>
-                    </div>
-
-                    <!-- Section 4: Rules / Bullets -->
-                    <div class="ticket-footer-section">
-                        <div class="ticket-bullet-item">&bull; Bring valid student ID for gate inspection</div>
-                        <div class="ticket-bullet-item">&bull; Single scan only; non-transferable pass</div>
-                    </div>
-                </div>
-
-                <div style="display:flex; flex-direction:column; gap:0.65rem;">
-                    <button type="button" class="btn-action-primary" style="width:100%; justify-content:center;" onclick="validateAndGoStep(5)">
-                        Proceed to Summary & Confirm
-                    </button>
-                    <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="btn-action-secondary" style="width:100%; justify-content:center;">
-                        Cancel & Discard
-                    </a>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Stepper Tab Controller Script -->
@@ -1898,12 +1771,6 @@
             var hf = document.getElementById('<%= hfSelectedPrograms.ClientID %>');
             if (hf) {
                 hf.value = selected.join(', ');
-            }
-
-            // Update preview card Target Courses
-            var previewProg = document.getElementById('<%= litPreviewPrograms.ClientID %>');
-            if (previewProg) {
-                previewProg.innerText = selected.length > 0 ? selected.join(', ') : 'All Programs';
             }
         }
 

@@ -79,39 +79,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private void UpdatePreviewCard()
         {
-            litPreviewTitle.Text = string.IsNullOrWhiteSpace(txtTitle.Text)
-                ? "Event Title Preview"
-                : Server.HtmlEncode(txtTitle.Text.Trim());
-
-            litPreviewVenue.Text = string.IsNullOrWhiteSpace(txtVenueLocation.Text)
-                ? "University Grand Auditorium"
-                : Server.HtmlEncode(txtVenueLocation.Text.Trim());
-
-            if (DateTime.TryParse(txtEventDate.Text, out DateTime evDate))
-            {
-                litPreviewDate.Text = evDate.ToString("MM/dd/yyyy");
-
-                TimeSpan sTimeSpan = new TimeSpan(9, 0, 0);
-                TimeSpan eTimeSpan = new TimeSpan(16, 0, 0);
-                if (TimeSpan.TryParse(txtEventStartTime.Text, out TimeSpan st)) sTimeSpan = st;
-                if (TimeSpan.TryParse(txtEventEndTime.Text, out TimeSpan et)) eTimeSpan = et;
-
-                DateTime dummy = DateTime.Today;
-                DateTime startDt = dummy.Add(sTimeSpan);
-                DateTime endDt = dummy.Add(eTimeSpan);
-                DateTime gatesOpen = startDt.AddMinutes(-45);
-
-                litPreviewTime.Text = $"{startDt:hh:mm tt} - {endDt:hh:mm tt} (Gates Open: {gatesOpen:hh:mm tt})";
-            }
-            else
-            {
-                litPreviewDate.Text = "10/28/2026";
-                litPreviewTime.Text = "09:00 AM - 04:00 PM (Gates Open: 08:15 AM)";
-            }
-
-            litPreviewPrograms.Text = string.IsNullOrWhiteSpace(hfSelectedPrograms.Value)
-                ? "BS Information Technology (SBIT3C)"
-                : Server.HtmlEncode(hfSelectedPrograms.Value);
+            // Event card preview removed from CreateEvent (reserved for EventDetails)
         }
 
         protected void btnAddSponsor_Click(object sender, EventArgs e)
@@ -265,6 +233,29 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 ? null
                 : hfSelectedPrograms.Value.Trim();
 
+            // Process Event Photo Upload
+            string photoPath = null;
+            if (fuEventPhoto != null && fuEventPhoto.HasFile)
+            {
+                try
+                {
+                    string uploadFolder = Server.MapPath("~/Frontend/Assets/Events/");
+                    if (!System.IO.Directory.Exists(uploadFolder))
+                    {
+                        System.IO.Directory.CreateDirectory(uploadFolder);
+                    }
+                    string ext = System.IO.Path.GetExtension(fuEventPhoto.FileName).ToLowerInvariant();
+                    string safeFileName = $"{Guid.NewGuid():N}_{System.IO.Path.GetFileNameWithoutExtension(fuEventPhoto.FileName)}{ext}";
+                    string physicalPath = System.IO.Path.Combine(uploadFolder, safeFileName);
+                    fuEventPhoto.SaveAs(physicalPath);
+                    photoPath = "~/Frontend/Assets/Events/" + safeFileName;
+                }
+                catch (Exception uploadEx)
+                {
+                    System.Diagnostics.Debug.WriteLine("Photo upload error: " + uploadEx.Message);
+                }
+            }
+
             var newEvent = new EventModel
             {
                 Title = title,
@@ -282,7 +273,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 TargetBranch = string.IsNullOrWhiteSpace(ddlBranch.SelectedValue) ? null : ddlBranch.SelectedValue,
                 TargetDepartment = string.IsNullOrWhiteSpace(ddlDepartment.SelectedValue) ? null : ddlDepartment.SelectedValue,
                 TargetProgram = targetPrograms,
-                TargetYearLevel = int.TryParse(ddlYearLevel.SelectedValue, out int yl) ? (int?)yl : null
+                TargetYearLevel = int.TryParse(ddlYearLevel.SelectedValue, out int yl) ? (int?)yl : null,
+                EventPhotoPath = photoPath
             };
 
             try
