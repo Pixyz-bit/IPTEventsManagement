@@ -395,16 +395,36 @@
             background-color: var(--bg-hover);
         }
 
-        .timestamp-badge {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: var(--accent-emerald-text);
-            background-color: var(--accent-emerald-subtle);
-            border: 1px solid var(--accent-emerald-border);
-            padding: 0.25rem 0.6rem;
-            border-radius: var(--radius-sm);
-            white-space: nowrap;
+        .timestamp-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            line-height: 1.25;
+        }
+
+        .timestamp-date {
+            font-size: 0.85rem;
             font-weight: 700;
+            color: var(--text-heading);
+            font-family: var(--font-mono);
+            letter-spacing: -0.01em;
+        }
+
+        .timestamp-time {
+            font-size: 0.775rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .timestamp-badge {
+            background: transparent;
+            border: none;
+            padding: 0;
+            color: var(--text-heading);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
         }
 
         .ticket-code {

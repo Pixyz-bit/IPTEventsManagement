@@ -210,10 +210,11 @@
                                 data-dept='<%# Eval("StudentDepartment") %>'
                                 data-course='<%# Eval("StudentProgram") %>'>
                                 <td>
-                                    <!-- Strict MM/dd/yyyy hh:mm:ss tt format -->
-                                    <span class="timestamp-badge">
-                                        <%# FormatTimestamp(Eval("CheckInTimestamp")) %>
-                                    </span>
+                                    <!-- Date above, time below (containerless) -->
+                                    <div class="timestamp-stack">
+                                        <span class="timestamp-date"><%# FormatDate(Eval("CheckInTimestamp")) %></span>
+                                        <span class="timestamp-time"><%# FormatTime(Eval("CheckInTimestamp")) %></span>
+                                    </div>
                                 </td>
                                 <td>
                                     <span class="ticket-code">

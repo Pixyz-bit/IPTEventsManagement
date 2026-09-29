@@ -8,8 +8,7 @@
     <!-- Page Header & Top Operations -->
     <div class="directory-header-row">
         <div class="header-title-block">
-            <h2>Students Directory & Identity Master</h2>
-            <p>Authoritative academic registry and credential control center for university event registrations and pass validation.</p>
+            <h2>Students Directory</h2>
         </div>
         <div class="header-actions">
             <asp:LinkButton ID="btnOpenBatchModal" runat="server" CssClass="btn-action-secondary" OnClick="btnOpenBatchModal_Click">
@@ -27,7 +26,7 @@
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
-                <span>+ Add New Student</span>
+                <span>Add New Student</span>
             </asp:LinkButton>
         </div>
     </div>

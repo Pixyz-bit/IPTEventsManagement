@@ -119,9 +119,10 @@
             align-items: center;
             background-color: #ffffff;
             border: 1px solid var(--border-subtle);
-            border-radius: 10px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid var(--border-subtle);
             padding: 0.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
             overflow-x: auto;
             gap: 0.35rem;
@@ -225,12 +226,18 @@
         }
 
         /* Step Panels Visibility */
+        .create-form-layout > div {
+            width: 100%;
+        }
+
         .step-panel {
             display: none;
+            width: 100%;
         }
 
         .step-panel.active-panel {
             display: block;
+            width: 100%;
         }
 
         /* Step Footer Navigation */
@@ -245,19 +252,19 @@
             gap: 0.75rem;
         }
 
-        /* ─── Two-Column Layout ─── */
+        /* ─── Single-Column Full-Width Layout ─── */
         .create-form-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 350px;
-            gap: 1.5rem;
-            align-items: flex-start;
+            display: block;
+            width: 100%;
+            margin-top: 0;
         }
 
         /* ─── Card Design ─── */
         .form-section-card {
             background-color: #ffffff;
             border: 1px solid var(--border-subtle);
-            border-radius: 8px;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
             margin-bottom: 1.5rem;
             box-shadow: var(--shadow-subtle);
             overflow: hidden;

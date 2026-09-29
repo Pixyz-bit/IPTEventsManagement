@@ -322,73 +322,7 @@
 
     </div>
 
-    <!-- Live Checked-In Attendance Roster Card -->
-    <div class="live-roster-card">
-        <div class="live-roster-header">
-            <div class="live-roster-title">
-                <span class="live-indicator-dot"></span>
-                <span>Live Checked-In Attendance Roster</span>
-            </div>
-            <div style="font-size:0.8rem; color:var(--text-muted);">
-                Chronological gate log &bull; Authenticated database commits
-            </div>
-        </div>
-
-        <div style="overflow-x:auto;">
-            <table class="roster-table" id="tblLiveCheckedIn">
-                <thead>
-                    <tr>
-                        <th>Verified Timestamp</th>
-                        <th>Ticket Ref</th>
-                        <th>Student ID</th>
-                        <th>Attendee Full Name</th>
-                        <th>Program & Year / Section</th>
-                        <th>Verification Method</th>
-                        <th>Inspecting Admin</th>
-                    </tr>
-                </thead>
-                <tbody id="tbodyLiveRoster">
-                    <asp:Repeater ID="rptLiveCheckedIn" runat="server">
-                        <ItemTemplate>
-                            <tr>
-                                <td>
-                                    <!-- Strict MM/dd/yyyy hh:mm:ss tt format -->
-                                    <span class="timestamp-badge">
-                                        <%# Eval("CheckInTimestamp", "{0:MM/dd/yyyy hh:mm:ss tt}") %>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span style="font-family:'Courier New', monospace; font-weight:700; color:#38bdf8;">
-                                        <%# Eval("TicketReference") %>
-                                    </span>
-                                </td>
-                                <td><strong><%# Eval("StudentId") %></strong></td>
-                                <td><%# Eval("StudentFullName") %></td>
-                                <td><%# Eval("StudentProgram") %> (Yr <%# Eval("CurrentYearLvl") %> - <%# Eval("CurrentSection") %>)</td>
-                                <td>
-                                    <span class="method-pill">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                        <span>Gate Verification</span>
-                                    </span>
-                                </td>
-                                <td><span style="color:var(--text-muted);"><asp:Literal ID="litAdminRosterEmail" runat="server"></asp:Literal></span></td>
-                            </tr>
-                        </ItemTemplate>
-                    </asp:Repeater>
-                </tbody>
-            </table>
-
-            <asp:Panel ID="pnlEmptyLiveRoster" runat="server" Visible="false" CssClass="empty-live-roster" ClientIDMode="Static">
-                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-                <div style="font-weight:600; color:var(--text-main);">No Attendees Checked In Yet</div>
-                <div style="font-size:0.8rem;">Gate entries confirmed by administrative inspection will appear chronologically here.</div>
-            </asp:Panel>
-        </div>
-    </div>
+    <!-- Live Checked-In Attendance Roster is displayed on EventAttendance.aspx per requirement -->
 
 </div>
 
@@ -771,6 +705,7 @@
 
     function prependLiveRosterRow(row) {
         const tbody = document.getElementById('tbodyLiveRoster');
+        if (!tbody) return;
         const emptyPanel = document.getElementById('pnlEmptyLiveRoster');
         if (emptyPanel) {
             emptyPanel.style.display = 'none';

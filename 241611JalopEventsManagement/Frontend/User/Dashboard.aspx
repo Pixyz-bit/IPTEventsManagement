@@ -57,6 +57,86 @@
             </div>
         </header>
 
+        <!-- ══════════════════════════════════════════════════════════════
+             HERO SECTION: FULL VIEWPORT HERO SHOWCASE
+             ══════════════════════════════════════════════════════════════ -->
+        <section class="hero-showcase-container" id="heroGallery">
+            <!-- Background Image Layer & Dark Vignette Overlay -->
+            <div class="hero-bg-layer" id="heroBgImage" style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>');"></div>
+            <div class="hero-overlay-layer"></div>
+
+            <!-- Main Hero Headline & Metadata (Matching Photo 1) -->
+            <div class="hero-body-content">
+                <h1 class="hero-title" id="heroTitle">Cybersecurity and AI Convention</h1>
+                <p class="hero-description" id="heroDescription">
+                    Flagship cybersecurity conference and defensive hacking competition with enterprise penetration testers and student defense drills.
+                </p>
+
+                <div class="hero-meta-list">
+                    <div class="hero-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span id="heroVenue">QCU Auditorium</span>
+                    </div>
+
+                    <div class="hero-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span id="heroDate">Oct 09, 2026</span>
+                    </div>
+
+                    <div class="hero-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span id="heroTime">10:00 AM - 03:00 PM</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Horizontal Thumbnail Gallery Rail (Matching Photo 1) -->
+            <div class="hero-gallery-rail">
+                <div class="hero-thumb-card active-thumb" id="heroThumb-0" onclick="selectHeroSlide(0)" 
+                     style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>');">
+                    <div class="thumb-overlay">
+                        <div class="thumb-title">Cybersecurity & AI Convention</div>
+                        <div class="thumb-meta">Oct 09 &bull; Auditorium</div>
+                    </div>
+                </div>
+
+                <div class="hero-thumb-card" id="heroThumb-1" onclick="selectHeroSlide(1)"
+                     style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg") %>');">
+                    <div class="thumb-overlay">
+                        <div class="thumb-title">AI & Cloud Architecture</div>
+                        <div class="thumb-meta">Oct 09 &bull; Tech Lab 3</div>
+                    </div>
+                </div>
+
+                <div class="hero-thumb-card" id="heroThumb-2" onclick="selectHeroSlide(2)"
+                     style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/campus-clean.jpg") %>');">
+                    <div class="thumb-overlay">
+                        <div class="thumb-title">Tech & Innovation Summit</div>
+                        <div class="thumb-meta">Nov 12 &bull; University Hall</div>
+                    </div>
+                </div>
+
+                <div class="hero-thumb-card" id="heroThumb-3" onclick="selectHeroSlide(3)"
+                     style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/QCU Background.png") %>');">
+                    <div class="thumb-overlay">
+                        <div class="thumb-title">Grand Org Fair & SportsFest</div>
+                        <div class="thumb-meta">Nov 20 &bull; Main Plaza</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Main Workspace -->
         <main class="portal-main">
             <!-- Toast Feedback Notification -->
@@ -64,94 +144,13 @@
                 <asp:Literal ID="litToastMsg" runat="server" />
             </asp:Panel>
 
-            <!-- ══════════════════════════════════════════════════════════════
-                 HERO SECTION: MATCHING PHOTO 1 (CINEMATIC GALLERY STAGE)
-                 ══════════════════════════════════════════════════════════════ -->
-            <section class="hero-showcase-container" id="heroGallery">
-                <!-- Background Image Layer & Dark Vignette Overlay -->
-                <div class="hero-bg-layer" id="heroBgImage" style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>');"></div>
-                <div class="hero-overlay-layer"></div>
-
-                <!-- Main Hero Headline & Metadata (Matching Photo 1) -->
-                <div class="hero-body-content">
-                    <h1 class="hero-title" id="heroTitle">Cybersecurity and AI Convention</h1>
-                    <p class="hero-description" id="heroDescription">
-                        Flagship cybersecurity conference and defensive hacking competition with enterprise penetration testers and student defense drills.
-                    </p>
-
-                    <div class="hero-meta-list">
-                        <div class="hero-meta-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                            <span id="heroVenue">QCU Auditorium</span>
-                        </div>
-
-                        <div class="hero-meta-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <span id="heroDate">Oct 09, 2026</span>
-                        </div>
-
-                        <div class="hero-meta-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            <span id="heroTime">10:00 AM - 03:00 PM</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bottom Horizontal Thumbnail Gallery Rail (Matching Photo 1) -->
-                <div class="hero-gallery-rail">
-                    <div class="hero-thumb-card active-thumb" id="heroThumb-0" onclick="selectHeroSlide(0)" 
-                         style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>');">
-                        <div class="thumb-overlay">
-                            <div class="thumb-title">Cybersecurity & AI Convention</div>
-                            <div class="thumb-meta">Oct 09 &bull; Auditorium</div>
-                        </div>
-                    </div>
-
-                    <div class="hero-thumb-card" id="heroThumb-1" onclick="selectHeroSlide(1)"
-                         style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg") %>');">
-                        <div class="thumb-overlay">
-                            <div class="thumb-title">AI & Cloud Architecture</div>
-                            <div class="thumb-meta">Oct 09 &bull; Tech Lab 3</div>
-                        </div>
-                    </div>
-
-                    <div class="hero-thumb-card" id="heroThumb-2" onclick="selectHeroSlide(2)"
-                         style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/campus-clean.jpg") %>');">
-                        <div class="thumb-overlay">
-                            <div class="thumb-title">Tech & Innovation Summit</div>
-                            <div class="thumb-meta">Nov 12 &bull; University Hall</div>
-                        </div>
-                    </div>
-
-                    <div class="hero-thumb-card" id="heroThumb-3" onclick="selectHeroSlide(3)"
-                         style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/QCU Background.png") %>');">
-                        <div class="thumb-overlay">
-                            <div class="thumb-title">Grand Org Fair & SportsFest</div>
-                            <div class="thumb-meta">Nov 20 &bull; Main Plaza</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Student Demographic Identity Matrix Bar -->
-            <div class="student-matrix-strip">
-                <span class="matrix-title">COHORT MATRIX:</span>
-                <span class="matrix-chip">BRANCH: <asp:Literal ID="litCampusBranch" runat="server" Text="San Bartolome" /></span>
-                <span class="matrix-chip">DEPT: <asp:Literal ID="litDepartment" runat="server" Text="College of Computer Studies" /></span>
-                <span class="matrix-chip">PROGRAM: <asp:Literal ID="litProgram" runat="server" Text="BSIT" /></span>
-                <span class="matrix-chip">STANDING: <asp:Literal ID="litYearLevel" runat="server" Text="3rd Year" /></span>
-            </div>
+            <!-- Student Demographic Identity Hidden PlaceHolder -->
+            <asp:PlaceHolder ID="phStudentCohort" runat="server" Visible="false">
+                <asp:Literal ID="litCampusBranch" runat="server" />
+                <asp:Literal ID="litDepartment" runat="server" />
+                <asp:Literal ID="litProgram" runat="server" />
+                <asp:Literal ID="litYearLevel" runat="server" />
+            </asp:PlaceHolder>
 
             <!-- ══════════════════════════════════════════════════════════════
                  VIEW ALL EVENTS & TAB-LIKE TOGGLE SECTION
@@ -181,17 +180,6 @@
                      TAB 1 VIEW: ALL OPEN EVENTS CATALOG
                      ──────────────────────────────────────────────────────────── -->
                 <div class="events-catalog-content" id="catalogContentArea">
-                    <!-- Category Filter Pills Bar -->
-                    <div class="category-filter-bar">
-                        <span class="filter-label">Filter Tags:</span>
-                        <a href="javascript:void(0)" class="cat-pill active" onclick="filterByCategory('all', this)">#All Events</a>
-                        <a href="javascript:void(0)" class="cat-pill" onclick="filterByCategory('seminar', this)">#Seminar</a>
-                        <a href="javascript:void(0)" class="cat-pill" onclick="filterByCategory('hackathon', this)">#Hackathon</a>
-                        <a href="javascript:void(0)" class="cat-pill" onclick="filterByCategory('workshop', this)">#Workshop</a>
-                        <a href="javascript:void(0)" class="cat-pill" onclick="filterByCategory('sportsfest', this)">#SportsFest</a>
-                        <a href="javascript:void(0)" class="cat-pill" onclick="filterByCategory('orgfair', this)">#OrgFair</a>
-                    </div>
-
                     <!-- ────────────────────────────────────────────────────────────
                          EVENT CARDS GRID: ORGANIZATION OF PHOTO 2 WITH CINEMATIC STYLING
                          ──────────────────────────────────────────────────────────── -->
@@ -251,13 +239,9 @@
                                         <div class="card-action-row">
                                             <%# Eval("RegSpotsHintHtml") %>
 
-                                            <asp:LinkButton ID="btnViewDetails" runat="server" 
-                                                CssClass="btn-view-details" 
-                                                CommandName="ViewDetails" 
-                                                CommandArgument='<%# Eval("EventId") %>'
-                                                CausesValidation="false">
+                                            <a href='<%# ResolveUrl("~/Frontend/User/EventRegistration.aspx?eventId=" + Eval("EventId")) %>' class="btn-view-details">
                                                 <span>VIEW DETAILS &rarr;</span>
-                                            </asp:LinkButton>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -272,53 +256,61 @@
                 <div class="registered-section-content" id="registeredContentArea">
                     <asp:Repeater ID="rptMyRegistrations" runat="server" OnItemCommand="rptMyRegistrations_ItemCommand">
                         <HeaderTemplate>
-                            <div class="registered-table-wrapper">
-                                <table class="registered-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Event Title</th>
-                                            <th>Venue Location</th>
-                                            <th>Event Date & Time</th>
-                                            <th>Attendance Status</th>
-                                            <th style="text-align: right;">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                            <div class="registered-cards-grid">
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <tr>
-                                <td>
-                                    <div class="pass-event-title"><%# Eval("EventTitle") %></div>
-                                </td>
-                                <td><%# Eval("VenueLocation") %></td>
-                                <td style="font-family: var(--font-mono); font-size: 0.82rem;"><%# Eval("EventDateFormatted") %></td>
-                                <td>
+                            <div class="registered-pass-card">
+                                <div class="pass-card-top">
                                     <span class='status-badge-reg <%# GetStatusBadgeCss(Eval("Status")?.ToString()) %>'>
                                         <%# Eval("Status") %>
                                     </span>
-                                </td>
-                                <td style="text-align: right; white-space: nowrap;">
-                                    <a href='<%# ResolveUrl("~/Frontend/User/EventPass.aspx?regId=" + Eval("EventRegistrationId")) %>' 
-                                       class="btn-view-details" 
-                                       style="display: inline-flex; padding: 0.35rem 0.75rem; font-size: 0.75rem; margin-right: 0.5rem; text-decoration: none; vertical-align: middle;">
-                                        VIEW PASS &rarr;
+                                    <span class="pass-id-chip">PASS #<%# Eval("EventRegistrationId") %></span>
+                                </div>
+
+                                <div class="pass-card-body">
+                                    <h3 class="pass-card-title"><%# Eval("EventTitle") %></h3>
+
+                                    <div class="pass-meta-list">
+                                        <div class="pass-meta-row">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                <circle cx="12" cy="10" r="3"></circle>
+                                            </svg>
+                                            <span><%# Eval("VenueLocation") %></span>
+                                        </div>
+
+                                        <div class="pass-meta-row">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg>
+                                            <span><%# Eval("EventDateFormatted") %></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pass-card-footer">
+                                    <a href='<%# ResolveUrl("~/Frontend/User/EventPass.aspx?regId=" + Eval("EventRegistrationId")) %>' class="btn-pass-view">
+                                        <span>VIEW PASS</span>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg>
                                     </a>
 
                                     <asp:LinkButton ID="btnCancelRegistration" runat="server" 
-                                        CssClass="btn-cancel-reg"
+                                        CssClass="btn-pass-cancel"
                                         CommandName="CancelRegistration" 
                                         CommandArgument='<%# Eval("EventRegistrationId") %>'
                                         Visible='<%# Eval("CanCancel") %>'
                                         OnClientClick="return confirm('Confirm cancellation of your attendance pass for this event?');"
                                         CausesValidation="false">
-                                        CANCEL PASS
+                                        Cancel Pass
                                     </asp:LinkButton>
-                                </td>
-                            </tr>
+                                </div>
+                            </div>
                         </ItemTemplate>
                         <FooterTemplate>
-                                    </tbody>
-                                </table>
                             </div>
                         </FooterTemplate>
                     </asp:Repeater>
@@ -343,61 +335,22 @@
             </section>
         </main>
 
-        <!-- ══════════════════════════════════════════════════════════════
-             REGISTRATION & EVENT DETAILS MODAL DIALOG
-             ══════════════════════════════════════════════════════════════ -->
-        <asp:Panel ID="pnlModalDetails" runat="server" CssClass="modal-overlay" Visible="false">
-            <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalEventTitle">
-                <div class="modal-header">
-                    <h4 id="modalEventTitle">Event Registration Details</h4>
-                    <asp:LinkButton ID="btnCloseModal" runat="server" CssClass="modal-close-btn" OnClick="btnCloseModal_Click" CausesValidation="false">&times;</asp:LinkButton>
-                </div>
-
-                <div class="modal-body">
-                    <div>
-                        <h3 style="font-size: 1.35rem; font-weight: 800; color: #FFFFFF; margin-bottom: 0.5rem; text-transform: uppercase;">
-                            <asp:Literal ID="litModalTitle" runat="server" />
-                        </h3>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.55;">
-                            <asp:Literal ID="litModalDescription" runat="server" />
-                        </p>
-                    </div>
-
-                    <div class="modal-detail-grid">
-                        <div class="modal-meta-box">
-                            <div class="modal-meta-box-label">SCHEDULE & TIME</div>
-                            <div class="modal-meta-box-val"><asp:Literal ID="litModalSchedule" runat="server" /></div>
-                        </div>
-
-                        <div class="modal-meta-box">
-                            <div class="modal-meta-box-label">VENUE LOCATION</div>
-                            <div class="modal-meta-box-val"><asp:Literal ID="litModalVenue" runat="server" /></div>
-                        </div>
-
-                        <div class="modal-meta-box">
-                            <div class="modal-meta-box-label">AVAILABLE SEATS</div>
-                            <div class="modal-meta-box-val"><asp:Literal ID="litModalCapacity" runat="server" /></div>
-                        </div>
-
-                        <div class="modal-meta-box">
-                            <div class="modal-meta-box-label">REGISTRATION WINDOW</div>
-                            <div class="modal-meta-box-val"><asp:Literal ID="litModalRegPeriod" runat="server" /></div>
-                        </div>
-
-                        <div class="modal-meta-box" style="grid-column: 1 / -1;">
-                            <div class="modal-meta-box-label">OFFICIAL SPONSORS</div>
-                            <div class="modal-meta-box-val"><asp:Literal ID="litModalSponsors" runat="server" Text="AWS, Microsoft" /></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <asp:HiddenField ID="hfSelectedEventId" runat="server" />
-                    <asp:Button ID="btnCancelModal" runat="server" Text="CLOSE" CssClass="btn-modal-cancel" OnClick="btnCloseModal_Click" CausesValidation="false" />
-                    <asp:Button ID="btnConfirmRegistration" runat="server" Text="CONFIRM PASS REGISTRATION &rarr;" CssClass="btn-register-action" OnClick="btnConfirmRegistration_Click" />
-                </div>
-            </div>
-        </asp:Panel>
+        <!-- Hidden controls retained invisibly for designer & code-behind compatibility -->
+        <asp:PlaceHolder ID="phModalHidden" runat="server" Visible="false">
+            <asp:Panel ID="pnlModalDetails" runat="server">
+                <asp:LinkButton ID="btnCloseModal" runat="server" />
+                <asp:Literal ID="litModalTitle" runat="server" />
+                <asp:Literal ID="litModalDescription" runat="server" />
+                <asp:Literal ID="litModalSchedule" runat="server" />
+                <asp:Literal ID="litModalVenue" runat="server" />
+                <asp:Literal ID="litModalCapacity" runat="server" />
+                <asp:Literal ID="litModalRegPeriod" runat="server" />
+                <asp:Literal ID="litModalSponsors" runat="server" />
+                <asp:HiddenField ID="hfSelectedEventId" runat="server" />
+                <asp:Button ID="btnCancelModal" runat="server" />
+                <asp:Button ID="btnConfirmRegistration" runat="server" />
+            </asp:Panel>
+        </asp:PlaceHolder>
     </form>
 
     <!-- Client-Side Scripting: Slide Switcher, Segmented Tabs, Category Filtering -->

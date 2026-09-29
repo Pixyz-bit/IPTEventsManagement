@@ -154,12 +154,6 @@
             <!-- STEP 1: Event Details -->
             <div id="step-panel-1" class="step-panel active-panel">
                 <div class="form-section-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span>Step 1: Event Details</span>
-                        </div>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">1 of 5</span>
-                    </div>
                     <div class="card-body">
                         <div class="form-group">
                             <label class="form-label" for="<%= txtTitle.ClientID %>">Event Title <span class="required-mark">*</span></label>
@@ -316,12 +310,12 @@
 
                             <div class="form-group">
                                 <label class="form-label" for="<%= ddlDepartment.ClientID %>">2. Academic College / Department</label>
-                                <asp:DropDownList ID="ddlDepartment" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
+                                <asp:DropDownList ID="ddlDepartment" runat="server" CssClass="form-select" onchange="filterProgramsByDepartment(this.value);" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
                                     <asp:ListItem Value="" Text="All Colleges / Open to All" />
                                     <asp:ListItem Value="College of Computer Studies" Text="College of Computer Studies (CCS)" />
                                     <asp:ListItem Value="College of Engineering" Text="College of Engineering (COE)" />
-                                    <asp:ListItem Value="College of Business & Acctg" Text="College of Business & Accountancy (CBA)" />
-                                    <asp:ListItem Value="College of Arts & Sciences" Text="College of Arts & Sciences (CAS)" />
+                                    <asp:ListItem Value="College of Business Administration and Accountancy" Text="College of Business Administration and Accountancy (CBAA)" />
+                                    <asp:ListItem Value="College of Education" Text="College of Education (CED)" />
                                 </asp:DropDownList>
                             </div>
                         </div>
@@ -337,45 +331,87 @@
                                     <button type="button" class="btn-micro" onclick="selectAllPrograms(false)">Clear (Open to All)</button>
                                 </div>
                             </div>
-                            <span class="form-hint" style="margin-bottom:0.6rem;">Leave all unchecked to keep open to all programs. Select one or more specific courses (e.g. BSIT and BSCS) to restrict eligibility.</span>
+                            <span class="form-hint" style="margin-bottom:0.6rem;">Leave all unchecked to keep open to all programs. Select one or more specific courses to restrict eligibility. Dynamic according to Academic College / Department.</span>
                             
-                            <div class="course-picker-grid">
-                                <label class="course-picker-card" id="card_BSIT">
+                            <div class="course-picker-grid" id="coursePickerGrid">
+                                <!-- College of Computer Studies (CCS) -->
+                                <label class="course-picker-card" id="card_BSIT" data-dept="College of Computer Studies">
                                     <input type="checkbox" name="courseFilter" value="BSIT" id="chk_BSIT" onchange="onCourseSelectionChanged()" />
                                     <div class="course-picker-info">
                                         <span class="course-code">BSIT</span>
                                         <span class="course-name">BS Information Technology</span>
                                     </div>
                                 </label>
-                                <label class="course-picker-card" id="card_BSCS">
+                                <label class="course-picker-card" id="card_BSCS" data-dept="College of Computer Studies">
                                     <input type="checkbox" name="courseFilter" value="BSCS" id="chk_BSCS" onchange="onCourseSelectionChanged()" />
                                     <div class="course-picker-info">
                                         <span class="course-code">BSCS</span>
                                         <span class="course-name">BS Computer Science</span>
                                     </div>
                                 </label>
-                                <label class="course-picker-card" id="card_BSIE">
+                                <label class="course-picker-card" id="card_BSIS" data-dept="College of Computer Studies">
+                                    <input type="checkbox" name="courseFilter" value="BSIS" id="chk_BSIS" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BSIS</span>
+                                        <span class="course-name">BS Information Systems</span>
+                                    </div>
+                                </label>
+
+                                <!-- College of Engineering (COE) -->
+                                <label class="course-picker-card" id="card_BSIE" data-dept="College of Engineering">
                                     <input type="checkbox" name="courseFilter" value="BSIE" id="chk_BSIE" onchange="onCourseSelectionChanged()" />
                                     <div class="course-picker-info">
                                         <span class="course-code">BSIE</span>
                                         <span class="course-name">BS Industrial Engineering</span>
                                     </div>
                                 </label>
-                                <label class="course-picker-card" id="card_BSBA">
-                                    <input type="checkbox" name="courseFilter" value="BSBA" id="chk_BSBA" onchange="onCourseSelectionChanged()" />
+                                <label class="course-picker-card" id="card_BSCpE" data-dept="College of Engineering">
+                                    <input type="checkbox" name="courseFilter" value="BSCpE" id="chk_BSCpE" onchange="onCourseSelectionChanged()" />
                                     <div class="course-picker-info">
-                                        <span class="course-code">BSBA</span>
-                                        <span class="course-name">BS Business Administration</span>
+                                        <span class="course-code">BSCpE</span>
+                                        <span class="course-name">BS Computer Engineering</span>
                                     </div>
                                 </label>
-                                <label class="course-picker-card" id="card_BSA">
+                                <label class="course-picker-card" id="card_BSECE" data-dept="College of Engineering">
+                                    <input type="checkbox" name="courseFilter" value="BSECE" id="chk_BSECE" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BSECE</span>
+                                        <span class="course-name">BS Electronics Engineering</span>
+                                    </div>
+                                </label>
+
+                                <!-- College of Business Administration and Accountancy (CBAA) -->
+                                <label class="course-picker-card" id="card_BSA" data-dept="College of Business Administration and Accountancy">
                                     <input type="checkbox" name="courseFilter" value="BSA" id="chk_BSA" onchange="onCourseSelectionChanged()" />
                                     <div class="course-picker-info">
                                         <span class="course-code">BSA</span>
                                         <span class="course-name">BS Accountancy</span>
                                     </div>
                                 </label>
-                                <label class="course-picker-card" id="card_BSEd">
+                                <label class="course-picker-card" id="card_BSBA" data-dept="College of Business Administration and Accountancy">
+                                    <input type="checkbox" name="courseFilter" value="BSBA" id="chk_BSBA" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BSBA</span>
+                                        <span class="course-name">BS Business Administration</span>
+                                    </div>
+                                </label>
+                                <label class="course-picker-card" id="card_BSEntrep" data-dept="College of Business Administration and Accountancy">
+                                    <input type="checkbox" name="courseFilter" value="BSEntrep" id="chk_BSEntrep" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BSEntrep</span>
+                                        <span class="course-name">BS Entrepreneurship</span>
+                                    </div>
+                                </label>
+
+                                <!-- College of Education (CED) -->
+                                <label class="course-picker-card" id="card_BECEd" data-dept="College of Education">
+                                    <input type="checkbox" name="courseFilter" value="BECEd" id="chk_BECEd" onchange="onCourseSelectionChanged()" />
+                                    <div class="course-picker-info">
+                                        <span class="course-code">BECEd</span>
+                                        <span class="course-name">Bachelor of Early Childhood Education</span>
+                                    </div>
+                                </label>
+                                <label class="course-picker-card" id="card_BSEd" data-dept="College of Education">
                                     <input type="checkbox" name="courseFilter" value="BSEd" id="chk_BSEd" onchange="onCourseSelectionChanged()" />
                                     <div class="course-picker-info">
                                         <span class="course-code">BSEd</span>
@@ -789,9 +825,9 @@
             var selected = [];
             checkboxes.forEach(function (cb) {
                 var card = document.getElementById('card_' + cb.value);
-                if (cb.checked) {
+                if (cb.checked && card && card.style.display !== 'none') {
                     selected.push(cb.value);
-                    if (card) card.classList.add('selected');
+                    card.classList.add('selected');
                 } else {
                     if (card) card.classList.remove('selected');
                 }
@@ -803,15 +839,40 @@
             }
         }
 
+        function filterProgramsByDepartment(dept) {
+            var cards = document.querySelectorAll('.course-picker-card');
+            cards.forEach(function (card) {
+                var cardDept = card.getAttribute('data-dept');
+                if (!dept || cardDept === dept) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                    var cb = card.querySelector('input[name="courseFilter"]');
+                    if (cb && cb.checked) {
+                        cb.checked = false;
+                        card.classList.remove('selected');
+                    }
+                }
+            });
+            onCourseSelectionChanged();
+        }
+
         function selectAllPrograms(selectAll) {
-            var checkboxes = document.querySelectorAll('input[name="courseFilter"]');
-            checkboxes.forEach(function (cb) {
-                cb.checked = selectAll;
+            var cards = document.querySelectorAll('.course-picker-card');
+            cards.forEach(function (card) {
+                if (card.style.display !== 'none') {
+                    var cb = card.querySelector('input[name="courseFilter"]');
+                    if (cb) cb.checked = selectAll;
+                }
             });
             onCourseSelectionChanged();
         }
 
         function restoreCourseSelection() {
+            var deptDdl = document.getElementById('<%= ddlDepartment.ClientID %>');
+            if (deptDdl) {
+                filterProgramsByDepartment(deptDdl.value);
+            }
             var hf = document.getElementById('<%= hfSelectedPrograms.ClientID %>');
             if (hf && hf.value) {
                 var selected = hf.value.split(',').map(function (s) { return s.trim(); });
@@ -821,7 +882,7 @@
                     cb.checked = match;
                     var card = document.getElementById('card_' + cb.value);
                     if (card) {
-                        if (match) card.classList.add('selected');
+                        if (match && card.style.display !== 'none') card.classList.add('selected');
                         else card.classList.remove('selected');
                     }
                 });

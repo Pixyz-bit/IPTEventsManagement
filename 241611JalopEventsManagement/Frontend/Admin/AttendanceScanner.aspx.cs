@@ -136,22 +136,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             double turnoutRate = totalActive > 0 ? ((double)checkedInCount / totalActive) * 100.0 : 0.0;
             litTurnoutRate.Text = $"{turnoutRate:F1}%";
 
-            // Bind Live Roster Table
-            rptLiveCheckedIn.DataSource = checkedInList;
-            rptLiveCheckedIn.DataBind();
-            pnlEmptyLiveRoster.Visible = checkedInList.Count == 0;
-        }
-
-        protected void rptLiveCheckedIn_ItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
-            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
-            {
-                var litAdmin = (Literal)e.Item.FindControl("litAdminRosterEmail");
-                if (litAdmin != null)
-                {
-                    litAdmin.Text = Server.HtmlEncode(CurrentAdminEmail);
-                }
-            }
+            // Note: Live Roster Table display is rendered on EventAttendance.aspx
         }
 
         #region AJAX WebMethods for Optical QR Scanner Terminal

@@ -20,8 +20,5 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litExpectedCount;
         protected global::System.Web.UI.WebControls.Literal litTurnoutRate;
         protected global::System.Web.UI.WebControls.Literal litCurrentAdminEmail;
-
-        protected global::System.Web.UI.WebControls.Repeater rptLiveCheckedIn;
-        protected global::System.Web.UI.WebControls.Panel pnlEmptyLiveRoster;
     }
 }

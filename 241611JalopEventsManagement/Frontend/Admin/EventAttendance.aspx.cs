@@ -175,6 +175,24 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
         }
 
+        public string FormatDate(object timestampObj)
+        {
+            if (timestampObj != null && DateTime.TryParse(timestampObj.ToString(), out DateTime dt))
+            {
+                return dt.ToString("MM/dd/yyyy");
+            }
+            return DateTime.Now.ToString("MM/dd/yyyy");
+        }
+
+        public string FormatTime(object timestampObj)
+        {
+            if (timestampObj != null && DateTime.TryParse(timestampObj.ToString(), out DateTime dt))
+            {
+                return dt.ToString("hh:mm:ss tt");
+            }
+            return DateTime.Now.ToString("hh:mm:ss tt");
+        }
+
         public string FormatTimestamp(object timestampObj)
         {
             if (timestampObj != null && DateTime.TryParse(timestampObj.ToString(), out DateTime dt))

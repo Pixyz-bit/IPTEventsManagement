@@ -503,7 +503,7 @@ namespace _241611JalopEventsManagement.Frontend.User
             if (e.CommandName == "ViewDetails")
             {
                 int eventId = Convert.ToInt32(e.CommandArgument);
-                ShowEventDetailsModal(eventId);
+                Response.Redirect($"~/Frontend/User/EventRegistration.aspx?eventId={eventId}", true);
             }
         }
 

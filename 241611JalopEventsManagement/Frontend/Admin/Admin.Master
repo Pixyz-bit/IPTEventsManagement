@@ -73,6 +73,7 @@
                     <div>
                         <div class="nav-group-title">Attendance & Users</div>
                         <ul class="nav-list">
+                            <%-- Hidden from navigation per user request
                             <li class="nav-item <%= Request.Path.EndsWith("EventPreRegistered.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
                                 <a href="<%= ResolveUrl("~/Frontend/Admin/EventPreRegistered.aspx") %>">
                                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -100,6 +101,7 @@
                                     <span>Event Attendance</span>
                                 </a>
                             </li>
+                            --%>
                             <li class="nav-item <%= Request.Path.EndsWith("StudentList.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
                                 <a href="<%= ResolveUrl("~/Frontend/Admin/StudentList.aspx") %>">
                                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -118,6 +120,7 @@
                     <div>
                         <div class="nav-group-title">Analytics & System</div>
                         <ul class="nav-list">
+                            <%-- Hidden from sidebar navigation per user request
                             <li class="nav-item <%= Request.Path.EndsWith("EventAnalytics.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
                                 <a href="<%= ResolveUrl("~/Frontend/Admin/EventAnalytics.aspx") %>">
                                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -128,6 +131,7 @@
                                     <span>Event Analytics</span>
                                 </a>
                             </li>
+                            --%>
                             <li class="nav-item <%= Request.Path.EndsWith("AuditLogs.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
                                 <a href="<%= ResolveUrl("~/Frontend/Admin/AuditLogs.aspx") %>">
                                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
