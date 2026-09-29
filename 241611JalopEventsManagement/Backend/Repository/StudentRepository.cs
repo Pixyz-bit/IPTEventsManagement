@@ -24,8 +24,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
             string sql = @"
                 SELECT s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, 
-                       s.CampusBranch, s.Department, s.Program, s.UserId, s.YearLevel, 
-                       s.Section, s.BirthDate,
+                       s.CampusBranch, s.Department, s.Program, s.UserId,
                        u.Email, u.IsActive
                 FROM dbo.StudentTable s
                 INNER JOIN dbo.UserTable u ON s.UserId = u.UserId
@@ -40,8 +39,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     s.FirstName LIKE @Search OR 
                     s.LastName LIKE @Search OR 
                     (s.FirstName + ' ' + s.LastName) LIKE @Search OR
-                    u.Email LIKE @Search OR
-                    s.Section LIKE @Search
+                    u.Email LIKE @Search
                 )";
                 parameters.Add(new SqlParameter("@Search", SqlDbType.NVarChar, 150) { Value = $"%{search.Trim()}%" });
             }
@@ -56,12 +54,6 @@ namespace _241611JalopEventsManagement.Backend.Repository
             {
                 sql += " AND s.Program = @Program";
                 parameters.Add(new SqlParameter("@Program", SqlDbType.NVarChar, 100) { Value = program.Trim() });
-            }
-
-            if (yearLevel.HasValue && yearLevel.Value > 0)
-            {
-                sql += " AND s.YearLevel = @YearLevel";
-                parameters.Add(new SqlParameter("@YearLevel", SqlDbType.Int) { Value = yearLevel.Value });
             }
 
             if (!string.IsNullOrWhiteSpace(status) && status != "ALL")
@@ -102,8 +94,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
             const string sql = @"
                 SELECT s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, 
-                       s.CampusBranch, s.Department, s.Program, s.UserId, s.YearLevel, 
-                       s.Section, s.BirthDate,
+                       s.CampusBranch, s.Department, s.Program, s.UserId,
                        u.Email, u.IsActive
                 FROM dbo.StudentTable s
                 INNER JOIN dbo.UserTable u ON s.UserId = u.UserId
@@ -132,8 +123,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
             const string sql = @"
                 SELECT s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, 
-                       s.CampusBranch, s.Department, s.Program, s.UserId, s.YearLevel, 
-                       s.Section, s.BirthDate,
+                       s.CampusBranch, s.Department, s.Program, s.UserId,
                        u.Email, u.IsActive
                 FROM dbo.StudentTable s
                 INNER JOIN dbo.UserTable u ON s.UserId = u.UserId
@@ -229,11 +219,11 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     const string insertStudentSql = @"
                         INSERT INTO dbo.StudentTable (
                             StudentId, FirstName, MiddleName, LastName, Gender, CampusBranch, 
-                            Department, Program, UserId, YearLevel, Section, BirthDate
+                            Department, Program, UserId
                         )
                         VALUES (
                             @StudentId, @FirstName, @MiddleName, @LastName, @Gender, @CampusBranch, 
-                            @Department, @Program, @UserId, @YearLevel, @Section, @BirthDate
+                            @Department, @Program, @UserId
                         );";
 
                     using (var studentCmd = new SqlCommand(insertStudentSql, conn, trans))
@@ -247,9 +237,6 @@ namespace _241611JalopEventsManagement.Backend.Repository
                         studentCmd.Parameters.Add(new SqlParameter("@Department", SqlDbType.NVarChar, 100) { Value = student.Department.Trim() });
                         studentCmd.Parameters.Add(new SqlParameter("@Program", SqlDbType.NVarChar, 100) { Value = student.Program.Trim() });
                         studentCmd.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int) { Value = newUserId });
-                        studentCmd.Parameters.Add(new SqlParameter("@YearLevel", SqlDbType.Int) { Value = (object)student.YearLevel ?? DBNull.Value });
-                        studentCmd.Parameters.Add(new SqlParameter("@Section", SqlDbType.NVarChar, 50) { Value = (object)student.Section?.Trim() ?? DBNull.Value });
-                        studentCmd.Parameters.Add(new SqlParameter("@BirthDate", SqlDbType.Date) { Value = (object)student.BirthDate ?? DBNull.Value });
 
                         studentCmd.ExecuteNonQuery();
                     }
@@ -290,10 +277,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                             Gender = @Gender,
                             CampusBranch = @CampusBranch,
                             Department = @Department,
-                            Program = @Program,
-                            YearLevel = @YearLevel,
-                            Section = @Section,
-                            BirthDate = @BirthDate
+                            Program = @Program
                         WHERE StudentId = @StudentId;";
 
                     using (var cmd = new SqlCommand(studentSql, conn, trans))
@@ -305,9 +289,6 @@ namespace _241611JalopEventsManagement.Backend.Repository
                         cmd.Parameters.Add(new SqlParameter("@CampusBranch", SqlDbType.NVarChar, 100) { Value = student.CampusBranch?.Trim() ?? "San Bartolome" });
                         cmd.Parameters.Add(new SqlParameter("@Department", SqlDbType.NVarChar, 100) { Value = student.Department.Trim() });
                         cmd.Parameters.Add(new SqlParameter("@Program", SqlDbType.NVarChar, 100) { Value = student.Program.Trim() });
-                        cmd.Parameters.Add(new SqlParameter("@YearLevel", SqlDbType.Int) { Value = (object)student.YearLevel ?? DBNull.Value });
-                        cmd.Parameters.Add(new SqlParameter("@Section", SqlDbType.NVarChar, 50) { Value = (object)student.Section?.Trim() ?? DBNull.Value });
-                        cmd.Parameters.Add(new SqlParameter("@BirthDate", SqlDbType.Date) { Value = (object)student.BirthDate ?? DBNull.Value });
                         cmd.Parameters.Add(new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = student.StudentId.Trim() });
 
                         cmd.ExecuteNonQuery();

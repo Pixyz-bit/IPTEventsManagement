@@ -89,6 +89,21 @@
     <Content Include="Frontend\User\EventRegistration.aspx" />
     <Content Include="Frontend\User\EventPass.aspx" />
     <Content Include="Frontend\Assets\css\global.css" />
+    <Content Include="Frontend\Assets\css\auth\access-denied.css" />
+    <Content Include="Frontend\Assets\css\auth\login.css" />
+    <Content Include="Frontend\Assets\css\user\event-registration.css" />
+    <Content Include="Frontend\Assets\css\user\event-pass.css" />
+    <Content Include="Frontend\Assets\css\user\dashboard.css" />
+    <Content Include="Frontend\Assets\css\admin\test-connection.css" />
+    <Content Include="Frontend\Assets\css\admin\attendance-scanner.css" />
+    <Content Include="Frontend\Assets\css\admin\event-preregistered.css" />
+    <Content Include="Frontend\Assets\css\admin\event-details.css" />
+    <Content Include="Frontend\Assets\css\admin\event-attendance.css" />
+    <Content Include="Frontend\Assets\css\admin\event-analytics.css" />
+    <Content Include="Frontend\Assets\css\admin\dashboard.css" />
+    <Content Include="Frontend\Assets\css\admin\create-event.css" />
+    <Content Include="Frontend\Assets\css\admin\admin-events.css" />
+    <Content Include="Frontend\Assets\css\admin\student-list.css" />
     <Content Include="Frontend\global.css" />
   </ItemGroup>
   <ItemGroup>

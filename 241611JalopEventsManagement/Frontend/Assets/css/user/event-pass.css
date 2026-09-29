@@ -1,0 +1,465 @@
+:root {
+            --bg-canvas: #090D16;
+            --surface-card: #111726;
+            --surface-elevated: #182238;
+            --surface-ticket: #FFFFFF;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-medium: rgba(255, 255, 255, 0.16);
+            --brand-primary: #2563eb;
+            --brand-primary-hover: #1d4ed8;
+            --text-heading: #FFFFFF;
+            --text-body: #94A3B8;
+            --text-muted: #64748B;
+            --accent-emerald: #10B981;
+            --accent-emerald-subtle: rgba(16, 185, 129, 0.15);
+            --accent-amber: #F59E0B;
+            --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-body);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Standalone Navigation Bar */
+        .portal-navbar {
+            background: rgba(9, 13, 22, 0.95);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .navbar-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .nav-logo-img {
+            height: 38px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-brand-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.015em;
+        }
+
+        .nav-brand-subtitle {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .nav-link-dashboard {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.825rem;
+            font-weight: 700;
+            color: var(--text-body);
+            text-decoration: none;
+            padding: 0.45rem 0.95rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.15s ease;
+        }
+
+        .nav-link-dashboard:hover {
+            color: #FFFFFF;
+            border-color: var(--border-medium);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Pass Container Workspace */
+        .pass-container {
+            flex: 1;
+            max-width: 680px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1.25rem 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Success Banner */
+        .success-status-banner {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: 14px;
+            padding: 1.15rem 1.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            color: #34D399;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+        }
+
+        .success-icon-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-emerald);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .success-banner-text h3 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin-bottom: 0.15rem;
+        }
+
+        .success-banner-text p {
+            font-size: 0.825rem;
+            color: #A7F3D0;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           PREMIUM EDITORIAL DIGITAL BOARDING PASS CARD
+           Institutional White Body with High-Contrast Layout
+           ═══════════════════════════════════════════════════════════════════════ */
+        .boarding-pass-card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            color: #0F172A;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Pass Header Bar (Deep Navy Accent) */
+        .pass-header-bar {
+            background: #090D16;
+            color: #FFFFFF;
+            padding: 1.35rem 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #2563eb;
+        }
+
+        .pass-brand-lockup {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .pass-crest-img {
+            width: 34px;
+            height: 34px;
+            object-fit: contain;
+        }
+
+        .pass-issuer-text h4 {
+            font-size: 0.875rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.01em;
+        }
+
+        .pass-issuer-text span {
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            color: #94A3B8;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .pass-status-pill {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.3rem 0.75rem;
+            border-radius: 9999px;
+            background: #064E3B;
+            color: #34D399;
+            border: 1px solid #059669;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Pass Main Details */
+        .pass-body {
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .pass-event-headline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .pass-event-headline .event-tag {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--brand-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pass-event-headline h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #0F172A;
+            line-height: 1.25;
+            letter-spacing: -0.02em;
+        }
+
+        /* Pass Spec Grid */
+        .pass-specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem 1.5rem;
+            border-top: 1px dashed #CBD5E1;
+            border-bottom: 1px dashed #CBD5E1;
+            padding: 1.25rem 0;
+        }
+
+        .pass-spec-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .pass-spec-label {
+            font-size: 0.725rem;
+            font-family: var(--font-mono);
+            color: #64748B;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .pass-spec-val {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0F172A;
+        }
+
+        .pass-spec-val-highlight {
+            color: var(--brand-primary);
+            font-family: var(--font-mono);
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+
+        /* Perforated Notch Divider */
+        .pass-notch-divider {
+            position: relative;
+            height: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .pass-notch-left, .pass-notch-right {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: var(--bg-canvas);
+            border-radius: 50%;
+            top: 0;
+        }
+
+        .pass-notch-left {
+            left: -12px;
+        }
+
+        .pass-notch-right {
+            right: -12px;
+        }
+
+        .pass-dash-line {
+            width: 100%;
+            height: 1px;
+            border-top: 2px dashed #CBD5E1;
+            margin: 0 16px;
+        }
+
+        /* Pass Bottom QR Section */
+        .pass-qr-stub {
+            padding: 1rem 1.75rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            background: #FAFBFD;
+        }
+
+        .qr-frame-box {
+            background: #FFFFFF;
+            padding: 14px;
+            border-radius: 16px;
+            border: 2px solid #E2E8F0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #qrCanvas {
+            display: block;
+            width: 180px;
+            height: 180px;
+        }
+
+        .qr-meta-block {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .qr-ref-code {
+            font-family: var(--font-mono);
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            color: var(--brand-primary);
+        }
+
+        .qr-notice-text {
+            font-size: 0.775rem;
+            color: #64748B;
+            max-width: 420px;
+            line-height: 1.45;
+        }
+
+        .qr-security-hash {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: #94A3B8;
+            letter-spacing: 0.04em;
+        }
+
+        /* Action Buttons */
+        .pass-actions-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-download-pass {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            background: #FFFFFF;
+            color: #0F172A;
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.85rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-medium);
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .btn-download-pass:hover {
+            background: #F8FAFC;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        }
+
+        .btn-return-dashboard {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            background: var(--brand-primary);
+            color: #FFFFFF;
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.85rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .btn-return-dashboard:hover {
+            background: var(--brand-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+        }
+
+        /* Print Media Styles (Prints only the boarding pass card) */
+        @media print {
+            body {
+                background: #FFFFFF !important;
+                color: #000000 !important;
+            }
+            .portal-navbar, .success-status-banner, .pass-actions-row {
+                display: none !important;
+            }
+            .pass-container {
+                margin: 0 !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+            .boarding-pass-card {
+                box-shadow: none !important;
+                border: 2px solid #000000 !important;
+                page-break-inside: avoid;
+            }
+            .pass-header-bar {
+                background: #000000 !important;
+                color: #FFFFFF !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .pass-notch-left, .pass-notch-right {
+                display: none !important;
+            }
+        }

@@ -1,165 +1,7 @@
 <%@ Page Title="Students Directory & Identity Master | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="StudentList.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.StudentList" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
-    <style>
-        /* ─── Page-Specific Styles for Student Directory ─── */
-        
-        /* Filter Toolbar (Photo 3 Alignment) */
-        .filters-toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-            background: #ffffff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 0.85rem 1.25rem;
-            margin-bottom: 1.25rem;
-            box-shadow: var(--shadow-subtle);
-            flex-wrap: wrap;
-        }
-
-        .filters-toolbar .search-box-wrapper {
-            flex: 1 1 260px;
-            min-width: 220px;
-        }
-
-        .filter-controls-group {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-controls-group .filter-select {
-            height: 38px;
-            padding: 0 1.75rem 0 0.85rem;
-            border: 1px solid var(--border-medium);
-            border-radius: var(--radius-md);
-            background-color: #ffffff;
-            font-size: 0.825rem;
-            color: var(--text-body);
-            cursor: pointer;
-        }
-
-        .filter-controls-group .btn-icon-export {
-            height: 38px;
-            width: 38px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--border-medium);
-            border-radius: var(--radius-md);
-            background-color: #ffffff;
-            color: var(--text-body);
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.15s ease;
-        }
-
-        .filter-controls-group .btn-icon-export:hover {
-            border-color: var(--brand-primary);
-            color: var(--brand-primary);
-            background-color: var(--brand-subtle);
-        }
-
-        /* Directory Table Column Layout & Cells (Photo 1) */
-        .directory-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .directory-table thead th {
-            padding: 0.85rem 1.25rem;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            background-color: #fafbfc;
-            border-bottom: 1px solid var(--border-subtle);
-            text-align: left;
-        }
-
-        .directory-table tbody td {
-            padding: 1rem 1.25rem;
-            font-size: 0.875rem;
-            border-bottom: 1px solid var(--border-subtle);
-            vertical-align: middle;
-        }
-
-        .directory-table tbody tr:hover td {
-            background-color: #f8fafc;
-        }
-
-        .student-id-text {
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-heading);
-            letter-spacing: -0.01em;
-        }
-
-        .student-name-text {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-heading);
-        }
-
-        /* Stacked Department (small on top) & Course (below) */
-        .dept-course-cell {
-            display: flex;
-            flex-direction: column;
-            gap: 0.15rem;
-        }
-
-        .dept-text {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.02em;
-        }
-
-        .course-text {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-heading);
-        }
-
-        .branch-text {
-            font-size: 0.85rem;
-            color: var(--text-body);
-        }
-
-        /* View > Link (Underlined link per Photo 1) */
-        .btn-view-link {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-heading);
-            text-decoration: underline;
-            text-underline-offset: 3px;
-            text-decoration-thickness: 1.5px;
-            cursor: pointer;
-            transition: color 0.15s ease;
-            background: none;
-            border: none;
-            padding: 0;
-        }
-
-        .btn-view-link:hover {
-            color: var(--brand-primary);
-        }
-
-        /* Edit Modal Tabs & Content */
-        .edit-tab-pane {
-            animation: fadeInTab 0.15s ease;
-        }
-
-        @keyframes fadeInTab {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/student-list.css") %>" />
 </asp:Content>
 
 <asp:Content ID="MainArea" ContentPlaceHolderID="MainContent" runat="server">
@@ -212,14 +54,6 @@
 
             <asp:DropDownList ID="ddlProgramFilter" runat="server" CssClass="filter-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
                 <asp:ListItem Text="All Courses" Value="ALL" />
-            </asp:DropDownList>
-
-            <asp:DropDownList ID="ddlYearFilter" runat="server" CssClass="filter-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
-                <asp:ListItem Text="All Year Levels" Value="ALL" />
-                <asp:ListItem Text="1st Year" Value="1" />
-                <asp:ListItem Text="2nd Year" Value="2" />
-                <asp:ListItem Text="3rd Year" Value="3" />
-                <asp:ListItem Text="4th Year" Value="4" />
             </asp:DropDownList>
 
             <asp:Button ID="btnFilter" runat="server" Text="Search" CssClass="btn-filter-apply" OnClick="btnFilter_Click" />
@@ -398,22 +232,6 @@
                         </asp:DropDownList>
                     </div>
                 </div>
-
-                <div class="form-grid-2">
-                    <div class="form-group">
-                        <label>Year Level <span class="required-star">*</span></label>
-                        <asp:DropDownList ID="ddlAddYearLevel" runat="server" CssClass="form-select">
-                            <asp:ListItem Text="1st Year" Value="1" />
-                            <asp:ListItem Text="2nd Year" Value="2" />
-                            <asp:ListItem Text="3rd Year" Value="3" />
-                            <asp:ListItem Text="4th Year" Value="4" />
-                        </asp:DropDownList>
-                    </div>
-                    <div class="form-group">
-                        <label>Section (e.g. SBIT-3A)</label>
-                        <asp:TextBox ID="txtAddSection" runat="server" CssClass="form-input" Placeholder="e.g. SBIT-3A" />
-                    </div>
-                </div>
             </div>
 
             <div class="modal-footer">
@@ -525,28 +343,12 @@
                         </div>
                     </div>
 
-                    <div class="form-grid-2">
-                        <div class="form-group">
-                            <label>Academic Program / Course <span class="required-star">*</span></label>
-                            <asp:DropDownList ID="ddlEditProgram" runat="server" CssClass="form-select">
-                                <asp:ListItem Text="BS Information Technology" Value="BS Information Technology" />
-                                <asp:ListItem Text="BS Computer Science" Value="BS Computer Science" />
-                            </asp:DropDownList>
-                        </div>
-                        <div class="form-group">
-                            <label>Year Level</label>
-                            <asp:DropDownList ID="ddlEditYearLevel" runat="server" CssClass="form-select">
-                                <asp:ListItem Text="1st Year" Value="1" />
-                                <asp:ListItem Text="2nd Year" Value="2" />
-                                <asp:ListItem Text="3rd Year" Value="3" />
-                                <asp:ListItem Text="4th Year" Value="4" />
-                            </asp:DropDownList>
-                        </div>
-                    </div>
-
                     <div class="form-group">
-                        <label>Section</label>
-                        <asp:TextBox ID="txtEditSection" runat="server" CssClass="form-input" />
+                        <label>Academic Program / Course <span class="required-star">*</span></label>
+                        <asp:DropDownList ID="ddlEditProgram" runat="server" CssClass="form-select">
+                            <asp:ListItem Text="BS Information Technology" Value="BS Information Technology" />
+                            <asp:ListItem Text="BS Computer Science" Value="BS Computer Science" />
+                        </asp:DropDownList>
                     </div>
                 </div>
 
@@ -661,7 +463,7 @@
 
                 <div class="password-info-box">
                     <strong>Standard CSV Header Format:</strong><br />
-                    <code>StudentId,FirstName,MiddleName,LastName,Gender,CampusBranch,Department,Program,YearLevel,Section,Email,BirthDate</code><br />
+                    <code>StudentId,FirstName,MiddleName,LastName,Gender,CampusBranch,Department,Program,Email,BirthDate</code><br />
                     <em>Dates must follow the strict MM/dd/yyyy standard (e.g. 03/24/2004).</em>
                 </div>
 

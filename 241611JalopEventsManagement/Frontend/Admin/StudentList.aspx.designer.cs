@@ -25,7 +25,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Button btnClearFilter;
         protected global::System.Web.UI.WebControls.DropDownList ddlDepartmentFilter;
         protected global::System.Web.UI.WebControls.DropDownList ddlProgramFilter;
-        protected global::System.Web.UI.WebControls.DropDownList ddlYearFilter;
         protected global::System.Web.UI.WebControls.DropDownList ddlStatusFilter;
         protected global::System.Web.UI.WebControls.Literal litShowingCount;
         protected global::System.Web.UI.WebControls.Repeater rptStudents;
@@ -43,8 +42,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.DropDownList ddlAddCampus;
         protected global::System.Web.UI.WebControls.DropDownList ddlAddDepartment;
         protected global::System.Web.UI.WebControls.DropDownList ddlAddProgram;
-        protected global::System.Web.UI.WebControls.DropDownList ddlAddYearLevel;
-        protected global::System.Web.UI.WebControls.TextBox txtAddSection;
         protected global::System.Web.UI.WebControls.Button btnCancelAdd;
         protected global::System.Web.UI.WebControls.Button btnSaveNewStudent;
         protected global::System.Web.UI.WebControls.Panel pnlEditModal;
@@ -61,8 +58,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.DropDownList ddlEditCampus;
         protected global::System.Web.UI.WebControls.DropDownList ddlEditDepartment;
         protected global::System.Web.UI.WebControls.DropDownList ddlEditProgram;
-        protected global::System.Web.UI.WebControls.DropDownList ddlEditYearLevel;
-        protected global::System.Web.UI.WebControls.TextBox txtEditSection;
         protected global::System.Web.UI.WebControls.DropDownList ddlEditStatus;
         protected global::System.Web.UI.WebControls.Literal litEditStructuredPassword;
         protected global::System.Web.UI.WebControls.TextBox txtEditNewPassword;

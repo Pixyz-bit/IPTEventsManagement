@@ -45,10 +45,9 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             string search = txtSearch.Text?.Trim();
             string dept = ddlDepartmentFilter.SelectedValue;
             string prog = ddlProgramFilter.SelectedValue;
-            int? year = int.TryParse(ddlYearFilter.SelectedValue, out int y) ? (int?)y : null;
             string status = ddlStatusFilter != null ? ddlStatusFilter.SelectedValue : "ALL";
 
-            List<StudentProfile> allStudents = _studentRepo.GetAllStudents(search, dept, prog, year, status);
+            List<StudentProfile> allStudents = _studentRepo.GetAllStudents(search, dept, prog, null, status);
 
             // Update Metrics (Safely null-guarded)
             var completeRoster = _studentRepo.GetAllStudents();
@@ -172,8 +171,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             txtSearch.Text = string.Empty;
             ddlDepartmentFilter.SelectedValue = "ALL";
             ddlProgramFilter.SelectedValue = "ALL";
-            ddlYearFilter.SelectedValue = "ALL";
-            ddlStatusFilter.SelectedValue = "ALL";
+            if (ddlStatusFilter != null) ddlStatusFilter.SelectedValue = "ALL";
             BindStudentDirectory();
         }
 
@@ -309,13 +307,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 ddlEditProgram.SelectedValue = student.Program;
             }
 
-            if (student.YearLevel.HasValue && ddlEditYearLevel.Items.FindByValue(student.YearLevel.Value.ToString()) != null)
-            {
-                ddlEditYearLevel.SelectedValue = student.YearLevel.Value.ToString();
-            }
-
-            txtEditSection.Text = student.Section ?? string.Empty;
-
             if (ddlEditStatus != null)
             {
                 ddlEditStatus.SelectedValue = student.IsActive ? "Active" : "Suspended";
@@ -351,7 +342,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             txtAddMiddleName.Text = string.Empty;
             txtAddLastName.Text = string.Empty;
             txtAddBirthDate.Text = string.Empty;
-            txtAddSection.Text = string.Empty;
 
             UpdateAddProgramsForDepartment(ddlAddDepartment.SelectedValue);
             pnlAddModal.Visible = true;
@@ -374,8 +364,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             string campus = ddlAddCampus.SelectedValue;
             string department = ddlAddDepartment.SelectedValue;
             string program = ddlAddProgram.SelectedValue;
-            int yearLevel = int.Parse(ddlAddYearLevel.SelectedValue);
-            string section = txtAddSection.Text?.Trim();
 
             // Field Validations
             if (string.IsNullOrWhiteSpace(studentId) || string.IsNullOrWhiteSpace(email) ||
@@ -421,8 +409,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 CampusBranch = campus,
                 Department = department,
                 Program = program,
-                YearLevel = yearLevel,
-                Section = section,
+                YearLevel = null,
+                Section = null,
                 BirthDate = birthDate,
                 Email = email,
                 IsActive = true
@@ -479,8 +467,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             string campus = ddlEditCampus.SelectedValue;
             string department = ddlEditDepartment.SelectedValue;
             string program = ddlEditProgram.SelectedValue;
-            int? yearLevel = int.TryParse(ddlEditYearLevel.SelectedValue, out int y) ? (int?)y : null;
-            string section = txtEditSection.Text?.Trim();
 
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
             {
@@ -514,8 +500,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 CampusBranch = campus,
                 Department = department,
                 Program = program,
-                YearLevel = yearLevel,
-                Section = section,
+                YearLevel = null,
+                Section = null,
                 BirthDate = birthDate,
                 Email = email
             };
@@ -644,10 +630,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
                     string[] cols = line.Split(',');
-                    if (cols.Length < 11)
+                    if (cols.Length < 10)
                     {
                         errorCount++;
-                        errorLogs.Add($"Line {lineNumber}: Insufficient columns (found {cols.Length}, expected 12).");
+                        errorLogs.Add($"Line {lineNumber}: Insufficient columns (found {cols.Length}, expected at least 10).");
                         continue;
                     }
 
@@ -661,14 +647,24 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                         string campus = cols[5].Trim();
                         string department = cols[6].Trim();
                         string program = cols[7].Trim();
-                        int? year = int.TryParse(cols[8].Trim(), out int yVal) ? (int?)yVal : null;
-                        string section = cols[9].Trim();
-                        string email = cols[10].Trim();
+
+                        string email;
                         DateTime? birthDate = null;
 
-                        if (cols.Length >= 12 && !string.IsNullOrWhiteSpace(cols[11]))
+                        if (cols.Length >= 12)
                         {
-                            if (DateTime.TryParse(cols[11].Trim(), CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtVal))
+                            // Legacy format: StudentId,FirstName,MiddleName,LastName,Gender,CampusBranch,Department,Program,YearLevel,Section,Email,BirthDate
+                            email = cols[10].Trim();
+                            if (!string.IsNullOrWhiteSpace(cols[11]) && DateTime.TryParse(cols[11].Trim(), CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtVal))
+                            {
+                                birthDate = dtVal;
+                            }
+                        }
+                        else
+                        {
+                            // Direct StudentTable format: StudentId,FirstName,MiddleName,LastName,Gender,CampusBranch,Department,Program,Email,BirthDate
+                            email = cols[8].Trim();
+                            if (cols.Length > 9 && !string.IsNullOrWhiteSpace(cols[9]) && DateTime.TryParse(cols[9].Trim(), CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtVal))
                             {
                                 birthDate = dtVal;
                             }
@@ -699,8 +695,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                             CampusBranch = string.IsNullOrEmpty(campus) ? "San Bartolome" : campus,
                             Department = department,
                             Program = program,
-                            YearLevel = year,
-                            Section = section,
+                            YearLevel = null,
+                            Section = null,
                             BirthDate = birthDate,
                             Email = email,
                             IsActive = true
@@ -732,9 +728,9 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected void btnDownloadTemplate_Click(object sender, EventArgs e)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("StudentId,FirstName,MiddleName,LastName,Gender,CampusBranch,Department,Program,YearLevel,Section,Email,BirthDate");
-            sb.AppendLine("24-1614,Althea,Rose,Navarro,Female,San Bartolome,College of Computer Studies,BS Information Technology,3,SBIT-3B,althea.navarro@qcu.edu.ph,04/14/2005");
-            sb.AppendLine("24-1615,Carlos,Eduardo,Santos,Male,San Bartolome,College of Engineering,BS Industrial Engineering,2,BSIE-2A,carlos.santos@qcu.edu.ph,08/22/2004");
+            sb.AppendLine("StudentId,FirstName,MiddleName,LastName,Gender,CampusBranch,Department,Program,Email,BirthDate");
+            sb.AppendLine("24-1614,Althea,Rose,Navarro,Female,San Bartolome,College of Computer Studies,BS Information Technology,althea.navarro@qcu.edu.ph,04/14/2005");
+            sb.AppendLine("24-1615,Carlos,Eduardo,Santos,Male,San Bartolome,College of Engineering,BS Industrial Engineering,carlos.santos@qcu.edu.ph,08/22/2004");
 
             Response.Clear();
             Response.ContentType = "text/csv";
@@ -749,19 +745,18 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             string search = txtSearch.Text?.Trim();
             string dept = ddlDepartmentFilter.SelectedValue;
             string prog = ddlProgramFilter.SelectedValue;
-            int? year = int.TryParse(ddlYearFilter.SelectedValue, out int y) ? (int?)y : null;
-            string status = ddlStatusFilter.SelectedValue;
+            string status = ddlStatusFilter != null ? ddlStatusFilter.SelectedValue : "ALL";
 
-            var list = _studentRepo.GetAllStudents(search, dept, prog, year, status);
+            var list = _studentRepo.GetAllStudents(search, dept, prog, null, status);
 
             var sb = new StringBuilder();
-            sb.AppendLine("StudentId,FullName,FirstName,MiddleName,LastName,Gender,CampusBranch,Department,Program,YearLevel,Section,Email,BirthDate(MM/dd/yyyy),AccountStatus");
+            sb.AppendLine("StudentId,FullName,FirstName,MiddleName,LastName,Gender,CampusBranch,Department,Program,Email,BirthDate(MM/dd/yyyy),AccountStatus");
 
             foreach (var s in list)
             {
                 string statusText = s.IsActive ? "Active" : "Suspended";
                 string bdate = s.BirthDate.HasValue ? s.BirthDate.Value.ToString("MM/dd/yyyy") : "";
-                sb.AppendLine($"\"{EscapeCsv(s.StudentId)}\",\"{EscapeCsv(s.FullName)}\",\"{EscapeCsv(s.FirstName)}\",\"{EscapeCsv(s.MiddleName)}\",\"{EscapeCsv(s.LastName)}\",\"{EscapeCsv(s.Gender)}\",\"{EscapeCsv(s.CampusBranch)}\",\"{EscapeCsv(s.Department)}\",\"{EscapeCsv(s.Program)}\",\"{s.YearLevel}\",\"{EscapeCsv(s.Section)}\",\"{EscapeCsv(s.Email)}\",\"{bdate}\",\"{statusText}\"");
+                sb.AppendLine($"\"{EscapeCsv(s.StudentId)}\",\"{EscapeCsv(s.FullName)}\",\"{EscapeCsv(s.FirstName)}\",\"{EscapeCsv(s.MiddleName)}\",\"{EscapeCsv(s.LastName)}\",\"{EscapeCsv(s.Gender)}\",\"{EscapeCsv(s.CampusBranch)}\",\"{EscapeCsv(s.Department)}\",\"{EscapeCsv(s.Program)}\",\"{EscapeCsv(s.Email)}\",\"{bdate}\",\"{statusText}\"");
             }
 
             Response.Clear();
