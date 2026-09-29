@@ -1,4 +1,4 @@
-<%@ Page Title="Campus Events Matrix | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AdminEvents.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AdminEvents" %>
+<%@ Page Title="Campus Events Matrix | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AdminEvents.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AdminEvents" EnableEventValidation="false" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
@@ -670,15 +670,8 @@
     <div class="page-header-row">
         <div class="header-title-block">
             <h2>Campus Events Matrix</h2>
-            <p>Central operational cockpit for Closed, Open, and Upcoming events &bull; Single entry gateway to event-level sub-modules.</p>
         </div>
         <div class="header-actions">
-            <a href="<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx") %>" class="btn-action-secondary">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
-                </svg>
-                <span>Attendance Scanner</span>
-            </a>
             <a href="<%= ResolveUrl("~/Frontend/Admin/CreateEvent.aspx") %>" class="btn-action-primary">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -695,80 +688,24 @@
         <asp:LinkButton ID="btnCloseFeedback" runat="server" OnClick="btnCloseFeedback_Click" Text="&times;" Style="font-size: 1.25rem; font-weight: bold; background: none; border: none; cursor: pointer; color: inherit;" CausesValidation="false" />
     </asp:Panel>
 
-    <!-- Summary KPI Cards -->
-    <div class="summary-kpi-grid">
-        <div class="summary-kpi-card">
-            <div class="summary-kpi-icon" style="background-color: #eff6ff; color: #1d4ed8;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-            </div>
-            <div class="summary-kpi-info">
-                <span class="summary-kpi-label">Total Matrix Events</span>
-                <span class="summary-kpi-value"><asp:Literal ID="litTotalMatrixCount" runat="server" Text="0" /></span>
-            </div>
-        </div>
 
-        <div class="summary-kpi-card">
-            <div class="summary-kpi-icon" style="background-color: #ecfdf5; color: #059669;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-            </div>
-            <div class="summary-kpi-info">
-                <span class="summary-kpi-label">Open</span>
-                <span class="summary-kpi-value"><asp:Literal ID="litOpenCount" runat="server" Text="0" /></span>
-            </div>
-        </div>
-
-        <div class="summary-kpi-card">
-            <div class="summary-kpi-icon" style="background-color: #fefce8; color: #a16207;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-            </div>
-            <div class="summary-kpi-info">
-                <span class="summary-kpi-label">Soon</span>
-                <span class="summary-kpi-value"><asp:Literal ID="litSoonCount" runat="server" Text="0" /></span>
-            </div>
-        </div>
-
-        <div class="summary-kpi-card">
-            <div class="summary-kpi-icon" style="background-color: #f1f5f9; color: #475569;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="15" y1="9" x2="9" y2="15"></line>
-                    <line x1="9" y1="9" x2="15" y2="15"></line>
-                </svg>
-            </div>
-            <div class="summary-kpi-info">
-                <span class="summary-kpi-label">Close</span>
-                <span class="summary-kpi-value"><asp:Literal ID="litCloseCount" runat="server" Text="0" /></span>
-            </div>
-        </div>
-    </div>
 
     <!-- Filter & Search Toolbar -->
     <div class="matrix-toolbar">
         <div class="status-tabs-group">
-            <asp:LinkButton ID="btnTabAll" runat="server" CssClass="tab-btn active" OnClick="FilterTab_Click" CommandArgument="All" CausesValidation="false">
+            <asp:LinkButton ID="btnTabAll" runat="server" CssClass="tab-btn active" OnClick="FilterTab_Click" CommandArgument="All" CausesValidation="false" OnClientClick="filterMatrixByStatus('All', this); return false;">
                 <span>All Events</span>
                 <span class="tab-badge"><asp:Literal ID="litBadgeAll" runat="server" Text="0" /></span>
             </asp:LinkButton>
-            <asp:LinkButton ID="btnTabOpen" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Open" CausesValidation="false">
+            <asp:LinkButton ID="btnTabOpen" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Open" CausesValidation="false" OnClientClick="filterMatrixByStatus('Open', this); return false;">
                 <span>Open</span>
                 <span class="tab-badge"><asp:Literal ID="litBadgeOpen" runat="server" Text="0" /></span>
             </asp:LinkButton>
-            <asp:LinkButton ID="btnTabSoon" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Soon" CausesValidation="false">
+            <asp:LinkButton ID="btnTabSoon" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Soon" CausesValidation="false" OnClientClick="filterMatrixByStatus('Soon', this); return false;">
                 <span>Soon</span>
                 <span class="tab-badge"><asp:Literal ID="litBadgeSoon" runat="server" Text="0" /></span>
             </asp:LinkButton>
-            <asp:LinkButton ID="btnTabClose" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Close" CausesValidation="false">
+            <asp:LinkButton ID="btnTabClose" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Close" CausesValidation="false" OnClientClick="filterMatrixByStatus('Close', this); return false;">
                 <span>Close</span>
                 <span class="tab-badge"><asp:Literal ID="litBadgeClose" runat="server" Text="0" /></span>
             </asp:LinkButton>
@@ -812,7 +749,7 @@
                         <tbody>
                 </HeaderTemplate>
                 <ItemTemplate>
-                    <tr>
+                    <tr class="event-matrix-row" data-status='<%# Eval("MatrixStatus") %>' data-dept='<%# Eval("TargetDepartment") %>'>
                         <!-- 1. Status: Close, Open, Soon -->
                         <td>
                             <span class='status-pill <%# GetMatrixStatusClass(Eval("MatrixStatus")) %>'>
@@ -898,4 +835,51 @@
             </div>
         </div>
     </asp:Panel>
+
+    <script type="text/javascript">
+        function filterMatrixByStatus(status, clickedTab) {
+            // 1. Update active tab pill styling
+            var tabs = document.querySelectorAll('.status-tabs-group .tab-btn');
+            tabs.forEach(function (tab) {
+                tab.classList.remove('active');
+            });
+            if (clickedTab) {
+                clickedTab.classList.add('active');
+            }
+
+            // 2. Filter table rows
+            var rows = document.querySelectorAll('.matrix-table tbody tr.event-matrix-row');
+            var visibleCount = 0;
+            var normalizedStatus = (status || 'All').toLowerCase();
+
+            rows.forEach(function (row) {
+                var rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
+                if (normalizedStatus === 'all' || rowStatus === normalizedStatus) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // 3. Toggle Zero State / Empty State message
+            var noEventsPnl = document.getElementById('<%= pnlNoEvents.ClientID %>');
+            var tableElement = document.querySelector('.matrix-table');
+            if (noEventsPnl) {
+                if (visibleCount === 0 && rows.length > 0) {
+                    noEventsPnl.style.display = 'block';
+                    if (tableElement) tableElement.style.display = 'none';
+                } else {
+                    noEventsPnl.style.display = 'none';
+                    if (tableElement) tableElement.style.display = '';
+                }
+            }
+
+            // 4. Update browser URL without reload
+            if (window.history && window.history.replaceState) {
+                var newUrl = window.location.pathname + (normalizedStatus === 'all' ? '' : '?status=' + encodeURIComponent(status));
+                window.history.replaceState(null, '', newUrl);
+            }
+        }
+    </script>
 </asp:Content>

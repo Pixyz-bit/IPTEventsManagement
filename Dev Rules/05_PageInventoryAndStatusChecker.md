@@ -26,8 +26,8 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 | **P-01** | Shared | **Login** | [`Frontend/Login/Login.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Login/Login.aspx) | `/Frontend/Login/Login.aspx` | `[x] COMPLETED` | `UserRepository`, `PasswordHelper`, `SessionHelper` |
 | **P-02** | Shared | **Access Denied / Error** | [`Frontend/AccessDenied.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/AccessDenied.aspx) | `/Frontend/AccessDenied.aspx` | `[x] COMPLETED` | `SessionHelper`, `AuthHelper` |
 | **P-03** | User | **Student Events Portal** | [`Frontend/User/Dashboard.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/User/Dashboard.aspx) | `/Frontend/User/Dashboard.aspx` | `[x] COMPLETED` | `EventRepository`, `RegistrationRepository`, `SponsorRepository`, `StudentRepository` |
-| **P-04** | User | **Event Details & Booking** | `Frontend/User/EventDetails.aspx` | `/Frontend/User/EventDetails.aspx?eventId={id}` | `[ ] NOT YET STARTED` | `EventRepository`, `RegistrationRepository`, `SponsorRepository` |
-| **P-05** | User | **Electronic Pass / E-Ticket** | `Frontend/User/MyTicket.aspx` | `/Frontend/User/MyTicket.aspx?regId={id}` | `[ ] NOT YET STARTED` | `RegistrationRepository`, `EventRepository`, QR Generation Engine |
+| **P-04** | User | **Event Registration Wizard** | [`Frontend/User/EventRegistration.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/User/EventRegistration.aspx) | `/Frontend/User/EventRegistration.aspx?eventId={id}` | `[x] COMPLETED` | `EventRepository`, `StudentRepository`, `RegistrationRepository`, Multi-Tab Identity & Enrollment Validation |
+| **P-05** | User | **Digital Ticket & QR Attendance Pass** | [`Frontend/User/EventPass.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/User/EventPass.aspx) | `/Frontend/User/EventPass.aspx?regId={id}` | `[x] COMPLETED` | `EventRegistrationModel`, Offline Standalone QR Engine, Print/Download Styles, Gate Interoperability |
 | **P-06** | User | **Student Profile & Security** | `Frontend/User/Profile.aspx` | `/Frontend/User/Profile.aspx` | `[ ] NOT YET STARTED` | `StudentRepository`, `UserRepository`, `PasswordHelper` |
 | **P-07** | Admin | **Admin Master Layout** | [`Frontend/Admin/Admin.Master`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/Admin.Master) | *(Master Shell for Admin Views)* | `[x] COMPLETED` | `SessionHelper`, Navigation Sidebar Component |
 | **P-08** | Admin | **Executive Dashboard** | [`Frontend/Admin/Dashboard.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/Dashboard.aspx) | `/Frontend/Admin/Dashboard.aspx` | `[-] POLISH PENDING` | `EventRepository`, `RegistrationRepository`, KPI Metrics Engine |
@@ -97,32 +97,49 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 
 ---
 
-#### [ ] P-04: Event Details & Booking Page (`EventDetails.aspx`)
-- **Planned File Location:** `Frontend/User/EventDetails.aspx`
-- **Access Rule:** Student / User.
-- **Visual Design:** Full-page immersive layout with high-resolution banner hero, tabbed content blocks, sticky registration action drawer.
-- **Key Capabilities:**
-  - Comprehensive event view displaying full markdown description, speaker dossiers, full high-res sponsors grid, and venue directions/map.
-  - Eligibility checklist highlighting whether the student satisfies the event's 4-tier audience targeting (Department, Year Level, Section).
-  - Live quota countdown with real-time remaining seat calculation.
-  - Atomic booking trigger invoking `RegistrationRepository.RegisterStudentForEvent`:
-    - Prevents double bookings.
-    - Enforces capacity locks using `UPDLOCK, HOLDLOCK`.
-    - Enforces cancellation deadlines (`RegistrationDeadline` / `EventStartDate`).
-- **Status:** `[ ] NOT YET STARTED` (Next phase after dashboard review).
+#### [x] P-04: Event Registration Wizard (`EventRegistration.aspx`)
+- **Physical File Location:** [`Frontend/User/EventRegistration.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/User/EventRegistration.aspx)
+- **Target URL:** `/Frontend/User/EventRegistration.aspx?eventId={id}`
+- **Access Rule:** Authenticated Student / User.
+- **Purpose:** A structured, multi-step tabbed workflow validating student identity and capturing dynamic academic enrollment details before committing the registration record to the database.
+- **Core Components & Layout:**
+  - **Tab 1: Student Profile Review (View-Only):**
+    - Identity verification fields: Student ID Number (`24-1611`), Full Name, Institutional Email, Academic Department / College, Degree Program / Course, and Campus Branch.
+    - Official Notice Banner: *"These profile details are synchronized directly from your official university record. If any information is incorrect, please contact the Registrar’s Office."*
+    - Navigation Action: `[ Next: Academic Information -> ]` (smoothly activates Tab 2).
+  - **Tab 2: Academic Enrollment & Confirmation (Active Inputs):**
+    - Term-specific dynamic details: Year Level dropdown (1st Year through 4th Year, Irregular) and Class Section text input (e.g., `SBIT-3C`).
+    - Terms & Commitment Checkbox: `[X] I confirm that I will attend this event and agree to follow university event guidelines.`
+    - Navigation Controls: `[ <- Back to Profile ]` and `[ Confirm & Complete Registration ]`.
+  - **Backend Processing Rules:**
+    - Wraps the booking execution in an atomic database transaction.
+    - Validates against maximum capacity, event status, and active registration windows (`RegStart` <= `NOW` <= `RegEnd`).
+    - Enforces uniqueness (`StudentID + EventID`) to prevent double-booking.
+    - Creates registration record with initial status `'NoShow'`, `IsCheckedIn = 0`.
+    - Generates unique ticket reference (`TCK-XXXX-XXXXX`) and cryptographic token GUID, automatically redirecting to `EventPass.aspx`.
+- **Status:** `[x] COMPLETED`.
 
 ---
 
-#### [ ] P-05: Electronic Pass / E-Ticket (`MyTicket.aspx`)
-- **Planned File Location:** `Frontend/User/MyTicket.aspx`
-- **Access Rule:** Student / User (must own the registration or be Admin).
-- **Visual Design:** Sleek boarding-pass/e-ticket card with holographic gradient borders, notch cutouts, and dark glass styling.
-- **Key Capabilities:**
-  - Generates a cryptographically signed QR code containing `RegistrationId`, `StudentNumber`, and `EventId` for swift scan at check-in desks.
-  - Displays check-in instructions, gate opening times, dress codes, and venue rules.
-  - "Save as Image" / "Print Electronic Pass" utility for offline entry.
-  - Live attendance state indicator (`Registered (Pending)` vs `Attended`).
-- **Status:** `[ ] NOT YET STARTED`.
+#### [x] P-05: Digital Ticket & QR Attendance Pass (`EventPass.aspx`)
+- **Physical File Location:** [`Frontend/User/EventPass.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/User/EventPass.aspx)
+- **Target URL:** `/Frontend/User/EventPass.aspx?regId={id}`
+- **Access Rule:** Authenticated Student / User (owner of ticket or Admin).
+- **Purpose:** Post-registration confirmation destination and persistent digital boarding pass presented at the gate scanner.
+- **Core Components & Layout:**
+  - **Registration Success Banner:** Green confirmation status: *"You're Registered! Present this pass at the gate scanner."*
+  - **Digital Boarding Pass Card:**
+    - Event Title, Date, Start Time, and Venue.
+    - Attendee Full Name, Student ID (`24-1611`), Academic Course, Year Level, and Section.
+    - Assigned Unique Ticket Reference Code (`TCK-XXXX-XXXXX`).
+  - **Personalized High-Contrast QR Code:**
+    - Centered scannable QR code generated client-side with zero external internet dependencies.
+    - Encodes validation payload (`TCK-XXXX-XXXXX` + security hash) to prevent counterfeit passes.
+    - **Security & Scan Logic:** When scanned by `AttendanceScanner.aspx` at the gate, this exact QR code populates the administrative verification panel with the attendee's profile for gate check-in confirmation.
+  - **Utility Actions:**
+    - `[ Download / Print Pass ]`: Optimized `@media print` layout formatting an official printable admission card.
+    - `[ Return to My Events Dashboard ]`: Links directly back to the student portal.
+- **Status:** `[x] COMPLETED`.
 
 ---
 
@@ -332,13 +349,13 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 
 ```
 Total Identified Pages: 17
-  ├── [x] Completed & Verified:      12  (70.6%)
-  └── [ ] Not Yet Started:            5  (29.4%)
+  ├── [x] Completed & Verified:      14  (82.4%)
+  └── [ ] Not Yet Started:            3  (17.6%)
 ```
 
 ### Module Breakdown:
 1. **Shared / Public:** 2 / 2 Completed (100%)
-2. **Student / User:** 1 / 4 Completed (25%)
+2. **Student / User:** 3 / 4 Completed (75%)
 3. **Administrative:** 9 / 11 Completed (81.8%)
 
 ---

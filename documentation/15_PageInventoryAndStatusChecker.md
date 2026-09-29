@@ -43,21 +43,25 @@
    - Route interception for unauthorized role access and unauthenticated expirations.
    - Tested on `http://localhost:51717/Frontend/AccessDenied.aspx`.
 
-### Student / User Module (1 / 4 Completed - 25%)
+### Student / User Module (3 / 4 Completed - 75%)
 1. **`Dashboard.aspx` (`[x] COMPLETED`):**
    - Dedicated top navigation bar above main content with QCU Emblem, University Event Portal branding, student avatar badge, and sign out button.
    - Hero showcase container with fixed, consistent height (`480px` desktop, `460px` tablet, `520px` mobile) and smooth slide switching.
    - Segmented tab toggle: *"Campus Event Matrix"* vs *"My Registered Events & Passes"*.
-   - Event card element hierarchy adhering to Photo 2 standard.
+   - Event card element hierarchy adhering to Photo 2 standard with direct modal registration trigger.
    - Tested across Desktop, Tablet (900x700), and Mobile (420x800).
-2. **`EventDetails.aspx` (`[ ] NOT YET STARTED`):**
-   - Full event view, requirements checklist, speaker lineup, full sponsors grid, atomic registration and cancellation.
-3. **`MyTicket.aspx` (`[ ] NOT YET STARTED`):**
-   - Digital e-ticket / boarding pass with personalized QR code for check-in desk scanning, entry instructions, and ticket download/print.
+2. **`EventRegistration.aspx` (`[x] COMPLETED`):**
+   - Structured, multi-step tabbed workflow validating student identity and capturing dynamic academic enrollment details before transactional commitment.
+   - **Tab 1: Student Profile Review (View-Only):** Synchronized university identity (Student ID `24-1611`, Full Name, Email, Department, Program, Branch) with official registrar notice.
+   - **Tab 2: Academic Enrollment & Confirmation (Active Inputs):** Current dynamic term inputs (Year Level dropdown, class Section input e.g. `SBIT-3C`, commitment checkbox), transactional registration execution, and redirect.
+3. **`EventPass.aspx` (`[x] COMPLETED`):**
+   - Post-registration confirmation destination and persistent digital boarding pass presented at the gate scanner.
+   - Features: Green success status banner, editorial digital pass card with event and student credentials, unique Ticket Reference (`TCK-XXXX-XXXXX`), centered scannable QR code encoding cryptographic validation tokens, one-click print/download pass action, and return to dashboard.
+   - 100% interoperable with `AttendanceScanner.aspx`.
 4. **`Profile.aspx` (`[ ] NOT YET STARTED`):**
    - Student academic demographics from `dbo.StudentTable`, password change form, and attendance history ledger.
 
-### Administrative Module (4 / 10 Completed - 40%)
+### Administrative Module (9 / 10 Completed - 90%)
 1. **`Admin.Master` (`[x] COMPLETED`):**
    - Shared shell with responsive navigation rail, role verification, and admin header.
 2. **`Dashboard.aspx` (`[x] COMPLETED`):**
@@ -93,7 +97,9 @@
    - Core capabilities: Universal search (evaluating Student ID, Name, Email, Section) and multi-filtering (Department, Academic Program, Year Level, Account Status).
    - Single Student Creation Form with automatic structured temporary password generation (`[First letter of Middle Name] + [MMDDYYYY birthdate]`, e.g. `N03242006`).
    - Profile demographic updates, account status toggle (`Active` / `Suspended`), administrative password reset modal, and batch CSV roster import + export.
-9. **`AuditLogs.aspx` (`[ ] NOT YET STARTED`):**
-   - Administrative action history ledger.
-10. **`Reports.aspx` (`[ ] NOT YET STARTED`):**
-    - Visual turnout analytics and exportable administrative reports.
+9. **`EventAttendance.aspx` (`[x] COMPLETED`):**
+   - Dedicated administrative gate attendance ledger displaying strictly the Live Checked-In Attendance Roster with microsecond timestamps, search filter, and CSV streaming.
+10. **`EventAnalytics.aspx` (`[x] COMPLETED`):**
+    - Telemetry, reporting, and statistical intelligence engine visualizing event performance before launch, during active execution, and after event conclusion with official PDF & CSV exports.
+11. **`AuditLogs.aspx` (`[ ] NOT YET STARTED`):**
+    - Administrative action history ledger.

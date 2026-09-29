@@ -1016,7 +1016,7 @@
             <div class="step-badge">1</div>
             <div class="step-meta">
                 <span class="step-number">Step 01</span>
-                <span class="step-name">Core Information</span>
+                <span class="step-name">Event Details</span>
             </div>
         </div>
 
@@ -1031,7 +1031,7 @@
             <div class="step-badge">2</div>
             <div class="step-meta">
                 <span class="step-number">Step 02</span>
-                <span class="step-name">Schedule & Timeline</span>
+                <span class="step-name">Schedule & Registration</span>
             </div>
         </div>
 
@@ -1046,7 +1046,7 @@
             <div class="step-badge">3</div>
             <div class="step-meta">
                 <span class="step-number">Step 03</span>
-                <span class="step-name">Audience Targeting</span>
+                <span class="step-name">Target Audience</span>
             </div>
         </div>
 
@@ -1099,18 +1099,12 @@
     <div class="create-form-layout">
         <!-- Left Column: Step Panels -->
         <div>
-            <!-- STEP 1 PANEL: Core Event Information -->
+            <!-- STEP 1: Event Details -->
             <div id="step-panel-1" class="step-panel active-panel">
                 <div class="form-section-card">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <span>Step 1: Core Event Specifications</span>
+                            <span>Step 1: Event Details</span>
                         </div>
                         <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">1 of 5</span>
                     </div>
@@ -1152,7 +1146,7 @@
                                 Cancel & Discard
                             </a>
                             <button type="button" class="btn-action-primary" onclick="validateAndGoStep(2)">
-                                <span>Next: Schedule & Timeline</span>
+                                <span>Schedule & Timeline</span>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
@@ -1167,10 +1161,6 @@
                 <div class="form-section-card">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
                             <span>Step 2: Schedule & Registration Timeline</span>
                         </div>
                         <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">2 of 5</span>
@@ -1229,10 +1219,10 @@
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <polyline points="15 18 9 12 15 6"></polyline>
                                 </svg>
-                                <span>Back: Core Details</span>
+                                <span>Event Details</span>
                             </button>
                             <button type="button" class="btn-action-primary" onclick="validateAndGoStep(3)">
-                                <span>Next: Audience Targeting</span>
+                                <span>Target Audience</span>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
@@ -1247,13 +1237,7 @@
                 <div class="form-section-card">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            <span>Step 3: 4-Tier Academic Audience Targeting</span>
+                            <span>Step 3: Target Audience</span>
                         </div>
                         <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">3 of 5</span>
                     </div>
@@ -1368,10 +1352,10 @@
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <polyline points="15 18 9 12 15 6"></polyline>
                                 </svg>
-                                <span>Back: Schedule</span>
+                                <span>Schedule</span>
                             </button>
                             <button type="button" class="btn-action-primary" onclick="validateAndGoStep(4)">
-                                <span>Next: Sponsors</span>
+                                <span>Sponsors</span>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
@@ -1386,9 +1370,6 @@
                 <div class="form-section-card">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                            </svg>
                             <span>Step 4: Multi-Sponsor Associations</span>
                         </div>
                         <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">4 of 5</span>
@@ -1454,10 +1435,10 @@
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <polyline points="15 18 9 12 15 6"></polyline>
                                 </svg>
-                                <span>Back: Audience Targeting</span>
+                                <span>Target Audience</span>
                             </button>
                             <button type="button" class="btn-action-primary" onclick="validateAndGoStep(5)">
-                                <span>Next: Summary & Confirmation</span>
+                                <span>Summary & Confirmation</span>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
@@ -1472,11 +1453,7 @@
                 <div class="form-section-card">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M9 11l3 3L22 4"></path>
-                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                            </svg>
-                            <span>Step 5: Event Specifications Summary & Confirmation</span>
+                            <span>Step 5: Event Summary & Confirmation</span>
                         </div>
                         <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">5 of 5</span>
                     </div>
@@ -1495,8 +1472,8 @@
                             <!-- 1. Core Specifications Summary -->
                             <div class="summary-section-box">
                                 <div class="summary-section-title">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                                    <span>Core Specifications</span>
+                                    
+                                    <span>Event Details</span>
                                 </div>
                                 <div class="summary-grid">
                                     <div class="summary-item full-width">
@@ -1522,7 +1499,7 @@
                             <div class="summary-section-box">
                                 <div class="summary-section-title">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                    <span>Event Schedule &amp; Timeline</span>
+                                    <span>Schedule &amp; Registration</span>
                                 </div>
                                 <div class="summary-schedule-split">
                                     <!-- Left side: Date at top, Time below -->
@@ -1557,7 +1534,7 @@
                             <div class="summary-section-box">
                                 <div class="summary-section-title">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                                    <span>Audience Eligibility Targeting</span>
+                                    <span>Target Audience</span>
                                 </div>
                                 <div class="summary-grid">
                                     <div class="summary-item">
@@ -1604,7 +1581,7 @@
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <polyline points="15 18 9 12 15 6"></polyline>
                                 </svg>
-                                <span>Back: Sponsors</span>
+                                <span>Sponsors</span>
                             </button>
                             <asp:Button ID="btnConfirmPublish" runat="server" Text="Confirm & Publish Event" CssClass="btn-action-primary" OnClick="btnPublishEvent_Click" />
                         </div>

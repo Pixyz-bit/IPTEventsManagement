@@ -406,9 +406,18 @@ namespace _241611JalopEventsManagement.Backend.Repository
             if (cleaned.StartsWith("TCK-", StringComparison.OrdinalIgnoreCase))
             {
                 var parts = cleaned.Split('-');
-                if (parts.Length == 3 && int.TryParse(parts[2], out int regId))
+                if (parts.Length >= 3)
                 {
-                    parsedRegId = regId;
+                    string idPart = parts[2];
+                    if (idPart.Contains("|"))
+                    {
+                        idPart = idPart.Split('|')[0];
+                    }
+                    if (idPart.Contains(" "))
+                    {
+                        idPart = idPart.Split(' ')[0];
+                    }
+                    int.TryParse(idPart, out parsedRegId);
                 }
             }
             else

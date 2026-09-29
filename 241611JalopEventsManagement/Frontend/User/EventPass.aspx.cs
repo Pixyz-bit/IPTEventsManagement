@@ -1,0 +1,126 @@
+using System;
+using System.Web.UI;
+using _241611JalopEventsManagement.Backend.Helpers;
+using _241611JalopEventsManagement.Backend.Models;
+using _241611JalopEventsManagement.Backend.Repository;
+
+namespace _241611JalopEventsManagement.Frontend.User
+{
+    public partial class EventPass : Page
+    {
+        private readonly RegistrationRepository _regRepo = new RegistrationRepository();
+        private readonly EventRepository _eventRepo = new EventRepository();
+
+        public string QrPayload { get; set; } = "TCK-0000-00000";
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                LoadDigitalPass();
+            }
+        }
+
+        private void LoadDigitalPass()
+        {
+            int regId = 0;
+            if (int.TryParse(Request.QueryString["regId"], out int parsedRegId) && parsedRegId > 0)
+            {
+                regId = parsedRegId;
+            }
+
+            string ticketRef = Request.QueryString["ticketRef"]?.Trim();
+
+            EventRegistrationModel reg = null;
+
+            if (regId > 0)
+            {
+                reg = _regRepo.GetRegistrationById(regId);
+            }
+            else if (!string.IsNullOrWhiteSpace(ticketRef))
+            {
+                reg = _regRepo.GetRegistrationForScan(0, ticketRef);
+            }
+
+            // Fallback: If student logged in, check for their latest registration
+            if (reg == null && !string.IsNullOrWhiteSpace(SessionHelper.CurrentStudentId))
+            {
+                var studentRegs = _regRepo.GetRegistrationsByStudent(SessionHelper.CurrentStudentId);
+                if (studentRegs != null && studentRegs.Count > 0)
+                {
+                    reg = studentRegs[0];
+                }
+            }
+
+            // Fallback demo model if testing directly
+            if (reg == null)
+            {
+                reg = new EventRegistrationModel
+                {
+                    EventRegistrationId = 1,
+                    EventId = 3,
+                    StudentId = SessionHelper.CurrentStudentId ?? "24-1611",
+                    CurrentYearLvl = 3,
+                    CurrentSection = "SBIT-3A",
+                    Status = "NoShow",
+                    EventTitle = "Cybersecurity and AI Convention",
+                    VenueLocation = "Main Academic Amphitheater",
+                    EventStart = DateTime.Today.AddDays(7).AddHours(9),
+                    EventEnd = DateTime.Today.AddDays(7).AddHours(17),
+                    StudentFirstName = "Martin",
+                    StudentLastName = "Jalop",
+                    StudentProgram = "BS Information Technology",
+                    StudentDepartment = "College of Computer Studies"
+                };
+            }
+
+            // Bind QR Code Payload (Ticket reference format matches AttendanceScanner.aspx)
+            QrPayload = reg.TicketReference;
+
+            // Show or hide success banner
+            bool isNewRegistration = string.Equals(Request.QueryString["success"], "1", StringComparison.OrdinalIgnoreCase);
+            pnlSuccessBanner.Visible = isNewRegistration;
+
+            // Populate Boarding Pass UI
+            litPassEventTitle.Text = Server.HtmlEncode(reg.EventTitle ?? "Campus Event");
+            litPassStudentName.Text = Server.HtmlEncode(reg.StudentFullName);
+            litPassStudentId.Text = Server.HtmlEncode(reg.StudentId);
+            litPassCourse.Text = Server.HtmlEncode(reg.StudentProgram ?? "BS Information Technology");
+            litPassYearSection.Text = $"Yr {reg.CurrentYearLvl} - {Server.HtmlEncode(reg.CurrentSection ?? "SBIT-3A")}";
+
+            if (reg.EventStart.HasValue)
+            {
+                litPassEventSchedule.Text = $"{reg.EventStart:MMM dd, yyyy} | {reg.EventStart:hh:mm tt} - {reg.EventEnd:hh:mm tt}";
+            }
+            else
+            {
+                litPassEventSchedule.Text = "TBD";
+            }
+
+            litPassVenue.Text = Server.HtmlEncode(reg.VenueLocation ?? "Campus Grounds");
+            litPassTicketRef.Text = Server.HtmlEncode(reg.TicketReference);
+
+            // Generate security hash token
+            string token = Request.QueryString["token"];
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                token = $"SEC-{Math.Abs((reg.StudentId + reg.EventId + reg.TicketReference).GetHashCode()):X8}";
+            }
+            litPassSecurityToken.Text = Server.HtmlEncode(token);
+
+            // Dynamic Pass Status Pill
+            if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
+            {
+                litPassStatusPill.Text = "● PRESENT & CHECKED IN";
+            }
+            else if (string.Equals(reg.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
+            {
+                litPassStatusPill.Text = "✕ PASS REVOKED";
+            }
+            else
+            {
+                litPassStatusPill.Text = "CONFIRMED PASS";
+            }
+        }
+    }
+}

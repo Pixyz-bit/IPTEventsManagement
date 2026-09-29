@@ -629,53 +629,10 @@ namespace _241611JalopEventsManagement.Frontend.User
 
         protected void btnConfirmRegistration_Click(object sender, EventArgs e)
         {
-            int eventId = Convert.ToInt32(hfSelectedEventId.Value);
-            string studentId = litStudentId.Text;
-
-            try
+            if (int.TryParse(hfSelectedEventId.Value, out int eventId) && eventId > 0)
             {
-                var reg = new EventRegistrationModel
-                {
-                    EventId = eventId,
-                    StudentId = studentId,
-                    CurrentYearLvl = 3,
-                    CurrentSection = "BSIT 3A",
-                    Status = "NoShow" // Default per Rule 1
-                };
-
-                int newId = _regRepo.RegisterStudent(reg);
-
-                if (newId > 0)
-                {
-                    ShowToast("Registration confirmed! Your seat is reserved. Default status is 'NoShow' until event day check-in.", true);
-                }
-                else if (newId == -1)
-                {
-                    ShowToast("Registration failed: This event has reached maximum capacity (Fully Booked).", false);
-                }
-                else if (newId == -2)
-                {
-                    ShowToast("Registration failed: The registration window for this event is closed.", false);
-                }
+                Response.Redirect($"~/Frontend/User/EventRegistration.aspx?eventId={eventId}", true);
             }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("already registered"))
-                {
-                    ShowToast("You are already enrolled in this event.", false);
-                }
-                else
-                {
-                    // Simulated in preview mode
-                    ShowToast("Registration confirmed! Slot successfully reserved for student account.", true);
-                }
-            }
-
-            pnlModalDetails.Visible = false;
-            pnlModalDetails.CssClass = "modal-overlay";
-
-            LoadEventsCatalog();
-            LoadStudentRegistrations();
         }
 
         protected void rptMyRegistrations_ItemCommand(object source, RepeaterCommandEventArgs e)

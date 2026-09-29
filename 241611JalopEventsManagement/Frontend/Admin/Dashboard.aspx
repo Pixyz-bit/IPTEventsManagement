@@ -405,7 +405,6 @@
     <div class="dashboard-header">
         <div class="header-title-block">
             <h2>Administrative Operations</h2>
-            <p>University-wide event scheduling, cohort demographics, and capacity tracking.</p>
         </div>
         <div class="header-actions">
             <a href="<%= ResolveUrl("~/Frontend/Admin/TestConnection.aspx") %>" class="btn-action-secondary">

@@ -1,3 +1,1 @@
-@echo off
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Run-Project.ps1"
-pause
+& "C:\Program Files\IIS Express\iisexpress.exe" /path:"c:\Martin Archive\Programming\ASP NET\241611JalopEventsManagement\241611JalopEventsManagement" /port:51717

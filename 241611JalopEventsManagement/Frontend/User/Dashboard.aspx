@@ -1588,7 +1588,13 @@
                                         <%# Eval("Status") %>
                                     </span>
                                 </td>
-                                <td style="text-align: right;">
+                                <td style="text-align: right; white-space: nowrap;">
+                                    <a href='<%# ResolveUrl("~/Frontend/User/EventPass.aspx?regId=" + Eval("EventRegistrationId")) %>' 
+                                       class="btn-view-details" 
+                                       style="display: inline-flex; padding: 0.35rem 0.75rem; font-size: 0.75rem; margin-right: 0.5rem; text-decoration: none; vertical-align: middle;">
+                                        VIEW PASS &rarr;
+                                    </a>
+
                                     <asp:LinkButton ID="btnCancelRegistration" runat="server" 
                                         CssClass="btn-cancel-reg"
                                         CommandName="CancelRegistration" 

@@ -54,7 +54,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             try
             {
-                allEvents = _eventRepository.GetAllUpcomingEvents();
+                allEvents = _eventRepository.GetAllEvents();
                 if (allEvents == null || allEvents.Count == 0)
                 {
                     allEvents = GetDemonstrationEvents();
@@ -66,22 +66,17 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 allEvents = GetDemonstrationEvents();
             }
 
-            // Strictly filter to active upcoming events (never cancelled or completed)
-            allEvents = allEvents
-                .Where(ev => string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase) && ev.EventEnd >= now)
-                .ToList();
-
             // 1. Evaluate 3 Statuses: Close, Open, Soon
             int totalCount = allEvents.Count;
             int openCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Open");
             int soonCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Soon");
             int closeCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Close");
 
-            // Update Summary KPI Cards
-            litTotalMatrixCount.Text = totalCount.ToString();
-            litOpenCount.Text = openCount.ToString();
-            litSoonCount.Text = soonCount.ToString();
-            litCloseCount.Text = closeCount.ToString();
+            // Update Summary KPI Cards (if present in markup)
+            if (litTotalMatrixCount != null) litTotalMatrixCount.Text = totalCount.ToString();
+            if (litOpenCount != null) litOpenCount.Text = openCount.ToString();
+            if (litSoonCount != null) litSoonCount.Text = soonCount.ToString();
+            if (litCloseCount != null) litCloseCount.Text = closeCount.ToString();
 
             // 2. Update Status Filter Badges
             litBadgeAll.Text = totalCount.ToString();
