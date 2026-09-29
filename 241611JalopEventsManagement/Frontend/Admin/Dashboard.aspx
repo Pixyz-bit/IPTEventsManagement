@@ -415,11 +415,11 @@
                 </svg>
                 <span>DB Diagnostic</span>
             </a>
-            <a href="<%= ResolveUrl("~/Frontend/Admin/CheckIn.aspx") %>" class="btn-action-secondary">
+            <a href="<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx") %>" class="btn-action-secondary">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
                 </svg>
-                <span>QR Scanner</span>
+                <span>Attendance Scanner</span>
             </a>
             <a href="<%= ResolveUrl("~/Frontend/Admin/CreateEvent.aspx") %>" class="btn-action-primary">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -674,14 +674,14 @@
                 </div>
 
                 <div class="quick-links-list">
-                    <a href="<%= ResolveUrl("~/Frontend/Admin/CheckIn.aspx") %>" class="quick-link-item">
-                        <span>QR Attendance Desk</span>
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventPreRegistered.aspx") %>" class="quick-link-item">
+                        <span>Pre-Registered Roster</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
                     </a>
-                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventAttendees.aspx") %>" class="quick-link-item">
-                        <span>Attendee Roster</span>
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx") %>" class="quick-link-item">
+                        <span>Attendance Scanner</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>

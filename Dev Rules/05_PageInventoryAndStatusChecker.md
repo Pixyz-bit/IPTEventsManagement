@@ -34,8 +34,8 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 | **P-09** | Admin | **Campus Events Matrix** | [`Frontend/Admin/AdminEvents.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/AdminEvents.aspx) | `/Frontend/Admin/AdminEvents.aspx` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository` |
 | **P-10** | Admin | **Create Event Form** | [`Frontend/Admin/CreateEvent.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/CreateEvent.aspx) | `/Frontend/Admin/CreateEvent.aspx` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository`, File Upload Handler |
 | **P-11** | Admin | **Event Details** | [`Frontend/Admin/EventDetails.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventDetails.aspx) | `/Frontend/Admin/EventDetails.aspx?eventId={id}` | `[x] COMPLETED` | `EventRepository`, `SponsorRepository`, Audit Logger |
-| **P-12** | Admin | **Check-In / QR Scanner** | `Frontend/Admin/CheckIn.aspx` | `/Frontend/Admin/CheckIn.aspx` | `[ ] NOT YET STARTED` | `RegistrationRepository`, Camera Scanner API, Sound Synthesis |
-| **P-13** | Admin | **Event Attendees Roster** | `Frontend/Admin/EventAttendees.aspx` | `/Frontend/Admin/EventAttendees.aspx?eventId={id}` | `[ ] NOT YET STARTED` | `RegistrationRepository`, `StudentRepository`, CSV Export Helper |
+| **P-12** | Admin | **Event Pre-Registered** | [`Frontend/Admin/EventPreRegistered.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventPreRegistered.aspx) | `/Frontend/Admin/EventPreRegistered.aspx?eventId={id}` | `[x] COMPLETED` | `RegistrationRepository`, `StudentRepository`, Dual-Sheet Roster, CSV Export |
+| **P-13** | Admin | **Event Scanner and Attendance** | [`Frontend/Admin/AttendanceScanner.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/AttendanceScanner.aspx) | `/Frontend/Admin/AttendanceScanner.aspx?eventId={id}` | `[x] COMPLETED` | Optical Camera Viewfinder, Staging Area, Audiovisual Chimes, Live Attendance Roster |
 | **P-14** | Admin | **Student Directory & Accounts** | `Frontend/Admin/StudentList.aspx` | `/Frontend/Admin/StudentList.aspx` | `[ ] NOT YET STARTED` | `StudentRepository`, `UserRepository`, CSV Bulk Import Parser |
 | **P-15** | Admin | **System Audit Logs** | `Frontend/Admin/AuditLogs.aspx` | `/Frontend/Admin/AuditLogs.aspx` | `[ ] NOT YET STARTED` | `AuditRepository`, `dbo.AuditLogsTable` |
 | **P-16** | Admin | **Reports & Analytics** | `Frontend/Admin/Reports.aspx` | `/Frontend/Admin/Reports.aspx` | `[ ] NOT YET STARTED` | Analytics Engine, Chart.js / SVG Visualizer, CSV/PDF Export |
@@ -219,33 +219,48 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 
 ---
 
-#### [ ] P-12: Event Attendance / QR Check-In Scanner (`CheckIn.aspx`)
-- **Planned File Location:** `Frontend/Admin/CheckIn.aspx`
-- **Access Rule:** Administrator / Desk Staff.
-- **Visual Design:** High-contrast kiosk view with live camera viewport, manual student ID fallback input box, and large visual verification banner.
-- **Key Capabilities:**
-  - Browser camera QR code scanner (via HTML5 QR scanner library).
-  - Manual fallback input box for student ID numbers.
-  - Instant real-time attendance verification:
-    - **`GREEN (SUCCESS)`**: Student successfully checked in; state updated to `'Attended'`.
-    - **`YELLOW (ALREADY CHECKED IN)`**: Student was already scanned; displays timestamp of initial scan.
-    - **`RED (NOT REGISTERED)`**: Student holds no valid registration for this event.
-    - **`RED (EVENT NOT TODAY / CANCELLED)`**: Validation error.
-  - Audio-visual feedback chimes on successful and rejected scans.
-- **Status:** `[ ] NOT YET STARTED`.
+#### [x] P-12: Event Pre-Registered (`EventPreRegistered.aspx`)
+- **Physical File Location:** [`Frontend/Admin/EventPreRegistered.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventPreRegistered.aspx)
+- **Target URL:** `/Frontend/Admin/EventPreRegistered.aspx?eventId={id}`
+- **Access Rule:** Administrator.
+- **Purpose:** Serves as the pre-event roster management center, providing administrative tracking and triage for all registered attendees before gate check-in.
+- **Core Data & UI Components:**
+  - **Search & Multi-Filter Controls:** Universal search bar (evaluating Student ID and Full Name) alongside toggle/dropdown filters to segment attendees by Department, Course, and Year Level.
+  - **Dual-Sheet Roster Organization:** Distinct, switchable tabbed sheets separating:
+    - *Pre-Registered Sheet:* Active registered students awaiting attendance (designated as expected attendees / initial "No-Show" state prior to physical scanning).
+    - *Cancelled Sheet:* Historical record of revoked registrations.
+  - **Row-Level Action Controls:**
+    - *View:* Launches a detailed pop-up modal containing complete student profile information (Student ID, Full Name, Institutional Email, Branch, Department, Course, Year Level, Section, and Registration Timestamp).
+    - *Cancel:* Voids the student's registration pass and immediately migrates the entry to the Cancelled Sheet.
+- **Actions & Operational Directives:**
+  - Releasing cancelled slots back to the event’s available seating capacity pool in real time (`CurrentRegistrations` atomically decremented on `dbo.EventsTable`).
+  - Providing roster export functionality (CSV/Excel) for gate security backups and administrative archiving.
+- **Status:** `[x] COMPLETED`.
 
 ---
 
-#### [ ] P-13: Event Attendees Roster (`EventAttendees.aspx`)
-- **Planned File Location:** `Frontend/Admin/EventAttendees.aspx`
-- **Access Rule:** Administrator.
-- **Visual Design:** Data table with real-time search, status filter (`All`, `Attended`, `NoShow`), and attendance counter badges.
-- **Key Capabilities:**
-  - View full roster of registered students for a selected event.
-  - Manual attendance override toggle: mark student as `Attended` or revert to `NoShow`.
-  - Manual student registration entry (administrator emergency override).
-  - Export attendee roster to CSV for university administrative filing.
-- **Status:** `[ ] NOT YET STARTED`.
+#### [x] P-13: Event Scanner and Attendance (`AttendanceScanner.aspx`)
+- **Physical File Location:** [`Frontend/Admin/AttendanceScanner.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/AttendanceScanner.aspx)
+- **Target URL:** `/Frontend/Admin/AttendanceScanner.aspx?eventId={id}`
+- **Access Rule:** Administrator / Desk Staff.
+- **Purpose:** Functions as the real-time entrance gate operations terminal, combining optical QR code decoding, instant attendee profile staging, mandatory administrative inspection, and authenticated attendance logging.
+- **Core Data & UI Components:**
+  - **Optical Viewfinder Stream:** Direct camera interface (supporting external webcams, built-in laptop cameras, and mobile web browsers) configured to scan physical or digital attendee QR passes.
+  - **Auto-Populating Verification Panel (Staging Area):** Read-only inspection fields that immediately populate with the attendee's data upon a valid scan (Student ID, Full Name, Academic Department, Course, Year Level, Section, and Assigned Ticket Reference) without committing the record to the database.
+  - **Operator Confirmation Controls:** Explicit action triggers within the verification panel:
+    - `[ CONFIRM & CHECK-IN ]` (or keyboard shortcut like Enter/Space) to officially validate attendance.
+    - `[ CANCEL / DISCARD ]` to reject or clear the staged record and resume camera scanning without saving.
+  - **Live Checked-In Attendance Roster:** Chronologically updating data table beneath the scanner listing confirmed students, displaying verified check-in timestamps (`MM/dd/yyyy hh:mm:ss tt`), verification methods, and inspecting admin credentials.
+  - **Manual Fallback Console:** An input field allowing gate operators to manually look up a Student ID or Ticket Reference number when a student's camera stream or physical ticket is unreadable. Manual submissions populate the verification panel for confirmation before check-in.
+- **Actions & Operational Directives:**
+  - **Pre-Commit State Validation:** Run millisecond database checks upon optical scan or manual lookup against three preliminary states:
+    - *Valid Ticket / Pending Admin Confirmation:* Staged for review.
+    - *Duplicate Check-In Warning:* Flags that the pass was already used, showing the original check-in timestamp and gate location.
+    - *Invalid Ticket / Wrong Event:* Flags unassigned or incorrect event passes.
+  - **Mandatory Review Gate (No Automatic Check-In):** The system must not automatically mark a student as attended immediately upon scanning. It must hold the scanned data in a staged preview state so the administrator can physically verify the attendee's identity (e.g., verifying their physical University ID card against the displayed name and photo/details).
+  - **Audiovisual Feedback:** Trigger a preview chime/prompt when a code is detected, and distinct audiovisual indicators upon final action (green chime on confirmed check-in, red tone on error, duplicate, or administrative rejection).
+  - **Final Database Commit:** Only after the administrator clicks Confirm & Check-In does the system commit the record to the database (`IsCheckedIn = 1`, `CheckInDateTime = GETDATE()`), increment the live gate headcount, and append the attendee to the live checked-in attendance roster.
+- **Status:** `[x] COMPLETED`.
 
 ---
 
@@ -302,15 +317,14 @@ This document tracks all pages, templates, and views across the **Shared/Public*
 
 ```
 Total Identified Pages: 16
-  ├── [x] Completed & Verified:       4  (25.0%)
-  ├── [-] Polish / Redesign Pending:  1  ( 6.3%)
-  └── [ ] Not Yet Started:           11  (68.7%)
+  ├── [x] Completed & Verified:      10  (62.5%)
+  └── [ ] Not Yet Started:            6  (37.5%)
 ```
 
 ### Module Breakdown:
 1. **Shared / Public:** 2 / 2 Completed (100%)
 2. **Student / User:** 1 / 4 Completed (25%)
-3. **Administrative:** 1 / 10 Completed, 1 In Progress (20%)
+3. **Administrative:** 7 / 10 Completed (70%)
 
 ---
 
@@ -328,9 +342,9 @@ To maintain maximum engineering velocity and adhere to the project's layered arc
    - Build `Frontend/Admin/AdminEvents.aspx` (Event listings with status filters and quick actions).
    - Build `Frontend/Admin/CreateEvent.aspx` and `Frontend/Admin/EditEvent.aspx` (Event publishing, multi-tier targeting, and multi-sponsor management).
 
-3. **Phase 3: Event Day Execution & Check-In Desk**
-   - Build `Frontend/Admin/CheckIn.aspx` (Camera QR scanner and manual fallback).
-   - Build `Frontend/Admin/EventAttendees.aspx` (Live attendee roster and attendance toggles).
+3. **Phase 3: Event Roster Triage & Gate Check-In Desk**
+   - Build `Frontend/Admin/EventPreRegistered.aspx` (Dual-sheet pre-registered triage roster, filtering, student modal, real-time seat release cancellation, CSV/Excel export).
+   - Build `Frontend/Admin/AttendanceScanner.aspx` (Optical QR camera viewfinder, pre-commit verification staging area, mandatory operator review, audiovisual chimes, live checked-in attendance roster).
 
 4. **Phase 4: User Directory & Administrative Governance**
    - Build `Frontend/Admin/StudentList.aspx` (Single student form with birthdate password generation + CSV bulk import).

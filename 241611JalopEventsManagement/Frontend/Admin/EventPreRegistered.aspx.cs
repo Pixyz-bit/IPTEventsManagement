@@ -1,0 +1,288 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using _241611JalopEventsManagement.Backend.Helpers;
+using _241611JalopEventsManagement.Backend.Models;
+using _241611JalopEventsManagement.Backend.Repository;
+
+namespace _241611JalopEventsManagement.Frontend.Admin
+{
+    public partial class EventPreRegistered : Page
+    {
+        private readonly EventRepository _eventRepo = new EventRepository();
+        private readonly RegistrationRepository _registrationRepo = new RegistrationRepository();
+
+        public int CurrentEventId
+        {
+            get
+            {
+                if (ViewState["CurrentEventId"] != null)
+                {
+                    return (int)ViewState["CurrentEventId"];
+                }
+                return 0;
+            }
+            set
+            {
+                ViewState["CurrentEventId"] = value;
+            }
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // Security verification: administrator session gate
+            if (!SessionHelper.IsAuthenticated || !SessionHelper.IsAdmin)
+            {
+                if (!SessionHelper.IsAuthenticated)
+                {
+                    Response.Redirect("~/Frontend/Login/Login.aspx", true);
+                    return;
+                }
+            }
+
+            if (!IsPostBack)
+            {
+                InitializeEventContext();
+            }
+        }
+
+        private void InitializeEventContext()
+        {
+            // 1. Populate Events Selector Dropdown
+            var allEvents = _eventRepo.GetAllEvents();
+            ddlEvents.Items.Clear();
+
+            if (allEvents != null && allEvents.Count > 0)
+            {
+                foreach (var evt in allEvents)
+                {
+                    string dateText = evt.EventStart != DateTime.MinValue ? evt.EventStart.ToString("MM/dd/yyyy") : "TBD";
+                    string itemText = $"{evt.Title} ({dateText})";
+                    ddlEvents.Items.Add(new ListItem(itemText, evt.EventId.ToString()));
+                }
+            }
+
+            // 2. Resolve target event ID from QueryString or fallback
+            int eventId = 0;
+            if (Request.QueryString["eventId"] != null && int.TryParse(Request.QueryString["eventId"], out int parsedId))
+            {
+                eventId = parsedId;
+            }
+            else if (ddlEvents.Items.Count > 0)
+            {
+                eventId = int.Parse(ddlEvents.Items[0].Value);
+            }
+
+            CurrentEventId = eventId;
+
+            if (ddlEvents.Items.FindByValue(eventId.ToString()) != null)
+            {
+                ddlEvents.SelectedValue = eventId.ToString();
+            }
+
+            LoadEventData();
+        }
+
+        protected void ddlEvents_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(ddlEvents.SelectedValue, out int selectedId))
+            {
+                CurrentEventId = selectedId;
+                Response.Redirect($"~/Frontend/Admin/EventPreRegistered.aspx?eventId={selectedId}", true);
+            }
+        }
+
+        private void LoadEventData()
+        {
+            var evt = _eventRepo.GetEventById(CurrentEventId);
+
+            if (evt != null)
+            {
+                litEventTitle.Text = Server.HtmlEncode(evt.Title);
+                litEventDate.Text = evt.EventStart != DateTime.MinValue ? evt.EventStart.ToString("MM/dd/yyyy") : "MM/dd/yyyy";
+                litEventVenue.Text = Server.HtmlEncode(evt.VenueLocation ?? "Campus Grounds");
+                litEventCapacitySummary.Text = $"{evt.CurrentRegistrations} / {evt.MaxCapacity}";
+
+                // Status Badge
+                string statusText = evt.Status ?? "Upcoming";
+                if (string.Equals(statusText, "Open", StringComparison.OrdinalIgnoreCase))
+                {
+                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.3); color:#34d399;\">&#9679; REGISTRATION OPEN</span>";
+                }
+                else if (string.Equals(statusText, "Closed", StringComparison.OrdinalIgnoreCase))
+                {
+                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background:rgba(244,63,94,0.15); border-color:rgba(244,63,94,0.3); color:#f43f5e;\">&#9679; REGISTRATION CLOSED</span>";
+                }
+                else
+                {
+                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background:rgba(56,189,248,0.15); border-color:rgba(56,189,248,0.3); color:#38bdf8;\">&#9679; " + Server.HtmlEncode(statusText.ToUpper()) + "</span>";
+                }
+            }
+            else
+            {
+                litEventTitle.Text = "Demonstration Event Preview";
+                litEventDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
+                litEventVenue.Text = "Main Academic Amphitheater";
+                litEventCapacitySummary.Text = "0 / 100";
+                litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background:rgba(56,189,248,0.15); border-color:rgba(56,189,248,0.3); color:#38bdf8;\">&#9679; UPCOMING</span>";
+            }
+
+            // Load Attendees for this event
+            var registrations = _registrationRepo.GetRegistrationsByEvent(CurrentEventId);
+
+            // Triage into dual-sheet cohorts
+            // Pre-Registered: Active registrations awaiting scan (Status == 'NoShow' or not cancelled/present)
+            var preRegisteredList = registrations.Where(r => !string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase) && !string.Equals(r.Status, "Present", StringComparison.OrdinalIgnoreCase)).ToList();
+            
+            // Cancelled: Revoked passes
+            var cancelledList = registrations.Where(r => string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase)).ToList();
+
+            // Populate KPIs
+            litKpiPreRegistered.Text = preRegisteredList.Count.ToString();
+            litKpiCancelled.Text = cancelledList.Count.ToString();
+
+            int maxCap = evt != null ? evt.MaxCapacity : 100;
+            int currentRegs = evt != null ? evt.CurrentRegistrations : preRegisteredList.Count;
+            int availablePool = Math.Max(0, maxCap - currentRegs);
+            litKpiAvailablePool.Text = availablePool.ToString();
+
+            double occupancyRate = maxCap > 0 ? ((double)currentRegs / maxCap) * 100.0 : 0;
+            litKpiOccupancyRate.Text = $"{occupancyRate:F1}%";
+
+            // Tab Badges
+            litTabCountPreReg.Text = preRegisteredList.Count.ToString();
+            litTabCountCancelled.Text = cancelledList.Count.ToString();
+
+            // Bind Repeaters
+            rptPreRegistered.DataSource = preRegisteredList;
+            rptPreRegistered.DataBind();
+            pnlEmptyPreRegistered.Visible = preRegisteredList.Count == 0;
+
+            rptCancelled.DataSource = cancelledList;
+            rptCancelled.DataBind();
+            pnlEmptyCancelled.Visible = cancelledList.Count == 0;
+
+            // Populate Filter Dropdowns dynamically
+            PopulateFilterOptions(registrations);
+        }
+
+        private void PopulateFilterOptions(List<EventRegistrationModel> list)
+        {
+            string selectedDept = ddlFilterDepartment.SelectedValue;
+            string selectedCourse = ddlFilterCourse.SelectedValue;
+
+            ddlFilterDepartment.Items.Clear();
+            ddlFilterDepartment.Items.Add(new ListItem("All Departments", ""));
+
+            ddlFilterCourse.Items.Clear();
+            ddlFilterCourse.Items.Add(new ListItem("All Courses", ""));
+
+            if (list == null || list.Count == 0)
+            {
+                return;
+            }
+
+            var depts = list.Select(r => r.StudentDepartment)
+                            .Where(d => !string.IsNullOrWhiteSpace(d))
+                            .Distinct()
+                            .OrderBy(d => d);
+
+            foreach (var d in depts)
+            {
+                ddlFilterDepartment.Items.Add(new ListItem(d, d));
+            }
+
+            var courses = list.Select(r => r.StudentProgram)
+                              .Where(c => !string.IsNullOrWhiteSpace(c))
+                              .Distinct()
+                              .OrderBy(c => c);
+
+            foreach (var c in courses)
+            {
+                ddlFilterCourse.Items.Add(new ListItem(c, c));
+            }
+
+            if (ddlFilterDepartment.Items.FindByValue(selectedDept) != null)
+            {
+                ddlFilterDepartment.SelectedValue = selectedDept;
+            }
+
+            if (ddlFilterCourse.Items.FindByValue(selectedCourse) != null)
+            {
+                ddlFilterCourse.SelectedValue = selectedCourse;
+            }
+        }
+
+        protected void btnCancelRow_Command(object sender, CommandEventArgs e)
+        {
+            if (e.CommandArgument != null && int.TryParse(e.CommandArgument.ToString(), out int regId))
+            {
+                bool success = _registrationRepo.AdminVoidRegistration(regId);
+                if (success)
+                {
+                    ShowAlert("Attendee registration pass successfully voided. 1 seat has been released back to the event capacity pool in real time.", true);
+                    LoadEventData();
+                }
+                else
+                {
+                    ShowAlert("Unable to void registration. The pass may already be cancelled or invalid.", false);
+                }
+            }
+        }
+
+        protected void btnExportCsv_Click(object sender, EventArgs e)
+        {
+            var registrations = _registrationRepo.GetRegistrationsByEvent(CurrentEventId);
+            var evt = _eventRepo.GetEventById(CurrentEventId);
+
+            var sb = new StringBuilder();
+            sb.AppendLine("Ticket Reference,Student ID,Full Name,Email,Campus Branch,Department,Program,Year Level,Section,Status,Registration Date");
+
+            foreach (var r in registrations)
+            {
+                string regDate = FormatRegistrationDate(r.RegistrationTimestamp, r.RegStart);
+                string line = $"\"{EscapeCsv(r.TicketReference)}\",\"{EscapeCsv(r.StudentId)}\",\"{EscapeCsv(r.StudentFullName)}\",\"{EscapeCsv(r.StudentEmail)}\",\"{EscapeCsv(r.StudentCampusBranch)}\",\"{EscapeCsv(r.StudentDepartment)}\",\"{EscapeCsv(r.StudentProgram)}\",\"{r.CurrentYearLvl}\",\"{EscapeCsv(r.CurrentSection)}\",\"{EscapeCsv(r.Status)}\",\"{regDate}\"";
+                sb.AppendLine(line);
+            }
+
+            string filename = $"Event_{CurrentEventId}_Roster_{DateTime.Now:MMddyyyy}.csv";
+            Response.Clear();
+            Response.Buffer = true;
+            Response.AddHeader("content-disposition", $"attachment;filename={filename}");
+            Response.Charset = "";
+            Response.ContentType = "text/csv";
+            Response.Output.Write(sb.ToString());
+            Response.Flush();
+            Response.End();
+        }
+
+        public string FormatRegistrationDate(object regTimestampObj, object regStartObj)
+        {
+            if (regTimestampObj != null && DateTime.TryParse(regTimestampObj.ToString(), out DateTime dtReg))
+            {
+                return dtReg.ToString("MM/dd/yyyy hh:mm tt");
+            }
+            if (regStartObj != null && DateTime.TryParse(regStartObj.ToString(), out DateTime dtStart))
+            {
+                return dtStart.ToString("MM/dd/yyyy");
+            }
+            return DateTime.Now.ToString("MM/dd/yyyy");
+        }
+
+        private static string EscapeCsv(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return string.Empty;
+            return value.Replace("\"", "\"\"");
+        }
+
+        private void ShowAlert(string message, bool isSuccess)
+        {
+            pnlAlert.Visible = true;
+            lblAlertMessage.Text = message;
+            divAlertBox.Attributes["class"] = isSuccess ? "alert-toast alert-toast-success" : "alert-toast alert-toast-danger";
+        }
+    }
+}

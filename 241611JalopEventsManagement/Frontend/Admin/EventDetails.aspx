@@ -688,20 +688,20 @@
                 </svg>
                 <span>1. Event Details (Active)</span>
             </a>
-            <a href="<%= ResolveUrl("~/Frontend/Admin/EventAttendees.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab">
+            <a href="<%= ResolveUrl("~/Frontend/Admin/EventPreRegistered.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 </svg>
-                <span>2. Pre-Registered Roster</span>
+                <span>2. Event Pre-Registered</span>
             </a>
-            <a href="<%= ResolveUrl("~/Frontend/Admin/CheckIn.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab">
+            <a href="<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
                 </svg>
-                <span>3. Check-In Scanner</span>
+                <span>3. Event Scanner and Attendance</span>
             </a>
             <a href="<%= ResolveUrl("~/Frontend/Admin/Reports.aspx?eventId=" + CurrentEventId) %>" class="pipeline-tab">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1091,7 +1091,7 @@
 
                 <!-- Quick Navigation to Operational Sub-Modules -->
                 <div style="margin-top:1.25rem; display:flex; flex-direction:column; gap:0.65rem;">
-                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventAttendees.aspx?eventId=" + CurrentEventId) %>" class="btn-action-secondary" style="justify-content:center;">
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventPreRegistered.aspx?eventId=" + CurrentEventId) %>" class="btn-action-secondary" style="justify-content:center;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
@@ -1099,11 +1099,11 @@
                         <span>View Pre-Registered Attendees</span>
                     </a>
 
-                    <a href="<%= ResolveUrl("~/Frontend/Admin/CheckIn.aspx?eventId=" + CurrentEventId) %>" class="btn-action-primary" style="justify-content:center;">
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx?eventId=" + CurrentEventId) %>" class="btn-action-primary" style="justify-content:center;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
                         </svg>
-                        <span>Launch QR Gate Scanner</span>
+                        <span>Launch Event Attendance Scanner</span>
                     </a>
 
                     <a href="<%= ResolveUrl("~/Frontend/Admin/Reports.aspx?eventId=" + CurrentEventId) %>" class="btn-action-secondary" style="justify-content:center;">

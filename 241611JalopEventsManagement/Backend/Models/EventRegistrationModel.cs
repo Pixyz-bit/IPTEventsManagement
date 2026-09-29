@@ -37,13 +37,25 @@ namespace _241611JalopEventsManagement.Backend.Models
 
         public string StudentFirstName { get; set; }
 
+        public string StudentMiddleName { get; set; }
+
         public string StudentLastName { get; set; }
+
+        public string StudentCampusBranch { get; set; }
 
         public string StudentProgram { get; set; }
 
         public string StudentDepartment { get; set; }
 
-        public string StudentFullName => $"{StudentFirstName} {StudentLastName}".Trim();
+        public string StudentEmail { get; set; }
+
+        public string StudentFullName => string.IsNullOrWhiteSpace(StudentMiddleName)
+            ? $"{StudentFirstName} {StudentLastName}".Trim()
+            : $"{StudentFirstName} {StudentMiddleName} {StudentLastName}".Trim();
+
+        public string TicketReference => $"TCK-{EventId:D4}-{EventRegistrationId:D5}";
+
+        public DateTime? RegistrationTimestamp { get; set; }
 
         #endregion
 

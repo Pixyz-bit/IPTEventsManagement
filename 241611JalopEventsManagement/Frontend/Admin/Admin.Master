@@ -480,22 +480,22 @@
                     <div>
                         <div class="nav-group-title">Attendance & Users</div>
                         <ul class="nav-list">
-                            <li class="nav-item <%= Request.Path.EndsWith("CheckIn.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
-                                <a href="<%= ResolveUrl("~/Frontend/Admin/CheckIn.aspx") %>">
-                                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
-                                    </svg>
-                                    <span>QR Attendance</span>
-                                </a>
-                            </li>
-                            <li class="nav-item <%= Request.Path.EndsWith("EventAttendees.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
-                                <a href="<%= ResolveUrl("~/Frontend/Admin/EventAttendees.aspx") %>">
+                            <li class="nav-item <%= Request.Path.EndsWith("EventPreRegistered.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
+                                <a href="<%= ResolveUrl("~/Frontend/Admin/EventPreRegistered.aspx") %>">
                                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="8.5" cy="7" r="4"></circle>
                                         <polyline points="17 11 19 13 23 9"></polyline>
                                     </svg>
-                                    <span>Attendee Roster</span>
+                                    <span>Pre-Registered</span>
+                                </a>
+                            </li>
+                            <li class="nav-item <%= Request.Path.EndsWith("AttendanceScanner.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
+                                <a href="<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx") %>">
+                                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
+                                    </svg>
+                                    <span>Attendance Scanner</span>
                                 </a>
                             </li>
                             <li class="nav-item <%= Request.Path.EndsWith("StudentList.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">

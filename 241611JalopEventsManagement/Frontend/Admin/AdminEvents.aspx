@@ -673,11 +673,11 @@
             <p>Central operational cockpit for Closed, Open, and Upcoming events &bull; Single entry gateway to event-level sub-modules.</p>
         </div>
         <div class="header-actions">
-            <a href="<%= ResolveUrl("~/Frontend/Admin/CheckIn.aspx") %>" class="btn-action-secondary">
+            <a href="<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx") %>" class="btn-action-secondary">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
                 </svg>
-                <span>QR Check-In Desk</span>
+                <span>Attendance Scanner</span>
             </a>
             <a href="<%= ResolveUrl("~/Frontend/Admin/CreateEvent.aspx") %>" class="btn-action-primary">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
