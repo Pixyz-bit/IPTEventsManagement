@@ -27,6 +27,7 @@ CREATE TABLE StudentTable (
     Department NVARCHAR(100) NOT NULL,
     Program NVARCHAR(100) NOT NULL,
     UserId INT NOT NULL,
+    BirthDate DATE NULL,
     FOREIGN KEY (UserId) REFERENCES UserTable(UserId)
 );
 GO
@@ -56,6 +57,7 @@ CREATE TABLE EventsTable (
     TargetDepartment NVARCHAR(100) NULL,
     TargetProgram NVARCHAR(100) NULL,
     TargetYearLevel INT NULL,
+    EventPhotoPath NVARCHAR(500) NULL,
 
     FOREIGN KEY (CreatedByUserId) REFERENCES UserTable(UserId)
 );

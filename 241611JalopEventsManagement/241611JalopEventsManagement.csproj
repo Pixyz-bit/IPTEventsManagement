@@ -70,6 +70,9 @@
     <Content Include="Web.config" />
     <Content Include="Default.aspx" />
     <Content Include="Backend\Database\Migration\01_DatabaseSchema.sql" />
+    <Content Include="Backend\Database\Migration\02_AddEventPhotoFilePath.sql" />
+    <Content Include="Backend\Database\Migration\03_PurgeStudentRecords.sql" />
+    <Content Include="Backend\Database\Migration\04_RemoveYearLevelAndSectionFromStudentTable.sql" />
     <Content Include="Frontend\AccessDenied.aspx" />
     <Content Include="Frontend\Admin\Admin.Master" />
     <Content Include="Frontend\Admin\AdminEvents.aspx" />

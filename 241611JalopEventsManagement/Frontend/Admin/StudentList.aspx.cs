@@ -49,13 +49,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             List<StudentProfile> allStudents = _studentRepo.GetAllStudents(search, dept, prog, null, status);
 
-            // Update Metrics (Safely null-guarded)
-            var completeRoster = _studentRepo.GetAllStudents();
-            if (litTotalStudents != null) litTotalStudents.Text = completeRoster.Count.ToString("N0");
-            if (litActiveAccounts != null) litActiveAccounts.Text = completeRoster.Count(s => s.IsActive).ToString("N0");
-            if (litSuspendedAccounts != null) litSuspendedAccounts.Text = completeRoster.Count(s => !s.IsActive).ToString("N0");
-            if (litDistinctPrograms != null) litDistinctPrograms.Text = completeRoster.Select(s => s.Program).Where(p => !string.IsNullOrEmpty(p)).Distinct().Count().ToString("N0");
-
             if (litShowingCount != null) litShowingCount.Text = allStudents.Count.ToString("N0");
 
             if (allStudents.Count == 0)
@@ -278,7 +271,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             if (student.BirthDate.HasValue)
             {
-                txtEditBirthDate.Text = student.BirthDate.Value.ToString("yyyy-MM-dd");
+                txtEditBirthDate.Text = student.BirthDate.Value.ToString("MM/dd/yyyy");
             }
             else
             {
@@ -375,9 +368,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 return;
             }
 
-            if (!DateTime.TryParse(birthDateRaw, out DateTime birthDate))
+            string[] acceptedDateFormats = { "MM/dd/yyyy", "M/d/yyyy", "MM-dd-yyyy", "yyyy-MM-dd" };
+            if (!DateTime.TryParseExact(birthDateRaw, acceptedDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime birthDate) &&
+                !DateTime.TryParse(birthDateRaw, CultureInfo.GetCultureInfo("en-US"), DateTimeStyles.None, out birthDate))
             {
-                ShowNotification("Invalid Birthdate format. Please choose a valid date.", false);
+                ShowNotification("Invalid Birthdate format. Please use mm/dd/yyyy format (e.g. 03/24/2004).", false);
                 pnlAddModal.Visible = true;
                 return;
             }
@@ -478,13 +473,15 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             DateTime? birthDate = null;
             if (!string.IsNullOrWhiteSpace(birthDateRaw))
             {
-                if (DateTime.TryParse(birthDateRaw, out DateTime bDate))
+                string[] acceptedDateFormats = { "MM/dd/yyyy", "M/d/yyyy", "MM-dd-yyyy", "yyyy-MM-dd" };
+                if (DateTime.TryParseExact(birthDateRaw, acceptedDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime bDate) ||
+                    DateTime.TryParse(birthDateRaw, CultureInfo.GetCultureInfo("en-US"), DateTimeStyles.None, out bDate))
                 {
                     birthDate = bDate;
                 }
                 else
                 {
-                    ShowNotification("Invalid Birthdate format.", false);
+                    ShowNotification("Invalid Birthdate format. Please use mm/dd/yyyy format (e.g. 03/24/2004).", false);
                     pnlEditModal.Visible = true;
                     return;
                 }

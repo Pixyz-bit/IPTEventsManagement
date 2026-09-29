@@ -189,8 +189,8 @@
                         <asp:TextBox ID="txtAddLastName" runat="server" CssClass="form-input" Placeholder="Last Name" />
                     </div>
                     <div class="form-group">
-                        <label>Birthdate <span class="required-star">*</span> (Used for Temp Password)</label>
-                        <asp:TextBox ID="txtAddBirthDate" runat="server" CssClass="form-input" TextMode="Date" />
+                        <label>Birthdate <span class="required-star">*</span> (mm/dd/yyyy)</label>
+                        <asp:TextBox ID="txtAddBirthDate" runat="server" CssClass="form-input" Placeholder="mm/dd/yyyy" />
                     </div>
                 </div>
 
@@ -317,8 +317,8 @@
                             <asp:TextBox ID="txtEditLastName" runat="server" CssClass="form-input" />
                         </div>
                         <div class="form-group">
-                            <label>Birthdate</label>
-                            <asp:TextBox ID="txtEditBirthDate" runat="server" CssClass="form-input" TextMode="Date" />
+                            <label>Birthdate (mm/dd/yyyy)</label>
+                            <asp:TextBox ID="txtEditBirthDate" runat="server" CssClass="form-input" Placeholder="mm/dd/yyyy" />
                         </div>
                     </div>
 

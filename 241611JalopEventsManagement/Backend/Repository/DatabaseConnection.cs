@@ -27,7 +27,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 if (connSetting == null || string.IsNullOrWhiteSpace(connSetting.ConnectionString))
                 {
                     // Default local fallback pointing to UniversityEventDB
-                    return @"Data Source=localhost;Initial Catalog=UniversityEventDB;Integrated Security=True;TrustServerCertificate=True;";
+                    return @"Data Source=.;Initial Catalog=UniversityEventDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=15;Pooling=True;";
                 }
 
                 return connSetting.ConnectionString;
