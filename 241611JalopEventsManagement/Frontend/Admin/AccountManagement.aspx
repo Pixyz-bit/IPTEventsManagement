@@ -1,7 +1,7 @@
 <%@ Page Title="Account Management & Access Governance | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AccountManagement.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AccountManagement" EnableEventValidation="false" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/account-management.css?v=2.3") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/account-management.css?v=3.5") %>" />
 </asp:Content>
 
 <asp:Content ID="MainArea" ContentPlaceHolderID="MainContent" runat="server">
@@ -105,16 +105,6 @@
             </div>
         </div>
 
-        <div class="account-table-header-meta">
-            <h3>
-                <span>System Accounts Registry</span>
-                <span class="count-pill"><asp:Literal ID="litShowingCount" runat="server">0</asp:Literal> Accounts</span>
-            </h3>
-            <span style="font-size:0.775rem; color:var(--text-muted);">
-                Centralized Role-Based Access Control (RBAC)
-            </span>
-        </div>
-
         <div class="table-responsive">
             <asp:Repeater ID="rptUsers" runat="server" OnItemCommand="rptUsers_ItemCommand">
                 <HeaderTemplate>
@@ -161,8 +151,7 @@
                                     CommandName="ToggleActive" 
                                     CommandArgument='<%# Eval("UserId") %>' 
                                     ToolTip='<%# Convert.ToBoolean(Eval("IsActive")) ? "Deactivate Account" : "Activate Account" %>' 
-                                    CausesValidation="false"
-                                    OnClientClick='<%# Convert.ToBoolean(Eval("IsActive")) ? "return confirm(\"Are you sure you want to deactivate this account?\");" : "return confirm(\"Are you sure you want to activate this account?\");" %>'>
+                                    CausesValidation="false">
                                     <%# Convert.ToBoolean(Eval("IsActive")) ? "Deactivate" : "Activate" %>
                                 </asp:LinkButton>
 
@@ -202,7 +191,7 @@
     </div>
 
     <!-- 1. Provision Administrator Modal Dialog -->
-    <asp:Panel ID="pnlCreateAdminModal" runat="server" Visible="false" CssClass="modal-overlay">
+    <asp:Panel ID="pnlCreateAdminModal" runat="server" Visible="false" CssClass="modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 1.5rem; box-sizing: border-box;">
         <div class="modal-box-md">
             <div class="modal-header">
                 <h3 class="modal-title">Provision Administrator Account</h3>
@@ -236,7 +225,7 @@
     </asp:Panel>
 
     <!-- 2. Manage Account Modal Dialog (Triggered by 'Manage' button) -->
-    <asp:Panel ID="pnlManageModal" runat="server" Visible="false" CssClass="modal-overlay">
+    <asp:Panel ID="pnlManageModal" runat="server" Visible="false" CssClass="modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 1.5rem; box-sizing: border-box;">
         <div class="modal-box-lg">
             <div class="modal-header">
                 <h3 class="modal-title">
@@ -396,27 +385,59 @@
     </asp:Panel>
 
     <!-- 3. Account Activate / Deactivate Confirmation Modal Dialog -->
-    <asp:Panel ID="pnlLockModal" runat="server" Visible="false" CssClass="modal-overlay">
-        <div class="modal-box-md">
-            <div class="modal-header">
-                <h3 class="modal-title"><asp:Literal ID="litLockModalTitle" runat="server" Text="Confirm Account Status Change" /></h3>
+    <asp:Panel ID="pnlLockModal" runat="server" Visible="false" CssClass="modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 1.5rem; box-sizing: border-box;">
+        <div class="modal-box-md" style="max-width: 490px; border-radius: 14px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <div class="modal-header" style="padding: 1.1rem 1.35rem; border-bottom: 1px solid var(--border-subtle); display:flex; align-items:center; justify-content:space-between; background:#fafbfc;">
+                <h3 class="modal-title" style="display:flex; align-items:center; gap:0.6rem; font-size:1.05rem; font-weight:700; color:var(--text-heading); margin:0;">
+                    <asp:Literal ID="litLockModalIcon" runat="server" />
+                    <asp:Literal ID="litLockModalTitle" runat="server" Text="Confirm Account Status Change" />
+                </h3>
                 <asp:LinkButton ID="btnCloseLockModal" runat="server" OnClick="btnCloseModals_Click" CausesValidation="false" Style="background:none; border:none; font-size:1.5rem; line-height:1; font-weight:bold; color:var(--text-muted); cursor:pointer;">&times;</asp:LinkButton>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 1.35rem 1.5rem; background: #ffffff;">
                 <asp:HiddenField ID="hfLockTargetUserId" runat="server" />
-                <p style="font-size:0.875rem; color:var(--text-body); margin-bottom:1rem; line-height:1.45;">
-                    Are you sure you want to <strong id="actionText"><asp:Literal ID="litLockActionVerb" runat="server" /></strong> access for:
-                    <br />
-                    <span style="font-family:var(--font-mono); font-weight:600; color:var(--text-heading);"><asp:Literal ID="litLockTargetEmail" runat="server" /></span>?
-                </p>
+                <asp:Literal ID="litLockActionVerb" runat="server" Visible="false" />
 
-                <div class="modal-notice-box warning">
-                    <strong>Security Impact:</strong> Deactivating an account immediately invalidates active sessions and rejects upcoming authentication attempts.
+                <!-- Account Identity Card Preview -->
+                <div style="background: #f8fafc; border: 1px solid var(--border-subtle); border-radius: 10px; padding: 0.95rem 1.15rem; margin-bottom: 1.15rem; display: flex; align-items: center; gap: 0.9rem;">
+                    <div style="width: 42px; height: 42px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; color: var(--text-heading); flex-shrink: 0;">
+                        <asp:Literal ID="litLockAvatarInitials" runat="server" Text="--" />
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.2rem;">
+                            <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-heading);"><asp:Literal ID="litLockTargetName" runat="server" /></span>
+                            <asp:Literal ID="litLockRoleBadge" runat="server" />
+                        </div>
+                        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); word-break: break-all;">
+                            <asp:Literal ID="litLockTargetEmail" runat="server" />
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Current State to New State Status Row -->
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px dashed var(--border-medium); border-radius: 8px; padding: 0.75rem 1.15rem; margin-bottom: 1.15rem;">
+                    <div>
+                        <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; margin-bottom: 0.25rem;">Current Status</div>
+                        <div><asp:Literal ID="litLockCurrentStatusBadge" runat="server" /></div>
+                    </div>
+                    <div style="color: var(--text-muted); padding: 0 0.5rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; margin-bottom: 0.25rem;">Target Status</div>
+                        <div><asp:Literal ID="litLockNewStatusBadge" runat="server" /></div>
+                    </div>
+                </div>
+
+                <!-- Contextual Notice Box -->
+                <asp:Literal ID="litLockNoticeBox" runat="server" />
             </div>
-            <div class="modal-footer">
-                <asp:Button ID="btnDismissLockModal" runat="server" Text="Cancel" CssClass="btn-action-secondary" OnClick="btnCloseModals_Click" CausesValidation="false" />
-                <asp:Button ID="btnConfirmToggleLock" runat="server" Text="Confirm Status Change" CssClass="btn-action-primary" Style="background-color:#dc2626; border-color:#dc2626;" OnClick="btnConfirmToggleLock_Click" />
+            <div class="modal-footer" style="padding: 0.95rem 1.35rem; background: #fafbfc; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;">
+                <asp:Button ID="btnDismissLockModal" runat="server" Text="Cancel" CssClass="btn-action-secondary" OnClick="btnCloseModals_Click" CausesValidation="false" Style="padding: 0.6rem 1.25rem; font-weight: 600;" />
+                <asp:Button ID="btnConfirmToggleLock" runat="server" Text="Confirm Status Change" CssClass="btn-action-primary" OnClick="btnConfirmToggleLock_Click" CausesValidation="false" Style="padding: 0.6rem 1.35rem; font-weight: 700; border-radius: 6px; cursor: pointer;" />
             </div>
         </div>
     </asp:Panel>

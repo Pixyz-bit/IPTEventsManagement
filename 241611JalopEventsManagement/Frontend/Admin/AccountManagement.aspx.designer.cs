@@ -25,7 +25,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.DropDownList ddlStatusFilter;
         protected global::System.Web.UI.WebControls.Button btnFilterApply;
         protected global::System.Web.UI.WebControls.Button btnResetFilter;
-        protected global::System.Web.UI.WebControls.Literal litShowingCount;
         protected global::System.Web.UI.WebControls.Repeater rptUsers;
         protected global::System.Web.UI.WebControls.Panel pnlNoAccounts;
         protected global::System.Web.UI.WebControls.Button btnResetZeroState;
@@ -64,11 +63,18 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Button btnDismissManageModal;
         protected global::System.Web.UI.WebControls.Button btnSaveManageAccount;
         protected global::System.Web.UI.WebControls.Panel pnlLockModal;
+        protected global::System.Web.UI.WebControls.Literal litLockModalIcon;
         protected global::System.Web.UI.WebControls.Literal litLockModalTitle;
         protected global::System.Web.UI.WebControls.LinkButton btnCloseLockModal;
         protected global::System.Web.UI.WebControls.HiddenField hfLockTargetUserId;
         protected global::System.Web.UI.WebControls.Literal litLockActionVerb;
+        protected global::System.Web.UI.WebControls.Literal litLockAvatarInitials;
+        protected global::System.Web.UI.WebControls.Literal litLockTargetName;
+        protected global::System.Web.UI.WebControls.Literal litLockRoleBadge;
         protected global::System.Web.UI.WebControls.Literal litLockTargetEmail;
+        protected global::System.Web.UI.WebControls.Literal litLockCurrentStatusBadge;
+        protected global::System.Web.UI.WebControls.Literal litLockNewStatusBadge;
+        protected global::System.Web.UI.WebControls.Literal litLockNoticeBox;
         protected global::System.Web.UI.WebControls.Button btnDismissLockModal;
         protected global::System.Web.UI.WebControls.Button btnConfirmToggleLock;
     }

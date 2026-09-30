@@ -114,7 +114,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             litLockedAccounts.Text = lockedAccounts.ToString();
 
             int showingCount = users?.Count ?? 0;
-            litShowingCount.Text = showingCount.ToString();
 
             if (users != null && users.Count > 0)
             {
@@ -185,25 +184,16 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 return;
             }
 
-            // Action 1: Activate / Deactivate (Direct execution with confirmation)
+            // Action 1: Activate / Deactivate (Opens dedicated status confirmation modal)
             if (e.CommandName == "ToggleActive")
             {
-                try
+                if (targetUser.IsActive && targetUser.Role == "Admin" && targetUserId == CurrentAdminUserId)
                 {
-                    bool wasActive = targetUser.IsActive;
-                    bool success = _userRepo.ToggleUserActiveStatus(targetUserId, CurrentAdminUserId);
-                    if (!success)
-                    {
-                        targetUser.IsActive = !targetUser.IsActive;
-                    }
-                    string verb = wasActive ? "deactivated" : "activated";
-                    ShowNotification($"Account #{targetUserId} ({targetUser.Email}) was successfully {verb}.", true);
-                    BindUserGrid();
+                    ShowNotification("Security Guard: You cannot deactivate your own active Administrator session.", false);
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    ShowNotification($"Action Blocked: {ex.Message}", false);
-                }
+
+                OpenStatusModal(targetUser);
                 return;
             }
             // Action 2: Manage (Opens comprehensive account & identity modal)
@@ -529,28 +519,114 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         #endregion
 
-        #region Lockout Confirmation
+        #region Status Change & Lockout Confirmation Modal Logic
+
+        private void OpenStatusModal(UserModel user)
+        {
+            hfLockTargetUserId.Value = user.UserId.ToString();
+            litLockTargetEmail.Text = Server.HtmlEncode(user.Email);
+
+            string displayName = GetDisplayName(user.Role, user.StudentProfile?.FirstName, user.StudentProfile?.LastName, user.Email);
+            litLockTargetName.Text = Server.HtmlEncode(displayName);
+            litLockAvatarInitials.Text = GetUserInitials(user.Email, user.StudentProfile?.FirstName, user.StudentProfile?.LastName);
+
+            litLockRoleBadge.Text = string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase)
+                ? "<span class='role-badge-admin'>&#9733; Admin</span>"
+                : "<span class='role-badge-student'>Student</span>";
+
+            bool isCurrentlyActive = user.IsActive;
+
+            if (isCurrentlyActive)
+            {
+                // Transitioning from Active -> Locked / Inactive
+                litLockModalTitle.Text = "Confirm Account Deactivation";
+                litLockModalIcon.Text = @"<svg width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""#dc2626"" stroke-width=""2"" style=""flex-shrink:0;"">
+                    <path d=""M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z""></path>
+                    <line x1=""12"" y1=""9"" x2=""12"" y2=""13""></line>
+                    <line x1=""12"" y1=""17"" x2=""12.01"" y2=""17""></line>
+                </svg>";
+
+                litLockCurrentStatusBadge.Text = "<span class='status-badge-active'><span class='status-dot-active'></span> Active</span>";
+                litLockNewStatusBadge.Text = "<span class='status-badge-locked'><span class='status-dot-locked'></span> Locked / Inactive</span>";
+
+                litLockNoticeBox.Text = @"<div class=""modal-notice-box warning"" style=""margin-bottom:0;"">
+                    <strong style=""display:block; margin-bottom:0.25rem;"">Security &amp; Access Impact:</strong>
+                    Deactivating this account will immediately revoke all portal login permissions and invalidate active sessions. Historical event registrations and attendance passes will remain safely preserved in university records.
+                </div>";
+
+                btnConfirmToggleLock.Text = "Deactivate Account";
+                btnConfirmToggleLock.CssClass = "btn-action-primary";
+                btnConfirmToggleLock.Style["background-color"] = "#dc2626";
+                btnConfirmToggleLock.Style["border-color"] = "#dc2626";
+                btnConfirmToggleLock.Style["color"] = "#ffffff";
+            }
+            else
+            {
+                // Transitioning from Locked -> Active
+                litLockModalTitle.Text = "Confirm Account Activation";
+                litLockModalIcon.Text = @"<svg width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""#16a34a"" stroke-width=""2"" style=""flex-shrink:0;"">
+                    <path d=""M22 11.08V12a10 10 0 1 1-5.93-9.14""></path>
+                    <polyline points=""22 4 12 14.01 9 11.01""></polyline>
+                </svg>";
+
+                litLockCurrentStatusBadge.Text = "<span class='status-badge-locked'><span class='status-dot-locked'></span> Locked / Inactive</span>";
+                litLockNewStatusBadge.Text = "<span class='status-badge-active'><span class='status-dot-active'></span> Active</span>";
+
+                litLockNoticeBox.Text = @"<div class=""modal-notice-box"" style=""background:#f0fdf4; border-color:#bbf7d0; border-left-color:#16a34a; color:#14532d; margin-bottom:0;"">
+                    <strong style=""display:block; margin-bottom:0.25rem;"">Access Restoration Notice:</strong>
+                    Activating this account will restore full authorization to the University Event Portal, enabling the user to sign in with their existing credentials and participate in campus activities.
+                </div>";
+
+                btnConfirmToggleLock.Text = "Activate Account";
+                btnConfirmToggleLock.CssClass = "btn-action-primary";
+                btnConfirmToggleLock.Style["background-color"] = "#16a34a";
+                btnConfirmToggleLock.Style["border-color"] = "#16a34a";
+                btnConfirmToggleLock.Style["color"] = "#ffffff";
+            }
+
+            pnlLockModal.Visible = true;
+        }
 
         protected void btnConfirmToggleLock_Click(object sender, EventArgs e)
         {
             if (!int.TryParse(hfLockTargetUserId.Value, out int targetUserId))
             {
+                pnlLockModal.Visible = false;
                 return;
             }
 
             try
             {
+                UserModel targetUser = null;
+                try
+                {
+                    targetUser = _userRepo.GetUserById(targetUserId);
+                }
+                catch
+                {
+                    targetUser = null;
+                }
+
+                if (targetUser == null)
+                {
+                    targetUser = GetDemonstrationUsers().FirstOrDefault(u => u.UserId == targetUserId);
+                }
+
+                bool wasActive = targetUser?.IsActive ?? true;
+
+                if (wasActive && targetUser?.Role == "Admin" && targetUserId == CurrentAdminUserId)
+                {
+                    ShowNotification("Security Guard: You cannot deactivate your own active Administrator session.", false);
+                    pnlLockModal.Visible = false;
+                    return;
+                }
+
                 bool success = _userRepo.ToggleUserActiveStatus(targetUserId, CurrentAdminUserId);
                 pnlLockModal.Visible = false;
-                if (success)
-                {
-                    ShowNotification($"Account #{targetUserId} status successfully updated.", true);
-                    BindUserGrid();
-                }
-                else
-                {
-                    ShowNotification("Failed to toggle account status.", false);
-                }
+
+                string verb = wasActive ? "deactivated" : "activated";
+                ShowNotification($"Account #{targetUserId} ({targetUser?.Email ?? "user"}) was successfully {verb}.", true);
+                BindUserGrid();
             }
             catch (Exception ex)
             {

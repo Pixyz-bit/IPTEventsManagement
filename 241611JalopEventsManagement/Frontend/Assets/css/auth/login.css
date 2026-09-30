@@ -207,6 +207,38 @@
             font-size: 0.85rem;
         }
 
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .password-input-wrapper .form-control {
+            padding-right: 2.75rem;
+        }
+
+        .btn-toggle-password {
+            position: absolute;
+            right: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.15s ease;
+            z-index: 2;
+        }
+
+        .btn-toggle-password:hover {
+            color: #FFFFFF;
+        }
+
         .form-options {
             display: flex;
             align-items: center;

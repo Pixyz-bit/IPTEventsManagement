@@ -9,6 +9,7 @@
     <div class="dashboard-header">
         <div class="header-title-block">
             <h2>Administrative Dashboard</h2>
+            <p>Lorem Ipsum</p>
         </div>
         <div class="header-actions">
             <a href="<%= ResolveUrl("~/Frontend/Admin/TestConnection.aspx") %>" class="btn-action-secondary">
@@ -40,14 +41,7 @@
         <div class="metric-card">
             <div class="metric-top">
                 <span class="metric-label">Events</span>
-                <div class="metric-icon-wrap" style="background-color: #eff6ff; color: #1d4ed8;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                </div>
+
             </div>
             <div class="metric-value">
                 <asp:Literal ID="litTotalEvents" runat="server" Text="0" />
@@ -61,14 +55,7 @@
         <div class="metric-card">
             <div class="metric-top">
                 <span class="metric-label">Registrations</span>
-                <div class="metric-icon-wrap" style="background-color: #ecfdf5; color: #059669;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                </div>
+                
             </div>
             <div class="metric-value">
                 <asp:Literal ID="litTotalRegistrations" runat="server" Text="0" />
@@ -82,13 +69,7 @@
         <div class="metric-card">
             <div class="metric-top">
                 <span class="metric-label">Attendees</span>
-                <div class="metric-icon-wrap" style="background-color: #fffbeb; color: #d97706;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="8.5" cy="7" r="4"></circle>
-                        <polyline points="17 11 19 13 23 9"></polyline>
-                    </svg>
-                </div>
+                
             </div>
             <div class="metric-value">
                 <asp:Literal ID="litTotalAttendees" runat="server" Text="0" />
@@ -102,12 +83,6 @@
         <div class="metric-card">
             <div class="metric-top">
                 <span class="metric-label">Fill Rate</span>
-                <div class="metric-icon-wrap" style="background-color: #f5f3ff; color: #7c3aed;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                        <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                    </svg>
-                </div>
             </div>
             <div class="metric-value">
                 <asp:Literal ID="litFillRate" runat="server" Text="0%" />

@@ -9,6 +9,7 @@
     <div class="page-header-row">
         <div class="header-title-block">
             <h2>Campus Events Matrix</h2>
+            <p>Lorem Ipsum</p>
         </div>
         <div class="header-actions">
             <a href="<%= ResolveUrl("~/Frontend/Admin/CreateEvent.aspx") %>" class="btn-action-primary">

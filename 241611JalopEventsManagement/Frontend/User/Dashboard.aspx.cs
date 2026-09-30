@@ -38,7 +38,7 @@ namespace _241611JalopEventsManagement.Frontend.User
             public int RemainingCapacity => Math.Max(0, MaxCapacity - CurrentRegistrations);
 
             // Category & Imagery
-            public string CategoryTag { get; set; } = "#Seminar";
+            public string CategoryTag { get; set; } = string.Empty;
             public string CategoryFilterKey { get; set; } = "seminar";
             public string CategoryColorClass { get; set; } = "cat-pill-cyan";
             public string BannerClass { get; set; } = "banner-gradient-1";
@@ -209,31 +209,31 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             if (combined.Contains("hack") || combined.Contains("cyber") || combined.Contains("security") || combined.Contains("code"))
             {
-                catTag = "#Hackathon";
+                catTag = "Hackathon";
                 filterKey = "hackathon";
                 bannerImg = ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg");
             }
             else if (combined.Contains("workshop") || combined.Contains("lab") || combined.Contains("cloud") || combined.Contains("ai "))
             {
-                catTag = "#Workshop";
+                catTag = "Workshop";
                 filterKey = "workshop";
                 bannerImg = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg");
             }
             else if (combined.Contains("sport") || combined.Contains("fest") || combined.Contains("game") || combined.Contains("tournament"))
             {
-                catTag = "#SportsFest";
+                catTag = "SportsFest";
                 filterKey = "sportsfest";
                 bannerImg = ResolveUrl("~/Frontend/Assets/QCU Background.png");
             }
             else if (combined.Contains("org") || combined.Contains("fair") || combined.Contains("club") || combined.Contains("expo"))
             {
-                catTag = "#OrgFair";
+                catTag = "OrgFair";
                 filterKey = "orgfair";
                 bannerImg = ResolveUrl("~/Frontend/Assets/QCU Background.png");
             }
             else if (combined.Contains("summit") || combined.Contains("innovation") || combined.Contains("conference"))
             {
-                catTag = "#TechSummit";
+                catTag = "TechSummit";
                 filterKey = "seminar";
                 bannerImg = ResolveUrl("~/Frontend/Assets/campus-clean.jpg");
             }
@@ -332,7 +332,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                     Status = "Upcoming",
                     IsRegistrationOpen = true,
                     FormattedSchedule = "Oct 09, 2026 | 10:00 AM - 03:00 PM",
-                    CategoryTag = "#Workshop",
+                    CategoryTag = "Workshop",
                     CategoryFilterKey = "workshop",
                     BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg"),
                     Sponsors = new List<string> { "AWS", "Google" },
@@ -353,7 +353,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                     Status = "Upcoming",
                     IsRegistrationOpen = true,
                     FormattedSchedule = "Oct 24, 2026 | 09:00 AM - 04:00 PM",
-                    CategoryTag = "#Hackathon",
+                    CategoryTag = "Hackathon",
                     CategoryFilterKey = "hackathon",
                     BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg"),
                     Sponsors = new List<string> { "Microsoft", "LESIT" },
@@ -374,7 +374,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                     Status = "Upcoming",
                     IsRegistrationOpen = true,
                     FormattedSchedule = "Nov 12, 2026 | 08:30 AM - 04:30 PM",
-                    CategoryTag = "#Seminar",
+                    CategoryTag = "Seminar",
                     CategoryFilterKey = "seminar",
                     BannerImageUrl = ResolveUrl("~/Frontend/Assets/campus-clean.jpg"),
                     Sponsors = new List<string> { "AWS", "Microsoft" },
@@ -395,7 +395,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                     Status = "Upcoming",
                     IsRegistrationOpen = false,
                     FormattedSchedule = "Nov 20, 2026 | 08:00 AM - 06:00 PM",
-                    CategoryTag = "#SportsFest",
+                    CategoryTag = "SportsFest",
                     CategoryFilterKey = "sportsfest",
                     BannerImageUrl = ResolveUrl("~/Frontend/Assets/QCU Background.png"),
                     Sponsors = new List<string> { "Red Bull", "Smart", "GCash" },

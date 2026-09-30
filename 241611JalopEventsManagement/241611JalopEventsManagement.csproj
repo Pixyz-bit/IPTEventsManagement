@@ -111,6 +111,8 @@
     <Content Include="Frontend\Admin\AccountManagement.aspx" />
     <Content Include="Frontend\Assets\css\admin\event-history.css" />
     <Content Include="Frontend\Assets\css\admin\account-management.css" />
+    <Content Include="Frontend\Assets\css\toast.css" />
+    <Content Include="Frontend\Assets\js\toast.js" />
     <Content Include="Frontend\global.css" />
   </ItemGroup>
   <ItemGroup>

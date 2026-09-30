@@ -1,0 +1,251 @@
+/* ════════════════════════════════════════════════════════════════
+   ENTERPRISE FLOATING TOAST NOTIFICATION SYSTEM
+   Floating in Lower-Right Viewport with Frosted Glassmorphism
+   ════════════════════════════════════════════════════════════════ */
+
+/* Container fixed strictly to lower-right corner of viewport */
+.app-toast-container {
+    position: fixed;
+    bottom: 1.75rem;
+    right: 1.75rem;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+    max-width: 420px;
+    width: calc(100vw - 2.5rem);
+    pointer-events: none;
+}
+
+/* Individual Toast Item */
+.app-toast {
+    pointer-events: auto;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1rem 1.15rem 1.15rem;
+    background: rgba(15, 23, 42, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.45), 0 6px 14px -2px rgba(0, 0, 0, 0.25);
+    color: #f8fafc;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    overflow: hidden;
+    transform-origin: bottom right;
+    animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                max-height 0.3s ease, 
+                margin 0.3s ease, 
+                padding 0.3s ease;
+    cursor: default;
+    user-select: none;
+}
+
+/* Entry Animation: Slide up and in from the lower right */
+@keyframes toastSlideIn {
+    0% {
+        opacity: 0;
+        transform: translate3d(30px, 20px, 0) scale(0.94);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+/* Exit / Dismissing Animation */
+.app-toast.toast-dismissing {
+    opacity: 0;
+    transform: translate3d(40px, 0, 0) scale(0.92);
+    max-height: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: -0.75rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border-width: 0 !important;
+    pointer-events: none;
+}
+
+/* ─── Toast Variants & Accent Indicators ─── */
+
+/* Success Variant */
+.app-toast.toast-success {
+    border-left: 4px solid #10b981;
+}
+.app-toast.toast-success .toast-icon-badge {
+    background: rgba(16, 185, 129, 0.16);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.app-toast.toast-success .toast-title {
+    color: #34d399;
+}
+.app-toast.toast-success .toast-progress-bar {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+/* Error / Danger Variant */
+.app-toast.toast-error,
+.app-toast.toast-danger {
+    border-left: 4px solid #ef4444;
+}
+.app-toast.toast-error .toast-icon-badge,
+.app-toast.toast-danger .toast-icon-badge {
+    background: rgba(239, 68, 68, 0.16);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+.app-toast.toast-error .toast-title,
+.app-toast.toast-danger .toast-title {
+    color: #f87171;
+}
+.app-toast.toast-error .toast-progress-bar,
+.app-toast.toast-danger .toast-progress-bar {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+/* Warning Variant */
+.app-toast.toast-warning {
+    border-left: 4px solid #f59e0b;
+}
+.app-toast.toast-warning .toast-icon-badge {
+    background: rgba(245, 158, 11, 0.16);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.app-toast.toast-warning .toast-title {
+    color: #fbbf24;
+}
+.app-toast.toast-warning .toast-progress-bar {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+/* Info Variant */
+.app-toast.toast-info {
+    border-left: 4px solid #3b82f6;
+}
+.app-toast.toast-info .toast-icon-badge {
+    background: rgba(59, 130, 246, 0.16);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.app-toast.toast-info .toast-title {
+    color: #60a5fa;
+}
+.app-toast.toast-info .toast-progress-bar {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+/* ─── Internal Toast Layout Elements ─── */
+
+.toast-icon-badge {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+}
+.toast-icon-badge svg {
+    width: 18px;
+    height: 18px;
+}
+
+.toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-title {
+    font-size: 0.825rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+}
+
+.toast-message {
+    color: #cbd5e1;
+    font-size: 0.825rem;
+    line-height: 1.45;
+    word-break: break-word;
+}
+.toast-message strong {
+    color: #f8fafc;
+    font-weight: 600;
+}
+
+.toast-close-btn {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    padding: 0;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    margin-top: -2px;
+    margin-right: -4px;
+    transition: all 0.18s ease;
+}
+.toast-close-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+}
+.toast-close-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Auto-Dismiss Progress Bar */
+.toast-progress-track {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+}
+.toast-progress-bar {
+    height: 100%;
+    width: 100%;
+    transform-origin: left;
+    transition: width 0.1s linear;
+}
+
+/* Pause on hover */
+.app-toast:hover .toast-progress-bar {
+    animation-play-state: paused;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FAIL-SAFE CSS RETROFIT FOR LEGACY / SERVER-SIDE PANELS
+   Enforces lower-right floating placement for all postback alerts
+   ════════════════════════════════════════════════════════════════ */
+.feedback-alert,
+.alert-toast,
+.toast-banner,
+.error-alert-banner {
+    position: fixed !important;
+    bottom: 1.75rem !important;
+    right: 1.75rem !important;
+    z-index: 999999 !important;
+    max-width: 420px !important;
+    width: calc(100vw - 2.5rem) !important;
+    margin: 0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.45), 0 6px 14px -2px rgba(0, 0, 0, 0.25) !important;
+    animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}

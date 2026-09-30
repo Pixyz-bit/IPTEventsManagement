@@ -5,6 +5,8 @@
    Strictly reusable tokens, master shell layout, and common components
    ========================================================================== */
 
+@import url("toast.css");
+
 /* ─── 1. Design Tokens ─── */
 :root {
     /* Institutional Brand Primary */
@@ -1017,4 +1019,90 @@ table.data-table tbody tr:hover td {
     .form-grid-3 {
         grid-template-columns: 1fr;
     }
+}
+
+/* ─── 12. Universal Modal Overlay & Flat Text Badges ─── */
+.modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(15, 23, 42, 0.7) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 99999 !important;
+    padding: 1.5rem !important;
+    box-sizing: border-box !important;
+}
+
+.role-badge-admin {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    padding: 0 !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    color: #d97706 !important;
+}
+
+.role-badge-student {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    padding: 0 !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--brand-primary) !important;
+}
+
+.status-badge-active {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    padding: 0 !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    color: #16a34a !important;
+}
+
+.status-badge-locked {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    padding: 0 !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--accent-rose) !important;
+}
+
+.status-dot-active {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: var(--radius-full) !important;
+    background-color: #16a34a !important;
+}
+
+.status-dot-locked {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: var(--radius-full) !important;
+    background-color: var(--accent-rose) !important;
 }

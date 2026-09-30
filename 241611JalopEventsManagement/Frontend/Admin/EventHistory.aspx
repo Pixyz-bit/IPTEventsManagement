@@ -8,7 +8,7 @@
     <!-- Top Workspace Header -->
     <div class="history-header-row">
         <div class="history-title-block">
-            <h2>Events History &amp; Institutional Archive</h2>
+            <h2>Events History</h2>
             <p>Official permanent records repository for concluded, completed, and cancelled campus events.</p>
         </div>
         <div class="history-actions">
@@ -43,97 +43,66 @@
         <div class="history-kpi-card">
             <div class="kpi-card-header">
                 <span class="kpi-card-title">Total Archived Events</span>
-                <svg class="kpi-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                </svg>
             </div>
             <div class="kpi-card-value"><asp:Literal ID="litTotalArchived" runat="server" Text="0" /></div>
-            <div class="kpi-card-caption">All recorded historical campus activities</div>
         </div>
 
         <div class="history-kpi-card">
             <div class="kpi-card-header">
-                <span class="kpi-card-title">Successfully Completed</span>
-                <svg class="kpi-card-icon" style="color:var(--accent-emerald);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
+                <span class="kpi-card-title">Completed Events</span>
             </div>
             <div class="kpi-card-value" style="color:var(--accent-emerald);"><asp:Literal ID="litTotalCompleted" runat="server" Text="0" /></div>
-            <div class="kpi-card-caption">Fully concluded with verified turnouts</div>
         </div>
 
         <div class="history-kpi-card">
             <div class="kpi-card-header">
                 <span class="kpi-card-title">Cancelled Events</span>
-                <svg class="kpi-card-icon" style="color:var(--accent-rose);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="15" y1="9" x2="9" y2="15"></line>
-                    <line x1="9" y1="9" x2="15" y2="15"></line>
-                </svg>
             </div>
             <div class="kpi-card-value" style="color:var(--accent-rose);"><asp:Literal ID="litTotalCancelled" runat="server" Text="0" /></div>
-            <div class="kpi-card-caption">Voided with audit justification logs</div>
         </div>
 
         <div class="history-kpi-card">
             <div class="kpi-card-header">
                 <span class="kpi-card-title">Average Turnout Rate</span>
-                <svg class="kpi-card-icon" style="color:var(--brand-primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
             </div>
             <div class="kpi-card-value" style="color:var(--brand-primary);"><asp:Literal ID="litTurnoutAvg" runat="server" Text="0.0%" /></div>
-            <div class="kpi-card-caption">Cumulative attendee participation ratio</div>
         </div>
     </div>
 
-    <!-- Filtering & Universal Search Toolbar -->
-    <div class="history-toolbar">
-        <div class="history-search-wrapper">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <asp:TextBox ID="txtSearch" runat="server" CssClass="history-search-input" Placeholder="Search event title, venue, or college..." AutoPostBack="true" OnTextChanged="FilterChanged" />
-        </div>
-
-        <div class="history-filters-group">
-            <asp:DropDownList ID="ddlAcademicYear" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
-                <asp:ListItem Value="ALL" Text="All Academic Years" />
-            </asp:DropDownList>
-
-            <asp:DropDownList ID="ddlSemester" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
-                <asp:ListItem Value="ALL" Text="All Semesters" />
-                <asp:ListItem Value="1st Semester" Text="1st Semester (Aug - Dec)" />
-                <asp:ListItem Value="2nd Semester" Text="2nd Semester (Jan - May)" />
-                <asp:ListItem Value="Summer Term" Text="Summer Term (Jun - Jul)" />
-            </asp:DropDownList>
-
-            <asp:DropDownList ID="ddlOutcomeStatus" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
-                <asp:ListItem Value="ALL" Text="All Outcome Statuses" />
-                <asp:ListItem Value="Completed" Text="Completed Only" />
-                <asp:ListItem Value="Cancelled" Text="Cancelled Only" />
-                <asp:ListItem Value="Concluded" Text="Concluded (Date Passed)" />
-            </asp:DropDownList>
-
-            <asp:Button ID="btnFilterApply" runat="server" Text="Filter" CssClass="btn-action-primary" Style="height:38px; padding: 0 1rem;" OnClick="btnFilterApply_Click" CausesValidation="false" />
-            <asp:Button ID="btnResetFilter" runat="server" Text="Reset" CssClass="btn-action-secondary" Style="height:38px; padding: 0 1rem;" OnClick="btnResetFilter_Click" CausesValidation="false" />
-        </div>
-    </div>
-
-    <!-- Master Archive Table Card -->
+    <!-- Master Archive Table Card (Unified with Filter Toolbar & Zero Gap) -->
     <div class="history-table-card">
-        <div class="history-table-header-meta">
-            <h3>
-                <span>Institutional Event Records</span>
-                <span class="count-pill"><asp:Literal ID="litShowingCount" runat="server">0</asp:Literal> Records</span>
-            </h3>
-            <span style="font-size:0.775rem; color:var(--text-muted);">
-                Audited Archive Pool &bull; Immutable History
-            </span>
+        <!-- Filtering & Universal Search Toolbar -->
+        <div class="history-toolbar">
+            <div class="history-search-wrapper">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <asp:TextBox ID="txtSearch" runat="server" CssClass="history-search-input" Placeholder="Search event title, venue, or college..." AutoPostBack="true" OnTextChanged="FilterChanged" />
+            </div>
+
+            <div class="history-filters-group">
+                <asp:DropDownList ID="ddlAcademicYear" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
+                    <asp:ListItem Value="ALL" Text="All Academic Years" />
+                </asp:DropDownList>
+
+                <asp:DropDownList ID="ddlSemester" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
+                    <asp:ListItem Value="ALL" Text="All Semesters" />
+                    <asp:ListItem Value="1st Semester" Text="1st Semester (Aug - Dec)" />
+                    <asp:ListItem Value="2nd Semester" Text="2nd Semester (Jan - May)" />
+                    <asp:ListItem Value="Summer Term" Text="Summer Term (Jun - Jul)" />
+                </asp:DropDownList>
+
+                <asp:DropDownList ID="ddlOutcomeStatus" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
+                    <asp:ListItem Value="ALL" Text="All Outcome Statuses" />
+                    <asp:ListItem Value="Completed" Text="Completed Only" />
+                    <asp:ListItem Value="Cancelled" Text="Cancelled Only" />
+                    <asp:ListItem Value="Concluded" Text="Concluded (Date Passed)" />
+                </asp:DropDownList>
+
+                <asp:Button ID="btnFilterApply" runat="server" Text="Filter" CssClass="btn-action-primary" Style="height:38px; padding: 0 1rem;" OnClick="btnFilterApply_Click" CausesValidation="false" />
+                <asp:Button ID="btnResetFilter" runat="server" Text="Reset" CssClass="btn-action-secondary" Style="height:38px; padding: 0 1rem;" OnClick="btnResetFilter_Click" CausesValidation="false" />
+            </div>
         </div>
 
         <div class="table-responsive">

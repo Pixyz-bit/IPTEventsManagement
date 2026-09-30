@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-registration.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 </head>
 <body>
     <form id="form1" runat="server">
@@ -488,6 +489,9 @@
 
             </div>
         </main>
+
+        <!-- Enterprise Floating Lower-Right Toast Container -->
+        <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
     </form>
 
     <!-- Client-side Stepper Switcher Script -->
@@ -532,5 +536,8 @@
             switchStep(initialStep);
         });
     </script>
+
+    <!-- Universal Toast Engine -->
+    <script type="text/javascript" src="<%= ResolveUrl("~/Frontend/Assets/js/toast.js") %>"></script>
 </body>
 </html>

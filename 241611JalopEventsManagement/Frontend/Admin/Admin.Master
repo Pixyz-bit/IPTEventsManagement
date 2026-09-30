@@ -13,6 +13,7 @@
 
     <!-- Enterprise Global Stylesheet & Design Tokens -->
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
@@ -42,7 +43,7 @@
                                         <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
                                         <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
                                     </svg>
-                                    <span>Administrative Dashboard</span>
+                                    <span>Admin Dashboard</span>
                                 </a>
                             </li>
                             <li class="nav-item <%= Request.Path.EndsWith("AdminEvents.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
@@ -248,7 +249,13 @@
 
         <!-- High-Performance Navigation Progress Indicator -->
         <div id="adminNavBar" style="position: fixed; top: 0; left: 0; height: 3px; width: 0; background: linear-gradient(90deg, #3b82f6, #6366f1, #10b981); z-index: 99999; transition: width 0.25s ease-out; pointer-events: none; opacity: 0;"></div>
+
+        <!-- Enterprise Floating Lower-Right Toast Container -->
+        <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
     </form>
+
+    <!-- Universal Toast Engine -->
+    <script type="text/javascript" src="<%= ResolveUrl("~/Frontend/Assets/js/toast.js") %>"></script>
 
     <!-- Instant Page Prefetcher & Zero-Lag Transition Engine -->
     <script type="text/javascript">

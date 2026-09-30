@@ -559,6 +559,9 @@
             alertMessage.innerText = res.Message || 'No matching attendee registration found in the system.';
             clearStagedFields();
             btnConfirm.disabled = true;
+            if (window.showToast) {
+                window.showToast(res ? res.Message : 'No matching registration found.', 'error', 'Ticket Not Found');
+            }
             return;
         }
 
@@ -572,6 +575,9 @@
             alertBanner.className = 'staging-alert-banner banner-valid';
             alertMessage.innerText = 'Valid Ticket pass detected. Inspect student University ID card before confirming check-in.';
             btnConfirm.disabled = false;
+            if (window.showToast) {
+                window.showToast(`Attendee <strong>${res.FullName}</strong> staged. Confirm check-in to admit.`, 'info', 'Ticket Staged');
+            }
         }
         else if (res.State === "DuplicateWarning") {
             // State 2: Duplicate Check-In Warning
@@ -582,6 +588,9 @@
             alertBanner.className = 'staging-alert-banner banner-duplicate';
             alertMessage.innerText = res.Message || 'Warning: This ticket pass was already used for attendance check-in.';
             btnConfirm.disabled = true;
+            if (window.showToast) {
+                window.showToast(res.Message || 'Ticket already checked in.', 'warning', 'Duplicate Check-In');
+            }
         }
         else if (res.State === "WrongEventWarning") {
             // State 3: Wrong Event Warning
@@ -592,6 +601,9 @@
             alertBanner.className = 'staging-alert-banner banner-invalid';
             alertMessage.innerText = res.Message || 'Warning: This ticket pass belongs to another event.';
             btnConfirm.disabled = true;
+            if (window.showToast) {
+                window.showToast(res.Message || 'Ticket belongs to another event.', 'error', 'Wrong Event');
+            }
         }
         else if (res.State === "CancelledWarning") {
             // State 4: Cancelled Warning
@@ -687,16 +699,27 @@
                 discardStagedAttendee();
                 document.getElementById('stagingAlertBanner').className = 'staging-alert-banner banner-valid';
                 document.getElementById('stagingAlertMessage').innerText = `Checked in successfully: ${res.FullName} (${res.StudentId}) at ${res.CheckInTimestamp}`;
+                if (window.showToast) {
+                    window.showToast(`Checked in: <strong>${res.FullName}</strong> (${res.StudentId})`, 'success', 'Admission Confirmed');
+                }
             } else {
                 playErrorTone();
                 triggerVisualFlash(false);
-                alert(res.Message || 'Failed to record attendance check-in.');
+                if (window.showToast) {
+                    window.showToast(res.Message || 'Failed to record attendance check-in.', 'error', 'Check-In Refused');
+                } else {
+                    alert(res.Message || 'Failed to record attendance check-in.');
+                }
             }
         })
         .catch(err => {
             console.error("Check-in commit error:", err);
             playErrorTone();
-            alert('A network error occurred while committing attendance.');
+            if (window.showToast) {
+                window.showToast('A network error occurred while committing attendance.', 'error', 'Network Error');
+            } else {
+                alert('A network error occurred while committing attendance.');
+            }
         })
         .finally(() => {
             btnConfirm.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"></polyline></svg><span>CONFIRM & CHECK-IN</span><span class="keyboard-hint-badge">ENTER</span>`;

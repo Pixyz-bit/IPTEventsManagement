@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css") %>" />
-
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-pass.css") %>" />
 </head>
 <body>
@@ -138,7 +138,7 @@
 
             <!-- Utility Actions Row -->
             <div class="pass-actions-row">
-                <button type="button" class="btn-download-pass" onclick="window.print()">
+                <button type="button" class="btn-download-pass" onclick="if(window.AppToast){AppToast.info('Opening pass document print dialog...','Print Admission Pass',3500);} window.print();">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <polyline points="6 9 6 2 18 2 18 9"></polyline>
                         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -156,6 +156,9 @@
                 </a>
             </div>
         </main>
+
+        <!-- Enterprise Floating Lower-Right Toast Container -->
+        <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
     </form>
 
     <!-- Embedded High-Fidelity Standalone QR Engine -->
@@ -236,5 +239,8 @@
             }
         })();
     </script>
+
+    <!-- Universal Toast Engine -->
+    <script type="text/javascript" src="<%= ResolveUrl("~/Frontend/Assets/js/toast.js") %>"></script>
 </body>
 </html>

@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/dashboard.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 </head>
 <body>
     <form id="studentDashboardForm" runat="server">
@@ -25,7 +26,7 @@
             </div>
         </asp:Panel>
         <!-- Top Standalone Navigation Bar -->
-        <header class="portal-navbar">
+        <header class="portal-navbar" id="portalNavbar">
             <div class="navbar-inner">
                 <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="nav-brand">
                     <img src="<%= ResolveUrl("~/Frontend/Assets/QCU Logo.png") %>" alt="University Emblem" class="nav-logo-img" />
@@ -65,7 +66,7 @@
             <div class="hero-bg-layer" id="heroBgImage" style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>');"></div>
             <div class="hero-overlay-layer"></div>
 
-            <!-- Main Hero Headline & Metadata (Matching Photo 1) -->
+            <!-- Main Hero Headline & Metadata (Matching Photo Specification) -->
             <div class="hero-body-content">
                 <h1 class="hero-title" id="heroTitle">Cybersecurity and AI Convention</h1>
                 <p class="hero-description" id="heroDescription">
@@ -74,27 +75,27 @@
 
                 <div class="hero-meta-list">
                     <div class="hero-meta-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
+                        <svg class="hero-meta-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                         </svg>
                         <span id="heroVenue">QCU Auditorium</span>
                     </div>
 
                     <div class="hero-meta-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <svg class="hero-meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
                             <line x1="3" y1="10" x2="21" y2="10"></line>
+                            <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" stroke-width="2.8"></path>
                         </svg>
                         <span id="heroDate">Oct 09, 2026</span>
                     </div>
 
                     <div class="hero-meta-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <svg class="hero-meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
+                            <polyline points="12 6 12 12 16 12"></polyline>
                         </svg>
                         <span id="heroTime">10:00 AM - 03:00 PM</span>
                     </div>
@@ -187,17 +188,12 @@
                         <asp:Repeater ID="rptEventCards" runat="server" OnItemCommand="rptEventCards_ItemCommand">
                             <ItemTemplate>
                                 <div class="event-card" data-category='<%# Eval("CategoryFilterKey") %>' id='card-<%# Eval("EventId") %>'>
-                                    <!-- Top Half: Promotional Banner Area (Photo 2) -->
+                                    <!-- Top Half: Promotional Banner Area -->
                                     <div class="event-promo-banner" style='background-image: url("<%# Eval("BannerImageUrl") %>");'>
-                                        <!-- Category Tag Pill (Top-Left in Photo 2) -->
-                                        <div class="card-tag-pill">
-                                            <%# Eval("CategoryTag") %>
-                                        </div>
-
-                                        <!-- Status Indicator (Top-Right in Photo 2) -->
+                                        <!-- Status Indicator (Top-Right) -->
                                         <%# Eval("RegStatusBadgeHtml") %>
 
-                                        <!-- Capacity Indicator (Bottom-Right in Photo 2) -->
+                                        <!-- Capacity Indicator (Bottom-Right) -->
                                         <div class="card-capacity-pill">
                                             <%# Eval("CurrentRegistrations") %>/<%# Eval("MaxCapacity") %> SEATS
                                         </div>
@@ -351,6 +347,9 @@
                 <asp:Button ID="btnConfirmRegistration" runat="server" />
             </asp:Panel>
         </asp:PlaceHolder>
+
+        <!-- Enterprise Floating Lower-Right Toast Container -->
+        <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
     </form>
 
     <!-- Client-Side Scripting: Slide Switcher, Segmented Tabs, Category Filtering -->
@@ -481,6 +480,33 @@
                 countElem.textContent = visibleCount + " OPEN";
             }
         }
+
+        // ─── Dynamic Header Transparency on Hero Section ───
+        function handleNavbarScroll() {
+            var navbar = document.getElementById("portalNavbar");
+            var hero = document.getElementById("heroGallery");
+            if (!navbar) return;
+
+            if (!hero) {
+                navbar.classList.add("nav-scrolled");
+                return;
+            }
+
+            var heroRect = hero.getBoundingClientRect();
+            if (heroRect.bottom <= 70) {
+                navbar.classList.add("nav-scrolled");
+            } else {
+                navbar.classList.remove("nav-scrolled");
+            }
+        }
+
+        window.addEventListener("scroll", handleNavbarScroll, { passive: true });
+        window.addEventListener("resize", handleNavbarScroll);
+        document.addEventListener("DOMContentLoaded", handleNavbarScroll);
+        handleNavbarScroll();
     </script>
+
+    <!-- Universal Toast Engine -->
+    <script type="text/javascript" src="<%= ResolveUrl("~/Frontend/Assets/js/toast.js") %>"></script>
 </body>
 </html>

@@ -11,7 +11,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/auth/login.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/auth/login.css?v=3.5") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 </head>
 <body>
     <form id="form1" runat="server">
@@ -58,8 +59,20 @@
                         <div class="form-label-row">
                             <label for="txtPassword" class="form-label">Password</label>
                         </div>
-                        <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password"
-                            autocomplete="current-password"></asp:TextBox>
+                        <div class="password-input-wrapper">
+                            <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password"
+                                autocomplete="current-password"></asp:TextBox>
+                            <button type="button" class="btn-toggle-password" id="btnTogglePassword" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility" title="Show/Hide Password" tabindex="-1">
+                                <svg id="eyeIconOpen" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <svg id="eyeIconClosed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Remember Session Checkbox -->
@@ -81,6 +94,30 @@
                 &copy; 2026 QUEZON CITY UNIVERSITY &bull; STUDENT AFFAIRS
             </div>
         </div>
+
+        <!-- Enterprise Floating Lower-Right Toast Container -->
+        <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
     </form>
+
+    <script type="text/javascript">
+        function togglePasswordVisibility() {
+            var pwd = document.getElementById('<%= txtPassword.ClientID %>');
+            var eyeOpen = document.getElementById('eyeIconOpen');
+            var eyeClosed = document.getElementById('eyeIconClosed');
+            if (!pwd) return;
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                eyeOpen.style.display = 'none';
+                eyeClosed.style.display = 'block';
+            } else {
+                pwd.type = 'password';
+                eyeOpen.style.display = 'block';
+                eyeClosed.style.display = 'none';
+            }
+        }
+    </script>
+
+    <!-- Universal Toast Engine -->
+    <script type="text/javascript" src="<%= ResolveUrl("~/Frontend/Assets/js/toast.js") %>"></script>
 </body>
 </html>
