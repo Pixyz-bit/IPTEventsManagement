@@ -148,20 +148,24 @@ namespace _241611JalopEventsManagement.Frontend.User
 
                 if (events != null && events.Count > 0)
                 {
+                    // Batch fetch sponsors for all events in a single SQL query
+                    Dictionary<int, List<string>> sponsorsMap = new Dictionary<int, List<string>>();
+                    try
+                    {
+                        var eventIds = events.Select(ev => ev.EventId).Distinct();
+                        sponsorsMap = _sponsorRepo.GetSponsorsForEvents(eventIds);
+                    }
+                    catch
+                    {
+                        // Sponsor table gracefully bypassed
+                    }
+
                     foreach (var ev in events)
                     {
                         var vm = MapEventToCardViewModel(ev);
-                        try
+                        if (sponsorsMap.TryGetValue(ev.EventId, out var sponsors) && sponsors != null && sponsors.Count > 0)
                         {
-                            var sponsors = _sponsorRepo.GetSponsorsByEventId(ev.EventId);
-                            if (sponsors != null && sponsors.Count > 0)
-                            {
-                                vm.Sponsors = sponsors.Select(s => s.SponsorName).ToList();
-                            }
-                        }
-                        catch
-                        {
-                            // Sponsor table gracefully bypassed
+                            vm.Sponsors = sponsors;
                         }
 
                         // Ensure demo sponsors if none registered in DB

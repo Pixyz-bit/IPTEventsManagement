@@ -25,9 +25,55 @@ namespace _241611JalopEventsManagement.Backend.Models
 
         public string EventPhotoPath { get; set; }
 
+        // Archived & Reporting Telemetry
+        public int PreRegisteredCount { get; set; }
+        public int AttendedCount { get; set; }
+        public int NoShowCount { get; set; }
+        public int CancelledCount { get; set; }
+
         #region Computed Domain Helpers
 
         public int RemainingCapacity => Math.Max(0, MaxCapacity - CurrentRegistrations);
+
+        public double TurnoutPercentage =>
+            PreRegisteredCount > 0 ? ((double)AttendedCount / PreRegisteredCount) * 100.0 : 0.0;
+
+        public string AcademicYear
+        {
+            get
+            {
+                int year = EventStart != DateTime.MinValue ? EventStart.Year : DateTime.Now.Year;
+                return (EventStart != DateTime.MinValue && EventStart.Month >= 8) 
+                    ? $"A.Y. {year}-{year + 1}" 
+                    : $"A.Y. {year - 1}-{year}";
+            }
+        }
+
+        public string Semester
+        {
+            get
+            {
+                if (EventStart == DateTime.MinValue) return "1st Semester";
+                int month = EventStart.Month;
+                if (month >= 8 && month <= 12) return "1st Semester";
+                if (month >= 1 && month <= 5) return "2nd Semester";
+                return "Summer Term";
+            }
+        }
+
+        public string EffectiveOutcomeStatus
+        {
+            get
+            {
+                if (string.Equals(Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
+                    return "Cancelled";
+                if (string.Equals(Status, "Completed", StringComparison.OrdinalIgnoreCase))
+                    return "Completed";
+                if (DateTime.Now > EventEnd)
+                    return "Completed";
+                return Status ?? "Upcoming";
+            }
+        }
 
         public bool IsRegistrationOpen
         {

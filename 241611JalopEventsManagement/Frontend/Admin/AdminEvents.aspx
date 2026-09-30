@@ -1,4 +1,4 @@
-<%@ Page Title="Campus Events Matrix | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AdminEvents.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AdminEvents" EnableEventValidation="false" %>
+<%@ Page Title="Campus Events Matrix | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AdminEvents.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AdminEvents" EnableEventValidation="false" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/admin-events.css") %>" />
@@ -72,7 +72,7 @@
     <!-- Main Events Matrix Table Panel -->
     <div class="matrix-panel">
         <div class="table-responsive">
-            <asp:Repeater ID="rptEventsMatrix" runat="server" OnItemCommand="rptEventsMatrix_ItemCommand">
+            <asp:Repeater ID="rptEventsMatrix" runat="server" EnableViewState="false" OnItemCommand="rptEventsMatrix_ItemCommand">
                 <HeaderTemplate>
                     <table class="matrix-table">
                         <thead>

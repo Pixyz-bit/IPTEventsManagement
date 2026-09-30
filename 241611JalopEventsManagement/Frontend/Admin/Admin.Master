@@ -42,7 +42,7 @@
                                         <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
                                         <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
                                     </svg>
-                                    <span>Dashboard Overview</span>
+                                    <span>Administrative Dashboard</span>
                                 </a>
                             </li>
                             <li class="nav-item <%= Request.Path.EndsWith("AdminEvents.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
@@ -64,6 +64,15 @@
                                         <line x1="8" y1="12" x2="16" y2="12"></line>
                                     </svg>
                                     <span>Create Event</span>
+                                </a>
+                            </li>
+                            <li class="nav-item <%= Request.Path.EndsWith("EventHistory.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
+                                <a href="<%= ResolveUrl("~/Frontend/Admin/EventHistory.aspx") %>">
+                                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M12 8v4l3 3"></path>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span>Events History</span>
                                 </a>
                             </li>
                         </ul>
@@ -111,6 +120,14 @@
                                         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                     </svg>
                                     <span>Student Directory</span>
+                                </a>
+                            </li>
+                            <li class="nav-item <%= Request.Path.EndsWith("AccountManagement.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
+                                <a href="<%= ResolveUrl("~/Frontend/Admin/AccountManagement.aspx") %>">
+                                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    </svg>
+                                    <span>Account Management</span>
                                 </a>
                             </li>
                         </ul>
@@ -228,6 +245,60 @@
                 </main>
             </div>
         </div>
+
+        <!-- High-Performance Navigation Progress Indicator -->
+        <div id="adminNavBar" style="position: fixed; top: 0; left: 0; height: 3px; width: 0; background: linear-gradient(90deg, #3b82f6, #6366f1, #10b981); z-index: 99999; transition: width 0.25s ease-out; pointer-events: none; opacity: 0;"></div>
     </form>
+
+    <!-- Instant Page Prefetcher & Zero-Lag Transition Engine -->
+    <script type="text/javascript">
+        (function () {
+            var prefetched = {};
+            function prefetch(url) {
+                if (!url || prefetched[url] || url.indexOf('Logout') !== -1 || url.indexOf('#') !== -1 || url.indexOf('javascript:') === 0) return;
+                prefetched[url] = true;
+                var link = document.createElement('link');
+                link.rel = 'prefetch';
+                link.href = url;
+                link.as = 'document';
+                document.head.appendChild(link);
+            }
+
+            document.addEventListener('mouseover', function (e) {
+                var a = e.target.closest('a');
+                if (a && a.href && a.origin === window.location.origin && a.target !== '_blank') {
+                    prefetch(a.href);
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchstart', function (e) {
+                var a = e.target.closest('a');
+                if (a && a.href && a.origin === window.location.origin && a.target !== '_blank') {
+                    prefetch(a.href);
+                }
+            }, { passive: true });
+
+            var bar = document.getElementById('adminNavBar');
+            document.addEventListener('click', function (e) {
+                var a = e.target.closest('a');
+                if (a && a.href && a.origin === window.location.origin && !a.href.startsWith('#') && !a.href.startsWith('javascript:') && a.target !== '_blank') {
+                    if (bar) {
+                        bar.style.opacity = '1';
+                        bar.style.width = '70%';
+                    }
+                }
+            }, { passive: true });
+
+            window.addEventListener('pageshow', function () {
+                if (bar) {
+                    bar.style.width = '100%';
+                    setTimeout(function () {
+                        bar.style.opacity = '0';
+                        bar.style.width = '0';
+                    }, 180);
+                }
+            });
+        })();
+    </script>
 </body>
 </html>

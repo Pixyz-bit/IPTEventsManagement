@@ -1,4 +1,4 @@
-<%@ Page Title="Event Telemetry & Analytics" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventAnalytics.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventAnalytics" %>
+<%@ Page Title="Event Telemetry & Analytics" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventAnalytics.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventAnalytics" EnableSessionState="ReadOnly" EnableViewState="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
     Event Telemetry &amp; Performance Analytics | QCU Event Management

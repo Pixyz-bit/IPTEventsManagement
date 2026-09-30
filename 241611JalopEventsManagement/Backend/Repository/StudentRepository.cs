@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web;
 using _241611JalopEventsManagement.Backend.Helpers;
 using _241611JalopEventsManagement.Backend.Models;
 
@@ -414,38 +415,92 @@ namespace _241611JalopEventsManagement.Backend.Repository
         }
 
         /// <summary>
-        /// Retrieves distinct departments represented in the student directory.
+        /// Retrieves distinct departments represented in the student directory, cached in HttpRuntime.Cache for 30 minutes.
         /// </summary>
         public List<string> GetDistinctDepartments()
         {
-            var list = new List<string>();
-            const string sql = "SELECT DISTINCT Department FROM dbo.StudentTable WHERE Department IS NOT NULL AND Department <> '' ORDER BY Department ASC;";
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
-            if (dt != null)
+            const string cacheKey = "Cache_Student_DistinctDepartments";
+            if (HttpRuntime.Cache != null && HttpRuntime.Cache[cacheKey] is List<string> cached)
             {
-                foreach (DataRow row in dt.Rows)
+                return cached;
+            }
+
+            var list = new List<string>();
+            try
+            {
+                const string sql = "SELECT DISTINCT Department FROM dbo.StudentTable WHERE Department IS NOT NULL AND Department <> '' ORDER BY Department ASC;";
+                DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+                if (dt != null)
                 {
-                    list.Add(row["Department"].ToString());
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        list.Add(row["Department"].ToString());
+                    }
+                }
+
+                if (HttpRuntime.Cache != null && list.Count > 0)
+                {
+                    HttpRuntime.Cache.Insert(cacheKey, list, null, DateTime.Now.AddMinutes(30), System.Web.Caching.Cache.NoSlidingExpiration);
                 }
             }
+            catch
+            {
+                // Fallback to static list if database is offline
+                list = new List<string>
+                {
+                    "College of Computer Studies",
+                    "College of Engineering",
+                    "College of Business Administration and Accountancy",
+                    "College of Education"
+                };
+            }
+
             return list;
         }
 
         /// <summary>
-        /// Retrieves distinct academic programs/courses represented in the student directory.
+        /// Retrieves distinct academic programs/courses represented in the student directory, cached in HttpRuntime.Cache for 30 minutes.
         /// </summary>
         public List<string> GetDistinctPrograms()
         {
-            var list = new List<string>();
-            const string sql = "SELECT DISTINCT Program FROM dbo.StudentTable WHERE Program IS NOT NULL AND Program <> '' ORDER BY Program ASC;";
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
-            if (dt != null)
+            const string cacheKey = "Cache_Student_DistinctPrograms";
+            if (HttpRuntime.Cache != null && HttpRuntime.Cache[cacheKey] is List<string> cached)
             {
-                foreach (DataRow row in dt.Rows)
+                return cached;
+            }
+
+            var list = new List<string>();
+            try
+            {
+                const string sql = "SELECT DISTINCT Program FROM dbo.StudentTable WHERE Program IS NOT NULL AND Program <> '' ORDER BY Program ASC;";
+                DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+                if (dt != null)
                 {
-                    list.Add(row["Program"].ToString());
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        list.Add(row["Program"].ToString());
+                    }
+                }
+
+                if (HttpRuntime.Cache != null && list.Count > 0)
+                {
+                    HttpRuntime.Cache.Insert(cacheKey, list, null, DateTime.Now.AddMinutes(30), System.Web.Caching.Cache.NoSlidingExpiration);
                 }
             }
+            catch
+            {
+                // Fallback to static list if database is offline
+                list = new List<string>
+                {
+                    "BS Information Technology",
+                    "BS Computer Science",
+                    "BS Industrial Engineering",
+                    "BS Electronics Engineering",
+                    "BS Entrepreneurship",
+                    "BS Accountancy"
+                };
+            }
+
             return list;
         }
 

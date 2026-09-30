@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Engineering & Security Directives: Architecture & Security Rules
 
 - **Category:** Core Engineering Standards

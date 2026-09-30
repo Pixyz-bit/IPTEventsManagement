@@ -1,4 +1,4 @@
-<%@ Page Title="Event Attendance Scanner" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AttendanceScanner.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AttendanceScanner" %>
+<%@ Page Title="Event Attendance Scanner" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AttendanceScanner.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AttendanceScanner" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
     Event Attendance Scanner & Gate Terminal | QCU Event Management

@@ -122,12 +122,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             litCurrentAdminEmail.Text = Server.HtmlEncode(CurrentAdminEmail);
 
-            // Fetch registrations for headcounts
-            var allRegistrations = _registrationRepo.GetRegistrationsByEvent(CurrentEventId);
-            var checkedInList = _registrationRepo.GetCheckedInAttendees(CurrentEventId);
-
-            int checkedInCount = checkedInList.Count;
-            int totalActive = allRegistrations.Count(r => !string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase));
+            // Fast single-query aggregate retrieval
+            var summary = _registrationRepo.GetEventAttendanceSummary(CurrentEventId);
+            int checkedInCount = summary.TotalCheckedIn;
+            int totalActive = summary.TotalRegistered;
             int expectedCount = Math.Max(0, totalActive - checkedInCount);
 
             litCheckedInCount.Text = checkedInCount.ToString();

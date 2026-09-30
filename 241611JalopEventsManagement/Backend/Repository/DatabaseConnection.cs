@@ -27,12 +27,45 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 if (connSetting == null || string.IsNullOrWhiteSpace(connSetting.ConnectionString))
                 {
                     // Default local fallback pointing to UniversityEventDB
-                    return @"Data Source=.;Initial Catalog=UniversityEventDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=15;Pooling=True;";
+                    return @"Data Source=localhost;Initial Catalog=UniversityEventDB;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;Connect Timeout=3;Pooling=True;";
                 }
 
                 return connSetting.ConnectionString;
             }
         }
+
+        #region Circuit Breaker for High Performance Fast-Fail
+
+        private static DateTime _lastConnectionFailureUtc = DateTime.MinValue;
+        private const int CircuitBreakerSeconds = 15;
+
+        /// <summary>
+        /// Indicates if the connection circuit breaker is tripped due to a recent connection timeout/failure.
+        /// When true, subsequent queries fail fast (in 0ms) rather than repeatedly hanging threads.
+        /// </summary>
+        public static bool IsCircuitBreakerOpen
+        {
+            get
+            {
+                if (_lastConnectionFailureUtc == DateTime.MinValue)
+                {
+                    return false;
+                }
+                return (DateTime.UtcNow - _lastConnectionFailureUtc).TotalSeconds < CircuitBreakerSeconds;
+            }
+        }
+
+        public static void RecordConnectionSuccess()
+        {
+            _lastConnectionFailureUtc = DateTime.MinValue;
+        }
+
+        public static void RecordConnectionFailure()
+        {
+            _lastConnectionFailureUtc = DateTime.UtcNow;
+        }
+
+        #endregion
 
         /// <summary>
         /// Creates a new, closed SqlConnection instance.
@@ -45,20 +78,36 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
         /// <summary>
         /// Creates and opens a new SqlConnection instance.
+        /// Fails fast if the database circuit breaker is open to prevent freezing UI threads.
         /// Wrap in a using statement when utilizing.
         /// </summary>
         public static SqlConnection GetOpenConnection()
         {
-            var connection = GetConnection();
-            if (connection.State != ConnectionState.Open)
+            if (IsCircuitBreakerOpen)
             {
-                connection.Open();
+                throw new InvalidOperationException("Database connection circuit breaker is open due to recent unreachable database server. Fast-failing to preserve UI responsiveness.");
             }
-            return connection;
+
+            try
+            {
+                var connection = GetConnection();
+                if (connection.State != ConnectionState.Open)
+                {
+                    connection.Open();
+                }
+                RecordConnectionSuccess();
+                return connection;
+            }
+            catch (Exception)
+            {
+                RecordConnectionFailure();
+                throw;
+            }
         }
 
         /// <summary>
         /// Tests connectivity to UniversityEventDB with a lightweight query (SELECT 1).
+        /// Bypasses the circuit breaker to permit active health checking.
         /// </summary>
         /// <param name="errorMessage">Contains the error message if the connection fails; otherwise null.</param>
         /// <returns>True if connection succeeds; false otherwise.</returns>
@@ -67,16 +116,21 @@ namespace _241611JalopEventsManagement.Backend.Repository
             errorMessage = null;
             try
             {
-                using (var conn = GetOpenConnection())
-                using (var cmd = new SqlCommand("SELECT 1;", conn))
+                using (var conn = GetConnection())
                 {
-                    cmd.CommandTimeout = 5;
-                    cmd.ExecuteScalar();
+                    conn.Open();
+                    using (var cmd = new SqlCommand("SELECT 1;", conn))
+                    {
+                        cmd.CommandTimeout = 3;
+                        cmd.ExecuteScalar();
+                    }
                 }
+                RecordConnectionSuccess();
                 return true;
             }
             catch (Exception ex)
             {
+                RecordConnectionFailure();
                 errorMessage = ex.Message;
                 return false;
             }

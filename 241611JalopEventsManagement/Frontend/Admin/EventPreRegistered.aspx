@@ -1,4 +1,4 @@
-<%@ Page Title="Event Pre-Registered Roster" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventPreRegistered.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventPreRegistered" %>
+<%@ Page Title="Event Pre-Registered Roster" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventPreRegistered.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventPreRegistered" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
     Event Pre-Registered Roster | QCU Event Management

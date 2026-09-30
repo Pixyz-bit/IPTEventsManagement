@@ -104,10 +104,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             // Fetch live checked-in attendees
             var checkedInList = _registrationRepo.GetCheckedInAttendees(CurrentEventId);
-            var allRegistrations = _registrationRepo.GetRegistrationsByEvent(CurrentEventId);
+            var summary = _registrationRepo.GetEventAttendanceSummary(CurrentEventId);
 
-            int totalRegistered = allRegistrations.Count(r => !string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase));
-            int totalCheckedIn = checkedInList.Count;
+            int totalRegistered = summary.TotalRegistered;
+            int totalCheckedIn = checkedInList.Count > 0 ? checkedInList.Count : summary.TotalCheckedIn;
 
             litCheckedInCount.Text = totalCheckedIn.ToString();
             litKpiTotalCheckedIn.Text = totalCheckedIn.ToString();

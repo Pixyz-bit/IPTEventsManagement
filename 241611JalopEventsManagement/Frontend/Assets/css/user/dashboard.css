@@ -308,8 +308,9 @@
         .hero-body-content {
             position: relative;
             z-index: 10;
-            padding: 4rem 4.5rem 1rem 4.5rem;
+            padding: 2rem 4.5rem 1rem 4.5rem;
             max-width: 880px;
+            margin: auto 0;
         }
 
         .hero-title {
@@ -371,6 +372,7 @@
             z-index: 10;
             padding: 1.5rem 4.5rem 2.5rem 4.5rem;
             display: flex;
+            justify-content: flex-end;
             gap: 1rem;
             overflow-x: auto;
             scrollbar-width: none;

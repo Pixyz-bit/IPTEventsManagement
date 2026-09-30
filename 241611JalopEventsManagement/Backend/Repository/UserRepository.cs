@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using _241611JalopEventsManagement.Backend.Helpers;
 using _241611JalopEventsManagement.Backend.Models;
 
 namespace _241611JalopEventsManagement.Backend.Repository
@@ -156,6 +158,25 @@ namespace _241611JalopEventsManagement.Backend.Repository
             return Convert.ToInt32(result) > 0;
         }
 
+        /// Updates the email address of a user account.
+        public bool UpdateUserEmail(int userId, string email)
+        {
+            if (userId <= 0 || string.IsNullOrWhiteSpace(email))
+            {
+                return false;
+            }
+
+            const string sql = "UPDATE dbo.UserTable SET Email = @Email WHERE UserId = @UserId;";
+            var parameters = new[]
+            {
+                new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = email.Trim() },
+                new SqlParameter("@UserId", SqlDbType.Int) { Value = userId }
+            };
+
+            int rowsAffected = DatabaseConnection.ExecuteNonQuery(sql, parameters);
+            return rowsAffected > 0;
+        }
+
         /// Updates the activation status of a user account.
         public bool UpdateUserStatus(int userId, bool isActive)
         {
@@ -202,6 +223,233 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
             int rowsAffected = DatabaseConnection.ExecuteNonQuery(sql, parameters);
             return rowsAffected > 0;
+        }
+
+        /// <summary>
+        /// Retrieves all registered user accounts joined with student profiles (if any),
+        /// supporting keyword search, role filtering, and account status filtering.
+        /// </summary>
+        public List<UserModel> GetAllUsers(string search = null, string roleFilter = null, string statusFilter = null)
+        {
+            var list = new List<UserModel>();
+
+            string sql = @"
+                SELECT u.UserId, u.Email, u.PasswordHash, u.PasswordSalt, u.Role, u.IsActive,
+                       s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, 
+                       s.CampusBranch, s.Department, s.Program
+                FROM dbo.UserTable u
+                LEFT JOIN dbo.StudentTable s ON u.UserId = s.UserId
+                WHERE 1=1";
+
+            var parameters = new List<SqlParameter>();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                sql += @" AND (
+                    u.Email LIKE @Search OR 
+                    s.StudentId LIKE @Search OR 
+                    s.FirstName LIKE @Search OR 
+                    s.LastName LIKE @Search OR 
+                    (s.FirstName + ' ' + s.LastName) LIKE @Search
+                )";
+                parameters.Add(new SqlParameter("@Search", SqlDbType.NVarChar, 150) { Value = $"%{search.Trim()}%" });
+            }
+
+            if (!string.IsNullOrWhiteSpace(roleFilter) && !string.Equals(roleFilter, "ALL", StringComparison.OrdinalIgnoreCase))
+            {
+                sql += " AND u.Role = @Role";
+                parameters.Add(new SqlParameter("@Role", SqlDbType.VarChar, 50) { Value = roleFilter.Trim() });
+            }
+
+            if (!string.IsNullOrWhiteSpace(statusFilter) && !string.Equals(statusFilter, "ALL", StringComparison.OrdinalIgnoreCase))
+            {
+                if (statusFilter.Equals("Active", StringComparison.OrdinalIgnoreCase))
+                {
+                    sql += " AND u.IsActive = 1";
+                }
+                else if (statusFilter.Equals("Locked", StringComparison.OrdinalIgnoreCase) || statusFilter.Equals("Inactive", StringComparison.OrdinalIgnoreCase))
+                {
+                    sql += " AND u.IsActive = 0";
+                }
+            }
+
+            sql += " ORDER BY u.UserId DESC;";
+
+            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, parameters.ToArray());
+            if (dt != null)
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(MapRowToUserModel(row));
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Updates the access control role of a target user account while enforcing strict RBAC guards.
+        /// Prevents self-demotion and ensures at least one active Administrator always exists.
+        /// </summary>
+        public bool UpdateUserRole(int targetUserId, string newRole, int currentAdminUserId)
+        {
+            if (targetUserId <= 0)
+            {
+                throw new ArgumentException("Target UserId must be valid.", nameof(targetUserId));
+            }
+
+            string cleanRole = newRole?.Trim();
+            if (cleanRole != RoleAdmin && cleanRole != RoleStudent)
+            {
+                throw new ArgumentException($"Invalid role '{cleanRole}'. Allowed roles are '{RoleAdmin}' or '{RoleStudent}'.", nameof(newRole));
+            }
+
+            // Guard 1: Prevent an admin from demoting themselves
+            if (targetUserId == currentAdminUserId && cleanRole != RoleAdmin)
+            {
+                throw new InvalidOperationException("Security Violation: You cannot revoke Administrator privileges from your own active session account.");
+            }
+
+            // Guard 2: If demoting an admin, ensure at least one other active admin remains
+            if (cleanRole == RoleStudent)
+            {
+                const string countAdminsSql = "SELECT COUNT(1) FROM dbo.UserTable WHERE Role = 'Admin' AND IsActive = 1 AND UserId != @TargetUserId;";
+                var countParam = new SqlParameter("@TargetUserId", SqlDbType.Int) { Value = targetUserId };
+                int remainingAdmins = Convert.ToInt32(DatabaseConnection.ExecuteScalar(countAdminsSql, countParam));
+
+                if (remainingAdmins <= 0)
+                {
+                    throw new InvalidOperationException("Action Blocked: At least one active Administrator account must remain in the institution to prevent system lockout.");
+                }
+            }
+
+            const string updateSql = "UPDATE dbo.UserTable SET Role = @Role WHERE UserId = @UserId;";
+            var parameters = new[]
+            {
+                new SqlParameter("@Role", SqlDbType.VarChar, 50) { Value = cleanRole },
+                new SqlParameter("@UserId", SqlDbType.Int) { Value = targetUserId }
+            };
+
+            int rows = DatabaseConnection.ExecuteNonQuery(updateSql, parameters);
+            return rows > 0;
+        }
+
+        /// <summary>
+        /// Toggles active/locked status for a user with authorization guards against self-lockout.
+        /// </summary>
+        public bool ToggleUserActiveStatus(int targetUserId, int currentAdminUserId)
+        {
+            if (targetUserId <= 0)
+            {
+                return false;
+            }
+
+            if (targetUserId == currentAdminUserId)
+            {
+                throw new InvalidOperationException("Security Violation: You cannot deactivate or lock your own active administrative account.");
+            }
+
+            // Verify if target is an Admin being locked out; verify other active Admins exist
+            var targetUser = GetUserById(targetUserId);
+            if (targetUser != null && targetUser.Role == RoleAdmin && targetUser.IsActive)
+            {
+                const string countSql = "SELECT COUNT(1) FROM dbo.UserTable WHERE Role = 'Admin' AND IsActive = 1 AND UserId != @TargetUserId;";
+                var p = new SqlParameter("@TargetUserId", SqlDbType.Int) { Value = targetUserId };
+                int otherAdmins = Convert.ToInt32(DatabaseConnection.ExecuteScalar(countSql, p));
+                if (otherAdmins <= 0)
+                {
+                    throw new InvalidOperationException("Action Blocked: Cannot deactivate the last remaining active Administrator account.");
+                }
+            }
+
+            const string toggleSql = "UPDATE dbo.UserTable SET IsActive = CASE WHEN IsActive = 1 THEN 0 ELSE 1 END WHERE UserId = @UserId;";
+            var param = new SqlParameter("@UserId", SqlDbType.Int) { Value = targetUserId };
+            int rows = DatabaseConnection.ExecuteNonQuery(toggleSql, param);
+            return rows > 0;
+        }
+
+        /// <summary>
+        /// Administrative password reset using PBKDF2 cryptography.
+        /// </summary>
+        public bool AdminResetPassword(int targetUserId, string newPlainPassword)
+        {
+            if (targetUserId <= 0)
+            {
+                throw new ArgumentException("Target UserId must be valid.", nameof(targetUserId));
+            }
+
+            if (string.IsNullOrWhiteSpace(newPlainPassword) || newPlainPassword.Length < 6)
+            {
+                throw new ArgumentException("New password must be at least 6 characters.", nameof(newPlainPassword));
+            }
+
+            string salt = PasswordHelper.GenerateSalt();
+            string hash = PasswordHelper.HashPassword(newPlainPassword.Trim(), salt);
+
+            return UpdatePassword(targetUserId, hash, salt);
+        }
+
+        /// <summary>
+        /// Creates a new institutional administrative user account.
+        /// </summary>
+        public int CreateAdminUser(string email, string plainPassword)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new ArgumentException("Institutional email is required.", nameof(email));
+            }
+
+            if (string.IsNullOrWhiteSpace(plainPassword) || plainPassword.Length < 6)
+            {
+                throw new ArgumentException("Password must be at least 6 characters in length.", nameof(plainPassword));
+            }
+
+            if (EmailExists(email.Trim()))
+            {
+                throw new InvalidOperationException($"The email '{email.Trim()}' is already registered in the system.");
+            }
+
+            string salt = PasswordHelper.GenerateSalt();
+            string hash = PasswordHelper.HashPassword(plainPassword.Trim(), salt);
+
+            var adminUser = new UserModel
+            {
+                Email = email.Trim(),
+                PasswordHash = hash,
+                PasswordSalt = salt,
+                Role = RoleAdmin,
+                IsActive = true
+            };
+
+            return CreateUser(adminUser);
+        }
+
+        /// <summary>
+        /// Returns aggregate account metrics across the institution.
+        /// </summary>
+        public (int TotalAccounts, int ActiveAdmins, int TotalStudents, int LockedAccounts) GetAccountStatistics()
+        {
+            const string sql = @"
+                SELECT 
+                    COUNT(1) AS TotalAccounts,
+                    COUNT(CASE WHEN Role = 'Admin' AND IsActive = 1 THEN 1 END) AS ActiveAdmins,
+                    COUNT(CASE WHEN Role = 'Student' THEN 1 END) AS TotalStudents,
+                    COUNT(CASE WHEN IsActive = 0 THEN 1 END) AS LockedAccounts
+                FROM dbo.UserTable;";
+
+            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                var r = dt.Rows[0];
+                return (
+                    Convert.ToInt32(r["TotalAccounts"]),
+                    Convert.ToInt32(r["ActiveAdmins"]),
+                    Convert.ToInt32(r["TotalStudents"]),
+                    Convert.ToInt32(r["LockedAccounts"])
+                );
+            }
+
+            return (0, 0, 0, 0);
         }
 
         #region Helper Mapping

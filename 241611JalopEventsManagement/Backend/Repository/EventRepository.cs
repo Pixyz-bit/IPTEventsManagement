@@ -319,11 +319,144 @@ namespace _241611JalopEventsManagement.Backend.Repository
             return rowsAffected > 0;
         }
 
+        /// <summary>
+        /// Retrieves archived, completed, and cancelled campus events with attendance statistics,
+        /// supporting multi-criteria filtering across Academic Year, Semester, Outcome Status, and Universal Search.
+        /// </summary>
+        public List<EventModel> GetArchivedEvents(string semester = null, string academicYear = null, string outcomeStatus = null, string search = null)
+        {
+            string sql = @"
+                SELECT e.EventId, e.Title, e.Description, e.VenueLocation, e.MaxCapacity, e.CurrentRegistrations, 
+                       e.CreatedByUserId, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status, 
+                       e.CancellationReason, e.TargetBranch, e.TargetDepartment, e.TargetProgram, e.TargetYearLevel,
+                       e.EventPhotoPath,
+                       ISNULL(regStats.PreRegisteredCount, 0) AS PreRegisteredCount,
+                       ISNULL(regStats.AttendedCount, 0) AS AttendedCount,
+                       ISNULL(regStats.NoShowCount, 0) AS NoShowCount,
+                       ISNULL(regStats.CancelledCount, 0) AS CancelledCount
+                FROM dbo.EventsTable e
+                LEFT JOIN (
+                    SELECT EventId,
+                           COUNT(CASE WHEN Status != 'Cancelled' THEN 1 END) AS PreRegisteredCount,
+                           COUNT(CASE WHEN Status = 'Present' THEN 1 END) AS AttendedCount,
+                           COUNT(CASE WHEN Status = 'NoShow' THEN 1 END) AS NoShowCount,
+                           COUNT(CASE WHEN Status = 'Cancelled' THEN 1 END) AS CancelledCount
+                    FROM dbo.EventRegistrationTable
+                    GROUP BY EventId
+                ) regStats ON e.EventId = regStats.EventId
+                WHERE (e.Status IN ('Completed', 'Cancelled') OR (e.Status = 'Upcoming' AND e.EventEnd < GETDATE()))";
+
+            var parameters = new List<SqlParameter>();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                sql += @" AND (
+                    e.Title LIKE @Search OR 
+                    e.VenueLocation LIKE @Search OR 
+                    e.TargetDepartment LIKE @Search OR
+                    e.TargetProgram LIKE @Search
+                )";
+                parameters.Add(new SqlParameter("@Search", SqlDbType.NVarChar, 200) { Value = $"%{search.Trim()}%" });
+            }
+
+            if (!string.IsNullOrWhiteSpace(outcomeStatus) && !string.Equals(outcomeStatus, "ALL", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.Equals(outcomeStatus, "Completed", StringComparison.OrdinalIgnoreCase))
+                {
+                    sql += " AND (e.Status = 'Completed' OR (e.Status != 'Cancelled' AND e.EventEnd < GETDATE()))";
+                }
+                else if (string.Equals(outcomeStatus, "Cancelled", StringComparison.OrdinalIgnoreCase))
+                {
+                    sql += " AND e.Status = 'Cancelled'";
+                }
+                else if (string.Equals(outcomeStatus, "Concluded", StringComparison.OrdinalIgnoreCase))
+                {
+                    sql += " AND e.EventEnd < GETDATE() AND e.Status != 'Cancelled'";
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(semester) && !string.Equals(semester, "ALL", StringComparison.OrdinalIgnoreCase))
+            {
+                if (semester.IndexOf("1st", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    sql += " AND MONTH(e.EventStart) BETWEEN 8 AND 12";
+                }
+                else if (semester.IndexOf("2nd", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    sql += " AND MONTH(e.EventStart) BETWEEN 1 AND 5";
+                }
+                else if (semester.IndexOf("Summer", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    sql += " AND MONTH(e.EventStart) BETWEEN 6 AND 7";
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(academicYear) && !string.Equals(academicYear, "ALL", StringComparison.OrdinalIgnoreCase))
+            {
+                // Format expected: "2025-2026" or "A.Y. 2025-2026"
+                string cleanAy = academicYear.Replace("A.Y.", "").Trim();
+                string[] parts = cleanAy.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 2 && int.TryParse(parts[0].Trim(), out int startYear) && int.TryParse(parts[1].Trim(), out int endYear))
+                {
+                    sql += @" AND (
+                        (MONTH(e.EventStart) >= 8 AND YEAR(e.EventStart) = @StartYear) OR 
+                        (MONTH(e.EventStart) < 8 AND YEAR(e.EventStart) = @EndYear)
+                    )";
+                    parameters.Add(new SqlParameter("@StartYear", SqlDbType.Int) { Value = startYear });
+                    parameters.Add(new SqlParameter("@EndYear", SqlDbType.Int) { Value = endYear });
+                }
+            }
+
+            sql += " ORDER BY e.EventStart DESC;";
+
+            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, parameters.ToArray());
+            return MapDataTableToEventList(dt);
+        }
+
+        /// <summary>
+        /// Retrieves distinct academic years found across historical events for filter dropdowns.
+        /// </summary>
+        public List<string> GetDistinctArchivedAcademicYears()
+        {
+            var years = new List<string>();
+            const string sql = @"
+                SELECT DISTINCT YEAR(EventStart) AS EvtYear, MONTH(EventStart) AS EvtMonth
+                FROM dbo.EventsTable
+                WHERE (Status IN ('Completed', 'Cancelled') OR (Status = 'Upcoming' AND EventEnd < GETDATE()))
+                ORDER BY EvtYear DESC;";
+
+            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+            if (dt != null)
+            {
+                var aySet = new HashSet<string>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    if (row["EvtYear"] != DBNull.Value && row["EvtMonth"] != DBNull.Value)
+                    {
+                        int y = Convert.ToInt32(row["EvtYear"]);
+                        int m = Convert.ToInt32(row["EvtMonth"]);
+                        string ay = m >= 8 ? $"A.Y. {y}-{y + 1}" : $"A.Y. {y - 1}-{y}";
+                        aySet.Add(ay);
+                    }
+                }
+                years.AddRange(aySet);
+            }
+
+            if (years.Count == 0)
+            {
+                int currentYear = DateTime.Now.Year;
+                years.Add($"A.Y. {currentYear}-{currentYear + 1}");
+                years.Add($"A.Y. {currentYear - 1}-{currentYear}");
+            }
+
+            return years;
+        }
+
         #region Helper Mappings
 
         private static EventModel MapRowToEventModel(DataRow row)
         {
-            return new EventModel
+            var ev = new EventModel
             {
                 EventId = Convert.ToInt32(row["EventId"]),
                 Title = row["Title"]?.ToString(),
@@ -344,6 +477,25 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 TargetYearLevel = row["TargetYearLevel"] != DBNull.Value ? Convert.ToInt32(row["TargetYearLevel"]) : (int?)null,
                 EventPhotoPath = row.Table.Columns.Contains("EventPhotoPath") && row["EventPhotoPath"] != DBNull.Value ? row["EventPhotoPath"].ToString() : null
             };
+
+            if (row.Table.Columns.Contains("PreRegisteredCount") && row["PreRegisteredCount"] != DBNull.Value)
+            {
+                ev.PreRegisteredCount = Convert.ToInt32(row["PreRegisteredCount"]);
+            }
+            if (row.Table.Columns.Contains("AttendedCount") && row["AttendedCount"] != DBNull.Value)
+            {
+                ev.AttendedCount = Convert.ToInt32(row["AttendedCount"]);
+            }
+            if (row.Table.Columns.Contains("NoShowCount") && row["NoShowCount"] != DBNull.Value)
+            {
+                ev.NoShowCount = Convert.ToInt32(row["NoShowCount"]);
+            }
+            if (row.Table.Columns.Contains("CancelledCount") && row["CancelledCount"] != DBNull.Value)
+            {
+                ev.CancelledCount = Convert.ToInt32(row["CancelledCount"]);
+            }
+
+            return ev;
         }
 
         private static List<EventModel> MapDataTableToEventList(DataTable dt)

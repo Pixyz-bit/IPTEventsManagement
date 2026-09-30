@@ -107,6 +107,10 @@
     <Content Include="Frontend\Assets\css\admin\create-event.css" />
     <Content Include="Frontend\Assets\css\admin\admin-events.css" />
     <Content Include="Frontend\Assets\css\admin\student-list.css" />
+    <Content Include="Frontend\Admin\EventHistory.aspx" />
+    <Content Include="Frontend\Admin\AccountManagement.aspx" />
+    <Content Include="Frontend\Assets\css\admin\event-history.css" />
+    <Content Include="Frontend\Assets\css\admin\account-management.css" />
     <Content Include="Frontend\global.css" />
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +204,20 @@
     </Compile>
     <Compile Include="Frontend\Admin\StudentList.aspx.designer.cs">
       <DependentUpon>StudentList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend\Admin\EventHistory.aspx.cs">
+      <DependentUpon>EventHistory.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\Admin\EventHistory.aspx.designer.cs">
+      <DependentUpon>EventHistory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend\Admin\AccountManagement.aspx.cs">
+      <DependentUpon>AccountManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\Admin\AccountManagement.aspx.designer.cs">
+      <DependentUpon>AccountManagement.aspx</DependentUpon>
     </Compile>
     <Compile Include="Frontend\Admin\TestConnection.aspx.cs">
       <DependentUpon>TestConnection.aspx</DependentUpon>

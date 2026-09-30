@@ -285,6 +285,45 @@ namespace _241611JalopEventsManagement.Backend.Repository
             }
         }
 
+        public class EventAttendanceSummary
+        {
+            public int TotalRegistered { get; set; }
+            public int TotalCheckedIn { get; set; }
+        }
+
+        /// <summary>
+        /// Highly optimized single-query retrieval of attendance metrics for an event.
+        /// Replaces multi-table full entity joins when only aggregate counts are needed.
+        /// </summary>
+        public EventAttendanceSummary GetEventAttendanceSummary(int eventId)
+        {
+            var summary = new EventAttendanceSummary();
+            if (eventId <= 0) return summary;
+
+            try
+            {
+                const string sql = @"
+                    SELECT 
+                        COUNT(CASE WHEN Status != 'Cancelled' THEN 1 END) AS TotalRegistered,
+                        COUNT(CASE WHEN Status = 'Present' THEN 1 END) AS TotalCheckedIn
+                    FROM dbo.EventRegistrationTable
+                    WHERE EventId = @EventId;";
+
+                var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
+                DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    summary.TotalRegistered = dt.Rows[0]["TotalRegistered"] != DBNull.Value ? Convert.ToInt32(dt.Rows[0]["TotalRegistered"]) : 0;
+                    summary.TotalCheckedIn = dt.Rows[0]["TotalCheckedIn"] != DBNull.Value ? Convert.ToInt32(dt.Rows[0]["TotalCheckedIn"]) : 0;
+                }
+            }
+            catch
+            {
+                // Fallback gracefully
+            }
+            return summary;
+        }
+
         /// <summary>
         /// Cancels a student registration and atomically decrements the event's current registration count.
         /// Business Rule: Cancellations are strictly permitted ONLY during the event's active registration period (GETDATE() &lt;= RegEnd).

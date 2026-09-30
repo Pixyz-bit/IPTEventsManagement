@@ -205,12 +205,7 @@
             <!-- STEP 2 PANEL: Schedule & Timeline -->
             <div id="step-panel-2" class="step-panel">
                 <div class="form-section-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span>Step 2: Schedule & Registration Timeline</span>
-                        </div>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">2 of 5</span>
-                    </div>
+
                     <div class="card-body">
                         <div class="info-callout">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -281,12 +276,7 @@
             <!-- STEP 3 PANEL: 4-Tier Audience Targeting -->
             <div id="step-panel-3" class="step-panel">
                 <div class="form-section-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span>Step 3: Target Audience</span>
-                        </div>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">3 of 5</span>
-                    </div>
+
                     <div class="card-body">
                         <div class="info-callout">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -456,12 +446,6 @@
             <!-- STEP 4 PANEL: Multi-Sponsor Associations -->
             <div id="step-panel-4" class="step-panel">
                 <div class="form-section-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span>Step 4: Multi-Sponsor Associations</span>
-                        </div>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">4 of 5</span>
-                    </div>
                     <div class="card-body">
                         <div class="form-group">
                             <label class="form-label">Attach Corporate & Institutional Partners</label>
@@ -496,27 +480,6 @@
                             </div>
                         </div>
 
-                        <!-- Pre-Publication Checklist -->
-                        <div class="review-checklist-card">
-                            <div class="review-checklist-title">Pre-Publication Readiness Verification</div>
-                            <div class="checklist-item">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                <span>Core specifications and seat capacity allocated</span>
-                            </div>
-                            <div class="checklist-item">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                <span>Event single date, start time, and end time verified</span>
-                            </div>
-                            <div class="checklist-item">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                <span>Audience demographic and multi-course eligibility mapped</span>
-                            </div>
-                            <div class="checklist-item">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                <span>Partner sponsorship branding verified for event header</span>
-                            </div>
-                        </div>
-
                         <!-- Step 4 Footer Navigation -->
                         <div class="step-nav-footer">
                             <button type="button" class="btn-action-secondary" onclick="switchStep(3)">
@@ -539,12 +502,6 @@
             <!-- STEP 5 PANEL: Summary & Final Confirmation -->
             <div id="step-panel-5" class="step-panel">
                 <div class="form-section-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span>Step 5: Event Summary & Confirmation</span>
-                        </div>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">5 of 5</span>
-                    </div>
                     <div class="card-body">
                         <div class="info-callout">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -603,16 +560,13 @@
                                     </div>
                                     <!-- Right side: Registration Availability Window -->
                                     <div class="summary-schedule-right">
-                                        <span class="summary-label">Registration Availability Window</span>
-                                        <div class="reg-window-card">
-                                            <div class="reg-window-row">
-                                                <span class="reg-window-tag opens">OPENS</span>
-                                                <span id="sumRegOpen" class="reg-window-val">-</span>
-                                            </div>
-                                            <div class="reg-window-row">
-                                                <span class="reg-window-tag deadline">DEADLINE</span>
-                                                <span id="sumRegDeadline" class="reg-window-val">-</span>
-                                            </div>
+                                        <div class="reg-window-row">
+                                            <span class="reg-window-tag opens">OPENS</span>
+                                            <span id="sumRegOpen" class="reg-window-val">-</span>
+                                        </div>
+                                        <div class="reg-window-row">
+                                            <span class="reg-window-tag deadline">DEADLINE</span>
+                                            <span id="sumRegDeadline" class="reg-window-val">-</span>
                                         </div>
                                     </div>
                                 </div>

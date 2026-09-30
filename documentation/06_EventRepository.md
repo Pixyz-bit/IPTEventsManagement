@@ -145,3 +145,30 @@ The `EventRepository` is the sole data-access interface for managing institution
 * **When it is used:** Invoked when a student cancels their event ticket (`RegistrationService.CancelTicket`).
 * **Why:** Frees up ticket capacity for other students:
   * `[EventsTable.CurrentRegistrations = CurrentRegistrations - 1]`
+
+---
+
+### 2.10 `GetArchivedEvents`
+* **Purpose:** Retrieves closed, concluded, or cancelled historical campus events with aggregate attendee telemetry, supporting multi-criteria filtering across Academic Year, Semester, Outcome Status, and Universal Search.
+* **Signature & Contracts:**
+  - Input: `string semester = null`, `string academicYear = null`, `string outcomeStatus = null`, `string search = null`.
+  - Output: `List<EventModel>` (Models populated with `PreRegisteredCount`, `AttendedCount`, `NoShowCount`, and `CancelledCount`).
+* **Internal Mechanics:**
+  - Queries `dbo.EventsTable` left joined with a pre-aggregated subquery against `dbo.EventRegistrationTable`.
+  - Evaluates `(Status IN ('Completed', 'Cancelled') OR (Status = 'Upcoming' AND EventEnd < GETDATE()))`.
+  - Applies parameterized filters for semester months, academic year ranges, and text searches.
+* **When it is used:** Invoked on `Page_Load` and filter triggers in the Events History module (`Frontend/Admin/EventHistory.aspx`).
+* **Why:** Keeps daily operational dashboards uncluttered by isolating historical events into a dedicated, read-only accreditation archive:
+  * `[EventsTable.Status, EventRegistrationTable.Status, EventHistory.aspx]`
+
+---
+
+### 2.11 `GetDistinctArchivedAcademicYears`
+* **Purpose:** Extracts distinct academic years present across historical events to populate archive dropdown filters dynamically.
+* **Signature & Contracts:**
+  - Input: None.
+  - Output: `List<string>` (e.g. `["A.Y. 2026-2027", "A.Y. 2025-2026"]`).
+* **When it is used:** Invoked during filter dropdown initialization in `Frontend/Admin/EventHistory.aspx`.
+* **Why:** Eliminates hardcoded calendar years and guarantees filter choices accurately reflect recorded database history:
+  * `[EventsTable.EventStart, ddlAcademicYear]`
+

@@ -1,4 +1,4 @@
-<%@ Page Title="Event Attendance Roster" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventAttendance.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventAttendance" %>
+<%@ Page Title="Event Attendance Roster" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventAttendance.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventAttendance" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
     Live Event Attendance Roster | QCU Event Management
@@ -201,7 +201,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbodyAttendance">
-                    <asp:Repeater ID="rptCheckedInAttendees" runat="server">
+                    <asp:Repeater ID="rptCheckedInAttendees" runat="server" EnableViewState="false">
                         <ItemTemplate>
                             <tr class="attendance-row"
                                 data-student-id='<%# Eval("StudentId") %>'

@@ -1,4 +1,4 @@
-<%@ Page Title="Event Specifications & Configuration | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventDetails.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventDetails" %>
+<%@ Page Title="Event Specifications & Configuration | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventDetails.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventDetails" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/event-details.css") %>" />

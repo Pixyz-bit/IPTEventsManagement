@@ -93,3 +93,74 @@ Role constraints are strictly enforced: the repository only permits users with r
   - Parameterized `UPDATE` modifying `PasswordHash` and `PasswordSalt` for the specified `UserId`.
 * **Side Effects & Thrown Errors:**
   - Mutates password credentials. Throws `ArgumentException` if hash or salt is empty.
+
+---
+
+### 2.7 `GetAllUsers`
+* **Purpose:** Retrieves all user accounts joined with demographic records from `dbo.StudentTable`, supporting universal search, role filtering, and account status filtering.
+* **Signature & Contracts:**
+  - Input: `string search = null`, `string roleFilter = null`, `string statusFilter = null`.
+  - Output: `List<UserModel>` (Populated with `StudentProfile` if student role).
+* **When it is used:** Invoked on `Page_Load` and filter triggers in `Frontend/Admin/AccountManagement.aspx`.
+* **Why:** Powers the central identity and access control table:
+  * `[UserTable.UserId, StudentTable.UserId, AccountManagement.aspx]`
+
+---
+
+### 2.8 `UpdateUserRole`
+* **Purpose:** Modifies a user's access control role while enforcing strict RBAC guards against self-demotion and ensuring system availability.
+* **Signature & Contracts:**
+  - Input: `int targetUserId`, `string newRole`, `int currentAdminUserId`.
+  - Output: `bool`.
+* **Internal Mechanics:**
+  - Validates `newRole` is strictly `'Admin'` or `'Student'`.
+  - Throws `InvalidOperationException` if an administrator attempts to revoke their own rights.
+  - Verifies that at least one other active Administrator remains before allowing an Admin demotion.
+* **When it is used:** Invoked when an Administrator changes an account's role in `Frontend/Admin/AccountManagement.aspx`.
+* **Why:** Enforces zero unauthorized privilege escalation or accidental administrative lockout:
+  * `[UserTable.Role, SessionHelper.CurrentUserId]`
+
+---
+
+### 2.9 `ToggleUserActiveStatus`
+* **Purpose:** Toggles active / locked status (`IsActive`) with defensive guards preventing self-lockout or deactivation of the last remaining admin.
+* **Signature & Contracts:**
+  - Input: `int targetUserId`, `int currentAdminUserId`.
+  - Output: `bool`.
+* **When it is used:** Invoked on lockout/unlock triggers in `Frontend/Admin/AccountManagement.aspx`.
+* **Why:** Immediately cuts off system access for suspended accounts while protecting administrative uptime:
+  * `[UserTable.IsActive]`
+
+---
+
+### 2.10 `AdminResetPassword`
+* **Purpose:** Securely resets a user's password using PBKDF2 cryptography with HMAC-SHA1 and a 32-byte salt.
+* **Signature & Contracts:**
+  - Input: `int targetUserId`, `string newPlainPassword`.
+  - Output: `bool`.
+* **When it is used:** Invoked when an Administrator executes a password dispatch in `Frontend/Admin/AccountManagement.aspx`.
+* **Why:** Allows administrative credential recovery without ever storing or handling plain-text secrets in the database:
+  * `[PasswordHelper.HashPassword, UserTable.PasswordHash]`
+
+---
+
+### 2.11 `CreateAdminUser`
+* **Purpose:** Directly provisions an administrative user account in `dbo.UserTable` with active status and validated institutional email.
+* **Signature & Contracts:**
+  - Input: `string email`, `string plainPassword`.
+  - Output: `int` (Generated `UserId`).
+* **When it is used:** Invoked when creating a new administrator in `Frontend/Admin/AccountManagement.aspx`.
+* **Why:** Establishes administrative accounts without requiring an academic student enrollment record:
+  * `[UserTable.Role = 'Admin']`
+
+---
+
+### 2.12 `GetAccountStatistics`
+* **Purpose:** Computes institutional account metrics (Total Accounts, Active Admins, Enrolled Students, Locked Accounts) in a single database aggregation.
+* **Signature & Contracts:**
+  - Input: None.
+  - Output: `(int TotalAccounts, int ActiveAdmins, int TotalStudents, int LockedAccounts)`.
+* **When it is used:** Invoked to render top KPI cards in `Frontend/Admin/AccountManagement.aspx`.
+* **Why:** Provides instantaneous real-time identity governance telemetry:
+  * `[UserTable.Role, UserTable.IsActive]`
+

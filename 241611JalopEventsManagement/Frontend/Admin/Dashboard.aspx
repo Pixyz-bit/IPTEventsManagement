@@ -1,4 +1,4 @@
-<%@ Page Title="Dashboard Overview | University Admin Console" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.Dashboard" %>
+<%@ Page Title="Dashboard Overview | University Admin Console" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.Dashboard" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadContentArea" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/dashboard.css") %>" />
@@ -8,7 +8,7 @@
     <!-- Dashboard Workspace Header -->
     <div class="dashboard-header">
         <div class="header-title-block">
-            <h2>Administrative Operations</h2>
+            <h2>Administrative Dashboard</h2>
         </div>
         <div class="header-actions">
             <a href="<%= ResolveUrl("~/Frontend/Admin/TestConnection.aspx") %>" class="btn-action-secondary">
@@ -138,7 +138,7 @@
             </div>
 
             <div class="table-responsive">
-                <asp:Repeater ID="rptEvents" runat="server">
+                <asp:Repeater ID="rptEvents" runat="server" EnableViewState="false">
                     <HeaderTemplate>
                         <table class="events-table">
                             <thead>

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using _241611JalopEventsManagement.Backend.Models;
 
 namespace _241611JalopEventsManagement.Backend.Repository
@@ -45,6 +46,51 @@ namespace _241611JalopEventsManagement.Backend.Repository
         }
 
         /// <summary>
+        /// Retrieves sponsors for multiple events in a single batched query to avoid N+1 query overhead.
+        /// </summary>
+        public Dictionary<int, List<string>> GetSponsorsForEvents(IEnumerable<int> eventIds)
+        {
+            var dict = new Dictionary<int, List<string>>();
+            if (eventIds == null)
+            {
+                return dict;
+            }
+
+            var validIds = eventIds.Where(id => id > 0).Distinct().ToList();
+            if (validIds.Count == 0)
+            {
+                return dict;
+            }
+
+            string idList = string.Join(",", validIds);
+            string sql = $@"
+                SELECT EventId, SponsorName 
+                FROM dbo.SponsorListTable 
+                WHERE EventId IN ({idList})
+                ORDER BY SponsorEntryId ASC;";
+
+            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+            if (dt != null)
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    int evId = Convert.ToInt32(row["EventId"]);
+                    string name = row["SponsorName"]?.ToString();
+                    if (!string.IsNullOrWhiteSpace(name))
+                    {
+                        if (!dict.ContainsKey(evId))
+                        {
+                            dict[evId] = new List<string>();
+                        }
+                        dict[evId].Add(name.Trim());
+                    }
+                }
+            }
+
+            return dict;
+        }
+
+        /// <summary>
         /// Adds a single sponsor record for an event.
         /// Returns the newly generated SponsorEntryId.
         /// </summary>
@@ -73,7 +119,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             var parameters = new[]
             {
                 new SqlParameter("@SponsorName", SqlDbType.NVarChar, 150) { Value = sponsor.SponsorName.Trim() },
-                new SqlParameter("@CreatedAt", SqlDbType.DateTime) { Value = sponsor.CreatedAt != default ? sponsor.CreatedAt : DateTime.Now },
+                new SqlParameter("@CreatedAt", SqlDbType.DateTime) { Value = sponsor.CreatedAt != default(DateTime) ? sponsor.CreatedAt : DateTime.Now },
                 new SqlParameter("@EventId", SqlDbType.Int) { Value = sponsor.EventId }
             };
 

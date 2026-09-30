@@ -1,4 +1,4 @@
-<%@ Page Title="Students Directory & Identity Master | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="StudentList.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.StudentList" %>
+<%@ Page Title="Students Directory & Identity Master | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="StudentList.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.StudentList" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/student-list.css") %>" />
@@ -514,6 +514,63 @@
             var hfTab = document.getElementById('<%= hfActiveEditTab.ClientID %>');
             if (hfTab && hfTab.value === 'account') {
                 switchEditTab('account');
+            }
+
+            // Instant Client-Side Directory Filtering for Zero-Lag Search
+            var searchInput = document.getElementById('<%= txtSearch.ClientID %>');
+            var deptFilter = document.getElementById('<%= ddlDepartmentFilter.ClientID %>');
+            var progFilter = document.getElementById('<%= ddlProgramFilter.ClientID %>');
+            var countPill = document.getElementById('<%= litShowingCount.ClientID %>') || document.querySelector('.count-pill');
+            var tableBody = document.querySelector('.directory-table tbody');
+
+            if (tableBody && searchInput) {
+                var rows = Array.from(tableBody.querySelectorAll('tr'));
+                var rowCache = rows.map(function(row) {
+                    var idEl = row.querySelector('.student-id-text');
+                    var nameEl = row.querySelector('.student-name-text');
+                    var deptEl = row.querySelector('.dept-text');
+                    var courseEl = row.querySelector('.course-text');
+                    var branchEl = row.querySelector('.branch-text');
+                    return {
+                        row: row,
+                        id: idEl ? idEl.textContent.toLowerCase() : '',
+                        name: nameEl ? nameEl.textContent.toLowerCase() : '',
+                        dept: deptEl ? deptEl.textContent.toLowerCase() : '',
+                        course: courseEl ? courseEl.textContent.toLowerCase() : '',
+                        branch: branchEl ? branchEl.textContent.toLowerCase() : ''
+                    };
+                });
+
+                function applyInstantFilter() {
+                    var query = searchInput.value.toLowerCase().trim();
+                    var dept = deptFilter ? deptFilter.value.toLowerCase() : 'all';
+                    var prog = progFilter ? progFilter.value.toLowerCase() : 'all';
+                    var visibleCount = 0;
+
+                    rowCache.forEach(function(item) {
+                        var matchesSearch = !query || 
+                            item.id.indexOf(query) !== -1 || 
+                            item.name.indexOf(query) !== -1 || 
+                            item.dept.indexOf(query) !== -1 || 
+                            item.course.indexOf(query) !== -1 || 
+                            item.branch.indexOf(query) !== -1;
+                        var matchesDept = (dept === 'all' || dept === '') || item.dept.indexOf(dept) !== -1 || dept.indexOf(item.dept) !== -1;
+                        var matchesProg = (prog === 'all' || prog === '') || item.course.indexOf(prog) !== -1 || prog.indexOf(item.course) !== -1;
+
+                        if (matchesSearch && matchesDept && matchesProg) {
+                            item.row.style.display = '';
+                            visibleCount++;
+                        } else {
+                            item.row.style.display = 'none';
+                        }
+                    });
+
+                    if (countPill) {
+                        countPill.textContent = visibleCount.toLocaleString();
+                    }
+                }
+
+                searchInput.addEventListener('input', applyInstantFilter);
             }
         });
     </script>
