@@ -40,7 +40,10 @@
                         </svg>
                         <span>Venue: <strong><asp:Literal ID="litEventVenue" runat="server" Text="--"></asp:Literal></strong></span>
                     </span>
-                    <asp:Literal ID="litEventStatusBadge" runat="server"></asp:Literal>
+                    <span class="meta-chip">
+                        <span>Capacity: <strong><asp:Literal ID="litEventCapacitySummary" runat="server" Text="0 / 0"></asp:Literal></strong></span>
+                    </span>
+                    <asp:Literal ID="litEventStatusBadge" runat="server" Visible="false"></asp:Literal>
                 </div>
             </div>
 
@@ -54,14 +57,14 @@
 
         <!-- Sub-Module Pipeline Progression Tabs -->
         <div class="pipeline-tabs-wrapper">
-            <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="pipeline-tab-item">
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventDetails.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                     <line x1="16" y1="2" x2="16" y2="6"></line>
                     <line x1="8" y1="2" x2="8" y2="6"></line>
                     <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
-                <span>1. Event Matrix</span>
+                <span>1. Event Details</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventPreRegistered.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -90,7 +93,7 @@
                     <line x1="12" y1="20" x2="12" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="14"></line>
                 </svg>
-                <span>5. Event Analytics (Active)</span>
+                <span>5. Event Analytics</span>
             </a>
         </div>
     </div>
@@ -147,6 +150,7 @@
     <div id="sectionPhaseBefore" class="lifecycle-phase-section">
         <!-- Before KPI Grid -->
         <div class="analytics-kpi-grid">
+            <!-- 1. Total Pre-Registered -->
             <div class="analytics-card">
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Total Pre-Registered</span>
@@ -161,26 +165,54 @@
                 </div>
             </div>
 
+            <!-- 2. Total Reserved -->
             <div class="analytics-card">
                 <div class="analytics-card-info">
-                    <span class="analytics-card-label">Capacity Saturation</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litBeforeSaturationRate" runat="server" Text="0.0%"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Registered vs venue capacity</span>
+                    <span class="analytics-card-label">Total Reserved</span>
+                    <span class="analytics-card-value"><asp:Literal ID="litBeforeTotalReserved" runat="server" Text="0"></asp:Literal></span>
+                    <span class="analytics-card-subtext">EventsTable allocated quota</span>
                 </div>
-                <div class="analytics-card-badge" style="background-color:var(--accent-emerald-subtle); color:var(--accent-emerald); border:1px solid var(--accent-emerald-border);">
+                <div class="analytics-card-badge" style="background-color:var(--accent-indigo-subtle); color:var(--accent-indigo); border:1px solid var(--accent-indigo-border);">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                        <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
                     </svg>
                 </div>
             </div>
 
+            <!-- 3. Cancelled -->
+            <div class="analytics-card">
+                <div class="analytics-card-info">
+                    <span class="analytics-card-label">Cancelled</span>
+                    <span class="analytics-card-value"><asp:Literal ID="litBeforeCancelled" runat="server" Text="0"></asp:Literal></span>
+                    <span class="analytics-card-subtext">Slots released back to pool</span>
+                </div>
+                <div class="analytics-card-badge" style="background-color:var(--accent-rose-subtle); color:var(--accent-rose); border:1px solid var(--accent-rose-border);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Hidden State Holders for Removed Attrition and Saturation Cards -->
+            <asp:PlaceHolder ID="phAttritionAndSaturationHidden" runat="server" Visible="false">
+                <asp:Literal ID="litBeforeAttritionRate" runat="server" Text="0.0%"></asp:Literal>
+                <asp:Literal ID="litBeforeSaturationRate" runat="server" Text="0.0%"></asp:Literal>
+                <asp:Literal ID="litBeforeSaturationStatus" runat="server" Text="Undersubscribed"></asp:Literal>
+            </asp:PlaceHolder>
+
+            <!-- 6. Available Capacity Pool -->
             <div class="analytics-card">
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Available Capacity Pool</span>
                     <span class="analytics-card-value"><asp:Literal ID="litBeforeAvailableQuota" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Seats remaining open</span>
+                    <span class="analytics-card-subtext">Seats remaining open (<asp:Literal ID="litBeforeDaysUntilLaunch" runat="server" Text="0 Days"></asp:Literal> left)</span>
                 </div>
-                <div class="analytics-card-badge" style="background-color:var(--accent-amber-subtle); color:var(--accent-amber); border:1px solid var(--accent-amber-border);">
+                <div class="analytics-card-badge" style="background-color:var(--brand-subtle); color:var(--brand-primary); border:1px solid var(--brand-border);">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="18" height="18" rx="2"></rect>
                         <line x1="9" y1="9" x2="15" y2="15"></line>
@@ -188,25 +220,11 @@
                     </svg>
                 </div>
             </div>
-
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Days to Event Launch</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litBeforeDaysUntilLaunch" runat="server" Text="0 Days"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Countdown to door opening</span>
-                </div>
-                <div class="analytics-card-badge" style="background-color:var(--brand-subtle); color:var(--brand-primary); border:1px solid var(--brand-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                </div>
-            </div>
         </div>
 
         <!-- Before Telemetry Grid -->
         <div class="telemetry-dashboard-grid" style="margin-top:1.5rem;">
-            <!-- Capacity Saturation & Registration Velocity -->
+            <!-- Left: Capacity Saturation & Pre-Event Attrition Formula Callouts + Timeline -->
             <div class="telemetry-panel">
                 <div class="panel-header-bar">
                     <div class="panel-title">
@@ -215,20 +233,46 @@
                             <line x1="12" y1="20" x2="12" y2="4"></line>
                             <line x1="6" y1="20" x2="6" y2="14"></line>
                         </svg>
-                        <span>Capacity Saturation Meter</span>
+                        <span>Capacity Saturation Meter &amp; Attrition Audit</span>
                     </div>
-                    <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">LIVE QUOTA STATUS</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">LIVE QUOTA TELEMETRY</span>
                 </div>
                 <div class="panel-body">
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700;">
-                        <span>Target Enrollment Progress</span>
-                        <span>Pre-Registered Quota Fill</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <asp:Literal ID="litSaturationProgressBar" runat="server"></asp:Literal>
+                    <!-- Photo 4 Formula Card -->
+                    <div class="formula-spec-card">
+                        <div class="formula-spec-top">
+                            <span class="formula-title">Capacity Saturation Meter</span>
+                            <span class="formula-code">CurrentRegistrations / MaxCapacity</span>
+                        </div>
+                        <div class="formula-desc">Real-time gauge showing whether the event is undersubscribed, at capacity, or needs a larger venue.</div>
                     </div>
 
-                    <div style="margin-top:1rem;">
+                    <!-- Photo 5 Formula Card -->
+                    <div class="formula-spec-card">
+                        <div class="formula-spec-top">
+                            <span class="formula-title">Pre-Event Attrition Rate</span>
+                            <span class="formula-code">Status = 'Cancelled' before EventStart</span>
+                        </div>
+                        <div class="formula-desc">Identifies drop-offs and tickets released back into the pool.</div>
+                    </div>
+
+                    <!-- Real-time Quota Saturation Gauge -->
+                    <div style="margin-top:0.25rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; font-weight:700; margin-bottom:0.4rem;">
+                            <span>Target Quota Utilization</span>
+                            <span style="font-family:var(--font-mono); font-size:0.875rem;"><asp:Literal ID="litSaturationPercentDisplay" runat="server">0.0%</asp:Literal></span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <asp:Literal ID="litSaturationProgressBar" runat="server"></asp:Literal>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+                            <span>0 Enrolled</span>
+                            <span>Max Capacity: <asp:Literal ID="litCapacityMaxDisplay" runat="server">100</asp:Literal> Seats</span>
+                        </div>
+                    </div>
+
+                    <!-- Registration Velocity Timeline Table -->
+                    <div style="margin-top:0.75rem;">
                         <h4 style="font-size:0.875rem; font-weight:700; margin-bottom:0.75rem; color:var(--text-heading);">Registration Velocity Timeline</h4>
                         <table class="analytics-table">
                             <thead>
@@ -254,87 +298,55 @@
                 </div>
             </div>
 
-            <!-- Demographic Breakdown -->
+            <!-- Right: Target Demographics Distribution (Interactive SVG Pie / Donut Chart) -->
             <div class="telemetry-panel">
                 <div class="panel-header-bar">
                     <div class="panel-title">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                            <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
                         </svg>
                         <span>Target Demographics Distribution</span>
                     </div>
-                    <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">ACADEMIC AUDIT</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">INTERACTIVE COHORT AUDIT</span>
                 </div>
                 <div class="panel-body">
-                    <h5 style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); font-weight:700;">Branch Distribution</h5>
-                    <div class="distribution-list">
-                        <asp:Repeater ID="rptBranchDistribution" runat="server">
-                            <ItemTemplate>
-                                <div class="dist-item">
-                                    <div class="dist-item-top">
-                                        <span class="dist-label"><%# Eval("Label") %></span>
-                                        <span class="dist-meta"><%# Eval("Count") %> (<%# Eval("Percentage", "{0:F1}") %>%)</span>
-                                    </div>
-                                    <div class="dist-track">
-                                        <div class="dist-fill-blue" style='width:<%# Eval("Percentage") %>%;'></div>
-                                    </div>
-                                </div>
-                            </ItemTemplate>
-                        </asp:Repeater>
+                    <!-- Dimension Switcher Bar -->
+                    <div class="dimension-switcher-bar">
+                        <div class="dim-dropdown-group">
+                            <label for="ddlDemographicDimension" class="dim-dropdown-label">Cohort Breakdown:</label>
+                            <select id="ddlDemographicDimension" class="dim-dropdown-select" onchange="switchDemographicDimension(this.value)">
+                                <option value="department" selected="selected">Department</option>
+                                <option value="course">Program / Course</option>
+                                <option value="branch">Campus Branch</option>
+                                <option value="year">Year Level</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <h5 style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); font-weight:700; margin-top:0.75rem;">Department Distribution</h5>
-                    <div class="distribution-list">
-                        <asp:Repeater ID="rptDepartmentDistribution" runat="server">
-                            <ItemTemplate>
-                                <div class="dist-item">
-                                    <div class="dist-item-top">
-                                        <span class="dist-label"><%# Eval("Label") %></span>
-                                        <span class="dist-meta"><%# Eval("Count") %> (<%# Eval("Percentage", "{0:F1}") %>%)</span>
-                                    </div>
-                                    <div class="dist-track">
-                                        <div class="dist-fill-emerald" style='width:<%# Eval("Percentage") %>%;'></div>
-                                    </div>
-                                </div>
-                            </ItemTemplate>
-                        </asp:Repeater>
+                    <!-- Pie Chart & Legend Grid -->
+                    <div class="pie-dashboard-layout">
+                        <div class="pie-chart-container" id="pieChartWrapper">
+                            <svg id="demographicsPieSvg" class="pie-chart-svg" viewBox="0 0 240 240"></svg>
+                            <div class="pie-donut-center">
+                                <span id="pieCenterCount" class="pie-center-count">0</span>
+                                <span id="pieCenterLabel" class="pie-center-label">Department</span>
+                            </div>
+                        </div>
+                        <div id="demographicsLegend" class="pie-chart-legend">
+                            <!-- Populated via JS -->
+                        </div>
                     </div>
 
-                    <h5 style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); font-weight:700; margin-top:0.75rem;">Program / Course Distribution (Top 5)</h5>
-                    <div class="distribution-list">
-                        <asp:Repeater ID="rptCourseDistribution" runat="server">
-                            <ItemTemplate>
-                                <div class="dist-item">
-                                    <div class="dist-item-top">
-                                        <span class="dist-label"><%# Eval("Label") %></span>
-                                        <span class="dist-meta"><%# Eval("Count") %> (<%# Eval("Percentage", "{0:F1}") %>%)</span>
-                                    </div>
-                                    <div class="dist-track">
-                                        <div class="dist-fill-blue" style='width:<%# Eval("Percentage") %>%;'></div>
-                                    </div>
-                                </div>
-                            </ItemTemplate>
-                        </asp:Repeater>
-                    </div>
+                    <!-- Hidden Demographics Data JSON Literal -->
+                    <script id="demographicsJsonData" type="application/json"><asp:Literal ID="litDemographicsJson" runat="server"></asp:Literal></script>
 
-                    <h5 style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); font-weight:700; margin-top:0.75rem;">Year Level Distribution</h5>
-                    <div class="distribution-list">
-                        <asp:Repeater ID="rptYearDistribution" runat="server">
-                            <ItemTemplate>
-                                <div class="dist-item">
-                                    <div class="dist-item-top">
-                                        <span class="dist-label"><%# Eval("Label") %></span>
-                                        <span class="dist-meta"><%# Eval("Count") %> (<%# Eval("Percentage", "{0:F1}") %>%)</span>
-                                    </div>
-                                    <div class="dist-track">
-                                        <div class="dist-fill-blue" style='width:<%# Eval("Percentage") %>%;'></div>
-                                    </div>
-                                </div>
-                            </ItemTemplate>
-                        </asp:Repeater>
+                    <!-- Hidden Legacy Repeaters for Seamless Designer / Backward Compatibility -->
+                    <div style="display:none;" aria-hidden="true">
+                        <asp:Repeater ID="rptBranchDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
+                        <asp:Repeater ID="rptDepartmentDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
+                        <asp:Repeater ID="rptCourseDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
+                        <asp:Repeater ID="rptYearDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
                     </div>
                 </div>
             </div>
@@ -617,7 +629,7 @@
                         </div>
                         <div>
                             <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Certified Audit Date</div>
-                            <div style="font-weight:700; color:var(--text-heading); font-size:0.95rem;"><%= DateTime.Now.ToString("MMMM dd, yyyy") %></div>
+                            <div style="font-weight:700; color:var(--text-heading); font-size:0.95rem;"><%= DateTime.Now.ToString("MM/dd/yyyy") %></div>
                         </div>
                     </div>
                 </div>
@@ -625,6 +637,15 @@
         </div>
     </div>
 
+</div>
+
+<!-- Floating interactive tooltip for mouse hover over pie slices and legend items -->
+<div id="pieInteractiveTooltip" class="pie-interactive-tooltip">
+    <div id="pieTooltipTitle" class="tooltip-title">Demographic Category</div>
+    <div id="pieTooltipBody" class="tooltip-body">
+        <span id="pieTooltipCount" style="font-weight:700;">0 Students</span>
+        <span id="pieTooltipPercent" style="opacity:0.85;">(0.0%)</span>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -650,6 +671,199 @@
             document.getElementById('sectionPhaseAfter').style.display = 'block';
         }
     }
+
+    // =========================================================================
+    // INTERACTIVE PIE / DONUT GRAPH FOR TARGET DEMOGRAPHICS
+    // =========================================================================
+    let demographicsData = {};
+
+    function initDemographicsPieChart() {
+        const rawDataEl = document.getElementById('demographicsJsonData');
+        if (rawDataEl && rawDataEl.textContent.trim()) {
+            try {
+                demographicsData = JSON.parse(rawDataEl.textContent);
+            } catch (e) {
+                console.error("Failed to parse demographics data:", e);
+            }
+        }
+        const select = document.getElementById('ddlDemographicDimension');
+        const initialDim = select ? select.value : 'department';
+        let label = 'Department';
+        if (initialDim === 'course') label = 'Program';
+        else if (initialDim === 'branch') label = 'Branch';
+        else if (initialDim === 'year') label = 'Year Level';
+        renderDemographicDimension(initialDim, label);
+    }
+
+    function switchDemographicDimension(dimensionKey) {
+        const select = document.getElementById('ddlDemographicDimension');
+        if (select && select.value !== dimensionKey) {
+            select.value = dimensionKey;
+        }
+
+        let label = 'Department';
+        if (dimensionKey === 'course') label = 'Program';
+        else if (dimensionKey === 'branch') label = 'Branch';
+        else if (dimensionKey === 'year') label = 'Year Level';
+
+        renderDemographicDimension(dimensionKey, label);
+    }
+
+    function renderDemographicDimension(dimensionKey, displayLabel) {
+        const list = (demographicsData && demographicsData[dimensionKey]) ? demographicsData[dimensionKey] : [];
+        const svg = document.getElementById('demographicsPieSvg');
+        const legend = document.getElementById('demographicsLegend');
+        const centerCount = document.getElementById('pieCenterCount');
+        const centerLabel = document.getElementById('pieCenterLabel');
+        const tooltip = document.getElementById('pieInteractiveTooltip');
+        const tooltipTitle = document.getElementById('pieTooltipTitle');
+        const tooltipCount = document.getElementById('pieTooltipCount');
+        const tooltipPercent = document.getElementById('pieTooltipPercent');
+
+        if (!svg || !legend) return;
+
+        svg.innerHTML = '';
+        legend.innerHTML = '';
+
+        const totalStudents = list.reduce(function (sum, item) { return sum + item.count; }, 0);
+        centerCount.textContent = totalStudents.toLocaleString();
+        centerLabel.textContent = displayLabel;
+
+        if (totalStudents === 0 || list.length === 0) {
+            svg.innerHTML = '<circle cx="120" cy="120" r="80" fill="none" stroke="#e2e8f0" stroke-width="26" />' +
+                            '<text x="120" y="125" text-anchor="middle" font-size="12" fill="#94a3b8" font-family="sans-serif">No Records</text>';
+            legend.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:0.5rem;">No demographic cohorts registered yet.</div>';
+            return;
+        }
+
+        const palette = [
+            '#2563eb', // Royal Blue
+            '#059669', // Emerald
+            '#d97706', // Amber
+            '#7c3aed', // Violet
+            '#e11d48', // Rose
+            '#0891b2', // Cyan
+            '#4f46e5', // Indigo
+            '#16a34a', // Green
+            '#ea580c', // Orange
+            '#64748b'  // Slate
+        ];
+
+        const cx = 120;
+        const cy = 120;
+        const outerR = 96;
+        const innerR = 58;
+        let currentAngle = -Math.PI / 2; // start at top (12 o'clock)
+
+        list.forEach(function (item, index) {
+            const color = palette[index % palette.length];
+            const fraction = item.count / totalStudents;
+            const sliceAngle = fraction * 2 * Math.PI;
+            const startAngle = currentAngle;
+            const endAngle = currentAngle + sliceAngle;
+            currentAngle = endAngle;
+
+            let pathD = '';
+            if (fraction >= 0.999) {
+                // Single 100% slice donut
+                pathD = 'M ' + cx + ' ' + (cy - outerR) +
+                        ' A ' + outerR + ' ' + outerR + ' 0 1 1 ' + cx + ' ' + (cy + outerR) +
+                        ' A ' + outerR + ' ' + outerR + ' 0 1 1 ' + cx + ' ' + (cy - outerR) +
+                        ' M ' + cx + ' ' + (cy - innerR) +
+                        ' A ' + innerR + ' ' + innerR + ' 0 1 0 ' + cx + ' ' + (cy + innerR) +
+                        ' A ' + innerR + ' ' + innerR + ' 0 1 0 ' + cx + ' ' + (cy - innerR) + ' Z';
+            } else {
+                const x1 = cx + outerR * Math.cos(startAngle);
+                const y1 = cy + outerR * Math.sin(startAngle);
+                const x2 = cx + outerR * Math.cos(endAngle);
+                const y2 = cy + outerR * Math.sin(endAngle);
+
+                const ix1 = cx + innerR * Math.cos(startAngle);
+                const iy1 = cy + innerR * Math.sin(startAngle);
+                const ix2 = cx + innerR * Math.cos(endAngle);
+                const iy2 = cy + innerR * Math.sin(endAngle);
+
+                const largeArc = (sliceAngle > Math.PI) ? 1 : 0;
+
+                pathD = 'M ' + x1.toFixed(3) + ' ' + y1.toFixed(3) +
+                        ' A ' + outerR + ' ' + outerR + ' 0 ' + largeArc + ' 1 ' + x2.toFixed(3) + ' ' + y2.toFixed(3) +
+                        ' L ' + ix2.toFixed(3) + ' ' + iy2.toFixed(3) +
+                        ' A ' + innerR + ' ' + innerR + ' 0 ' + largeArc + ' 0 ' + ix1.toFixed(3) + ' ' + iy1.toFixed(3) + ' Z';
+            }
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathD);
+            path.setAttribute('fill', color);
+            path.setAttribute('class', 'pie-slice');
+            path.setAttribute('data-index', index);
+            svg.appendChild(path);
+
+            // Legend item row
+            const row = document.createElement('div');
+            row.className = 'pie-legend-row';
+            row.setAttribute('data-index', index);
+            row.innerHTML =
+                '<div class="pie-legend-left">' +
+                    '<span class="pie-legend-dot" style="background-color:' + color + ';"></span>' +
+                    '<span title="' + escapeHtml(item.label) + '">' + escapeHtml(item.label) + '</span>' +
+                '</div>' +
+                '<span class="pie-legend-meta">' + item.count.toLocaleString() + ' (' + item.percentage.toFixed(1) + '%)</span>';
+            legend.appendChild(row);
+
+            // Hover handlers for both slice & legend row
+            function onHover(e) {
+                path.style.filter = 'drop-shadow(0 6px 12px rgba(0,0,0,0.22))';
+                path.style.transform = 'scale(1.045)';
+                row.style.backgroundColor = 'var(--brand-subtle)';
+                row.style.borderColor = 'var(--brand-border)';
+
+                tooltipTitle.textContent = item.label;
+                tooltipCount.textContent = item.count.toLocaleString() + ' Students';
+                tooltipPercent.textContent = '(' + item.percentage.toFixed(1) + '%)';
+                tooltip.style.display = 'block';
+                updateTooltipPosition(e);
+            }
+
+            function onMove(e) {
+                updateTooltipPosition(e);
+            }
+
+            function onLeave() {
+                path.style.filter = '';
+                path.style.transform = '';
+                row.style.backgroundColor = '';
+                row.style.borderColor = '';
+                tooltip.style.display = 'none';
+            }
+
+            path.addEventListener('mouseenter', onHover);
+            path.addEventListener('mousemove', onMove);
+            path.addEventListener('mouseleave', onLeave);
+
+            row.addEventListener('mouseenter', onHover);
+            row.addEventListener('mousemove', onMove);
+            row.addEventListener('mouseleave', onLeave);
+        });
+    }
+
+    function updateTooltipPosition(e) {
+        const tooltip = document.getElementById('pieInteractiveTooltip');
+        if (!tooltip) return;
+        const offset = 14;
+        tooltip.style.left = (e.pageX + offset) + 'px';
+        tooltip.style.top = (e.pageY + offset) + 'px';
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initDemographicsPieChart();
+    });
 </script>
 
 </asp:Content>

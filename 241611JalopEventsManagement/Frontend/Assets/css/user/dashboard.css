@@ -143,9 +143,7 @@
            ════════════════════════════════════════════════════════════════ */
         .portal-navbar {
             width: 100%;
-            background: transparent;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
+            background: linear-gradient(180deg, rgba(6, 9, 16, 0.95) 0%, rgba(6, 9, 16, 0.75) 45%, rgba(6, 9, 16, 0.3) 75%, transparent 100%);
             border-bottom: 1px solid transparent;
             position: fixed;
             top: 0;
@@ -153,13 +151,11 @@
             right: 0;
             z-index: 50;
             box-shadow: none;
-            transition: background 0.35s ease, backdrop-filter 0.35s ease, -webkit-backdrop-filter 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
         }
 
         .portal-navbar.nav-scrolled {
-            background: rgba(9, 13, 22, 0.94);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(9, 13, 22, 0.96);
             border-bottom: 1px solid var(--border-subtle);
             box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
         }
@@ -177,34 +173,45 @@
         .nav-brand {
             display: flex;
             align-items: center;
-            gap: 0.9rem;
+            gap: 0.85rem;
             text-decoration: none;
             color: #FFFFFF;
         }
 
+        .nav-brand > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
         .nav-logo-img {
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             object-fit: cover;
             background: #FFFFFF;
             padding: 2px;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+            display: block;
+            flex-shrink: 0;
         }
 
         .nav-brand-title {
-            font-size: 1.22rem;
+            font-size: 1.15rem;
             font-weight: 800;
             letter-spacing: -0.02em;
-            line-height: 1.15;
+            line-height: 1.2;
             color: #FFFFFF;
+            margin: 0;
         }
 
         .nav-brand-subtitle {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: rgba(255, 255, 255, 0.75);
             font-weight: 600;
             letter-spacing: 0.01em;
+            line-height: 1.2;
+            margin: 0;
         }
 
         .nav-user-bar {
@@ -636,7 +643,7 @@
         }
 
         /* ════════════════════════════════════════════════════════════════
-           EVENT CARDS GRID: EXACT ELEMENT ORGANIZATION (PHOTO 2)
+           EVENT CARDS GRID: ORGANIZATION OF PHOTO WITH PREVIOUS DESIGN CONCEPT
            STYLING: PROFESSIONAL CINEMATIC (MATCHING HERO SECTION)
            ════════════════════════════════════════════════════════════════ */
         .events-grid {
@@ -669,9 +676,9 @@
             box-shadow: var(--shadow-hover);
         }
 
-        /* Top Half: Promotional Banner Area (Photo 2) */
+        /* Top Half: Promotional Banner Area */
         .event-promo-banner {
-            height: 160px;
+            height: 165px;
             padding: 1.15rem 1.25rem;
             position: relative;
             background-size: cover;
@@ -693,11 +700,12 @@
             z-index: 1;
         }
 
-        /* Status Badge (Top-Right of Banner) */
+        /* Status Badge: Top-Left of Banner with Previous Design Concept */
         .card-status-pill {
-            position: relative;
+            position: absolute;
+            top: 1rem;
+            left: 1.15rem;
             z-index: 2;
-            margin-left: auto;
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
@@ -744,7 +752,7 @@
             box-shadow: 0 0 8px #FACC15;
         }
 
-        /* Capacity Indicator (Bottom-Right of Banner in Photo 2) */
+        /* Capacity Indicator: Bottom-Right of Banner with Previous Design Concept */
         .card-capacity-pill {
             position: absolute;
             z-index: 2;
@@ -755,6 +763,9 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 9999px;
             padding: 0.3rem 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
             font-family: var(--font-mono);
             font-size: 0.74rem;
             font-weight: 700;
@@ -762,7 +773,14 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
         }
 
-        /* Bottom Half: Event Details (Photo 2) */
+        .capacity-pill-icon {
+            width: 14px;
+            height: 14px;
+            fill: var(--accent-gold);
+            flex-shrink: 0;
+        }
+
+        /* Bottom Half: Event Details Body */
         .event-card-body {
             padding: 1.45rem 1.4rem 1.35rem 1.4rem;
             display: flex;
@@ -782,7 +800,7 @@
             text-transform: uppercase;
         }
 
-        /* Location Line with Pin Icon (Photo 2) */
+        /* Metadata Line with Signature Gold Icon */
         .card-meta-line {
             display: flex;
             align-items: center;
@@ -801,7 +819,7 @@
             flex-shrink: 0;
         }
 
-        /* Sponsors Row (Photo 2) */
+        /* Sponsors Row */
         .card-sponsors-row {
             display: flex;
             align-items: center;
@@ -842,59 +860,16 @@
             background: rgba(255, 255, 255, 0.08);
         }
 
-        /* Crisp Divider Line (Photo 2) */
-        .card-divider {
-            border: none;
-            border-top: 1px solid var(--border-subtle);
-            margin-top: auto;
-            margin-bottom: 1.15rem;
-        }
-
-        /* Bottom Action Row (Photo 2) */
+        /* Bottom Action Row: Aligned Right */
         .card-action-row {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 0.85rem;
+            justify-content: flex-end;
+            margin-top: auto;
+            padding-top: 0.5rem;
         }
 
-        /* Spots Left Pill: Mint/Emerald glow (Photo 2) */
-        .spots-left-hint {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-family: var(--font-mono);
-            font-size: 0.76rem;
-            font-weight: 800;
-            color: var(--emerald-badge-text);
-            background: var(--emerald-badge-bg);
-            padding: 0.45rem 0.85rem;
-            border: 1px solid var(--emerald-badge-border);
-            border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-
-        .spots-left-hint.closed {
-            background: rgba(239, 68, 68, 0.1);
-            border-color: rgba(239, 68, 68, 0.25);
-            color: #F87171;
-        }
-
-        .spots-left-hint.soon {
-            background: rgba(234, 179, 8, 0.12);
-            border-color: rgba(234, 179, 8, 0.35);
-            color: #FDE047;
-        }
-
-        .spots-left-hint svg {
-            width: 14px;
-            height: 14px;
-            fill: currentColor;
-            flex-shrink: 0;
-        }
-
-        /* Tactile Details Button: Gold Gradient with Hover Elevation (Photo 2) */
+        /* Tactile Details Button: Gold Gradient with Hover Elevation */
         .btn-view-details {
             display: inline-flex;
             align-items: center;

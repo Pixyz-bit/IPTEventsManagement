@@ -25,6 +25,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litHeaderEventId;
         protected global::System.Web.UI.WebControls.Literal litHeaderTitle;
         protected global::System.Web.UI.WebControls.Literal litHeaderStatus;
+        protected global::System.Web.UI.WebControls.Literal litEventDate;
+        protected global::System.Web.UI.WebControls.Literal litEventVenue;
+        protected global::System.Web.UI.WebControls.Literal litEventCapacitySummary;
+        protected global::System.Web.UI.WebControls.DropDownList ddlEvents;
+        protected global::System.Web.UI.WebControls.PlaceHolder phHeaderHidden;
 
         protected global::System.Web.UI.WebControls.Literal litModeDescription;
         protected global::System.Web.UI.WebControls.PlaceHolder phViewActions;

@@ -1,7 +1,7 @@
 <%@ Page Title="Publish New Event | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="CreateEvent.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.CreateEvent" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/create-event.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/create-event.css?v=" + DateTime.Now.Ticks) %>" />
 </asp:Content>
 
 <asp:Content ID="MainArea" ContentPlaceHolderID="MainContent" runat="server">
@@ -79,7 +79,7 @@
         </div>
 
         <!-- Step 2 Tab -->
-        <div class="procedure-step-tab" id="tab-step-2" data-step="2" onclick="switchStep(2)" role="tab" aria-selected="false">
+        <div class="procedure-step-tab" id="tab-step-2" data-step="2" onclick="validateAndGoStep(2)" role="tab" aria-selected="false">
             <div class="step-badge">2</div>
             <div class="step-meta">
                 <span class="step-number">Step 02</span>
@@ -94,7 +94,7 @@
         </div>
 
         <!-- Step 3 Tab -->
-        <div class="procedure-step-tab" id="tab-step-3" data-step="3" onclick="switchStep(3)" role="tab" aria-selected="false">
+        <div class="procedure-step-tab" id="tab-step-3" data-step="3" onclick="validateAndGoStep(3)" role="tab" aria-selected="false">
             <div class="step-badge">3</div>
             <div class="step-meta">
                 <span class="step-number">Step 03</span>
@@ -109,7 +109,7 @@
         </div>
 
         <!-- Step 4 Tab -->
-        <div class="procedure-step-tab" id="tab-step-4" data-step="4" onclick="switchStep(4)" role="tab" aria-selected="false">
+        <div class="procedure-step-tab" id="tab-step-4" data-step="4" onclick="validateAndGoStep(4)" role="tab" aria-selected="false">
             <div class="step-badge">4</div>
             <div class="step-meta">
                 <span class="step-number">Step 04</span>
@@ -124,7 +124,7 @@
         </div>
 
         <!-- Step 5 Tab -->
-        <div class="procedure-step-tab" id="tab-step-5" data-step="5" onclick="switchStep(5)" role="tab" aria-selected="false">
+        <div class="procedure-step-tab" id="tab-step-5" data-step="5" onclick="validateAndGoStep(5)" role="tab" aria-selected="false">
             <div class="step-badge">5</div>
             <div class="step-meta">
                 <span class="step-number">Step 05</span>
@@ -155,35 +155,53 @@
             <div id="step-panel-1" class="step-panel active-panel">
                 <div class="form-section-card">
                     <div class="card-body">
-                        <div class="form-group">
-                            <label class="form-label" for="<%= txtTitle.ClientID %>">Event Title <span class="required-mark">*</span></label>
-                            <asp:TextBox ID="txtTitle" runat="server" CssClass="form-input" placeholder="e.g. Annual University Tech Symposium 2026" MaxLength="200" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                        <!--<span class="form-hint">A clear, descriptive title visible across student portals and institutional calendars.</span>-->
-                        </div>
+                        <div class="step1-bento-grid">
+                            <!-- Left Column: Overview & Location/Capacity -->
+                            <div class="step1-left-col">
+                                <div class="form-group">
+                                    <label class="form-label" for="<%= txtTitle.ClientID %>">Event Title <span class="required-mark">*</span></label>
+                                    <asp:TextBox ID="txtTitle" runat="server" CssClass="form-input" placeholder="e.g. Annual University Tech Symposium 2026" MaxLength="200" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="<%= txtDescription.ClientID %>">Event Description</label>
-                            <asp:TextBox ID="txtDescription" runat="server" TextMode="MultiLine" CssClass="form-textarea" placeholder="Detail the event objectives, keynote topics, speaker profiles, or student prerequisites..." />
-                        </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="<%= txtDescription.ClientID %>">Event Description</label>
+                                    <asp:TextBox ID="txtDescription" runat="server" TextMode="MultiLine" CssClass="form-textarea" placeholder="Detail the event objectives, keynote topics, speaker profiles, or student prerequisites..." rows="4" />
+                                </div>
 
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtVenueLocation.ClientID %>">Venue Location <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtVenueLocation" runat="server" CssClass="form-input" placeholder="e.g. Central Auditorium, Hall A" MaxLength="200" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                            <!--<span class="form-hint">Physical room, auditorium, or laboratory venue.</span>-->
+                                <div class="form-grid-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="<%= txtVenueLocation.ClientID %>">Venue Location <span class="required-mark">*</span></label>
+                                        <asp:TextBox ID="txtVenueLocation" runat="server" CssClass="form-input" placeholder="e.g. Central Auditorium, Hall A" MaxLength="200" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                        <span class="form-hint">Physical room, auditorium, or laboratory venue.</span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="<%= txtMaxCapacity.ClientID %>">Max Capacity (Seats) <span class="required-mark">*</span></label>
+                                        <asp:TextBox ID="txtMaxCapacity" runat="server" TextMode="Number" CssClass="form-input" Text="150" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                        <span class="form-hint">Attendance Ceiling (Seats)</span>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtMaxCapacity.ClientID %>">Max Capacity (Seats) <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtMaxCapacity" runat="server" TextMode="Number" CssClass="form-input" Text="150" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                                <!--<span class="form-hint">Enforces strict atomic concurrency lock against overbooking.</span>-->
-                            </div>
-                        </div>
+                            <!-- Right Column: Media & Branding -->
+                            <div class="step1-right-col">
+                                <div class="media-upload-card">
+                                    <label class="form-label" for="<%= fuEventPhoto.ClientID %>">Promotional Banner / Poster</label>
+                                    <span class="form-hint" style="margin-top:-0.2rem; margin-bottom:0.75rem;">(Optional Asset Upload)</span>
 
-                        <div class="form-group" style="margin-top: 0.5rem;">
-                            <label class="form-label" for="<%= fuEventPhoto.ClientID %>">Event Promotional Banner / Poster Image</label>
-                            <asp:FileUpload ID="fuEventPhoto" runat="server" CssClass="form-input" accept="image/*" />
-                            <span class="form-hint" style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem; display:block;">Optional. Supported formats: PNG, JPG, JPEG, WEBP. Uploaded asset is stored persistently in the dedicated assets folder.</span>
+                                    <div class="upload-dropzone">
+                                        <svg class="upload-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        <asp:FileUpload ID="fuEventPhoto" runat="server" CssClass="form-input banner-file-input" accept="image/*" />
+                                        <span class="upload-formats-hint">Supported formats: PNG, JPG, JPEG, WEBP</span>
+                                    </div>
+
+                                    <span class="form-hint" style="margin-top:0.75rem;">Stored persistently in the dedicated assets folder.</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Step 1 Footer Navigation -->
@@ -207,49 +225,56 @@
                 <div class="form-section-card">
 
                     <div class="card-body">
+                        <!-- Policy Directive -->
                         <div class="info-callout">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="12" y1="16" x2="12" y2="12"></line>
                                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
                             </svg>
-                            <span><strong>Policy Directive:</strong> Events take place on a designated calendar date. Registration period must conclude before or at event kickoff.</span>
+                            <span><strong>Policy Directive:</strong> Events occur on a designated date. Registration concludes prior to kickoff.</span>
                         </div>
 
-                        <!-- Single Event Date Picker -->
-                        <div class="form-group">
-                            <label class="form-label" for="<%= txtEventDate.ClientID %>">Event Date <span class="required-mark">*</span></label>
-                            <asp:TextBox ID="txtEventDate" runat="server" TextMode="Date" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                            <span class="form-hint">The single designated calendar date on which the event takes place.</span>
-                        </div>
+                        <!-- 2-Column Bento Grid: Event Runtime & Registration Window -->
+                        <div class="step2-bento-grid">
+                            <!-- Left: Event Runtime -->
+                            <div class="bento-col-box">
+                                <div class="bento-box-label">Event Runtime</div>
 
-                        <!-- Start and End Time Pickers -->
-                        <div class="form-grid-2" style="margin-top: 1rem;">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtEventStartTime.ClientID %>">Event Start Time <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtEventStartTime" runat="server" TextMode="Time" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                                <span class="form-hint">Kickoff time (e.g. 09:00)</span>
+                                <div class="form-group">
+                                    <label class="form-label" for="<%= txtEventDate.ClientID %>">Event Date <span class="required-mark">*</span></label>
+                                    <asp:TextBox ID="txtEventDate" runat="server" TextMode="Date" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                    <span class="form-hint">Designated calendar date (Format: MM/DD/YYYY)</span>
+                                </div>
+
+                                <div class="form-grid-2">
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label class="form-label" for="<%= txtEventStartTime.ClientID %>">Kickoff Time <span class="required-mark">*</span></label>
+                                        <asp:TextBox ID="txtEventStartTime" runat="server" TextMode="Time" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                        <span class="form-hint">Kickoff (e.g. 09:00 AM)</span>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label class="form-label" for="<%= txtEventEndTime.ClientID %>">End Time <span class="required-mark">*</span></label>
+                                        <asp:TextBox ID="txtEventEndTime" runat="server" TextMode="Time" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                        <span class="form-hint">End (e.g. 05:00 PM)</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtEventEndTime.ClientID %>">Event End Time <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtEventEndTime" runat="server" TextMode="Time" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
-                                <span class="form-hint">Conclusion time (e.g. 17:00)</span>
-                            </div>
-                        </div>
 
-                        <!-- Registration Availability Window -->
-                        <div style="margin-top: 1.25rem; padding-top: 1.15rem; border-top: 1px dashed var(--border-subtle);">
-                            <label class="form-label" style="font-size:0.8rem; color:var(--brand-primary); margin-bottom:0.75rem;">
-                                Registration Availability Window
-                            </label>
-                            <div class="form-grid-2">
+                            <!-- Right: Registration Window -->
+                            <div class="bento-col-box">
+                                <div class="bento-box-label">Registration Window</div>
+
                                 <div class="form-group">
                                     <label class="form-label" for="<%= txtRegStart.ClientID %>">Registration Open Date & Time <span class="required-mark">*</span></label>
                                     <asp:TextBox ID="txtRegStart" runat="server" TextMode="DateTimeLocal" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                    <span class="form-hint">Initial access timestamp (Format: MM/DD/YYYY HH:MM)</span>
                                 </div>
-                                <div class="form-group">
+
+                                <div class="form-group" style="margin-bottom:0;">
                                     <label class="form-label" for="<%= txtRegEnd.ClientID %>">Registration Deadline <span class="required-mark">*</span></label>
                                     <asp:TextBox ID="txtRegEnd" runat="server" TextMode="DateTimeLocal" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                    <span class="form-hint">Strict enrollment cutoff (Format: MM/DD/YYYY HH:MM)</span>
                                 </div>
                             </div>
                         </div>
@@ -278,150 +303,159 @@
                 <div class="form-section-card">
 
                     <div class="card-body">
+                        <!-- Policy Directive -->
                         <div class="info-callout">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="12" y1="16" x2="12" y2="12"></line>
                                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
                             </svg>
-                            <span>Leaving dimensions as <em>"All / Open to All"</em> grants access to the entire student body. Specific selections enforce cohort-based eligibility filtering.</span>
+                            <span><strong>Policy Directive:</strong> "Open to All" grants universal access. Cohort picks enforce restrictions.</span>
                         </div>
 
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= ddlBranch.ClientID %>">1. Campus Branch</label>
-                                <asp:DropDownList ID="ddlBranch" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
-                                    <asp:ListItem Value="" Text="All University Branches (Open)" />
-                                    <asp:ListItem Value="San Bartolome" Text="San Bartolome (Main Campus)" />
-                                    <asp:ListItem Value="Batasan" Text="Batasan Campus" />
-                                    <asp:ListItem Value="San Francisco" Text="San Francisco Campus" />
-                                </asp:DropDownList>
-                            </div>
+                        <!-- 2-Column Bento Grid: Institutional Filters vs Degree Programs Matrix -->
+                        <div class="step3-bento-grid">
+                            <!-- Left: Institutional Filters (1, 2, 4) -->
+                            <div class="bento-col-box">
+                                <div class="bento-box-label">Institutional Filters</div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="<%= ddlDepartment.ClientID %>">2. Academic College / Department</label>
-                                <asp:DropDownList ID="ddlDepartment" runat="server" CssClass="form-select" onchange="filterProgramsByDepartment(this.value);" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
-                                    <asp:ListItem Value="" Text="All Colleges / Open to All" />
-                                    <asp:ListItem Value="College of Computer Studies" Text="College of Computer Studies (CCS)" />
-                                    <asp:ListItem Value="College of Engineering" Text="College of Engineering (COE)" />
-                                    <asp:ListItem Value="College of Business Administration and Accountancy" Text="College of Business Administration and Accountancy (CBAA)" />
-                                    <asp:ListItem Value="College of Education" Text="College of Education (CED)" />
-                                </asp:DropDownList>
-                            </div>
-                        </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="<%= ddlBranch.ClientID %>">1. Campus Branch</label>
+                                    <asp:DropDownList ID="ddlBranch" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
+                                        <asp:ListItem Value="" Text="All Branches (Open)" />
+                                        <asp:ListItem Value="San Bartolome" Text="San Bartolome (Main Campus)" />
+                                        <asp:ListItem Value="Batasan" Text="Batasan Campus" />
+                                        <asp:ListItem Value="San Francisco" Text="San Francisco Campus" />
+                                    </asp:DropDownList>
+                                </div>
 
-                        <!-- Multi-Select Academic Degree Programs / Courses -->
-                        <div class="form-group" style="margin-top: 1.25rem;">
-                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.4rem; flex-wrap:wrap; gap:0.5rem;">
-                                <label class="form-label" style="margin-bottom:0;">
-                                    3. Academic Degree Programs / Courses (Multi-Select)
-                                </label>
-                                <div style="display:flex; gap:0.4rem;">
-                                    <button type="button" class="btn-micro" onclick="selectAllPrograms(true)">Select All</button>
-                                    <button type="button" class="btn-micro" onclick="selectAllPrograms(false)">Clear (Open to All)</button>
+                                <div class="form-group" style="margin-top: 1rem;">
+                                    <label class="form-label" for="<%= ddlDepartment.ClientID %>">2. Academic College / Dept</label>
+                                    <asp:DropDownList ID="ddlDepartment" runat="server" CssClass="form-select" onchange="filterProgramsByDepartment(this.value);" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
+                                        <asp:ListItem Value="" Text="All Colleges / Open" />
+                                        <asp:ListItem Value="College of Computer Studies" Text="College of Computer Studies (CCS)" />
+                                        <asp:ListItem Value="College of Engineering" Text="College of Engineering (COE)" />
+                                        <asp:ListItem Value="College of Business Administration and Accountancy" Text="College of Business Administration and Accountancy (CBAA)" />
+                                        <asp:ListItem Value="College of Education" Text="College of Education (CED)" />
+                                    </asp:DropDownList>
+                                </div>
+
+                                <div class="form-group" style="margin-top: 1rem; margin-bottom: 0;">
+                                    <label class="form-label" for="<%= ddlYearLevel.ClientID %>">4. Year Level Eligibility</label>
+                                    <asp:DropDownList ID="ddlYearLevel" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
+                                        <asp:ListItem Value="" Text="All Year Levels (1-4)" />
+                                        <asp:ListItem Value="1" Text="1st Year Students Only" />
+                                        <asp:ListItem Value="2" Text="2nd Year Students Only" />
+                                        <asp:ListItem Value="3" Text="3rd Year Students Only" />
+                                        <asp:ListItem Value="4" Text="4th Year Graduating Seniors Only" />
+                                    </asp:DropDownList>
                                 </div>
                             </div>
-                            <span class="form-hint" style="margin-bottom:0.6rem;">Leave all unchecked to keep open to all programs. Select one or more specific courses to restrict eligibility. Dynamic according to Academic College / Department.</span>
-                            
-                            <div class="course-picker-grid" id="coursePickerGrid">
-                                <!-- College of Computer Studies (CCS) -->
-                                <label class="course-picker-card" id="card_BSIT" data-dept="College of Computer Studies">
-                                    <input type="checkbox" name="courseFilter" value="BSIT" id="chk_BSIT" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BSIT</span>
-                                        <span class="course-name">BS Information Technology</span>
-                                    </div>
-                                </label>
-                                <label class="course-picker-card" id="card_BSCS" data-dept="College of Computer Studies">
-                                    <input type="checkbox" name="courseFilter" value="BSCS" id="chk_BSCS" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BSCS</span>
-                                        <span class="course-name">BS Computer Science</span>
-                                    </div>
-                                </label>
-                                <label class="course-picker-card" id="card_BSIS" data-dept="College of Computer Studies">
-                                    <input type="checkbox" name="courseFilter" value="BSIS" id="chk_BSIS" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BSIS</span>
-                                        <span class="course-name">BS Information Systems</span>
-                                    </div>
-                                </label>
 
-                                <!-- College of Engineering (COE) -->
-                                <label class="course-picker-card" id="card_BSIE" data-dept="College of Engineering">
-                                    <input type="checkbox" name="courseFilter" value="BSIE" id="chk_BSIE" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BSIE</span>
-                                        <span class="course-name">BS Industrial Engineering</span>
+                            <!-- Right: Degree Programs Matrix (3) -->
+                            <div class="bento-col-box">
+                                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem; flex-wrap:wrap; gap:0.5rem;">
+                                    <div class="bento-box-label" style="margin-bottom:0; padding-bottom:0; border-bottom:none;">
+                                        3. Degree Programs (Multi-Select)
                                     </div>
-                                </label>
-                                <label class="course-picker-card" id="card_BSCpE" data-dept="College of Engineering">
-                                    <input type="checkbox" name="courseFilter" value="BSCpE" id="chk_BSCpE" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BSCpE</span>
-                                        <span class="course-name">BS Computer Engineering</span>
+                                    <div style="display:flex; gap:0.4rem;">
+                                        <button type="button" class="btn-micro" onclick="selectAllPrograms(true)">Select All</button>
+                                        <button type="button" class="btn-micro" onclick="selectAllPrograms(false)">Clear All (Open)</button>
                                     </div>
-                                </label>
-                                <label class="course-picker-card" id="card_BSECE" data-dept="College of Engineering">
-                                    <input type="checkbox" name="courseFilter" value="BSECE" id="chk_BSECE" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BSECE</span>
-                                        <span class="course-name">BS Electronics Engineering</span>
-                                    </div>
-                                </label>
+                                </div>
 
-                                <!-- College of Business Administration and Accountancy (CBAA) -->
-                                <label class="course-picker-card" id="card_BSA" data-dept="College of Business Administration and Accountancy">
-                                    <input type="checkbox" name="courseFilter" value="BSA" id="chk_BSA" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BSA</span>
-                                        <span class="course-name">BS Accountancy</span>
-                                    </div>
-                                </label>
-                                <label class="course-picker-card" id="card_BSBA" data-dept="College of Business Administration and Accountancy">
-                                    <input type="checkbox" name="courseFilter" value="BSBA" id="chk_BSBA" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BSBA</span>
-                                        <span class="course-name">BS Business Administration</span>
-                                    </div>
-                                </label>
-                                <label class="course-picker-card" id="card_BSEntrep" data-dept="College of Business Administration and Accountancy">
-                                    <input type="checkbox" name="courseFilter" value="BSEntrep" id="chk_BSEntrep" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BSEntrep</span>
-                                        <span class="course-name">BS Entrepreneurship</span>
-                                    </div>
-                                </label>
+                                <div class="course-picker-grid" id="coursePickerGrid">
+                                    <!-- College of Computer Studies (CCS) -->
+                                    <label class="course-picker-card" id="card_BSIT" data-dept="College of Computer Studies">
+                                        <input type="checkbox" name="courseFilter" value="BSIT" id="chk_BSIT" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BSIT</span>
+                                            <span class="course-name">BS Information Technology</span>
+                                        </div>
+                                    </label>
+                                    <label class="course-picker-card" id="card_BSCS" data-dept="College of Computer Studies">
+                                        <input type="checkbox" name="courseFilter" value="BSCS" id="chk_BSCS" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BSCS</span>
+                                            <span class="course-name">BS Computer Science</span>
+                                        </div>
+                                    </label>
+                                    <label class="course-picker-card" id="card_BSIS" data-dept="College of Computer Studies">
+                                        <input type="checkbox" name="courseFilter" value="BSIS" id="chk_BSIS" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BSIS</span>
+                                            <span class="course-name">BS Information Systems</span>
+                                        </div>
+                                    </label>
 
-                                <!-- College of Education (CED) -->
-                                <label class="course-picker-card" id="card_BECEd" data-dept="College of Education">
-                                    <input type="checkbox" name="courseFilter" value="BECEd" id="chk_BECEd" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BECEd</span>
-                                        <span class="course-name">Bachelor of Early Childhood Education</span>
-                                    </div>
-                                </label>
-                                <label class="course-picker-card" id="card_BSEd" data-dept="College of Education">
-                                    <input type="checkbox" name="courseFilter" value="BSEd" id="chk_BSEd" onchange="onCourseSelectionChanged()" />
-                                    <div class="course-picker-info">
-                                        <span class="course-code">BSEd</span>
-                                        <span class="course-name">BS Secondary Education</span>
-                                    </div>
-                                </label>
+                                    <!-- College of Engineering (COE) -->
+                                    <label class="course-picker-card" id="card_BSIE" data-dept="College of Engineering">
+                                        <input type="checkbox" name="courseFilter" value="BSIE" id="chk_BSIE" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BSIE</span>
+                                            <span class="course-name">BS Industrial Engineering</span>
+                                        </div>
+                                    </label>
+                                    <label class="course-picker-card" id="card_BSCpE" data-dept="College of Engineering">
+                                        <input type="checkbox" name="courseFilter" value="BSCpE" id="chk_BSCpE" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BSCpE</span>
+                                            <span class="course-name">BS Computer Engineering</span>
+                                        </div>
+                                    </label>
+                                    <label class="course-picker-card" id="card_BSECE" data-dept="College of Engineering">
+                                        <input type="checkbox" name="courseFilter" value="BSECE" id="chk_BSECE" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BSECE</span>
+                                            <span class="course-name">BS Electronics Engineering</span>
+                                        </div>
+                                    </label>
+
+                                    <!-- College of Business Administration and Accountancy (CBAA) -->
+                                    <label class="course-picker-card" id="card_BSA" data-dept="College of Business Administration and Accountancy">
+                                        <input type="checkbox" name="courseFilter" value="BSA" id="chk_BSA" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BSA</span>
+                                            <span class="course-name">BS Accountancy</span>
+                                        </div>
+                                    </label>
+                                    <label class="course-picker-card" id="card_BSBA" data-dept="College of Business Administration and Accountancy">
+                                        <input type="checkbox" name="courseFilter" value="BSBA" id="chk_BSBA" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BSBA</span>
+                                            <span class="course-name">BS Business Administration</span>
+                                        </div>
+                                    </label>
+                                    <label class="course-picker-card" id="card_BSEntrep" data-dept="College of Business Administration and Accountancy">
+                                        <input type="checkbox" name="courseFilter" value="BSEntrep" id="chk_BSEntrep" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BSEntrep</span>
+                                            <span class="course-name">BS Entrepreneurship</span>
+                                        </div>
+                                    </label>
+
+                                    <!-- College of Education (CED) -->
+                                    <label class="course-picker-card" id="card_BECEd" data-dept="College of Education">
+                                        <input type="checkbox" name="courseFilter" value="BECEd" id="chk_BECEd" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BECEd</span>
+                                            <span class="course-name">Bachelor of Early Childhood Education</span>
+                                        </div>
+                                    </label>
+                                    <label class="course-picker-card" id="card_BSEd" data-dept="College of Education">
+                                        <input type="checkbox" name="courseFilter" value="BSEd" id="chk_BSEd" onchange="onCourseSelectionChanged()" />
+                                        <div class="course-picker-info">
+                                            <span class="course-code">BSEd</span>
+                                            <span class="course-name">BS Secondary Education</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <asp:HiddenField ID="hfSelectedPrograms" runat="server" Value="" />
+
+                                <div style="margin-top:0.75rem; padding-top:0.5rem; border-top:1px dashed var(--border-subtle);">
+                                    <span class="form-hint" style="margin:0; font-style:italic;">Note: Open to all majors when unselected. Dynamic according to Academic College / Department.</span>
+                                </div>
                             </div>
-                            <asp:HiddenField ID="hfSelectedPrograms" runat="server" Value="" />
-                        </div>
-
-                        <!-- Year Level Selection -->
-                        <div class="form-group" style="margin-top: 1.25rem;">
-                            <label class="form-label" for="<%= ddlYearLevel.ClientID %>">4. Year Level Eligibility</label>
-                            <asp:DropDownList ID="ddlYearLevel" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed" style="max-width:320px;">
-                                <asp:ListItem Value="" Text="All Year Levels (1st - 4th)" />
-                                <asp:ListItem Value="1" Text="1st Year Students Only" />
-                                <asp:ListItem Value="2" Text="2nd Year Students Only" />
-                                <asp:ListItem Value="3" Text="3rd Year Students Only" />
-                                <asp:ListItem Value="4" Text="4th Year Graduating Seniors Only" />
-                            </asp:DropDownList>
                         </div>
 
                         <!-- Step 3 Footer Navigation -->
@@ -461,7 +495,7 @@
                                 <ItemTemplate>
                                     <span class="sponsor-chip">
                                         <span><%# Container.DataItem %></span>
-                                        <asp:LinkButton ID="btnRemove" runat="server" CssClass="btn-remove-chip" CommandName="Remove" CommandArgument='<%# Container.DataItem %>' CausesValidation="false" ToolTip="Remove Sponsor">&times;</asp:LinkButton>
+                                        <asp:LinkButton ID="btnRemove" runat="server" CssClass="btn-remove-chip" CommandName="Remove" CommandArgument='<%# Container.DataItem %>' CausesValidation="false" ToolTip="Remove Sponsor"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></asp:LinkButton>
                                     </span>
                                 </ItemTemplate>
                             </asp:Repeater>
@@ -503,135 +537,190 @@
             <div id="step-panel-5" class="step-panel">
                 <div class="form-section-card">
                     <div class="card-body">
-                        <div class="info-callout">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                            </svg>
-                            <span>Please review all event specifications below carefully before publishing. Clicking <strong>Confirm &amp; Publish Event</strong> will register this event into the database and make it live in the matrix.</span>
-                        </div>
+                        <!-- Bento 2x2 Layout Container -->
+                        <div class="step5-bento-layout">
+                            <div class="step5-bento-grid">
+                                <!-- Box 1: Event Identity -->
+                                <div class="bento-col-box">
+                                    <div class="bento-box-label">EVENT IDENTITY</div>
+                                    <div class="event-identity-split">
+                                        <!-- Left Side: Title, Venue, Capacity -->
+                                        <div class="event-identity-left">
+                                            <div class="bento-kv-row">
+                                                <span class="bento-kv-label" style="width:75px;">TITLE:</span>
+                                                <span id="sumTitle" class="bento-kv-val" style="font-weight:700; color:var(--brand-primary);">-</span>
+                                            </div>
+                                            <div class="bento-kv-row">
+                                                <span class="bento-kv-label" style="width:75px;">VENUE:</span>
+                                                <span id="sumVenue" class="bento-kv-val" style="font-weight:600; color:#1e293b;">-</span>
+                                            </div>
+                                            <div class="bento-kv-row">
+                                                <span class="bento-kv-label" style="width:75px;">CAPACITY:</span>
+                                                <span id="sumCapacity" class="bento-kv-val" style="font-weight:600; color:#1e293b;">-</span>
+                                            </div>
+                                        </div>
 
-                        <!-- Summary Review Container -->
-                        <div class="summary-container">
-                            <!-- 1. Core Specifications Summary -->
-                            <div class="summary-section-box">
-                                <div class="summary-section-title">
-                                    
-                                    <span>Event Details</span>
-                                </div>
-                                <div class="summary-grid">
-                                    <div class="summary-item full-width">
-                                        <span class="summary-label">Event Title</span>
-                                        <span id="sumTitle" class="summary-value" style="font-size:1.05rem; font-weight:800; color:var(--brand-primary);">-</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="summary-label">Venue Location</span>
-                                        <span id="sumVenue" class="summary-value">-</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="summary-label">Max Seat Capacity</span>
-                                        <span id="sumCapacity" class="summary-value highlight">-</span>
-                                    </div>
-                                    <div class="summary-item full-width">
-                                        <span class="summary-label">Event Description</span>
-                                        <div id="sumDesc" class="summary-value" style="font-size:0.8rem; font-weight:400; color:var(--text-body); white-space:pre-wrap;">-</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 2. Schedule & Timeline Summary -->
-                            <div class="summary-section-box">
-                                <div class="summary-section-title">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                    <span>Schedule &amp; Registration</span>
-                                </div>
-                                <div class="summary-schedule-split">
-                                    <!-- Left side: Date at top, Time below -->
-                                    <div class="summary-schedule-left">
-                                        <div class="summary-item">
-                                            <span class="summary-label">Designated Event Date</span>
-                                            <span id="sumEventDate" class="summary-value highlight">-</span>
-                                        </div>
-                                        <div class="summary-item">
-                                            <span class="summary-label">Event Time Window</span>
-                                            <span id="sumEventHours" class="summary-value highlight">-</span>
-                                        </div>
-                                    </div>
-                                    <!-- Right side: Registration Availability Window -->
-                                    <div class="summary-schedule-right">
-                                        <div class="reg-window-row">
-                                            <span class="reg-window-tag opens">OPENS</span>
-                                            <span id="sumRegOpen" class="reg-window-val">-</span>
-                                        </div>
-                                        <div class="reg-window-row">
-                                            <span class="reg-window-tag deadline">DEADLINE</span>
-                                            <span id="sumRegDeadline" class="reg-window-val">-</span>
+                                        <!-- Right Side: Description -->
+                                        <div class="event-identity-right">
+                                            <span class="bento-kv-label" style="display:block; margin-bottom:0.35rem;">DESC:</span>
+                                            <div id="sumDesc" class="bento-kv-val summary-desc-text">-</div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Box 2: Schedule & Registration -->
+                                <div class="bento-col-box">
+                                    <div class="bento-box-label">SCHEDULE &amp; REGISTRATION</div>
+                                    <div class="schedule-split">
+                                        <!-- Left Side: Event Date & Time Window -->
+                                        <div class="schedule-split-col">
+                                            <div class="bento-kv-row">
+                                                <span class="bento-kv-label" style="width:105px;">EVENT DATE:</span>
+                                                <span id="sumEventDate" class="bento-kv-val schedule-val">-</span>
+                                            </div>
+                                            <div class="bento-kv-row">
+                                                <span class="bento-kv-label" style="width:105px;">TIME WINDOW:</span>
+                                                <span id="sumEventHours" class="bento-kv-val schedule-val">-</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Right Side: Opens & Deadline -->
+                                        <div class="schedule-split-col schedule-right-col">
+                                            <div class="bento-kv-row">
+                                                <span class="bento-kv-label" style="width:85px;">OPENS:</span>
+                                                <span id="sumRegOpen" class="bento-kv-val schedule-val">-</span>
+                                            </div>
+                                            <div class="bento-kv-row">
+                                                <span class="bento-kv-label" style="width:85px;">DEADLINE:</span>
+                                                <span id="sumRegDeadline" class="bento-kv-val schedule-val">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Box 3: Sponsors -->
+                                <div class="bento-col-box sponsors-bento-box">
+                                    <div class="bento-box-label">SPONSORS</div>
+                                    <div id="sumSponsors" class="summary-chips-wrap"></div>
+                                    <div class="sponsors-footer-tag">
+                                        <span class="badge-active-partners">ACTIVE PARTNERS</span>
+                                    </div>
+                                </div>
+
+                                <!-- Box 4: Audience Specifications -->
+                                <div class="bento-col-box">
+                                    <div class="bento-box-label">AUDIENCE SPECIFICATIONS</div>
+                                    <div class="bento-kv-list">
+                                        <div class="bento-kv-row">
+                                            <span class="bento-kv-label" style="width:100px;">CAMPUS:</span>
+                                            <span id="sumBranch" class="bento-kv-val">-</span>
+                                        </div>
+                                        <div class="bento-kv-row">
+                                            <span class="bento-kv-label" style="width:100px;">COLLEGE:</span>
+                                            <span id="sumDept" class="bento-kv-val">-</span>
+                                        </div>
+                                        <div class="bento-kv-row">
+                                            <span class="bento-kv-label" style="width:100px;">COHORT:</span>
+                                            <span id="sumYearLevel" class="bento-kv-val">-</span>
+                                        </div>
+                                        <div class="bento-kv-row" style="align-items:flex-start;">
+                                            <span class="bento-kv-label" style="width:100px; margin-top:0.2rem;">PROGRAMS:</span>
+                                            <div id="sumPrograms" class="summary-chips-wrap" style="flex:1;"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- 3. Demographic Targeting Summary -->
-                            <div class="summary-section-box">
-                                <div class="summary-section-title">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                                    <span>Target Audience</span>
+                            <!-- Bottom Row: Final Confirmation & Publication -->
+                            <div class="bento-col-box step5-confirm-box">
+                                <div class="bento-box-label">FINAL CONFIRMATION &amp; PUBLICATION</div>
+                                <div class="bento-compliance-notice">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                    <span><strong>Compliance:</strong> All specs, seat limits, and cohorts follow university policies.</span>
                                 </div>
-                                <div class="summary-grid">
-                                    <div class="summary-item">
-                                        <span class="summary-label">Campus Branch</span>
-                                        <span id="sumBranch" class="summary-value">-</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="summary-label">Academic College</span>
-                                        <span id="sumDept" class="summary-value">-</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="summary-label">Year Level</span>
-                                        <span id="sumYearLevel" class="summary-value">-</span>
-                                    </div>
-                                    <div class="summary-item full-width">
-                                        <span class="summary-label">Target Degree Programs / Courses</span>
-                                        <div id="sumPrograms" class="summary-chips-wrap"></div>
-                                    </div>
+                                <div class="bento-confirm-actions">
+                                    <button type="button" class="btn-action-secondary" onclick="switchStep(4)">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <polyline points="15 18 9 12 15 6"></polyline>
+                                        </svg>
+                                        <span>&lt; Back to Edit</span>
+                                    </button>
+                                    <asp:Button ID="btnConfirmPublish" runat="server" Text="Confirm &amp; Publish Event" CssClass="btn-action-primary" OnClick="btnPublishEvent_Click" />
                                 </div>
                             </div>
-
-                            <!-- 4. Sponsor Associations Summary -->
-                            <div class="summary-section-box">
-                                <div class="summary-section-title">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
-                                    <span>Partner &amp; Sponsor Associations</span>
-                                </div>
-                                <div id="sumSponsors" class="summary-chips-wrap"></div>
-                            </div>
-
-                            <!-- Policy Confirmation Callout -->
-                            <div class="summary-confirm-callout">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                                <div class="summary-confirm-text">
-                                    <h4>Final Confirmation Required</h4>
-                                    <p>By publishing, you confirm that all specifications, reservation limits, and eligibility cohorts comply with university event policies.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Step 5 Footer Navigation -->
-                        <div class="step-nav-footer">
-                            <button type="button" class="btn-action-secondary" onclick="switchStep(4)">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <polyline points="15 18 9 12 15 6"></polyline>
-                                </svg>
-                                <span>Sponsors</span>
-                            </button>
-                            <asp:Button ID="btnConfirmPublish" runat="server" Text="Confirm & Publish Event" CssClass="btn-action-primary" OnClick="btnPublishEvent_Click" />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+    </div>
+
+    <!-- Proper Schedule & Registration Policy Validation Modal -->
+    <div id="modalDateValidation" class="modal-overlay" style="display:none;" onclick="handleDateModalBackdrop(event)">
+        <div class="modal-box-validation" onclick="event.stopPropagation()">
+            <div class="modal-header-warning">
+                <div class="modal-title-wrap">
+                    <div class="modal-icon-badge">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="modal-title" id="valModalTitle">Registration Window Requirement</h3>
+                        <p class="modal-subtitle">University Event Policy Directive</p>
+                    </div>
+                </div>
+                <button type="button" class="modal-close-btn" onclick="closeDateValidationModal(false)" aria-label="Close dialog">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="validation-message-alert" id="valModalMessage">
+                    Registration opening date and registration deadline must both conclude <strong>before the event date itself</strong>.
+                </div>
+
+                <div class="date-comparison-card">
+                    <div class="date-comparison-row">
+                        <div class="date-comp-col">
+                            <span class="date-comp-label">Event Date (MM/DD/YYYY)</span>
+                            <span class="date-comp-value" id="valModalEventDate">-</span>
+                        </div>
+                    </div>
+                    <div class="date-comparison-grid">
+                        <div class="date-comp-col">
+                            <span class="date-comp-label">Registration Opens (MM/DD/YYYY)</span>
+                            <span class="date-comp-value" id="valModalRegOpen">-</span>
+                        </div>
+                        <div class="date-comp-col">
+                            <span class="date-comp-label">Registration Deadline (MM/DD/YYYY)</span>
+                            <span class="date-comp-value" id="valModalRegEnd">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="policy-note-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span><strong>Policy Mandate:</strong> The registration window must conclude strictly before the event date (MM/DD/YYYY) so administrative rosters and QR passes can be finalized.</span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-action-primary" onclick="closeDateValidationModal(true)">
+                    <span>Adjust Schedule</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Stepper Tab Controller Script -->
@@ -681,7 +770,78 @@
             }
         }
 
+        // ─── Modal State & Validation Helpers ───
+        var pendingFocusFieldId = null;
+
+        function showDateValidationModal(title, message, fieldToFocus) {
+            var modal = document.getElementById('modalDateValidation');
+            var titleEl = document.getElementById('valModalTitle');
+            var msgEl = document.getElementById('valModalMessage');
+            var evDateEl = document.getElementById('valModalEventDate');
+            var regOpenEl = document.getElementById('valModalRegOpen');
+            var regEndEl = document.getElementById('valModalRegEnd');
+
+            var evDate = document.getElementById('<%= txtEventDate.ClientID %>');
+            var regStart = document.getElementById('<%= txtRegStart.ClientID %>');
+            var regEnd = document.getElementById('<%= txtRegEnd.ClientID %>');
+
+            if (titleEl && title) titleEl.innerText = title;
+            if (msgEl && message) msgEl.innerHTML = message;
+
+            if (evDateEl) {
+                evDateEl.innerText = (evDate && evDate.value) ? formatDateOnlyPretty(evDate.value) : 'Not Specified';
+            }
+            if (regOpenEl) {
+                regOpenEl.innerText = (regStart && regStart.value) ? formatDateTimePretty(regStart.value) : 'Not Specified';
+            }
+            if (regEndEl) {
+                regEndEl.innerText = (regEnd && regEnd.value) ? formatDateTimePretty(regEnd.value) : 'Not Specified';
+            }
+
+            pendingFocusFieldId = fieldToFocus || null;
+
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeDateValidationModal(shouldFocus) {
+            var modal = document.getElementById('modalDateValidation');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            // Always return to Step 2 so coordinator can correct the schedule
+            switchStep(2);
+            if (shouldFocus && pendingFocusFieldId) {
+                var el = document.getElementById(pendingFocusFieldId);
+                if (el) {
+                    setTimeout(function () {
+                        el.focus();
+                        if (typeof el.select === 'function') el.select();
+                    }, 50);
+                }
+            }
+        }
+
+        function handleDateModalBackdrop(event) {
+            if (event.target && event.target.id === 'modalDateValidation') {
+                closeDateValidationModal(false);
+            }
+        }
+
         function validateAndGoStep(targetStep) {
+            targetStep = parseInt(targetStep);
+            var hf = document.getElementById('<%= hfActiveStep.ClientID %>');
+            var currentStep = (hf && hf.value) ? parseInt(hf.value) : 1;
+
+            // Navigating backwards is always allowed
+            if (targetStep <= currentStep) {
+                switchStep(targetStep);
+                return;
+            }
+
             // Validate Step 1 if moving forward past Step 1
             if (targetStep > 1) {
                 var title = document.getElementById('<%= txtTitle.ClientID %>');
@@ -689,26 +849,35 @@
                 var cap = document.getElementById('<%= txtMaxCapacity.ClientID %>');
 
                 if (title && !title.value.trim()) {
-                    alert('Please enter the Event Title before proceeding.');
+                    showDateValidationModal(
+                        'Event Title Required',
+                        'Please enter the <strong>Event Title</strong> before proceeding to subsequent steps.',
+                        '<%= txtTitle.ClientID %>'
+                    );
                     switchStep(1);
-                    title.focus();
                     return;
                 }
                 if (venue && !venue.value.trim()) {
-                    alert('Please specify the Venue / Room Location.');
+                    showDateValidationModal(
+                        'Venue Location Required',
+                        'Please specify the <strong>Venue / Room Location</strong>.',
+                        '<%= txtVenueLocation.ClientID %>'
+                    );
                     switchStep(1);
-                    venue.focus();
                     return;
                 }
                 if (cap && (!cap.value.trim() || parseInt(cap.value) <= 0)) {
-                    alert('Please enter a valid seat capacity greater than 0.');
+                    showDateValidationModal(
+                        'Invalid Seat Capacity',
+                        'Please enter a valid seat capacity greater than 0.',
+                        '<%= txtMaxCapacity.ClientID %>'
+                    );
                     switchStep(1);
-                    cap.focus();
                     return;
                 }
             }
 
-            // Validate Step 2 if moving forward past Step 2
+            // Validate Step 2 if moving forward past Step 2 (e.g. Target Audience button or tabs 3, 4, 5)
             if (targetStep > 2) {
                 var evDate = document.getElementById('<%= txtEventDate.ClientID %>');
                 var startTime = document.getElementById('<%= txtEventStartTime.ClientID %>');
@@ -717,56 +886,79 @@
                 var regEnd = document.getElementById('<%= txtRegEnd.ClientID %>');
 
                 if (evDate && !evDate.value) {
-                    alert('Please select the Event Date.');
-                    switchStep(2);
-                    evDate.focus();
+                    showDateValidationModal(
+                        'Event Date Required',
+                        'Please specify the designated <strong>Event Date (Format: MM/DD/YYYY)</strong> before proceeding to Target Audience.',
+                        '<%= txtEventDate.ClientID %>'
+                    );
                     return;
                 }
                 if (startTime && !startTime.value) {
-                    alert('Please specify the Event Start Time.');
-                    switchStep(2);
-                    startTime.focus();
+                    showDateValidationModal(
+                        'Kickoff Time Required',
+                        'Please specify the <strong>Event Kickoff Time</strong> (e.g. 09:00 AM).',
+                        '<%= txtEventStartTime.ClientID %>'
+                    );
                     return;
                 }
                 if (endTime && !endTime.value) {
-                    alert('Please specify the Event End Time.');
-                    switchStep(2);
-                    endTime.focus();
+                    showDateValidationModal(
+                        'End Time Required',
+                        'Please specify the <strong>Event End Time</strong> (e.g. 05:00 PM).',
+                        '<%= txtEventEndTime.ClientID %>'
+                    );
                     return;
                 }
                 if (startTime && endTime && startTime.value >= endTime.value) {
-                    alert('Event Start Time must be earlier than Event End Time.');
-                    switchStep(2);
-                    startTime.focus();
+                    showDateValidationModal(
+                        'Invalid Time Window',
+                        'Event Kickoff Time must be <strong>earlier</strong> than Event End Time.',
+                        '<%= txtEventStartTime.ClientID %>'
+                    );
                     return;
                 }
                 if (regStart && !regStart.value) {
-                    alert('Please specify the Registration Opening Date & Time.');
-                    switchStep(2);
-                    regStart.focus();
+                    showDateValidationModal(
+                        'Registration Open Date Required',
+                        'Please specify the <strong>Registration Opening Date &amp; Time (Format: MM/DD/YYYY)</strong>.',
+                        '<%= txtRegStart.ClientID %>'
+                    );
                     return;
                 }
                 if (regEnd && !regEnd.value) {
-                    alert('Please specify the Registration Deadline.');
-                    switchStep(2);
-                    regEnd.focus();
+                    showDateValidationModal(
+                        'Registration Deadline Required',
+                        'Please specify the <strong>Registration Deadline (Format: MM/DD/YYYY)</strong>.',
+                        '<%= txtRegEnd.ClientID %>'
+                    );
                     return;
                 }
-                if (regStart && regEnd && new Date(regStart.value) >= new Date(regEnd.value)) {
-                    alert('Registration Open Date & Time must be earlier than Registration Deadline.');
-                    switchStep(2);
-                    regStart.focus();
+
+                // Check 1: Registration Open must be strictly earlier than Registration Deadline
+                var dtRegStart = new Date(regStart.value);
+                var dtRegEnd = new Date(regEnd.value);
+                if (dtRegStart >= dtRegEnd) {
+                    showDateValidationModal(
+                        'Invalid Registration Window',
+                        'Registration Opening Date &amp; Time must be <strong>earlier</strong> than the Registration Deadline.',
+                        '<%= txtRegStart.ClientID %>'
+                    );
                     return;
                 }
-                if (regEnd && evDate && startTime) {
-                    var kickoff = new Date(evDate.value + 'T' + startTime.value);
-                    var deadline = new Date(regEnd.value);
-                    if (deadline > kickoff) {
-                        alert('Registration Deadline must conclude before or at the Event Kickoff time.');
-                        switchStep(2);
-                        regEnd.focus();
-                        return;
-                    }
+
+                // Check 2: Core directive - Registration Open Date and Registration Closing Date must BOTH be strictly before the Event Date itself!
+                var evDateStr = evDate.value; // "YYYY-MM-DD"
+                var regStartDateStr = regStart.value.split('T')[0]; // "YYYY-MM-DD"
+                var regEndDateStr = regEnd.value.split('T')[0]; // "YYYY-MM-DD"
+
+                if (regStartDateStr >= evDateStr || regEndDateStr >= evDateStr) {
+                    var formattedEvDate = formatDateOnlyPretty(evDateStr);
+                    showDateValidationModal(
+                        'Registration Must Precede Event Date',
+                        'The <strong>Registration Opening Date</strong> and <strong>Registration Deadline</strong> must both conclude <strong>before the Event Date itself (' + formattedEvDate + ')</strong>.<br><br>Please adjust your registration dates so they occur strictly prior to the scheduled event date.',
+                        '<%= txtRegEnd.ClientID %>'
+                    );
+                    return;
                 }
             }
 
@@ -861,11 +1053,19 @@
 
         function formatDateOnlyPretty(dateStr) {
             if (!dateStr) return '-';
-            var parts = dateStr.split('-');
+            var clean = (typeof dateStr === 'string') ? dateStr.split('T')[0] : '';
+            var parts = clean.split('-');
             if (parts.length === 3) {
-                var mm = ('0' + parts[1]).slice(-2);
-                var dd = ('0' + parts[2]).slice(-2);
+                var mm = ('0' + parseInt(parts[1], 10)).slice(-2);
+                var dd = ('0' + parseInt(parts[2], 10)).slice(-2);
                 var yyyy = parts[0];
+                return mm + '/' + dd + '/' + yyyy;
+            }
+            var d = new Date(dateStr);
+            if (!isNaN(d.getTime())) {
+                var mm = ('0' + (d.getMonth() + 1)).slice(-2);
+                var dd = ('0' + d.getDate()).slice(-2);
+                var yyyy = d.getFullYear();
                 return mm + '/' + dd + '/' + yyyy;
             }
             return dateStr;
@@ -952,7 +1152,7 @@
 
             if (sumTitle) sumTitle.innerText = (title && title.value.trim()) ? title.value.trim() : 'Untitled Event';
             if (sumVenue) sumVenue.innerText = (venue && venue.value.trim()) ? venue.value.trim() : 'Location TBD';
-            if (sumCapacity) sumCapacity.innerText = (cap && cap.value) ? (cap.value + ' Seats allocated') : '150 Seats allocated';
+            if (sumCapacity) sumCapacity.innerText = (cap && cap.value) ? (cap.value + ' seats') : '150 seats';
             if (sumDesc) sumDesc.innerText = (desc && desc.value.trim()) ? desc.value.trim() : '(No description provided)';
 
             // Schedule & Timeline

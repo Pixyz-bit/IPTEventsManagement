@@ -56,7 +56,7 @@
                     <span class="meta-chip">
                         <span>Capacity: <strong><asp:Literal ID="litEventCapacitySummary" runat="server" Text="0 / 0"></asp:Literal></strong></span>
                     </span>
-                    <asp:Literal ID="litEventStatusBadge" runat="server"></asp:Literal>
+                    <asp:Literal ID="litEventStatusBadge" runat="server" Visible="false"></asp:Literal>
                 </div>
             </div>
 
@@ -70,14 +70,14 @@
 
         <!-- Sub-Module Pipeline Progression Tabs -->
         <div class="pipeline-tabs-wrapper">
-            <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="pipeline-tab-item">
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventDetails.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
                 </svg>
-                <span>1. Event Matrix</span>
+                <span>1. Event Details</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventPreRegistered.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item active">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -111,141 +111,93 @@
         </div>
     </div>
 
-    <!-- Live KPI Metrics Cards -->
-    <div class="kpi-row">
-        <div class="kpi-card">
-            <div class="kpi-details">
-                <span class="kpi-label">Pre-Registered Roster</span>
-                <span class="kpi-value"><asp:Literal ID="litKpiPreRegistered" runat="server" Text="0"></asp:Literal></span>
-                <span class="kpi-subtext">Expected gate check-in cohort</span>
-            </div>
-            <div class="kpi-icon-badge kpi-icon-blue">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <polyline points="17 11 19 13 23 9"></polyline>
-                </svg>
-            </div>
-        </div>
+    <!-- Hidden State Holders for Legacy References -->
+    <asp:PlaceHolder ID="phKpiHidden" runat="server" Visible="false">
+        <asp:Literal ID="litKpiPreRegistered" runat="server" Text="0"></asp:Literal>
+        <asp:Literal ID="litKpiAvailablePool" runat="server" Text="0"></asp:Literal>
+        <asp:Literal ID="litKpiCancelled" runat="server" Text="0"></asp:Literal>
+        <asp:Literal ID="litKpiOccupancyRate" runat="server" Text="0%"></asp:Literal>
+    </asp:PlaceHolder>
 
-        <div class="kpi-card">
-            <div class="kpi-details">
-                <span class="kpi-label">Available Capacity Pool</span>
-                <span class="kpi-value"><asp:Literal ID="litKpiAvailablePool" runat="server" Text="0"></asp:Literal></span>
-                <span class="kpi-subtext">Remaining seats for event</span>
-            </div>
-            <div class="kpi-icon-badge kpi-icon-emerald">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+    <!-- White Surface Container -->
+    <div class="white-container roster-white-container">
+        <div class="unified-roster-card">
+        
+        <!-- 1. Dual-Sheet Tabbed Navigation (At the Top) -->
+        <div class="sheet-tabs-container">
+            <button type="button" id="tabPreRegistered" class="sheet-tab-btn active" onclick="switchSheet('preregistered')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
                 </svg>
-            </div>
-        </div>
+                <span>Pre-Registered Students</span>
+                <span class="sheet-badge sheet-badge-primary">
+                    <asp:Literal ID="litTabCountPreReg" runat="server" Text="0"></asp:Literal>
+                </span>
+            </button>
 
-        <div class="kpi-card">
-            <div class="kpi-details">
-                <span class="kpi-label">Revoked / Cancelled</span>
-                <span class="kpi-value"><asp:Literal ID="litKpiCancelled" runat="server" Text="0"></asp:Literal></span>
-                <span class="kpi-subtext">Slots released back to pool</span>
-            </div>
-            <div class="kpi-icon-badge kpi-icon-red">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button type="button" id="tabCancelled" class="sheet-tab-btn" onclick="switchSheet('cancelled')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="15" y1="9" x2="9" y2="15"></line>
                     <line x1="9" y1="9" x2="15" y2="15"></line>
                 </svg>
-            </div>
+                <span>Cancelled</span>
+                <span class="sheet-badge sheet-badge-cancelled">
+                    <asp:Literal ID="litTabCountCancelled" runat="server" Text="0"></asp:Literal>
+                </span>
+            </button>
         </div>
 
-        <div class="kpi-card">
-            <div class="kpi-details">
-                <span class="kpi-label">Occupancy Rate</span>
-                <span class="kpi-value"><asp:Literal ID="litKpiOccupancyRate" runat="server" Text="0%"></asp:Literal></span>
-                <span class="kpi-subtext">Of maximum venue quota</span>
-            </div>
-            <div class="kpi-icon-badge kpi-icon-amber">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                </svg>
-            </div>
-        </div>
-    </div>
-
-    <!-- Search & Multi-Filter Controls Card -->
-    <div class="controls-card">
-        <div class="controls-row">
-            <!-- Universal Search (Student ID and Full Name) -->
-            <div class="search-box-wrapper">
-                <svg class="search-box-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" id="txtUniversalSearch" class="search-input" placeholder="Search by Student ID or Full Name..." onkeyup="filterRosterTable()" />
-            </div>
-
-            <!-- Multi-Filter Dropdowns -->
-            <div class="filter-dropdowns-group">
-                <asp:DropDownList ID="ddlFilterDepartment" runat="server" CssClass="filter-select" onchange="filterRosterTable()">
-                    <asp:ListItem Value="" Text="All Departments"></asp:ListItem>
-                </asp:DropDownList>
-
-                <asp:DropDownList ID="ddlFilterCourse" runat="server" CssClass="filter-select" onchange="filterRosterTable()">
-                    <asp:ListItem Value="" Text="All Courses"></asp:ListItem>
-                </asp:DropDownList>
-
-                <asp:DropDownList ID="ddlFilterYearLevel" runat="server" CssClass="filter-select" onchange="filterRosterTable()">
-                    <asp:ListItem Value="" Text="All Year Levels"></asp:ListItem>
-                    <asp:ListItem Value="1" Text="1st Year"></asp:ListItem>
-                    <asp:ListItem Value="2" Text="2nd Year"></asp:ListItem>
-                    <asp:ListItem Value="3" Text="3rd Year"></asp:ListItem>
-                    <asp:ListItem Value="4" Text="4th Year"></asp:ListItem>
-                </asp:DropDownList>
-
-                <button type="button" class="btn-clear-filters" onclick="resetFilters()">Reset Filters</button>
-            </div>
-
-            <!-- Export Actions -->
-            <div class="actions-group">
-                <asp:LinkButton ID="btnExportCsv" runat="server" CssClass="btn-export-csv" OnClick="btnExportCsv_Click">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
+        <!-- 2. Search & Multi-Filter Controls Bar (Immediately Beneath Tabs) -->
+        <div class="unified-controls-bar">
+            <div class="controls-row">
+                <!-- Universal Search (Student ID and Full Name) -->
+                <div class="search-box-wrapper">
+                    <svg class="search-box-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-                    <span>Export Roster (CSV)</span>
-                </asp:LinkButton>
+                    <input type="text" id="txtUniversalSearch" class="search-input" placeholder="Search by Student ID or Full Name..." onkeyup="filterRosterTable()" />
+                </div>
+
+                <!-- Multi-Filter Dropdowns -->
+                <div class="filter-dropdowns-group">
+                    <asp:DropDownList ID="ddlFilterDepartment" runat="server" CssClass="filter-select" onchange="filterRosterTable()">
+                        <asp:ListItem Value="" Text="All Departments"></asp:ListItem>
+                    </asp:DropDownList>
+
+                    <asp:DropDownList ID="ddlFilterCourse" runat="server" CssClass="filter-select" onchange="filterRosterTable()">
+                        <asp:ListItem Value="" Text="All Courses"></asp:ListItem>
+                    </asp:DropDownList>
+
+                    <asp:DropDownList ID="ddlFilterYearLevel" runat="server" CssClass="filter-select" onchange="filterRosterTable()">
+                        <asp:ListItem Value="" Text="All Year Levels"></asp:ListItem>
+                        <asp:ListItem Value="1" Text="1st Year"></asp:ListItem>
+                        <asp:ListItem Value="2" Text="2nd Year"></asp:ListItem>
+                        <asp:ListItem Value="3" Text="3rd Year"></asp:ListItem>
+                        <asp:ListItem Value="4" Text="4th Year"></asp:ListItem>
+                    </asp:DropDownList>
+
+                    <button type="button" class="btn-clear-filters" onclick="resetFilters()">Reset Filters</button>
+                </div>
+
+                <!-- Export Actions -->
+                <div class="actions-group">
+                    <asp:LinkButton ID="btnExportCsv" runat="server" CssClass="btn-export-csv" OnClick="btnExportCsv_Click">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span>Export Roster (CSV)</span>
+                    </asp:LinkButton>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Dual-Sheet Tabbed Navigation -->
-    <div class="sheet-tabs-container">
-        <button type="button" id="tabPreRegistered" class="sheet-tab-btn active" onclick="switchSheet('preregistered')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-            </svg>
-            <span>Pre-Registered Sheet (Expected Attendees)</span>
-            <span class="sheet-badge sheet-badge-primary">
-                <asp:Literal ID="litTabCountPreReg" runat="server" Text="0"></asp:Literal>
-            </span>
-        </button>
-
-        <button type="button" id="tabCancelled" class="sheet-tab-btn" onclick="switchSheet('cancelled')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="15" y1="9" x2="9" y2="15"></line>
-                <line x1="9" y1="9" x2="15" y2="15"></line>
-            </svg>
-            <span>Cancelled Sheet (Revoked Passes)</span>
-            <span class="sheet-badge sheet-badge-cancelled">
-                <asp:Literal ID="litTabCountCancelled" runat="server" Text="0"></asp:Literal>
-            </span>
-        </button>
-    </div>
-
-    <!-- Sheet 1: Pre-Registered Roster Table -->
-    <div id="sheetPreRegistered" class="roster-card">
+        <!-- 3. Sheet 1: Pre-Registered Roster Table -->
+        <div id="sheetPreRegistered" class="unified-sheet-content">
         <div class="table-responsive">
             <table class="roster-table" id="tblPreRegistered">
                 <thead>
@@ -319,7 +271,7 @@
     </div>
 
     <!-- Sheet 2: Cancelled Roster Table -->
-    <div id="sheetCancelled" class="roster-card" style="display:none;">
+    <div id="sheetCancelled" class="unified-sheet-content" style="display:none;">
         <div class="table-responsive">
             <table class="roster-table" id="tblCancelled">
                 <thead>
@@ -391,6 +343,7 @@
                 <div style="font-size:0.825rem;">There are no revoked registration entries recorded for this event.</div>
             </asp:Panel>
         </div>
+    </div>
     </div>
 
 </div>

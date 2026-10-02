@@ -25,7 +25,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.DropDownList ddlOutcomeStatus;
         protected global::System.Web.UI.WebControls.Button btnFilterApply;
         protected global::System.Web.UI.WebControls.Button btnResetFilter;
-        protected global::System.Web.UI.WebControls.Literal litShowingCount;
         protected global::System.Web.UI.WebControls.Repeater rptEventHistory;
         protected global::System.Web.UI.WebControls.Panel pnlNoRecords;
         protected global::System.Web.UI.WebControls.Button btnResetZeroState;

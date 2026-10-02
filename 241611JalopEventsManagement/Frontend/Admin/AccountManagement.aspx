@@ -8,7 +8,7 @@
     <!-- Page Header & Top Operations -->
     <div class="account-header-row">
         <div class="account-title-block">
-            <h2>Account Management &amp; Access Governance</h2>
+            <h2>Account Management</h2>
             <p>Institutional identity console, Role-Based Access Control (RBAC), and security credential lifecycle.</p>
         </div>
         <div style="display:none;">
@@ -28,50 +28,29 @@
         <div class="account-kpi-card">
             <div class="kpi-card-header">
                 <span class="kpi-card-title">Total System Accounts</span>
-                <svg class="kpi-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
             </div>
             <div class="kpi-card-value"><asp:Literal ID="litTotalAccounts" runat="server" Text="0" /></div>
-            <div class="kpi-card-caption">All registered institutional user entities</div>
         </div>
 
         <div class="account-kpi-card">
             <div class="kpi-card-header">
                 <span class="kpi-card-title">Active Administrators</span>
-                <svg class="kpi-card-icon" style="color:var(--accent-amber);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
             </div>
             <div class="kpi-card-value" style="color:var(--accent-amber);"><asp:Literal ID="litActiveAdmins" runat="server" Text="0" /></div>
-            <div class="kpi-card-caption">Authorized governance and event coordinators</div>
         </div>
 
         <div class="account-kpi-card">
             <div class="kpi-card-header">
-                <span class="kpi-card-title">Enrolled Students</span>
-                <svg class="kpi-card-icon" style="color:var(--brand-primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
+                <span class="kpi-card-title">Active Students</span>
             </div>
             <div class="kpi-card-value" style="color:var(--brand-primary);"><asp:Literal ID="litTotalStudents" runat="server" Text="0" /></div>
-            <div class="kpi-card-caption">Active student event portal accounts</div>
         </div>
 
         <div class="account-kpi-card">
             <div class="kpi-card-header">
-                <span class="kpi-card-title">Locked / Inactive</span>
-                <svg class="kpi-card-icon" style="color:var(--accent-rose);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
+                <span class="kpi-card-title">Inactive Accounts</span>
             </div>
             <div class="kpi-card-value" style="color:var(--accent-rose);"><asp:Literal ID="litLockedAccounts" runat="server" Text="0" /></div>
-            <div class="kpi-card-caption">Deactivated or security suspended access</div>
         </div>
     </div>
 

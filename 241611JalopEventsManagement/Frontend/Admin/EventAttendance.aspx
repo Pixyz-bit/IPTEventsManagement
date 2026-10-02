@@ -40,11 +40,9 @@
                         <span>Venue: <strong><asp:Literal ID="litEventVenue" runat="server" Text="--"></asp:Literal></strong></span>
                     </span>
                     <span class="meta-chip">
-                        <span>Verified Present: <strong><asp:Literal ID="litCheckedInCount" runat="server" Text="0"></asp:Literal></strong></span>
+                        <span>Capacity: <strong><asp:Literal ID="litCapacitySummary" runat="server" Text="0 / 0"></asp:Literal></strong></span>
                     </span>
-                    <span class="meta-chip">
-                        <span>Event Quota: <strong><asp:Literal ID="litCapacitySummary" runat="server" Text="0 / 0"></asp:Literal></strong></span>
-                    </span>
+                    <asp:Literal ID="litCheckedInCount" runat="server" Visible="false"></asp:Literal>
                 </div>
             </div>
 
@@ -58,14 +56,14 @@
 
         <!-- Sub-Module Pipeline Progression Tabs -->
         <div class="pipeline-tabs-wrapper">
-            <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="pipeline-tab-item">
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventDetails.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                     <line x1="16" y1="2" x2="16" y2="6"></line>
                     <line x1="8" y1="2" x2="8" y2="6"></line>
                     <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
-                <span>1. Event Matrix</span>
+                <span>1. Event Details</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventPreRegistered.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -100,83 +98,50 @@
     </div>
 
     <!-- Attendance Summary Metrics -->
-    <div class="metrics-row">
-        <div class="metric-card">
-            <div class="metric-details">
-                <span class="metric-label">Total Verified Checked-In</span>
-                <span class="metric-value"><asp:Literal ID="litKpiTotalCheckedIn" runat="server" Text="0"></asp:Literal></span>
-                <span class="metric-subtext">Authenticated physical door entries</span>
-            </div>
-            <div class="metric-icon-badge metric-icon-emerald">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 6L9 17l-5-5"></path>
-                </svg>
-            </div>
-        </div>
+    <!-- Hidden State Holders for Legacy References -->
+    <asp:PlaceHolder ID="phAttendanceMetricsHidden" runat="server" Visible="false">
+        <asp:Literal ID="litKpiTotalCheckedIn" runat="server" Text="0"></asp:Literal>
+        <asp:Literal ID="litKpiTurnoutRate" runat="server" Text="0.0%"></asp:Literal>
+        <asp:Literal ID="litKpiLatestCheckIn" runat="server" Text="--:--:--"></asp:Literal>
+    </asp:PlaceHolder>
 
-        <div class="metric-card">
-            <div class="metric-details">
-                <span class="metric-label">Actual Turnout Rate</span>
-                <span class="metric-value"><asp:Literal ID="litKpiTurnoutRate" runat="server" Text="0.0%"></asp:Literal></span>
-                <span class="metric-subtext">Present vs. pre-registered pool</span>
-            </div>
-            <div class="metric-icon-badge metric-icon-blue">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                </svg>
-            </div>
-        </div>
-
-        <div class="metric-card">
-            <div class="metric-details">
-                <span class="metric-label">Latest Check-In</span>
-                <span class="metric-value" style="font-size:1.35rem;"><asp:Literal ID="litKpiLatestCheckIn" runat="server" Text="--:--:--"></asp:Literal></span>
-                <span class="metric-subtext">Most recent gate transaction</span>
-            </div>
-            <div class="metric-icon-badge metric-icon-amber">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-            </div>
-        </div>
-    </div>
-
-    <!-- Search & Filter Controls -->
-    <div class="controls-card">
-        <div class="controls-row">
-            <div class="search-box-wrapper">
-                <svg class="search-box-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <asp:TextBox ID="txtSearch" runat="server" CssClass="search-input" Placeholder="Search by Student ID, Attendee Name, or Ticket Ref..." onkeyup="filterAttendanceTable()" />
-            </div>
-
-            <div class="filter-dropdowns-group">
-                <asp:DropDownList ID="ddlDepartmentFilter" runat="server" CssClass="filter-select" onchange="filterAttendanceTable()">
-                    <asp:ListItem Text="All Departments" Value="" />
-                </asp:DropDownList>
-
-                <asp:DropDownList ID="ddlProgramFilter" runat="server" CssClass="filter-select" onchange="filterAttendanceTable()">
-                    <asp:ListItem Text="All Courses" Value="" />
-                </asp:DropDownList>
-
-                <asp:LinkButton ID="btnExportCsv" runat="server" CssClass="btn-export-csv" OnClick="btnExportCsv_Click">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
+    <!-- White Surface Container -->
+    <div class="white-container attendance-white-container">
+        <!-- Connected Search, Filters, and Live Attendance Roster Container -->
+        <div class="unified-attendance-card">
+        <!-- Controls Bar -->
+        <div class="unified-controls-bar">
+            <div class="controls-row">
+                <div class="search-box-wrapper">
+                    <svg class="search-box-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-                    <span>Export Attendance CSV</span>
-                </asp:LinkButton>
+                    <asp:TextBox ID="txtSearch" runat="server" CssClass="search-input" Placeholder="Search by Student ID, Attendee Name, or Ticket Ref..." onkeyup="filterAttendanceTable()" />
+                </div>
+
+                <div class="filter-dropdowns-group">
+                    <asp:DropDownList ID="ddlDepartmentFilter" runat="server" CssClass="filter-select" onchange="filterAttendanceTable()">
+                        <asp:ListItem Text="All Departments" Value="" />
+                    </asp:DropDownList>
+
+                    <asp:DropDownList ID="ddlProgramFilter" runat="server" CssClass="filter-select" onchange="filterAttendanceTable()">
+                        <asp:ListItem Text="All Courses" Value="" />
+                    </asp:DropDownList>
+
+                    <asp:LinkButton ID="btnExportCsv" runat="server" CssClass="btn-export-csv" OnClick="btnExportCsv_Click">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span>Export Attendance CSV</span>
+                    </asp:LinkButton>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Dedicated Table: Live Checked-In Attendance Roster (Photo 4) -->
-    <div class="table-card">
+        <!-- Live Checked-In Attendance Header Bar -->
         <div class="table-header-bar">
             <div class="table-header-title">
                 <span class="live-indicator-dot"></span>
@@ -187,6 +152,7 @@
             </div>
         </div>
 
+        <!-- Table Viewport -->
         <div style="overflow-x:auto;">
             <table class="attendance-table" id="tblAttendance">
                 <thead>
@@ -255,6 +221,7 @@
                 <div style="font-size:0.825rem;">Gate entries confirmed by administrative inspection will appear chronologically here.</div>
             </asp:Panel>
         </div>
+    </div>
     </div>
 
 </div>

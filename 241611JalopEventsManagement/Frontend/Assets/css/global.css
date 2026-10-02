@@ -459,6 +459,22 @@ body {
     font-weight: 700;
 }
 
+.event-id-tag {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background-color: #f1f5f9;
+    color: #475569;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+
 /* ─── 5. Reusable Action Buttons ─── */
 .btn-action-primary {
     display: inline-flex;

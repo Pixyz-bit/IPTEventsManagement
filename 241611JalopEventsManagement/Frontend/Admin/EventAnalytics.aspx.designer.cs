@@ -14,6 +14,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litEventTitle;
         protected global::System.Web.UI.WebControls.Literal litEventDate;
         protected global::System.Web.UI.WebControls.Literal litEventVenue;
+        protected global::System.Web.UI.WebControls.Literal litEventCapacitySummary;
         protected global::System.Web.UI.WebControls.Literal litEventStatusBadge;
         protected global::System.Web.UI.WebControls.DropDownList ddlEvents;
 
@@ -22,10 +23,17 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         // Tab 1: Before - Pre-Event Analytics
         protected global::System.Web.UI.WebControls.Literal litBeforePreRegistered;
+        protected global::System.Web.UI.WebControls.Literal litBeforeTotalReserved;
+        protected global::System.Web.UI.WebControls.Literal litBeforeCancelled;
+        protected global::System.Web.UI.WebControls.Literal litBeforeAttritionRate;
         protected global::System.Web.UI.WebControls.Literal litBeforeSaturationRate;
+        protected global::System.Web.UI.WebControls.Literal litBeforeSaturationStatus;
         protected global::System.Web.UI.WebControls.Literal litBeforeAvailableQuota;
         protected global::System.Web.UI.WebControls.Literal litBeforeDaysUntilLaunch;
+        protected global::System.Web.UI.WebControls.Literal litSaturationPercentDisplay;
+        protected global::System.Web.UI.WebControls.Literal litCapacityMaxDisplay;
         protected global::System.Web.UI.WebControls.Literal litSaturationProgressBar;
+        protected global::System.Web.UI.WebControls.Literal litDemographicsJson;
         protected global::System.Web.UI.WebControls.Repeater rptBranchDistribution;
         protected global::System.Web.UI.WebControls.Repeater rptDepartmentDistribution;
         protected global::System.Web.UI.WebControls.Repeater rptCourseDistribution;

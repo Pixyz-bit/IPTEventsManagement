@@ -160,10 +160,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 return;
             }
 
-            if (!DateTime.TryParse(txtEventDate.Text, out DateTime eventDate))
+            string[] dateFormats = new[] { "MM/dd/yyyy", "yyyy-MM-dd", "M/d/yyyy", "MM-dd-yyyy", "yyyy/MM/dd" };
+            if (!DateTime.TryParseExact(txtEventDate.Text.Trim(), dateFormats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime eventDate)
+                && !DateTime.TryParse(txtEventDate.Text.Trim(), out eventDate))
             {
                 hfActiveStep.Value = "2";
-                ShowError("Please select a valid Event Date.");
+                ShowError("Please select a valid Event Date (Format: MM/DD/YYYY).");
                 txtEventDate.Focus();
                 return;
             }
@@ -195,18 +197,21 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             DateTime eventStart = eventDate.Date.Add(startTime);
             DateTime eventEnd = eventDate.Date.Add(endTime);
 
-            if (!DateTime.TryParse(txtRegStart.Text, out DateTime regStart))
+            string[] dtFormats = new[] { "MM/dd/yyyy HH:mm", "MM/dd/yyyy hh:mm tt", "yyyy-MM-ddTHH:mm", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-dd HH:mm" };
+            if (!DateTime.TryParseExact(txtRegStart.Text.Trim(), dtFormats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime regStart)
+                && !DateTime.TryParse(txtRegStart.Text.Trim(), out regStart))
             {
                 hfActiveStep.Value = "2";
-                ShowError("Please provide a valid Registration Opening Date & Time.");
+                ShowError("Please provide a valid Registration Opening Date & Time (Format: MM/DD/YYYY HH:MM).");
                 txtRegStart.Focus();
                 return;
             }
 
-            if (!DateTime.TryParse(txtRegEnd.Text, out DateTime regEnd))
+            if (!DateTime.TryParseExact(txtRegEnd.Text.Trim(), dtFormats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime regEnd)
+                && !DateTime.TryParse(txtRegEnd.Text.Trim(), out regEnd))
             {
                 hfActiveStep.Value = "2";
-                ShowError("Please provide a valid Registration Deadline.");
+                ShowError("Please provide a valid Registration Deadline (Format: MM/DD/YYYY HH:MM).");
                 txtRegEnd.Focus();
                 return;
             }
@@ -219,10 +224,17 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 return;
             }
 
-            if (regEnd > eventStart)
+            if (regStart.Date >= eventDate.Date)
             {
                 hfActiveStep.Value = "2";
-                ShowError("Registration Deadline must conclude before or at the Event Kickoff time.");
+                ShowError($"Registration Open Date ({regStart:MM/dd/yyyy}) must be strictly before the Event Date ({eventDate:MM/dd/yyyy}).");
+                return;
+            }
+
+            if (regEnd.Date >= eventDate.Date)
+            {
+                hfActiveStep.Value = "2";
+                ShowError($"Registration Deadline ({regEnd:MM/dd/yyyy}) must be strictly before the Event Date ({eventDate:MM/dd/yyyy}).");
                 return;
             }
 

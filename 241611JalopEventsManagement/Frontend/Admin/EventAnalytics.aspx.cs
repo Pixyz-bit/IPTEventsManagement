@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using _241611JalopEventsManagement.Backend.Helpers;
@@ -99,6 +100,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             string status = evt != null ? evt.Status ?? "Upcoming" : "Upcoming";
             litEventStatusBadge.Text = $"<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">&#9679; {Server.HtmlEncode(status.ToUpper())}</span>";
+            litEventCapacitySummary.Text = evt != null ? $"{evt.CurrentRegistrations} / {maxCapacity}" : $"0 / {maxCapacity}";
 
             // Active (non-cancelled) registrations
             var activeCohort = registrations.Where(r => !string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase)).ToList();
@@ -110,19 +112,55 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             // PHASE 1: PRE-EVENT ANALYTICS (BEFORE)
             // =========================================================================
             int preRegisteredCount = activeCohort.Count;
-            litBeforePreRegistered.Text = preRegisteredCount.ToString();
+            litBeforePreRegistered.Text = preRegisteredCount.ToString("N0");
 
-            double saturationRate = maxCapacity > 0 ? ((double)preRegisteredCount / maxCapacity) * 100.0 : 0.0;
+            // Total Reserved: CurrentRegistrations from EventsTable, or active registrations count if event entity is null
+            int totalReservedCount = evt != null ? evt.CurrentRegistrations : preRegisteredCount;
+            litBeforeTotalReserved.Text = totalReservedCount.ToString("N0");
+
+            // Cancelled count (Photo 5: count of registrations where Status = 'Cancelled' before EventStart)
+            int cancelledCount = cancelledCohort.Count;
+            litBeforeCancelled.Text = cancelledCount.ToString("N0");
+
+            // Pre-event Attrition Rate %
+            int totalLoggedTransactions = preRegisteredCount + cancelledCount;
+            double attritionRate = totalLoggedTransactions > 0 ? ((double)cancelledCount / totalLoggedTransactions) * 100.0 : 0.0;
+            litBeforeAttritionRate.Text = $"{attritionRate:F1}%";
+
+            // Capacity Saturation Meter (Photo 4: CurrentRegistrations / MaxCapacity from EventsTable)
+            double saturationRate = maxCapacity > 0 ? ((double)totalReservedCount / maxCapacity) * 100.0 : 0.0;
             litBeforeSaturationRate.Text = $"{saturationRate:F1}%";
+            litSaturationPercentDisplay.Text = $"{saturationRate:F1}%";
+            litCapacityMaxDisplay.Text = maxCapacity.ToString("N0");
 
-            int availableQuota = Math.Max(0, maxCapacity - preRegisteredCount);
-            litBeforeAvailableQuota.Text = availableQuota.ToString();
+            // Saturation Status Indicator
+            string saturationStatusText;
+            if (saturationRate < 70.0)
+            {
+                saturationStatusText = "Undersubscribed (<70%)";
+            }
+            else if (saturationRate <= 95.0)
+            {
+                saturationStatusText = "At Healthy Capacity (70-95%)";
+            }
+            else if (saturationRate <= 100.0)
+            {
+                saturationStatusText = "At Maximum Capacity (100%)";
+            }
+            else
+            {
+                saturationStatusText = "Needs Larger Venue (>100%)";
+            }
+            litBeforeSaturationStatus.Text = saturationStatusText;
+
+            int availableQuota = Math.Max(0, maxCapacity - totalReservedCount);
+            litBeforeAvailableQuota.Text = availableQuota.ToString("N0");
 
             int daysUntilLaunch = Math.Max(0, (evtStart.Date - DateTime.Now.Date).Days);
             litBeforeDaysUntilLaunch.Text = $"{daysUntilLaunch} Days";
 
             // Saturation Progress Bar (with dynamic threshold styling)
-            string barColor = saturationRate >= 90.0 ? "var(--accent-emerald)" : (saturationRate >= 60.0 ? "var(--brand-primary)" : "var(--accent-amber)");
+            string barColor = saturationRate >= 95.0 ? "var(--accent-rose)" : (saturationRate >= 70.0 ? "var(--accent-emerald)" : "var(--brand-primary)");
             litSaturationProgressBar.Text = $"<div class=\"progress-fill\" style=\"width:{Math.Min(100.0, saturationRate):F1}%; background-color:{barColor};\"></div>";
 
             // Demographic Breakdown: Campus Branch
@@ -153,8 +191,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             rptDepartmentDistribution.DataSource = deptGroups;
             rptDepartmentDistribution.DataBind();
 
-            // Demographic Breakdown: Course / Program
-            var courseGroups = activeCohort
+            // Demographic Breakdown: Course / Program (Top 5 + Others for clean pie slice display)
+            var allCourses = activeCohort
                 .GroupBy(r => string.IsNullOrWhiteSpace(r.StudentProgram) ? "General Studies" : r.StudentProgram)
                 .Select(g => new DemographicBarItem
                 {
@@ -163,8 +201,20 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     Percentage = preRegisteredCount > 0 ? ((double)g.Count() / preRegisteredCount) * 100.0 : 0.0
                 })
                 .OrderByDescending(x => x.Count)
-                .Take(5)
                 .ToList();
+
+            List<DemographicBarItem> courseGroups;
+            if (allCourses.Count > 6)
+            {
+                courseGroups = allCourses.Take(5).ToList();
+                int othersCount = allCourses.Skip(5).Sum(x => x.Count);
+                double othersPct = preRegisteredCount > 0 ? ((double)othersCount / preRegisteredCount) * 100.0 : 0.0;
+                courseGroups.Add(new DemographicBarItem { Label = "Other Programs", Count = othersCount, Percentage = othersPct });
+            }
+            else
+            {
+                courseGroups = allCourses;
+            }
             rptCourseDistribution.DataSource = courseGroups;
             rptCourseDistribution.DataBind();
 
@@ -181,6 +231,17 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 .ToList();
             rptYearDistribution.DataSource = yearGroups;
             rptYearDistribution.DataBind();
+
+            // Serialize Demographics cohorts for interactive Pie Chart
+            var serializer = new JavaScriptSerializer();
+            var demographicsPayload = new
+            {
+                department = deptGroups.Select(d => new { label = d.Label, count = d.Count, percentage = Math.Round(d.Percentage, 1) }),
+                course = courseGroups.Select(c => new { label = c.Label, count = c.Count, percentage = Math.Round(c.Percentage, 1) }),
+                branch = branchGroups.Select(b => new { label = b.Label, count = b.Count, percentage = Math.Round(b.Percentage, 1) }),
+                year = yearGroups.Select(y => new { label = y.Label, count = y.Count, percentage = Math.Round(y.Percentage, 1) })
+            };
+            litDemographicsJson.Text = serializer.Serialize(demographicsPayload);
 
             // Registration Velocity Over Time
             var velocityList = new List<VelocityItem>();

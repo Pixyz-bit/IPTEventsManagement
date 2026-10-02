@@ -43,8 +43,7 @@
                         <span>Venue: <strong><asp:Literal ID="litEventVenue" runat="server" Text="--"></asp:Literal></strong></span>
                     </span>
                     <span class="meta-chip">
-                        <span class="live-indicator-dot"></span>
-                        <span style="color:#10b981; font-weight:600;">GATE OPERATIONS ACTIVE</span>
+                        <span>Capacity: <strong><asp:Literal ID="litEventCapacitySummary" runat="server" Text="0 / 0"></asp:Literal></strong></span>
                     </span>
                 </div>
             </div>
@@ -59,14 +58,14 @@
 
         <!-- Sub-Module Pipeline Tabs -->
         <div class="pipeline-tabs-wrapper">
-            <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="pipeline-tab-item">
+            <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventDetails.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
                 </svg>
-                <span>1. Event Matrix</span>
+                <span>1. Event Details</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventPreRegistered.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -100,66 +99,13 @@
         </div>
     </div>
 
-    <!-- Live Gate Headcount Metrics Bar -->
-    <div class="gate-metrics-bar">
-        <div class="gate-stat-card">
-            <div class="gate-stat-info">
-                <span class="gate-stat-label">Verified Check-Ins</span>
-                <span class="gate-stat-value" id="kpiVerifiedCount"><asp:Literal ID="litCheckedInCount" runat="server" Text="0"></asp:Literal></span>
-                <span class="gate-stat-subtext">Students admitted through gate</span>
-            </div>
-            <div style="color:#10b981;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-            </div>
-        </div>
-
-        <div class="gate-stat-card">
-            <div class="gate-stat-info">
-                <span class="gate-stat-label">Expected Attendees</span>
-                <span class="gate-stat-value" id="kpiExpectedCount"><asp:Literal ID="litExpectedCount" runat="server" Text="0"></asp:Literal></span>
-                <span class="gate-stat-subtext">Remaining in pre-registered roster</span>
-            </div>
-            <div style="color:#38bdf8;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                </svg>
-            </div>
-        </div>
-
-        <div class="gate-stat-card">
-            <div class="gate-stat-info">
-                <span class="gate-stat-label">Gate Turnout Rate</span>
-                <span class="gate-stat-value" id="kpiTurnoutRate"><asp:Literal ID="litTurnoutRate" runat="server" Text="0.0%"></asp:Literal></span>
-                <span class="gate-stat-subtext">Of total registered quota</span>
-            </div>
-            <div style="color:#fbbf24;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                </svg>
-            </div>
-        </div>
-
-        <div class="gate-stat-card">
-            <div class="gate-stat-info">
-                <span class="gate-stat-label">Inspecting Gate Admin</span>
-                <span class="gate-stat-value" style="font-size:1.1rem; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:200px;">
-                    <asp:Literal ID="litCurrentAdminEmail" runat="server" Text="admin@gmail.com"></asp:Literal>
-                </span>
-                <span class="gate-stat-subtext">Authenticated terminal credentials</span>
-            </div>
-            <div style="color:#818cf8;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-            </div>
-        </div>
-    </div>
+    <!-- Hidden State Holders for Legacy References -->
+    <asp:PlaceHolder ID="phGateMetricsHidden" runat="server" Visible="false">
+        <span id="kpiVerifiedCount"><asp:Literal ID="litCheckedInCount" runat="server" Text="0"></asp:Literal></span>
+        <span id="kpiExpectedCount"><asp:Literal ID="litExpectedCount" runat="server" Text="0"></asp:Literal></span>
+        <span id="kpiTurnoutRate"><asp:Literal ID="litTurnoutRate" runat="server" Text="0.0%"></asp:Literal></span>
+        <asp:Literal ID="litCurrentAdminEmail" runat="server" Text="admin@gmail.com"></asp:Literal>
+    </asp:PlaceHolder>
 
     <!-- Main Operational Terminal Grid: Viewfinder vs Staging Area -->
     <div class="terminal-grid">
@@ -177,9 +123,17 @@
                         </svg>
                         <span>Optical QR Viewfinder Stream</span>
                     </div>
-                    <select id="cameraDeviceSelect" class="camera-select-control" onchange="changeCameraDevice()">
-                        <option value="">Detecting Cameras...</option>
-                    </select>
+                    <div style="display:flex; align-items:center; gap:0.85rem;">
+                        <select id="cameraDeviceSelect" class="camera-select-control" onchange="changeCameraDevice()">
+                            <option value="">Detecting Cameras...</option>
+                        </select>
+                        <div class="camera-toggle-group">
+                            <span id="lblCameraToggleText" class="camera-toggle-title">Scanner ON</span>
+                            <button type="button" id="btnToggleCamera" class="btn-scanner-toggle is-active" onclick="toggleCameraPower()" role="switch" aria-checked="true" title="Toggle Optical Scanner Stream">
+                                <span class="toggle-thumb"></span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="camera-viewport-wrapper" id="cameraViewportContainer">
@@ -195,6 +149,17 @@
                             <div class="hud-corner hud-br"></div>
                         </div>
                         <div class="scanner-hud-hint">Align attendee digital or physical QR pass in viewfinder</div>
+                    </div>
+
+                    <!-- Suspended/Paused Overlay when toggled OFF -->
+                    <div id="scannerOffOverlay" class="scanner-paused-overlay" style="display:none;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2">
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                            <path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                        <span style="font-weight:700; font-size:0.95rem; color:#f1f5f9; margin-top:0.5rem;">Optical Scanner Suspended</span>
+                        <span style="font-size:0.75rem; color:#94a3b8;">Scanner stream is toggled OFF. Click "Scanner OFF" to resume or use manual lookup.</span>
                     </div>
 
                     <!-- Visual Flash Confirmation Overlay -->
@@ -474,8 +439,61 @@
 
     function changeCameraDevice() {
         const selectedId = document.getElementById('cameraDeviceSelect').value;
-        if (selectedId) {
+        if (selectedId && isCameraActive) {
             startCamera(selectedId);
+        }
+    }
+
+    let isCameraActive = true;
+
+    function toggleCameraPower() {
+        const btn = document.getElementById('btnToggleCamera');
+        const lbl = document.getElementById('lblCameraToggleText');
+        const overlay = document.getElementById('scannerOffOverlay');
+        const hud = document.querySelector('.scanner-hud-overlay');
+
+        if (isCameraActive) {
+            // Turn OFF
+            if (html5QrScanner) {
+                html5QrScanner.stop().then(() => {
+                    isCameraActive = false;
+                    btn.className = 'btn-scanner-toggle is-inactive';
+                    lbl.innerText = 'Scanner OFF';
+                    if (overlay) overlay.style.display = 'flex';
+                    if (hud) hud.style.display = 'none';
+                }).catch(err => {
+                    console.warn("Camera stop error:", err);
+                    isCameraActive = false;
+                    btn.className = 'btn-scanner-toggle is-inactive';
+                    lbl.innerText = 'Scanner OFF';
+                    if (overlay) overlay.style.display = 'flex';
+                    if (hud) hud.style.display = 'none';
+                });
+            } else {
+                isCameraActive = false;
+                btn.className = 'btn-scanner-toggle is-inactive';
+                lbl.innerText = 'Scanner OFF';
+                if (overlay) overlay.style.display = 'flex';
+                if (hud) hud.style.display = 'none';
+            }
+        } else {
+            // Turn ON
+            const selectedId = document.getElementById('cameraDeviceSelect').value;
+            if (selectedId) {
+                mountCamera(selectedId);
+                isCameraActive = true;
+                btn.className = 'btn-scanner-toggle is-active';
+                lbl.innerText = 'Scanner ON';
+                if (overlay) overlay.style.display = 'none';
+                if (hud) hud.style.display = 'block';
+            } else {
+                initScanner();
+                isCameraActive = true;
+                btn.className = 'btn-scanner-toggle is-active';
+                lbl.innerText = 'Scanner ON';
+                if (overlay) overlay.style.display = 'none';
+                if (hud) hud.style.display = 'block';
+            }
         }
     }
 

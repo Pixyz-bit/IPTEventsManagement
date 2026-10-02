@@ -86,7 +86,7 @@
             background-color: #ffffff;
             border: 1px solid var(--border-medium);
             color: var(--text-heading);
-            padding: 0.5rem 0.85rem;
+            padding: 0.5rem 2.25rem 0.5rem 0.85rem;
             border-radius: var(--radius-md);
             font-size: 0.85rem;
             font-family: inherit;
@@ -95,8 +95,16 @@
             min-width: 250px;
             box-shadow: var(--shadow-subtle);
             transition: all 0.15s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 14px 14px;
         }
 
+        .event-dropdown-select:hover,
         .event-dropdown-select:focus {
             border-color: var(--brand-primary);
             box-shadow: 0 0 0 3px var(--brand-focus-ring);
@@ -351,6 +359,50 @@
             color: var(--text-heading);
         }
 
+        /* White Container Surface (Prevents Floating Appearance) */
+        .white-container,
+        .roster-white-container {
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .white-container .unified-roster-card,
+        .roster-white-container .unified-roster-card {
+            box-shadow: none;
+            border: 1px solid var(--border-subtle);
+        }
+
+        /* Unified Connected Roster Card (Image 2 Architecture) */
+        .unified-roster-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .unified-roster-card .sheet-tabs-container {
+            padding: 0.5rem 1.25rem 0 1.25rem;
+            margin-bottom: 0;
+            background-color: #fafbfc;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .unified-controls-bar {
+            padding: 1rem 1.25rem;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .unified-sheet-content {
+            background-color: #ffffff;
+        }
+
         /* Dual-Sheet Tabbed Roster Navigation */
         .sheet-tabs-container {
             display: flex;
@@ -544,55 +596,63 @@
             font-weight: 500;
         }
 
-        /* Status Pills (Present, Reserved, Cancelled) */
+        /* Status Text (Present, Reserved, Cancelled) - Containerless with Colored Fonts */
         .status-pill {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 0.25rem 0.65rem;
-            border-radius: var(--radius-full);
+            gap: 0.45rem;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 0 !important;
+            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
             white-space: nowrap;
             text-transform: uppercase;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.04em;
         }
 
         .status-pill-reserved {
-            background-color: var(--brand-subtle);
-            color: var(--brand-primary);
-            border: 1px solid var(--brand-border);
+            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
+            color: #2563eb !important; /* Royal Blue */
         }
 
         .status-pill-present {
-            background-color: var(--accent-emerald-subtle);
-            color: var(--accent-emerald-text);
-            border: 1px solid var(--accent-emerald-border);
+            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
+            color: #059669 !important; /* Emerald Green */
         }
 
         .status-pill-cancelled {
-            background-color: var(--accent-rose-subtle);
-            color: var(--accent-rose-text);
-            border: 1px solid var(--accent-rose-border);
+            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
+            color: #e11d48 !important; /* Crimson / Rose Red */
         }
 
         .status-dot {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             display: inline-block;
+            flex-shrink: 0;
         }
 
         .status-dot-present {
-            background-color: var(--accent-emerald);
+            background-color: #059669 !important;
         }
 
         .status-dot-reserved {
-            background-color: var(--brand-primary);
+            background-color: #2563eb !important;
         }
 
         .status-dot-cancelled {
-            background-color: var(--accent-rose);
+            background-color: #e11d48 !important;
         }
 
         /* View > Link (Underlined text link per Student Directory reference) */

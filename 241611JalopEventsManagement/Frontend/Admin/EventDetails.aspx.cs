@@ -85,8 +85,39 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         {
             if (!IsPostBack)
             {
+                PopulateEventDropdown();
                 LoadEventData();
                 UpdateModeUI();
+            }
+        }
+
+        private void PopulateEventDropdown()
+        {
+            var events = _eventRepository.GetAllEvents().OrderByDescending(ev => ev.EventStart).ToList();
+            ddlEvents.Items.Clear();
+
+            foreach (var evt in events)
+            {
+                string dateText = evt.EventStart.ToString("MM/dd/yyyy");
+                string itemText = $"{evt.Title} ({dateText})";
+                ddlEvents.Items.Add(new ListItem(itemText, evt.EventId.ToString()));
+            }
+
+            if (ddlEvents.Items.FindByValue(CurrentEventId.ToString()) != null)
+            {
+                ddlEvents.SelectedValue = CurrentEventId.ToString();
+            }
+            else if (ddlEvents.Items.Count > 0)
+            {
+                ddlEvents.SelectedIndex = 0;
+            }
+        }
+
+        protected void ddlEvents_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(ddlEvents.SelectedValue, out int selectedId))
+            {
+                Response.Redirect($"~/Frontend/Admin/EventDetails.aspx?eventId={selectedId}");
             }
         }
 
@@ -118,9 +149,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 pnlDemoNotice.Visible = false;
             }
 
-            // Header Elements
+            // Header Elements & Chips
             litHeaderEventId.Text = $"EVENT #{ev.EventId}";
             litHeaderTitle.Text = Server.HtmlEncode(ev.Title);
+            litEventDate.Text = ev.EventStart.ToString("MM/dd/yyyy");
+            litEventVenue.Text = Server.HtmlEncode(ev.VenueLocation);
+            litEventCapacitySummary.Text = $"{ev.CurrentRegistrations} / {ev.MaxCapacity}";
             string matrixStatus = EvaluateMatrixStatus(ev);
             litHeaderStatus.Text = matrixStatus;
             litSidebarStatus.Text = matrixStatus;

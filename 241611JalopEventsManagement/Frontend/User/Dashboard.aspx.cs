@@ -33,6 +33,17 @@ namespace _241611JalopEventsManagement.Frontend.User
             public string Status { get; set; }
             public bool IsRegistrationOpen { get; set; }
             public string FormattedSchedule { get; set; }
+            public string FormattedDate => EventStart != DateTime.MinValue ? EventStart.ToString("MM/dd/yyyy") : "TBA";
+            public string FormattedTime
+            {
+                get
+                {
+                    if (EventStart == DateTime.MinValue) return "TBA";
+                    if (EventEnd == DateTime.MinValue || EventEnd == EventStart)
+                        return EventStart.ToString("h:mm tt");
+                    return $"{EventStart:h:mm tt} to {EventEnd:h:mm tt}";
+                }
+            }
             public string SponsorBadgesHtml { get; set; }
             public List<string> Sponsors { get; set; } = new List<string>();
             public int RemainingCapacity => Math.Max(0, MaxCapacity - CurrentRegistrations);
@@ -317,6 +328,27 @@ namespace _241611JalopEventsManagement.Frontend.User
         {
             var list = new List<EventCardViewModel>
             {
+                new EventCardViewModel
+                {
+                    EventId = 100,
+                    Title = "Hackathon Event 2026",
+                    Description = "Annual university-wide hackathon, software engineering challenge, and developer showcase.",
+                    VenueLocation = "Covered Court",
+                    MaxCapacity = 200,
+                    CurrentRegistrations = 150,
+                    EventStart = new DateTime(2026, 3, 1, 8, 0, 0),
+                    EventEnd = new DateTime(2026, 3, 1, 10, 0, 0),
+                    RegStart = DateTime.Today.AddDays(-5),
+                    RegEnd = DateTime.Today.AddDays(10),
+                    Status = "Upcoming",
+                    IsRegistrationOpen = true,
+                    FormattedSchedule = "March 1, 2026 | 8:00 AM - 10:00 AM",
+                    CategoryTag = "Hackathon",
+                    CategoryFilterKey = "hackathon",
+                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg"),
+                    Sponsors = new List<string> { "QCU Alumni Association", "AWS Educate", "DOST-NCR" },
+                    SponsorBadgesHtml = "<span class=\"sponsor-pill\">QCU Alumni Association</span> <span class=\"sponsor-pill\">AWS Educate</span> <span class=\"sponsor-pill\">DOST-NCR</span>"
+                },
                 new EventCardViewModel
                 {
                     EventId = 101,

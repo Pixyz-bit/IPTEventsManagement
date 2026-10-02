@@ -79,7 +79,7 @@ namespace _241611JalopEventsManagement.Frontend.User
             }
 
             if (litContextEventTitle != null) litContextEventTitle.Text = Server.HtmlEncode(ev.Title);
-            if (litContextEventDate != null) litContextEventDate.Text = ev.EventStart != DateTime.MinValue ? ev.EventStart.ToString("MMM dd, yyyy") : "TBD";
+            if (litContextEventDate != null) litContextEventDate.Text = ev.EventStart != DateTime.MinValue ? ev.EventStart.ToString("MM/dd/yyyy") : "TBD";
             if (litContextVenue != null) litContextVenue.Text = Server.HtmlEncode(ev.VenueLocation ?? "Campus Grounds");
             if (litContextSchedule != null) litContextSchedule.Text = $"{ev.EventStart:hh:mm tt} - {ev.EventEnd:hh:mm tt}";
 
@@ -99,7 +99,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 ? Server.HtmlEncode(ev.Description)
                 : "No extended description provided for this campus event.";
             litStep1Venue.Text = Server.HtmlEncode(ev.VenueLocation ?? "Central Campus Auditorium");
-            litStep1Date.Text = ev.EventStart != DateTime.MinValue ? ev.EventStart.ToString("dddd, MMMM dd, yyyy") : "TBD";
+            litStep1Date.Text = ev.EventStart != DateTime.MinValue ? ev.EventStart.ToString("MM/dd/yyyy") : "TBD";
             litStep1Schedule.Text = $"{ev.EventStart:hh:mm tt} - {ev.EventEnd:hh:mm tt}";
             litStep1Capacity.Text = $"{ev.MaxCapacity:N0} Seats";
             litStep1Spots.Text = remaining > 0 ? $"{remaining:N0} Seats Available" : "Fully Booked (0 Seats)";

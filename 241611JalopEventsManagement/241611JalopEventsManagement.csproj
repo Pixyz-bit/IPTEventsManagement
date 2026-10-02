@@ -91,12 +91,14 @@
     <Content Include="Frontend\User\Dashboard.aspx" />
     <Content Include="Frontend\User\EventRegistration.aspx" />
     <Content Include="Frontend\User\EventPass.aspx" />
+    <Content Include="Frontend\User\StudentProfile.aspx" />
     <Content Include="Frontend\Assets\css\global.css" />
     <Content Include="Frontend\Assets\css\auth\access-denied.css" />
     <Content Include="Frontend\Assets\css\auth\login.css" />
     <Content Include="Frontend\Assets\css\user\event-registration.css" />
     <Content Include="Frontend\Assets\css\user\event-pass.css" />
     <Content Include="Frontend\Assets\css\user\dashboard.css" />
+    <Content Include="Frontend\Assets\css\user\student-profile.css" />
     <Content Include="Frontend\Assets\css\admin\test-connection.css" />
     <Content Include="Frontend\Assets\css\admin\attendance-scanner.css" />
     <Content Include="Frontend\Assets\css\admin\event-preregistered.css" />
@@ -255,6 +257,13 @@
     </Compile>
     <Compile Include="Frontend\User\EventPass.aspx.designer.cs">
       <DependentUpon>EventPass.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend\User\StudentProfile.aspx.cs">
+      <DependentUpon>StudentProfile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Frontend\User\StudentProfile.aspx.designer.cs">
+      <DependentUpon>StudentProfile.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

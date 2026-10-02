@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/dashboard.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/dashboard.css?v=" + DateTime.Now.Ticks) %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 </head>
 <body>
@@ -37,7 +37,7 @@
                 </a>
 
                 <div class="nav-user-bar">
-                    <div class="nav-user-badge">
+                    <a href="<%= ResolveUrl("~/Frontend/User/StudentProfile.aspx") %>" class="nav-user-badge" title="Manage Account Settings" style="text-decoration:none; color:inherit; cursor:pointer;">
                         <div class="nav-user-avatar">
                             <asp:Literal ID="litAvatarInitials" runat="server" Text="MJ" />
                         </div>
@@ -45,7 +45,7 @@
                             <span class="nav-user-name"><asp:Literal ID="litStudentName" runat="server" Text="Martin Jalop" /></span>
                             <span class="nav-user-id">[ <asp:Literal ID="litStudentId" runat="server" Text="24-1611" /> ]</span>
                         </div>
-                    </div>
+                    </a>
 
                     <asp:LinkButton ID="btnSignOut" runat="server" CssClass="nav-btn-signout" OnClick="btnSignOut_Click" ToolTip="Sign Out" CausesValidation="false">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -190,21 +190,24 @@
                                 <div class="event-card" data-category='<%# Eval("CategoryFilterKey") %>' id='card-<%# Eval("EventId") %>'>
                                     <!-- Top Half: Promotional Banner Area -->
                                     <div class="event-promo-banner" style='background-image: url("<%# Eval("BannerImageUrl") %>");'>
-                                        <!-- Status Indicator (Top-Right) -->
+                                        <!-- Status Indicator (Top-Left of Banner) -->
                                         <%# Eval("RegStatusBadgeHtml") %>
 
-                                        <!-- Capacity Indicator (Bottom-Right) -->
+                                        <!-- Capacity Indicator (Bottom-Right of Banner) -->
                                         <div class="card-capacity-pill">
-                                            <%# Eval("CurrentRegistrations") %>/<%# Eval("MaxCapacity") %> SEATS
+                                            <svg class="capacity-pill-icon" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                            </svg>
+                                            <span><%# Eval("CurrentRegistrations") %>/<%# Eval("MaxCapacity") %> SEATS</span>
                                         </div>
                                     </div>
 
-                                    <!-- Bottom Half: Event Details (Photo 2) -->
+                                    <!-- Bottom Half: Event Details -->
                                     <div class="event-card-body">
                                         <!-- Event Title: Prominent, Crisp, High-Contrast -->
                                         <h3 class="card-event-name"><%# Eval("Title") %></h3>
                                         
-                                        <!-- Location Line with Pin Icon (Photo 2) -->
+                                        <!-- Location Line with Pin Icon -->
                                         <div class="card-meta-line">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -213,28 +216,34 @@
                                             <span><%# Eval("VenueLocation") %></span>
                                         </div>
 
-                                        <!-- Schedule Line with Clock Icon (Photo 2) -->
+                                        <!-- Date Line with Calendar Icon -->
+                                        <div class="card-meta-line">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                                            </svg>
+                                            <span><%# Eval("FormattedDate") %></span>
+                                        </div>
+
+                                        <!-- Time Line with Clock Icon -->
                                         <div class="card-meta-line">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                                 <circle cx="12" cy="12" r="10"></circle>
                                                 <polyline points="12 6 12 12 16 14"></polyline>
                                             </svg>
-                                            <span><%# Eval("FormattedSchedule") %></span>
+                                            <span><%# Eval("FormattedTime") %></span>
                                         </div>
 
-                                        <!-- Sponsors Row (Photo 2) -->
+                                        <!-- Sponsors Row -->
                                         <div class="card-sponsors-row">
                                             <span class="sponsor-label">SPONSORS:</span>
                                             <%# Eval("SponsorBadgesHtml") %>
                                         </div>
 
-                                        <!-- Subtle Divider Line (Photo 2) -->
-                                        <hr class="card-divider" />
-
-                                        <!-- Bottom Action Row (Photo 2) -->
+                                        <!-- Bottom Action Row -->
                                         <div class="card-action-row">
-                                            <%# Eval("RegSpotsHintHtml") %>
-
                                             <a href='<%# ResolveUrl("~/Frontend/User/EventRegistration.aspx?eventId=" + Eval("EventId")) %>' class="btn-view-details">
                                                 <span>VIEW DETAILS &rarr;</span>
                                             </a>

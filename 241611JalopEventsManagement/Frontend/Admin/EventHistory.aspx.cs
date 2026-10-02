@@ -110,8 +110,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             litTotalCancelled.Text = totalCancelled.ToString();
             litTurnoutAvg.Text = $"{avgTurnout:F1}%";
 
-            litShowingCount.Text = totalArchived.ToString();
-
             if (events != null && events.Count > 0)
             {
                 rptEventHistory.DataSource = events;
@@ -249,7 +247,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 string code = $"#EVT-{ev.EventId:D4}";
                 string dept = ev.TargetDepartment ?? "All Colleges";
                 string prog = ev.TargetProgram ?? "All Programs";
-                string date = ev.EventEnd.ToString("yyyy-MM-dd HH:mm");
+                string date = ev.EventEnd.ToString("MM/dd/yyyy HH:mm");
                 string cancelReason = ev.CancellationReason ?? string.Empty;
 
                 sb.AppendLine($"\"{ev.EventId}\",\"{code}\",\"{EscapeCsv(ev.Title)}\",\"{EscapeCsv(dept)}\",\"{EscapeCsv(prog)}\",\"{EscapeCsv(ev.VenueLocation)}\",\"{date}\",\"{ev.AcademicYear}\",\"{ev.Semester}\",\"{ev.EffectiveOutcomeStatus}\",\"{ev.MaxCapacity}\",\"{ev.PreRegisteredCount}\",\"{ev.AttendedCount}\",\"{ev.TurnoutPercentage:F1}%\",\"{EscapeCsv(cancelReason)}\"");

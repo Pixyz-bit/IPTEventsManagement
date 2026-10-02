@@ -112,12 +112,14 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 litEventTitle.Text = Server.HtmlEncode(evt.Title);
                 litEventDate.Text = evt.EventStart != DateTime.MinValue ? evt.EventStart.ToString("MM/dd/yyyy") : "MM/dd/yyyy";
                 litEventVenue.Text = Server.HtmlEncode(evt.VenueLocation ?? "Campus Grounds");
+                litEventCapacitySummary.Text = $"{evt.CurrentRegistrations} / {evt.MaxCapacity}";
             }
             else
             {
                 litEventTitle.Text = "Demonstration Event Gate Terminal";
                 litEventDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
                 litEventVenue.Text = "Main Academic Amphitheater";
+                litEventCapacitySummary.Text = "0 / 0";
             }
 
             litCurrentAdminEmail.Text = Server.HtmlEncode(CurrentAdminEmail);
