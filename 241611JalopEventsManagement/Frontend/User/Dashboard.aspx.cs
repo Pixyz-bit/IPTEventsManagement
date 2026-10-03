@@ -67,9 +67,14 @@ namespace _241611JalopEventsManagement.Frontend.User
             public string EventDateFormatted { get; set; }
             public string Status { get; set; }
             public bool CanCancel { get; set; }
+            public string EventPhotoPath { get; set; }
+            public string BannerImageUrl { get; set; }
         }
 
         #endregion
+
+        public string HeroSlidesJson { get; set; } = "[]";
+        public string EventsCatalogJson { get; set; } = "[]";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -78,6 +83,13 @@ namespace _241611JalopEventsManagement.Frontend.User
                 SetupStudentContext();
                 LoadEventsCatalog();
                 LoadStudentRegistrations();
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(HeroSlidesJson) || HeroSlidesJson == "[]")
+                {
+                    LoadEventsCatalog();
+                }
             }
         }
 
@@ -203,6 +215,117 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             rptEventCards.DataSource = viewModels;
             rptEventCards.DataBind();
+
+            var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+            EventsCatalogJson = serializer.Serialize(viewModels.Select(vm => new
+            {
+                id = vm.EventId,
+                title = vm.Title,
+                description = vm.Description,
+                venue = vm.VenueLocation,
+                capacity = vm.MaxCapacity,
+                currentRegistrations = vm.CurrentRegistrations,
+                remainingSpots = vm.RemainingCapacity,
+                schedule = vm.FormattedSchedule,
+                dateFormatted = vm.FormattedDate,
+                timeFormatted = vm.FormattedTime,
+                isRegistrationOpen = vm.IsRegistrationOpen,
+                status = vm.Status,
+                regStatusBadgeHtml = vm.RegStatusBadgeHtml,
+                bannerUrl = vm.BannerImageUrl,
+                category = vm.CategoryTag,
+                sponsors = vm.Sponsors ?? new List<string>(),
+                regStart = vm.RegStart.ToString("MM/dd/yyyy hh:mm tt"),
+                regEnd = vm.RegEnd.ToString("MM/dd/yyyy hh:mm tt"),
+                eventStart = vm.EventStart.ToString("MM/dd/yyyy hh:mm tt"),
+                eventEnd = vm.EventEnd.ToString("MM/dd/yyyy hh:mm tt"),
+                regUrl = ResolveUrl($"~/Frontend/User/EventRegistration.aspx?eventId={vm.EventId}")
+            }));
+
+            PopulateHeroShowcase(viewModels);
+        }
+
+        private void PopulateHeroShowcase(List<EventCardViewModel> viewModels)
+        {
+            var slidesList = new List<object>();
+
+            if (viewModels != null)
+            {
+                foreach (var vm in viewModels.Take(4))
+                {
+                    string desc = !string.IsNullOrWhiteSpace(vm.Description)
+                        ? (vm.Description.Length > 180 ? vm.Description.Substring(0, 177) + "..." : vm.Description)
+                        : "Discover event agenda, network with university partners, and confirm your attendance pass.";
+
+                    slidesList.Add(new
+                    {
+                        id = vm.EventId,
+                        title = vm.Title,
+                        description = desc,
+                        venue = vm.VenueLocation,
+                        date = vm.EventStart.ToString("MMM dd, yyyy"),
+                        time = $"{vm.EventStart:hh:mm tt} - {vm.EventEnd:hh:mm tt}",
+                        bgUrl = vm.BannerImageUrl,
+                        regUrl = ResolveUrl($"~/Frontend/User/EventRegistration.aspx?eventId={vm.EventId}")
+                    });
+                }
+            }
+
+            if (slidesList.Count < 4)
+            {
+                var fallbackPresets = new[]
+                {
+                    new {
+                        id = 0,
+                        title = "Cybersecurity and AI Convention",
+                        description = "Flagship cybersecurity conference and defensive hacking competition with enterprise penetration testers and student defense drills.",
+                        venue = "QCU Auditorium",
+                        date = "Oct 09, 2026",
+                        time = "10:00 AM - 03:00 PM",
+                        bgUrl = ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg"),
+                        regUrl = "#events-section"
+                    },
+                    new {
+                        id = 0,
+                        title = "AI & Cloud Architecture Workshop",
+                        description = "Deep dive into serverless cloud infrastructure, neural network deployments, and production container scaling with industry guest speakers.",
+                        venue = "QCU San Bartolome - Tech Lab 3",
+                        date = "Oct 09, 2026",
+                        time = "10:00 AM - 03:00 PM",
+                        bgUrl = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg"),
+                        regUrl = "#events-section"
+                    },
+                    new {
+                        id = 0,
+                        title = "Tech & Innovation Summit",
+                        description = "Annual academic showcase bringing together university students and tech sponsors for student capstone demonstrations and keynote sessions.",
+                        venue = "QCU Main Campus - University Hall",
+                        date = "Nov 12, 2026",
+                        time = "08:30 AM - 04:30 PM",
+                        bgUrl = ResolveUrl("~/Frontend/Assets/campus-clean.jpg"),
+                        regUrl = "#events-section"
+                    },
+                    new {
+                        id = 0,
+                        title = "Grand Org Fair & SportsFest",
+                        description = "Campus-wide student organization recruitment showcase, intramural games opening ceremony, and student creative exhibition.",
+                        venue = "QCU Main Plaza & Athletic Grounds",
+                        date = "Nov 20, 2026",
+                        time = "08:00 AM - 06:00 PM",
+                        bgUrl = ResolveUrl("~/Frontend/Assets/QCU Background.png"),
+                        regUrl = "#events-section"
+                    }
+                };
+
+                foreach (var fb in fallbackPresets)
+                {
+                    if (slidesList.Count >= 4) break;
+                    slidesList.Add(fb);
+                }
+            }
+
+            var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+            HeroSlidesJson = serializer.Serialize(slidesList);
         }
 
         private EventCardViewModel MapEventToCardViewModel(EventModel ev)
@@ -247,6 +370,12 @@ namespace _241611JalopEventsManagement.Frontend.User
                 catTag = "TechSummit";
                 filterKey = "seminar";
                 bannerImg = ResolveUrl("~/Frontend/Assets/campus-clean.jpg");
+            }
+
+            // Prioritize explicitly uploaded promotional banner if available
+            if (!string.IsNullOrWhiteSpace(ev.EventPhotoPath))
+            {
+                bannerImg = ResolveUrl(ev.EventPhotoPath);
             }
 
             var vm = new EventCardViewModel
@@ -467,7 +596,9 @@ namespace _241611JalopEventsManagement.Frontend.User
                             VenueLocation = reg.VenueLocation,
                             EventDateFormatted = reg.EventStart.HasValue ? reg.EventStart.Value.ToString("MM/dd/yyyy • hh:mm tt") : "TBA",
                             Status = reg.Status,
-                            CanCancel = reg.CanCancel
+                            CanCancel = reg.CanCancel,
+                            EventPhotoPath = reg.EventPhotoPath,
+                            BannerImageUrl = !string.IsNullOrWhiteSpace(reg.EventPhotoPath) ? ResolveUrl(reg.EventPhotoPath) : ResolveUrl("~/Frontend/Assets/campus-clean.jpg")
                         });
                     }
                 }
@@ -488,7 +619,8 @@ namespace _241611JalopEventsManagement.Frontend.User
                     VenueLocation = "QCU San Bartolome - Tech Lab 3",
                     EventDateFormatted = $"{DateTime.Today.AddDays(7):MMM dd, yyyy} • 10:00 AM",
                     Status = "NoShow", // Default status per business rule #1
-                    CanCancel = true // Active registration period
+                    CanCancel = true, // Active registration period
+                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg")
                 });
             }
 

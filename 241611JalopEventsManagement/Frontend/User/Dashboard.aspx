@@ -61,24 +61,28 @@
         <!-- ══════════════════════════════════════════════════════════════
              HERO SECTION: FULL VIEWPORT HERO SHOWCASE
              ══════════════════════════════════════════════════════════════ -->
+        <!-- ══════════════════════════════════════════════════════════════
+             HERO SECTION: FULL VIEWPORT HERO SHOWCASE (DYNAMICALLY BOUND)
+             ══════════════════════════════════════════════════════════════ -->
         <section class="hero-showcase-container" id="heroGallery">
             <!-- Background Image Layer & Dark Vignette Overlay -->
-            <div class="hero-bg-layer" id="heroBgImage" style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>');"></div>
+            <div class="hero-bg-layer" id="heroBgImage"></div>
             <div class="hero-overlay-layer"></div>
 
-            <!-- Main Hero Headline & Metadata (Matching Photo Specification) -->
-            <div class="hero-body-content">
-                <h1 class="hero-title" id="heroTitle">Cybersecurity and AI Convention</h1>
-                <p class="hero-description" id="heroDescription">
-                    Flagship cybersecurity conference and defensive hacking competition with enterprise penetration testers and student defense drills.
-                </p>
+            <!-- Main Hero Headline & Metadata -->
+            <div class="hero-body-content" id="heroBodyContent">
+                <div class="hero-badge-tag">
+                    <span>FEATURED UNIVERSITY EVENT</span>
+                </div>
+                <h1 class="hero-title" id="heroTitle">--</h1>
+                <p class="hero-description" id="heroDescription">--</p>
 
                 <div class="hero-meta-list">
                     <div class="hero-meta-item">
                         <svg class="hero-meta-icon" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                         </svg>
-                        <span id="heroVenue">QCU Auditorium</span>
+                        <span id="heroVenue">--</span>
                     </div>
 
                     <div class="hero-meta-item">
@@ -89,7 +93,7 @@
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                             <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" stroke-width="2.8"></path>
                         </svg>
-                        <span id="heroDate">Oct 09, 2026</span>
+                        <span id="heroDate">--</span>
                     </div>
 
                     <div class="hero-meta-item">
@@ -97,43 +101,35 @@
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 12"></polyline>
                         </svg>
-                        <span id="heroTime">10:00 AM - 03:00 PM</span>
+                        <span id="heroTime">--</span>
                     </div>
+                </div>
+
+                <div style="margin-top:1.5rem; display:flex; align-items:center; gap:1rem;">
+                    <a id="heroActionBtn" href="#events-section" class="btn-hero-action" style="display:inline-flex; align-items:center; gap:0.6rem; background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#FFFFFF; padding:0.85rem 1.85rem; border-radius:9999px; font-weight:800; font-size:0.88rem; letter-spacing:0.02em; text-decoration:none; box-shadow:0 6px 20px rgba(2,132,199,0.45); transition:transform 0.2s ease, box-shadow 0.2s ease;">
+                        <span>VIEW EVENT &amp; REGISTER</span>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
                 </div>
             </div>
 
-            <!-- Bottom Horizontal Thumbnail Gallery Rail (Matching Photo 1) -->
-            <div class="hero-gallery-rail">
-                <div class="hero-thumb-card active-thumb" id="heroThumb-0" onclick="selectHeroSlide(0)" 
-                     style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>');">
-                    <div class="thumb-overlay">
-                        <div class="thumb-title">Cybersecurity & AI Convention</div>
-                        <div class="thumb-meta">Oct 09 &bull; Auditorium</div>
-                    </div>
-                </div>
-
-                <div class="hero-thumb-card" id="heroThumb-1" onclick="selectHeroSlide(1)"
-                     style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg") %>');">
-                    <div class="thumb-overlay">
-                        <div class="thumb-title">AI & Cloud Architecture</div>
-                        <div class="thumb-meta">Oct 09 &bull; Tech Lab 3</div>
-                    </div>
-                </div>
-
-                <div class="hero-thumb-card" id="heroThumb-2" onclick="selectHeroSlide(2)"
-                     style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/campus-clean.jpg") %>');">
-                    <div class="thumb-overlay">
-                        <div class="thumb-title">Tech & Innovation Summit</div>
-                        <div class="thumb-meta">Nov 12 &bull; University Hall</div>
-                    </div>
-                </div>
-
-                <div class="hero-thumb-card" id="heroThumb-3" onclick="selectHeroSlide(3)"
-                     style="background-image: url('<%= ResolveUrl("~/Frontend/Assets/QCU Background.png") %>');">
-                    <div class="thumb-overlay">
-                        <div class="thumb-title">Grand Org Fair & SportsFest</div>
-                        <div class="thumb-meta">Nov 20 &bull; Main Plaza</div>
-                    </div>
+            <!-- Hero Carousel Bottom Bar Controls -->
+            <div class="hero-carousel-controls">
+                <div class="hero-carousel-dots" id="heroCarouselDots"></div>
+                <div class="hero-carousel-nav-arrows">
+                    <button type="button" class="hero-arrow-btn" onclick="prevHeroSlide()" aria-label="Previous Slide">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <button type="button" class="hero-arrow-btn" onclick="nextHeroSlide()" aria-label="Next Slide">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </section>
@@ -244,9 +240,9 @@
 
                                         <!-- Bottom Action Row -->
                                         <div class="card-action-row">
-                                            <a href='<%# ResolveUrl("~/Frontend/User/EventRegistration.aspx?eventId=" + Eval("EventId")) %>' class="btn-view-details">
+                                            <button type="button" class="btn-view-details" onclick='openEventDetailsModal(<%# Eval("EventId") %>)'>
                                                 <span>VIEW DETAILS &rarr;</span>
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -265,6 +261,7 @@
                         </HeaderTemplate>
                         <ItemTemplate>
                             <div class="registered-pass-card">
+                                <div class="pass-card-banner" style='background-image: url("<%# Eval("BannerImageUrl") %>"); height: 72px; background-size: cover; background-position: center; border-radius: 12px 12px 0 0; border-bottom: 1px solid rgba(255,255,255,0.08);'></div>
                                 <div class="pass-card-top">
                                     <span class='status-badge-reg <%# GetStatusBadgeCss(Eval("Status")?.ToString()) %>'>
                                         <%# Eval("Status") %>
@@ -357,83 +354,401 @@
             </asp:Panel>
         </asp:PlaceHolder>
 
+        <!-- ══════════════════════════════════════════════════════════════
+             EVENT DETAILS INTERACTIVE MODAL DIALOG
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="modalEventDetails" class="event-modal-backdrop" onclick="handleModalBackdropClick(event)">
+            <div class="event-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalEventTitle">
+                <!-- Banner Header with gradient overlay -->
+                <div class="modal-banner-header" id="modalBannerHeader">
+                    <div class="modal-banner-gradient"></div>
+
+                    <!-- Close Button (Top-Right) -->
+                    <button type="button" class="modal-close-btn" onclick="closeEventDetailsModal()" aria-label="Close Modal" title="Close details">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+
+                    <!-- Status Badge (Top-Left) -->
+                    <div id="modalRegStatusBadge" class="modal-status-badge-container"></div>
+
+                    <!-- Capacity Indicator (Bottom-Right) -->
+                    <div class="card-capacity-pill modal-capacity-pill" id="modalCapacityBadge">
+                        <svg class="capacity-pill-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span id="modalCapacityBadgeText">-- SEATS</span>
+                    </div>
+                </div>
+
+                <!-- Modal Body Content -->
+                <div class="modal-body-content">
+                    <div>
+                        <h2 class="modal-event-title" id="modalEventTitle">--</h2>
+                    </div>
+
+                    <!-- 4-item grid of specifications -->
+                    <div class="modal-specs-grid">
+                        <div class="modal-spec-card">
+                            <div class="modal-spec-label">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <span>Date &amp; Schedule</span>
+                            </div>
+                            <div class="modal-spec-val" id="modalEventDate">--</div>
+                            <div class="modal-spec-sub" id="modalEventTime">--</div>
+                        </div>
+
+                        <div class="modal-spec-card">
+                            <div class="modal-spec-label">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                <span>Location &amp; Venue</span>
+                            </div>
+                            <div class="modal-spec-val" id="modalEventVenue">--</div>
+                            <div class="modal-spec-sub">Quezon City University</div>
+                        </div>
+
+                        <div class="modal-spec-card">
+                            <div class="modal-spec-label">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                                <span>Live Capacity</span>
+                            </div>
+                            <div class="modal-spec-val" id="modalEventSeats">--</div>
+                            <div class="modal-capacity-progress">
+                                <div class="modal-capacity-bar" id="modalCapacityBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="modal-spec-card">
+                            <div class="modal-spec-label">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span>Registration Window</span>
+                            </div>
+                            <div class="modal-spec-val" id="modalRegPeriod">--</div>
+                            <div class="modal-spec-sub" id="modalRegStatusText">Open for Enrolled Students</div>
+                        </div>
+                    </div>
+
+                    <!-- Event Description Block -->
+                    <div class="modal-desc-block">
+                        <div class="modal-desc-heading">About This Campus Event</div>
+                        <p class="modal-desc-text" id="modalEventDescription">--</p>
+                    </div>
+
+                    <!-- Sponsors Block -->
+                    <div class="modal-sponsors-block" id="modalSponsorsArea">
+                        <span class="modal-sponsors-label">PARTNERS &amp; SPONSORS:</span>
+                        <div id="modalSponsorsBadges" style="display:inline-flex; flex-wrap:wrap; gap:0.4rem;"></div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer-actions">
+                    <button type="button" class="btn-modal-cancel" onclick="closeEventDetailsModal()">Close</button>
+                    <a id="modalRegisterBtn" href="#" class="btn-modal-register">
+                        <span>Register to this event</span>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Enterprise Floating Lower-Right Toast Container -->
         <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
     </form>
 
-    <!-- Client-Side Scripting: Slide Switcher, Segmented Tabs, Category Filtering -->
+    <!-- Client-Side Scripting: Auto Slide Carousel, Event Details Modal, Tabs, Category Filtering -->
     <script type="text/javascript">
-        // ─── Hero Gallery Slide Carousel Data ───
-        var heroSlides = [
-            {
-                title: "Cybersecurity and AI Convention",
-                description: "Flagship cybersecurity conference and defensive hacking competition with enterprise penetration testers and student defense drills.",
-                venue: "QCU Auditorium",
-                date: "Oct 09, 2026",
-                time: "10:00 AM - 03:00 PM",
-                bgUrl: '<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>'
-            },
-            {
-                title: "AI & Cloud Architecture Workshop",
-                description: "Deep dive into serverless cloud infrastructure, neural network deployments, and production container scaling with industry guest speakers.",
-                venue: "QCU San Bartolome - Tech Lab 3",
-                date: "Oct 09, 2026",
-                time: "10:00 AM - 03:00 PM",
-                bgUrl: '<%= ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg") %>'
-            },
-            {
-                title: "Tech & Innovation Summit",
-                description: "Annual academic showcase bringing together university students and tech sponsors for student capstone demonstrations and keynote sessions.",
-                venue: "QCU Main Campus - University Hall",
-                date: "Nov 12, 2026",
-                time: "08:30 AM - 04:30 PM",
-                bgUrl: '<%= ResolveUrl("~/Frontend/Assets/campus-clean.jpg") %>'
-            },
-            {
-                title: "Grand Org Fair & SportsFest",
-                description: "Campus-wide student organization recruitment showcase, intramural games opening ceremony, and student creative exhibition.",
-                venue: "QCU Main Plaza & Athletic Grounds",
-                date: "Nov 20, 2026",
-                time: "08:00 AM - 06:00 PM",
-                bgUrl: '<%= ResolveUrl("~/Frontend/Assets/QCU Background.png") %>'
-            }
-        ];
+        // ─── Data Bound from Server ───
+        var heroSlides = <%= HeroSlidesJson %>;
+        var eventsCatalog = <%= EventsCatalogJson %>;
 
-        function selectHeroSlide(index) {
-            if (index < 0 || index >= heroSlides.Length) {
-                if (index < 0 || index >= heroSlides.length) return;
-            }
-            var data = heroSlides[index];
+        var currentSlideIndex = 0;
+        var slideTimer = null;
+        var SLIDE_DURATION = 5000; // 5 seconds per slide
 
-            var bg = document.getElementById("heroBgImage");
-            if (bg) bg.style.backgroundImage = "url('" + data.bgUrl + "')";
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
 
-            var t = document.getElementById("heroTitle");
-            if (t) t.textContent = data.title;
-
-            var d = document.getElementById("heroDescription");
-            if (d) d.textContent = data.description;
-
-            var v = document.getElementById("heroVenue");
-            if (v) v.textContent = data.venue;
-
-            var dt = document.getElementById("heroDate");
-            if (dt) dt.textContent = data.date;
-
-            var tm = document.getElementById("heroTime");
-            if (tm) tm.textContent = data.time;
+        // ─── Auto Slide Carousel Controls ───
+        function renderHeroDots() {
+            var dotsContainer = document.getElementById("heroCarouselDots");
+            if (!dotsContainer || !heroSlides || heroSlides.length === 0) return;
+            dotsContainer.innerHTML = "";
 
             for (var i = 0; i < heroSlides.length; i++) {
-                var thumb = document.getElementById("heroThumb-" + i);
-                if (thumb) {
+                var btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "hero-dot-btn" + (i === currentSlideIndex ? " active" : "");
+                btn.id = "heroDot-" + i;
+                btn.setAttribute("aria-label", "Go to slide " + (i + 1));
+                btn.setAttribute("onclick", "goToHeroSlide(" + i + ")");
+                dotsContainer.appendChild(btn);
+            }
+        }
+
+        function updateHeroDots(index) {
+            for (var i = 0; i < heroSlides.length; i++) {
+                var dot = document.getElementById("heroDot-" + i);
+                if (dot) {
                     if (i === index) {
-                        thumb.classList.add("active-thumb");
+                        dot.classList.add("active");
                     } else {
-                        thumb.classList.remove("active-thumb");
+                        dot.classList.remove("active");
                     }
                 }
             }
         }
+
+        function selectHeroSlide(index) {
+            if (!heroSlides || heroSlides.length === 0) return;
+            if (index < 0) index = heroSlides.length - 1;
+            if (index >= heroSlides.length) index = 0;
+
+            currentSlideIndex = index;
+            var data = heroSlides[index];
+
+            var bg = document.getElementById("heroBgImage");
+            if (bg) {
+                bg.style.backgroundImage = "url('" + data.bgUrl + "')";
+            }
+
+            var bodyContent = document.getElementById("heroBodyContent");
+            if (bodyContent) {
+                bodyContent.classList.add("slide-transitioning");
+                setTimeout(function () {
+                    var t = document.getElementById("heroTitle");
+                    if (t) t.textContent = data.title;
+
+                    var d = document.getElementById("heroDescription");
+                    if (d) d.textContent = data.description;
+
+                    var v = document.getElementById("heroVenue");
+                    if (v) v.textContent = data.venue;
+
+                    var dt = document.getElementById("heroDate");
+                    if (dt) dt.textContent = data.date;
+
+                    var tm = document.getElementById("heroTime");
+                    if (tm) tm.textContent = data.time;
+
+                    var btn = document.getElementById("heroActionBtn");
+                    if (btn) {
+                        btn.href = data.regUrl || '#events-section';
+                    }
+
+                    bodyContent.classList.remove("slide-transitioning");
+                }, 150);
+            }
+
+            updateHeroDots(index);
+        }
+
+        function nextHeroSlide() {
+            var nextIdx = (currentSlideIndex + 1) % (heroSlides.length || 1);
+            selectHeroSlide(nextIdx);
+            restartAutoSlide();
+        }
+
+        function prevHeroSlide() {
+            var prevIdx = (currentSlideIndex - 1 + (heroSlides.length || 1)) % (heroSlides.length || 1);
+            selectHeroSlide(prevIdx);
+            restartAutoSlide();
+        }
+
+        function goToHeroSlide(index) {
+            selectHeroSlide(index);
+            restartAutoSlide();
+        }
+
+        function startAutoSlide() {
+            stopAutoSlide();
+            if (heroSlides && heroSlides.length > 1) {
+                slideTimer = setInterval(function () {
+                    var nextIdx = (currentSlideIndex + 1) % heroSlides.length;
+                    selectHeroSlide(nextIdx);
+                }, SLIDE_DURATION);
+            }
+        }
+
+        function stopAutoSlide() {
+            if (slideTimer) {
+                clearInterval(slideTimer);
+                slideTimer = null;
+            }
+        }
+
+        function restartAutoSlide() {
+            stopAutoSlide();
+            startAutoSlide();
+        }
+
+        // ─── Event Details Modal Logic ───
+        function openEventDetailsModal(eventId) {
+            var ev = null;
+            if (eventsCatalog && eventsCatalog.length > 0) {
+                for (var i = 0; i < eventsCatalog.length; i++) {
+                    if (eventsCatalog[i].id == eventId) {
+                        ev = eventsCatalog[i];
+                        break;
+                    }
+                }
+            }
+
+            if (!ev) {
+                // Redirect directly to registration page as seamless fallback
+                window.location.href = '<%= ResolveUrl("~/Frontend/User/EventRegistration.aspx?eventId=") %>' + eventId;
+                return;
+            }
+
+            // Populate Banner
+            var bannerHeader = document.getElementById("modalBannerHeader");
+            if (bannerHeader) {
+                bannerHeader.style.backgroundImage = "url('" + (ev.bannerUrl || '<%= ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg") %>') + "')";
+            }
+
+            // Status Badge & Capacity Pill
+            var regBadge = document.getElementById("modalRegStatusBadge");
+            if (regBadge) {
+                regBadge.innerHTML = ev.regStatusBadgeHtml || '<span class="status-badge-open">OPEN</span>';
+            }
+
+            var capPill = document.getElementById("modalCapacityBadgeText");
+            if (capPill) {
+                capPill.textContent = (ev.currentRegistrations || 0) + "/" + (ev.capacity || 0) + " SEATS";
+            }
+
+            // Title & Specs
+            var title = document.getElementById("modalEventTitle");
+            if (title) title.textContent = ev.title;
+
+            var dt = document.getElementById("modalEventDate");
+            if (dt) dt.textContent = ev.dateFormatted || ev.schedule || "TBA";
+
+            var tm = document.getElementById("modalEventTime");
+            if (tm) tm.textContent = ev.timeFormatted || "";
+
+            var venue = document.getElementById("modalEventVenue");
+            if (venue) venue.textContent = ev.venue || "Campus Venue";
+
+            var seats = document.getElementById("modalEventSeats");
+            if (seats) {
+                var remaining = ev.remainingSpots != null ? ev.remainingSpots : Math.max(0, (ev.capacity || 0) - (ev.currentRegistrations || 0));
+                seats.textContent = remaining + " Spots Remaining (" + (ev.currentRegistrations || 0) + " Filled)";
+            }
+
+            var capBar = document.getElementById("modalCapacityBar");
+            if (capBar) {
+                var percent = ev.capacity > 0 ? Math.min(100, Math.round(((ev.currentRegistrations || 0) / ev.capacity) * 100)) : 0;
+                capBar.style.width = percent + "%";
+            }
+
+            var regPeriod = document.getElementById("modalRegPeriod");
+            if (regPeriod) {
+                regPeriod.textContent = (ev.regStart && ev.regEnd) ? (ev.regStart + " - " + ev.regEnd) : "Registration Open";
+            }
+
+            // Description
+            var desc = document.getElementById("modalEventDescription");
+            if (desc) {
+                desc.textContent = ev.description || "Join us for this exciting campus activity. Register to confirm your seat and receive your digital QR pass.";
+            }
+
+            // Sponsors Badges
+            var sponsorsBadges = document.getElementById("modalSponsorsBadges");
+            if (sponsorsBadges) {
+                sponsorsBadges.innerHTML = "";
+                if (ev.sponsors && ev.sponsors.length > 0) {
+                    for (var s = 0; s < ev.sponsors.length; s++) {
+                        var span = document.createElement("span");
+                        span.className = "sponsor-badge";
+                        span.textContent = ev.sponsors[s];
+                        sponsorsBadges.appendChild(span);
+                    }
+                } else {
+                    var span = document.createElement("span");
+                    span.className = "sponsor-badge";
+                    span.textContent = "Quezon City University";
+                    sponsorsBadges.appendChild(span);
+                }
+            }
+
+            // Register Button Link
+            var regBtn = document.getElementById("modalRegisterBtn");
+            if (regBtn) {
+                regBtn.href = '<%= ResolveUrl("~/Frontend/User/EventRegistration.aspx?eventId=") %>' + ev.id;
+                if (!ev.isRegistrationOpen && ev.status === "Closed") {
+                    regBtn.classList.add("disabled");
+                    regBtn.innerHTML = '<span>Registration Closed</span>';
+                } else if (ev.remainingSpots <= 0 && ev.capacity > 0) {
+                    regBtn.classList.add("disabled");
+                    regBtn.innerHTML = '<span>Event Fully Booked</span>';
+                } else {
+                    regBtn.classList.remove("disabled");
+                    regBtn.innerHTML = '<span>Register to this event</span> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
+                }
+            }
+
+            // Show Modal
+            var modal = document.getElementById("modalEventDetails");
+            if (modal) {
+                modal.classList.add("active");
+                document.body.style.overflow = "hidden";
+            }
+        }
+
+        function closeEventDetailsModal() {
+            var modal = document.getElementById("modalEventDetails");
+            if (modal) {
+                modal.classList.remove("active");
+                document.body.style.overflow = "";
+            }
+        }
+
+        function handleModalBackdropClick(e) {
+            if (e.target && e.target.id === "modalEventDetails") {
+                closeEventDetailsModal();
+            }
+        }
+
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" || e.keyCode === 27) {
+                closeEventDetailsModal();
+            }
+        });
+
+        // ─── DOM Ready Initializations ───
+        document.addEventListener("DOMContentLoaded", function () {
+            renderHeroDots();
+            selectHeroSlide(0);
+            startAutoSlide();
+
+            // Hover pause listeners on hero
+            var heroEl = document.getElementById("heroGallery");
+            if (heroEl) {
+                heroEl.addEventListener("mouseenter", stopAutoSlide);
+                heroEl.addEventListener("mouseleave", startAutoSlide);
+            }
+        });
 
         // ─── Segmented Tab Switcher ───
         function switchTab(viewName) {

@@ -9,9 +9,10 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/student-profile.css?v=" + DateTime.Now.Ticks) %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 </head>
 <body>
     <form id="studentProfileForm" runat="server">
@@ -19,7 +20,7 @@
         <asp:HiddenField ID="hfActiveTab" runat="server" Value="profile" />
 
         <!-- Preview Notification Banner (Shown when evaluating in demo mode) -->
-        <asp:Panel ID="pnlPreviewBanner" runat="server" CssClass="verified-notice-box" Visible="false" style="margin:0; border-radius:0; border-left:none; border-right:none;">
+        <asp:Panel ID="pnlPreviewBanner" runat="server" CssClass="verified-notice-box" Visible="false" style="margin:0; border-radius:0; border-left:none; border-right:none; background:rgba(245, 158, 11, 0.12); border-color:rgba(245, 158, 11, 0.25); color:#FDE68A;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="16" x2="12" y2="12"></line>
@@ -30,7 +31,7 @@
             </div>
         </asp:Panel>
 
-        <!-- Top Navigation Bar -->
+        <!-- Top Navigation Bar (Consistent with Dashboard) -->
         <header class="portal-navbar">
             <div class="navbar-inner">
                 <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="nav-brand">
@@ -52,7 +53,7 @@
                         </div>
                     </div>
 
-                    <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="nav-link-back">
+                    <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="nav-link-back" title="Return to Dashboard">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <line x1="19" y1="12" x2="5" y2="12"></line>
                             <polyline points="12 19 5 12 12 5"></polyline>
@@ -77,11 +78,7 @@
                             <span>Student Portal</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-separator">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </li>
+                    <li class="breadcrumb-separator">/</li>
                     <li class="breadcrumb-item active" aria-current="page">
                         <span>Account Settings</span>
                     </li>
@@ -96,7 +93,7 @@
                 </div>
             </div>
 
-            <!-- Tab Switcher Navigation -->
+            <!-- Tab Switcher Navigation (Segmented Control) -->
             <div class="profile-tabs-nav" role="tablist">
                 <button type="button" class="tab-btn active" id="tabBtnProfile" onclick="switchProfileTab('profile')" role="tab" aria-selected="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -148,10 +145,11 @@
                         </svg>
                         <h2>Student Profile &amp; Academic Demographics</h2>
                     </div>
+
                     <div class="profile-card-body">
                         <!-- Verified Notice -->
                         <div class="verified-notice-box">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                             </svg>
                             <span><strong>Verified Academic Record:</strong> This demographic information is synchronized with university registrar records and is strictly read-only. For updates or major corrections, please coordinate with your college dean or campus registrar.</span>
@@ -266,7 +264,7 @@
                                 </div>
                             </div>
 
-                            <div style="margin-top: 1rem;">
+                            <div style="margin-top: 1.5rem;">
                                 <asp:Button ID="btnUpdatePassword" runat="server" Text="Update Password" CssClass="btn-update-pwd" OnClick="btnUpdatePassword_Click" />
                             </div>
                         </div>
@@ -274,6 +272,9 @@
                 </div>
             </div>
         </main>
+
+        <!-- Enterprise Floating Lower-Right Toast Container -->
+        <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
     </form>
 
     <!-- Tab Controller Script -->
@@ -307,5 +308,8 @@
             }
         });
     </script>
+
+    <!-- Universal Toast Engine -->
+    <script type="text/javascript" src="<%= ResolveUrl("~/Frontend/Assets/js/toast.js") %>"></script>
 </body>
 </html>

@@ -56,6 +56,7 @@ namespace _241611JalopEventsManagement.Backend.Models
         public string TicketReference => $"TCK-{EventId:D4}-{EventRegistrationId:D5}";
 
         public DateTime? RegistrationTimestamp { get; set; }
+        public string EventPhotoPath { get; set; }
 
         #endregion
 

@@ -99,7 +99,10 @@
 
                         <!-- 2. Event Title -->
                         <td>
-                            <div class="cell-event-title"><%# Eval("Title") %></div>
+                            <div style="display:flex; align-items:center; gap:0.75rem;">
+                                <img src='<%# ResolveUrl(Eval("BannerThumbnailUrl").ToString()) %>' alt="Banner" style="width:48px; height:32px; object-fit:cover; border-radius:5px; border:1px solid var(--border-color); flex-shrink:0;" />
+                                <div class="cell-event-title"><%# Eval("Title") %></div>
+                            </div>
                         </td>
 
                         <!-- 3. Venue and Date (Venue on top, Event Start date below) -->

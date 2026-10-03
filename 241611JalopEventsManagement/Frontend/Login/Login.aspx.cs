@@ -31,14 +31,7 @@ namespace _241611JalopEventsManagement.Frontend.Login
             // UI Boundary Validation
             if (string.IsNullOrWhiteSpace(identifier))
             {
-                ShowError("Please enter your registered Email address.");
-                txtIdentifier.Focus();
-                return;
-            }
-
-            if (!identifier.Contains("@") || !identifier.Contains("."))
-            {
-                ShowError("Portal login requires a valid institutional email address (e.g., student@qcu.edu.ph). Student ID login is not permitted.");
+                ShowError("Please enter your Student ID or Email address.");
                 txtIdentifier.Focus();
                 return;
             }

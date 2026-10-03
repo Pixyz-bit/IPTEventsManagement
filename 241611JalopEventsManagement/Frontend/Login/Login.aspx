@@ -11,27 +11,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/auth/login.css?v=3.5") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/auth/login.css?v=3.6") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 </head>
 <body>
     <form id="form1" runat="server">
         <div class="auth-container">
-            <!-- Brand Badge & Header -->
+            <!-- Brand Badge & Header Matching Photo -->
             <div class="brand-block">
-                <div class="brand-badge-ticker">
-                    <span class="ticker-dot"></span>
-                    <span>QCU PORTAL // AUTHENTICATION</span>
-                </div>
-                
-                <div>
-                    <div class="brand-seal-wrapper">
-                        <img src="<%= ResolveUrl("~/Frontend/Assets/QCU Logo.png") %>" alt="University Seal" class="brand-seal-img" />
-                    </div>
+                <div class="brand-seal-wrapper">
+                    <img src="<%= ResolveUrl("~/Frontend/Assets/QCU Logo.png") %>" alt="University Seal" class="brand-seal-img" />
                 </div>
 
-                <h1 class="brand-title">Campus Event Portal</h1>
-                <div class="brand-subtitle">Quezon City University &bull; Student Gateway</div>
+                <h1 class="brand-title">University Event Portal</h1>
+                <div class="brand-subtitle">&ldquo;Discover campus activities, reserve your slots, and get your digital pass.&rdquo;</div>
             </div>
 
             <!-- Cinematic Modern Auth Card Container -->
@@ -45,27 +38,23 @@
                         </div>
                     </asp:Panel>
 
-                    <!-- Email Address Input -->
+                    <!-- Student ID or Email Address Input -->
                     <div class="form-group">
-                        <div class="form-label-row">
-                            <label for="txtIdentifier" class="form-label">Email Address</label>
-                        </div>
-                        <asp:TextBox ID="txtIdentifier" runat="server" CssClass="form-control" TextMode="Email"
-                             autocomplete="email"></asp:TextBox>
+                        <label for="<%= txtIdentifier.ClientID %>" class="form-label">Student ID or Email Address</label>
+                        <asp:TextBox ID="txtIdentifier" runat="server" CssClass="form-control" 
+                            placeholder="Enter Student ID or University Email" autocomplete="username"></asp:TextBox>
                     </div>
 
                     <!-- Password Input -->
                     <div class="form-group">
-                        <div class="form-label-row">
-                            <label for="txtPassword" class="form-label">Password</label>
-                        </div>
+                        <label for="<%= txtPassword.ClientID %>" class="form-label">Password</label>
                         <div class="password-input-wrapper">
                             <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password"
-                                autocomplete="current-password"></asp:TextBox>
+                                placeholder="Enter Password" autocomplete="current-password"></asp:TextBox>
                             <button type="button" class="btn-toggle-password" id="btnTogglePassword" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility" title="Show/Hide Password" tabindex="-1">
                                 <svg id="eyeIconOpen" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <circle cx="12" cy="10" r="3"></circle>
                                 </svg>
                                 <svg id="eyeIconClosed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
                                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
@@ -79,19 +68,14 @@
                     <div class="form-options">
                         <label class="checkbox-label">
                             <asp:CheckBox ID="chkRememberMe" runat="server" />
-                            <span>Remember Me</span>
+                            <span>Remember session</span>
                         </label>
                     </div>
 
-                    <!-- Modern Gold Accent Submit Button -->
-                    <asp:Button ID="btnLogin" runat="server" Text="Sign In to Portal &rarr;" CssClass="btn-submit"
+                    <!-- Sign In to Portal Button Matching Photo -->
+                    <asp:Button ID="btnLogin" runat="server" Text="Sign In to Portal" CssClass="btn-submit"
                         OnClick="btnLogin_Click" />
                 </div>
-            </div>
-
-            <!-- Footer Notice -->
-            <div class="auth-footer">
-                &copy; 2026 QUEZON CITY UNIVERSITY &bull; STUDENT AFFAIRS
             </div>
         </div>
 

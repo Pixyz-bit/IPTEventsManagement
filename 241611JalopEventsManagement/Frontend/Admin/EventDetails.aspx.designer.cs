@@ -65,6 +65,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected global::System.Web.UI.WebControls.Image imgWideBanner;
         protected global::System.Web.UI.WebControls.PlaceHolder phWideUpload;
+        protected global::System.Web.UI.WebControls.HiddenField hfEditPhotoBase64;
+        protected global::System.Web.UI.WebControls.HiddenField hfEditPhotoFileName;
         protected global::System.Web.UI.WebControls.FileUpload fuWideBanner;
 
         protected global::System.Web.UI.WebControls.Image imgSquareBanner;

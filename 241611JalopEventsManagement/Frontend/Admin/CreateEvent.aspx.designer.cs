@@ -67,6 +67,16 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.FileUpload fuEventPhoto;
 
         /// <summary>
+        /// hfPhotoBase64 control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfPhotoBase64;
+
+        /// <summary>
+        /// hfPhotoFileName control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfPhotoFileName;
+
+        /// <summary>
         /// txtEventDate control.
         /// </summary>
         protected global::System.Web.UI.WebControls.TextBox txtEventDate;

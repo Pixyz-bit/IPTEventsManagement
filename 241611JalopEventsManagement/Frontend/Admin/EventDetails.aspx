@@ -283,25 +283,38 @@
                             </div>
                         </div>
 
-                        <div class="bento-hero-edit-media">
-                            <asp:PlaceHolder ID="phWideUpload" runat="server" Visible="false">
+                            <asp:PlaceHolder ID="phWideUpload" runat="server" Visible="true">
                                 <div class="upload-slot-group">
                                     <div class="upload-slot-header">
                                         <label class="form-label" style="margin-bottom:0;">16:9 Banner (Desktop / Web)</label>
                                         <span class="banner-ratio-tag">16:9 WIDE</span>
                                     </div>
-                                    <div class="upload-dropzone" style="min-height:100px; padding:0.85rem;">
+                                    <asp:HiddenField ID="hfEditPhotoBase64" runat="server" />
+                                    <asp:HiddenField ID="hfEditPhotoFileName" runat="server" />
+                                    <div id="editDropzoneContent" class="upload-dropzone" style="min-height:95px; padding:0.85rem; cursor:pointer;" onclick="triggerEditPhotoUpload();">
                                         <svg class="upload-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                             <polyline points="17 8 12 3 7 8"></polyline>
                                             <line x1="12" y1="3" x2="12" y2="15"></line>
                                         </svg>
-                                        <asp:FileUpload ID="fuWideBanner" runat="server" CssClass="form-control banner-file-input" accept="image/*" />
-                                        <span class="upload-formats-hint">PNG, JPG, WEBP</span>
+                                        <asp:FileUpload ID="fuWideBanner" runat="server" CssClass="form-control banner-file-input" accept="image/*" onchange="handleEditBannerFileSelect(this);" style="display:none;" />
+                                        <span style="font-weight:600; font-size:0.85rem; color:var(--text-heading); margin-bottom:0.25rem;">Click to Upload New Promotional Banner</span>
+                                        <span class="upload-formats-hint">Supported formats: PNG, JPG, JPEG, WEBP</span>
+                                    </div>
+
+                                    <!-- Live Interactive Banner Preview in Edit Mode -->
+                                    <div id="editBannerPreviewContainer" style="display:none; margin-top:0.65rem; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--card-bg);">
+                                        <img id="imgEditBannerPreview" src="" alt="New Selected Banner" style="width:100%; height:130px; object-fit:cover; display:block;" />
+                                        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.75rem; background:rgba(0,0,0,0.03);">
+                                            <span id="lblEditBannerFileName" style="font-size:0.8rem; font-weight:600; color:var(--text-heading); text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:140px;"></span>
+                                            <div style="display:flex; gap:0.4rem;">
+                                                <button type="button" onclick="triggerEditPhotoUpload();" style="background:#e0f2fe; color:#0284c7; border:none; border-radius:4px; padding:3px 7px; font-size:0.75rem; font-weight:600; cursor:pointer;">Change</button>
+                                                <button type="button" onclick="removeEditBanner();" style="background:#fee2e2; color:#ef4444; border:none; border-radius:4px; padding:3px 7px; font-size:0.75rem; font-weight:600; cursor:pointer;">Remove</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </asp:PlaceHolder>
-                        </div>
                     </div>
                 </asp:PlaceHolder>
             </div>
@@ -591,4 +604,62 @@
             <asp:Image ID="imgSquareBanner" runat="server" />
         </asp:PlaceHolder>
     </asp:PlaceHolder>
+
+    <script type="text/javascript">
+        function triggerEditPhotoUpload() {
+            var fu = document.getElementById('<%= fuWideBanner.ClientID %>');
+            if (fu) fu.click();
+        }
+
+        function handleEditBannerFileSelect(input) {
+            if (input.files && input.files[0]) {
+                var file = input.files[0];
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var preview = document.getElementById('imgEditBannerPreview');
+                    var nameLabel = document.getElementById('lblEditBannerFileName');
+                    var container = document.getElementById('editBannerPreviewContainer');
+                    var dropzone = document.getElementById('editDropzoneContent');
+                    if (preview) preview.src = e.target.result;
+                    if (nameLabel) nameLabel.innerText = file.name;
+                    if (container) container.style.display = 'block';
+                    if (dropzone) dropzone.style.display = 'none';
+
+                    var hfData = document.getElementById('<%= hfEditPhotoBase64.ClientID %>');
+                    var hfName = document.getElementById('<%= hfEditPhotoFileName.ClientID %>');
+                    if (hfData) hfData.value = e.target.result;
+                    if (hfName) hfName.value = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeEditBanner() {
+            var fu = document.getElementById('<%= fuWideBanner.ClientID %>');
+            if (fu) fu.value = '';
+            var hfData = document.getElementById('<%= hfEditPhotoBase64.ClientID %>');
+            var hfName = document.getElementById('<%= hfEditPhotoFileName.ClientID %>');
+            if (hfData) hfData.value = '';
+            if (hfName) hfName.value = '';
+            var container = document.getElementById('editBannerPreviewContainer');
+            var dropzone = document.getElementById('editDropzoneContent');
+            if (container) container.style.display = 'none';
+            if (dropzone) dropzone.style.display = 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var hfData = document.getElementById('<%= hfEditPhotoBase64.ClientID %>');
+            var hfName = document.getElementById('<%= hfEditPhotoFileName.ClientID %>');
+            if (hfData && hfData.value) {
+                var preview = document.getElementById('imgEditBannerPreview');
+                var nameLabel = document.getElementById('lblEditBannerFileName');
+                var container = document.getElementById('editBannerPreviewContainer');
+                var dropzone = document.getElementById('editDropzoneContent');
+                if (preview) preview.src = hfData.value;
+                if (nameLabel && hfName && hfName.value) nameLabel.innerText = hfName.value;
+                if (container) container.style.display = 'block';
+                if (dropzone) dropzone.style.display = 'none';
+            }
+        });
+    </script>
 </asp:Content>

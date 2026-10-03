@@ -141,6 +141,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
                        e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.EventPhotoPath,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
                        u.Email AS StudentEmail
@@ -176,6 +177,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
                        e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.EventPhotoPath,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
                        u.Email AS StudentEmail
@@ -215,6 +217,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
                        e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.EventPhotoPath,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
                        u.Email AS StudentEmail
@@ -469,6 +472,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 SELECT TOP 1 r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
                        e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.EventPhotoPath,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
                        u.Email AS StudentEmail
@@ -497,6 +501,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 SELECT TOP 1 r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
                        e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.EventPhotoPath,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
                        u.Email AS StudentEmail
@@ -717,6 +722,11 @@ namespace _241611JalopEventsManagement.Backend.Repository
             if (row.Table.Columns.Contains("StudentEmail") && row["StudentEmail"] != DBNull.Value)
             {
                 reg.StudentEmail = row["StudentEmail"].ToString();
+            }
+
+            if (row.Table.Columns.Contains("EventPhotoPath") && row["EventPhotoPath"] != DBNull.Value)
+            {
+                reg.EventPhotoPath = row["EventPhotoPath"].ToString();
             }
 
             return reg;

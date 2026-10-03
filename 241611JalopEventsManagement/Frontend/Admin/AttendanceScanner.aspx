@@ -1,4 +1,4 @@
-<%@ Page Title="Event Attendance Scanner" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AttendanceScanner.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AttendanceScanner" EnableSessionState="ReadOnly" %>
+<%@ Page Title="Event Attendance Scanner" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AttendanceScanner.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AttendanceScanner" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
     Event Attendance Scanner & Gate Terminal | QCU Event Management
@@ -536,14 +536,29 @@
     // Pre-Commit State Validation & Staging Query (AJAX WebMethod)
     // =========================================================================
     function stageLookupQuery(query) {
-        fetch('AttendanceScanner.aspx/LookupAttendee', {
+        // Immediately disable confirm button and clear previous staging data to prevent hardware scanner Enter race condition
+        const btnConfirm = document.getElementById('btnConfirmCheckIn');
+        if (btnConfirm) {
+            btnConfirm.disabled = true;
+        }
+        stagedData = null;
+
+        const endpoint = '<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx") %>/LookupAttendee';
+        fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8'
             },
             body: JSON.stringify({ eventId: activeEventId, query: query })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Server returned HTTP ${response.status}: ${text ? text.substring(0, 100) : ''}`);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             const result = data.d;
             handleLookupResult(result);
@@ -553,7 +568,7 @@
             handleLookupResult({
                 Success: false,
                 State: "NotFound",
-                Message: "Server communication error during attendee lookup."
+                Message: "Server communication error during attendee lookup: " + (err.message || err)
             });
         })
         .finally(() => {
@@ -675,16 +690,23 @@
     // =========================================================================
     // Final Database Commit (Explicit Operator Action Only)
     // =========================================================================
+    let isCommitting = false;
+
     function executeCheckInCommit() {
+        if (isCommitting) return;
         if (!stagedData || !stagedData.EventRegistrationId || stagedData.State !== "ValidPending") {
             return;
         }
 
+        isCommitting = true;
         const btnConfirm = document.getElementById('btnConfirmCheckIn');
-        btnConfirm.disabled = true;
-        btnConfirm.innerText = 'COMMITTING...';
+        if (btnConfirm) {
+            btnConfirm.disabled = true;
+            btnConfirm.innerText = 'COMMITTING...';
+        }
 
-        fetch('AttendanceScanner.aspx/CommitCheckIn', {
+        const endpoint = '<%= ResolveUrl("~/Frontend/Admin/AttendanceScanner.aspx") %>/CommitCheckIn';
+        fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8'
@@ -694,7 +716,14 @@
                 verificationMethod: currentVerificationMethod
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Server returned HTTP ${response.status}: ${text ? text.substring(0, 120) : ''}`);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             const res = data.d;
             if (res && res.Success) {
@@ -703,11 +732,14 @@
                 triggerVisualFlash(true);
 
                 // Update Live KPI metrics
-                document.getElementById('kpiVerifiedCount').innerText = res.UpdatedCheckedInCount;
+                const kpiVerified = document.getElementById('kpiVerifiedCount');
+                if (kpiVerified) kpiVerified.innerText = res.UpdatedCheckedInCount;
                 const expEl = document.getElementById('kpiExpectedCount');
-                let expCount = parseInt(expEl.innerText, 10);
-                if (!isNaN(expCount) && expCount > 0) {
-                    expEl.innerText = (expCount - 1).toString();
+                if (expEl) {
+                    let expCount = parseInt(expEl.innerText, 10);
+                    if (!isNaN(expCount) && expCount > 0) {
+                        expEl.innerText = (expCount - 1).toString();
+                    }
                 }
 
                 // Append attendee row to live attendance roster
@@ -723,24 +755,29 @@
             } else {
                 playErrorTone();
                 triggerVisualFlash(false);
+                const refusalMsg = res && res.Message ? res.Message : 'Failed to record attendance check-in.';
                 if (window.showToast) {
-                    window.showToast(res.Message || 'Failed to record attendance check-in.', 'error', 'Check-In Refused');
+                    window.showToast(refusalMsg, 'error', 'Check-In Refused');
                 } else {
-                    alert(res.Message || 'Failed to record attendance check-in.');
+                    alert(refusalMsg);
                 }
             }
         })
         .catch(err => {
             console.error("Check-in commit error:", err);
             playErrorTone();
+            const errMsg = err && err.message ? err.message : 'A network error occurred while committing attendance.';
             if (window.showToast) {
-                window.showToast('A network error occurred while committing attendance.', 'error', 'Network Error');
+                window.showToast(errMsg, 'error', 'Network Error');
             } else {
-                alert('A network error occurred while committing attendance.');
+                alert(errMsg);
             }
         })
         .finally(() => {
-            btnConfirm.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"></polyline></svg><span>CONFIRM & CHECK-IN</span><span class="keyboard-hint-badge">ENTER</span>`;
+            isCommitting = false;
+            if (btnConfirm) {
+                btnConfirm.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"></polyline></svg><span>CONFIRM & CHECK-IN</span><span class="keyboard-hint-badge">ENTER</span>`;
+            }
         });
     }
 

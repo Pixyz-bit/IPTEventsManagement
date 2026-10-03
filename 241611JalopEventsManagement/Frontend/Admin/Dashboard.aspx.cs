@@ -160,5 +160,14 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     return "status-completed";
             }
         }
+        public string GetEventBannerThumb(object photoPathObj)
+        {
+            string path = photoPathObj?.ToString();
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                return ResolveUrl(path);
+            }
+            return ResolveUrl("~/Frontend/Assets/campus-clean.jpg");
+        }
     }
 }

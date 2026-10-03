@@ -9,17 +9,17 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-registration.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-registration.css?v=" + DateTime.Now.Ticks) %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 </head>
 <body>
     <form id="form1" runat="server">
-        <!-- Persistent Hidden Field to maintain active step state -->
-        <asp:HiddenField ID="hfCurrentStep" runat="server" Value="1" />
+        <!-- Persistent Hidden Field to maintain state for code-behind -->
+        <asp:HiddenField ID="hfCurrentStep" runat="server" Value="3" />
 
-        <!-- Top University Navigation Bar -->
+        <!-- Top Navigation Bar (Consistent with Dashboard) -->
         <header class="portal-navbar">
             <div class="navbar-inner">
                 <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="nav-brand">
@@ -31,7 +31,7 @@
                 </a>
 
                 <div class="nav-user-bar">
-                    <div class="nav-user-badge">
+                    <a href="<%= ResolveUrl("~/Frontend/User/StudentProfile.aspx") %>" class="nav-user-badge" style="text-decoration:none; color:inherit;">
                         <div class="nav-user-avatar">
                             <asp:Literal ID="litNavAvatarInitials" runat="server" Text="ST" />
                         </div>
@@ -39,14 +39,14 @@
                             <span class="nav-user-name"><asp:Literal ID="litNavStudentName" runat="server" Text="Student Account" /></span>
                             <span class="nav-user-id">[ <asp:Literal ID="litNavStudentId" runat="server" Text="24-1611" /> ]</span>
                         </div>
-                    </div>
+                    </a>
 
-                    <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="nav-link-back">
+                    <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="nav-link-back" title="Return to Dashboard">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <line x1="19" y1="12" x2="5" y2="12"></line>
                             <polyline points="12 19 5 12 12 5"></polyline>
                         </svg>
-                        <span>Cancel & Return</span>
+                        <span>Cancel &amp; Return</span>
                     </a>
                 </div>
             </div>
@@ -65,24 +65,16 @@
                                 <rect x="14" y="14" width="7" height="7"></rect>
                                 <rect x="3" y="14" width="7" height="7"></rect>
                             </svg>
-                            <span>User Portal</span>
+                            <span>Dashboard</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-separator">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </li>
+                    <li class="breadcrumb-separator">/</li>
                     <li class="breadcrumb-item">
-                        <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>">
+                        <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx#events-section") %>">
                             <span>Campus Events</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-separator">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </li>
+                    <li class="breadcrumb-separator">/</li>
                     <li class="breadcrumb-item active" aria-current="page">
                         <span>Event Registration</span>
                     </li>
@@ -107,435 +99,225 @@
                 <asp:Literal ID="litErrorMsg" runat="server" />
             </asp:Panel>
 
-            <!-- Step-by-Step Procedure Breadcrumb Stepper (Matching Design System) -->
-            <div class="procedure-stepper-container" role="tablist" aria-label="Event Registration Procedure Steps">
-                <!-- Step 1 Tab -->
-                <div class="procedure-step-tab active" id="tab-step-1" data-step="1" onclick="switchStep(1)" role="tab" aria-selected="true">
-                    <div class="step-badge">1</div>
-                    <div class="step-meta">
-                        <span class="step-number">Step 01</span>
-                        <span class="step-name">Core Information</span>
+            <!-- Event Context Summary Card -->
+            <div class="event-summary-card">
+                <div class="event-summary-header">
+                    <div>
+                        <div style="font-size:0.75rem; font-family:var(--font-mono); font-weight:700; color:var(--accent-gold); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.35rem;">
+                            REGISTERING FOR:
+                        </div>
+                        <h3 class="event-summary-title">
+                            <asp:Literal ID="litStep1Title" runat="server" Text="--" />
+                        </h3>
+                        <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.5; max-width:800px; margin:0;">
+                            <asp:Literal ID="litStep1Description" runat="server" Text="--" />
+                        </p>
+                    </div>
+
+                    <!-- Optional Event Promotional Banner Poster -->
+                    <asp:Panel ID="pnlEventPhoto" runat="server" Visible="false" style="flex-shrink:0;">
+                        <asp:Image ID="imgEventPhoto" runat="server" AlternateText="Event Banner Poster" 
+                            style="width:140px; height:85px; object-fit:cover; border-radius:10px; border:1px solid rgba(255,255,255,0.15);" />
+                    </asp:Panel>
+                </div>
+
+                <div class="event-summary-meta-grid">
+                    <div class="meta-chip">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span><asp:Literal ID="litStep1Date" runat="server" Text="--" /> (<asp:Literal ID="litStep1Schedule" runat="server" Text="--" />)</span>
+                    </div>
+
+                    <div class="meta-chip">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><asp:Literal ID="litStep1Venue" runat="server" Text="--" /></span>
+                    </div>
+
+                    <div class="meta-chip">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span><asp:Literal ID="litStep1Spots" runat="server" Text="--" /></span>
                     </div>
                 </div>
 
-                <div class="step-separator">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </div>
-
-                <!-- Step 2 Tab -->
-                <div class="procedure-step-tab" id="tab-step-2" data-step="2" onclick="switchStep(2)" role="tab" aria-selected="false">
-                    <div class="step-badge">2</div>
-                    <div class="step-meta">
-                        <span class="step-number">Step 02</span>
-                        <span class="step-name">Student Information</span>
-                    </div>
-                </div>
-
-                <div class="step-separator">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </div>
-
-                <!-- Step 3 Tab -->
-                <div class="procedure-step-tab" id="tab-step-3" data-step="3" onclick="switchStep(3)" role="tab" aria-selected="false">
-                    <div class="step-badge">3</div>
-                    <div class="step-meta">
-                        <span class="step-number">Step 03</span>
-                        <span class="step-name">Year &amp; Section</span>
-                    </div>
+                <!-- Hidden literal placeholders retained for code-behind bindings -->
+                <div style="display:none;">
+                    <asp:Literal ID="litStep1Capacity" runat="server" />
+                    <asp:Literal ID="litStep1Audience" runat="server" />
                 </div>
             </div>
 
-            <!-- Wizard Workspace Card -->
-            <div class="wizard-workspace-card">
+            <!-- Main Form Card: View-Only Student Info + Interactive Year & Section Inputs -->
+            <div class="registration-form-card">
+                <!-- Section Header -->
+                <div class="card-section-header">
+                    <div class="section-title-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="section-title">Student Profile &amp; Enrollment Information</span>
+                    </div>
+                    <span class="section-badge-locked">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block; vertical-align:middle; margin-right:3px;">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        OFFICIAL RECORD
+                    </span>
+                </div>
 
-                <!-- =========================================================================
-                     STEP 1: INFORMATION ABOUT THE EVENTS
-                     ========================================================================= -->
-                <div id="step-panel-1" class="step-panel">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <span>Step 1: Core Event Specifications</span>
+                <!-- Section Body -->
+                <div class="card-section-body">
+                    <!-- 1. VIEW-ONLY STUDENT DETAILS -->
+                    <p class="section-desc-note">
+                        Your electronic event pass and attendance QR ticket will be verified against your official matriculation record below:
+                    </p>
+
+                    <div class="viewonly-student-grid">
+                        <!-- Student ID -->
+                        <div class="viewonly-item">
+                            <span class="viewonly-label">
+                                <span>Student ID Number</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </span>
+                            <span class="viewonly-value highlight-id">
+                                <asp:Literal ID="litProfileStudentId" runat="server" Text="24-1611" />
+                            </span>
+                        </div>
+
+                        <!-- Full Name -->
+                        <div class="viewonly-item">
+                            <span class="viewonly-label">
+                                <span>Full Student Name</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </span>
+                            <span class="viewonly-value">
+                                <asp:Literal ID="litProfileFullName" runat="server" Text="--" />
+                            </span>
+                        </div>
+
+                        <!-- University Email -->
+                        <div class="viewonly-item">
+                            <span class="viewonly-label">
+                                <span>Institutional Email</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </span>
+                            <span class="viewonly-value">
+                                <asp:Literal ID="litProfileEmail" runat="server" Text="--" />
+                            </span>
+                        </div>
+
+                        <!-- Campus Branch -->
+                        <div class="viewonly-item">
+                            <span class="viewonly-label">
+                                <span>Campus Branch</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </span>
+                            <span class="viewonly-value">
+                                <asp:Literal ID="litProfileCampus" runat="server" Text="--" />
+                            </span>
+                        </div>
+
+                        <!-- College / Department -->
+                        <div class="viewonly-item">
+                            <span class="viewonly-label">
+                                <span>College / Department</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </span>
+                            <span class="viewonly-value">
+                                <asp:Literal ID="litProfileDepartment" runat="server" Text="--" />
+                            </span>
+                        </div>
+
+                        <!-- Degree Program -->
+                        <div class="viewonly-item">
+                            <span class="viewonly-label">
+                                <span>Degree Program</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </span>
+                            <span class="viewonly-value">
+                                <asp:Literal ID="litProfileProgram" runat="server" Text="--" />
+                            </span>
                         </div>
                     </div>
 
-                    <div class="card-body">
-                        <!-- Event Title -->
+                    <!-- 2. INTERACTIVE COHORT INPUTS: YEAR AND SECTION -->
+                    <div class="inputs-subheading">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>Please Specify Your Current Standing &amp; Section</span>
+                    </div>
+
+                    <div class="inputs-grid-2col">
+                        <!-- Year Level Input -->
                         <div class="form-group">
-                            <label class="form-label">
-                                <span>Event Title <span class="req">*</span></span>
+                            <label class="form-label" for="<%= ddlYearLevel.ClientID %>">
+                                <span>Current Year Level <span class="req">*</span></span>
+                                <span class="form-label-muted">Select Academic Year</span>
                             </label>
-                            <div class="form-control-display">
-                                <strong><asp:Literal ID="litStep1Title" runat="server" Text="--" /></strong>
-                            </div>
+                            <asp:DropDownList ID="ddlYearLevel" runat="server" CssClass="form-select">
+                                <asp:ListItem Value="1" Text="1st Year"></asp:ListItem>
+                                <asp:ListItem Value="2" Text="2nd Year"></asp:ListItem>
+                                <asp:ListItem Value="3" Text="3rd Year" Selected="True"></asp:ListItem>
+                                <asp:ListItem Value="4" Text="4th Year"></asp:ListItem>
+                                <asp:ListItem Value="5" Text="Irregular"></asp:ListItem>
+                            </asp:DropDownList>
                         </div>
 
-                        <!-- Event Description -->
+                        <!-- Class Section Input -->
                         <div class="form-group">
-                            <label class="form-label">
-                                <span>Event Description</span>
+                            <label class="form-label" for="<%= txtSection.ClientID %>">
+                                <span>Class Section <span class="req">*</span></span>
+                                <span class="form-label-muted">e.g. SBIT-3A, SBIT-3C</span>
                             </label>
-                            <div class="form-control-display multiline">
-                                <asp:Literal ID="litStep1Description" runat="server" Text="--" />
-                            </div>
-                        </div>
-
-                        <!-- Venue & Capacity Row -->
-                        <div class="form-grid-2col">
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <span>Venue Location <span class="req">*</span></span>
-                                </label>
-                                <div class="form-control-display">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                        <circle cx="12" cy="10" r="3"></circle>
-                                    </svg>
-                                    <span><asp:Literal ID="litStep1Venue" runat="server" Text="--" /></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <span>Max Capacity (Seats) <span class="req">*</span></span>
-                                </label>
-                                <div class="form-control-display">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="9" cy="7" r="4"></circle>
-                                    </svg>
-                                    <span><asp:Literal ID="litStep1Capacity" runat="server" Text="--" /> &bull; <asp:Literal ID="litStep1Spots" runat="server" Text="--" /></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Schedule & Audience Row -->
-                        <div class="form-grid-2col">
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <span>Event Date &amp; Schedule</span>
-                                </label>
-                                <div class="form-control-display">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    <span><asp:Literal ID="litStep1Date" runat="server" Text="--" /> (<asp:Literal ID="litStep1Schedule" runat="server" Text="--" />)</span>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <span>Target Audience Eligibility</span>
-                                </label>
-                                <div class="form-control-display">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                    </svg>
-                                    <span><asp:Literal ID="litStep1Audience" runat="server" Text="Open to All Programs & Year Levels" /></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Optional Event Promotional Banner -->
-                        <asp:Panel ID="pnlEventPhoto" runat="server" Visible="false" CssClass="form-group">
-                            <label class="form-label">
-                                <span>Event Promotional Banner</span>
-                            </label>
-                            <div class="event-banner-card">
-                                <asp:Image ID="imgEventPhoto" runat="server" AlternateText="Event Banner Poster" />
-                            </div>
-                        </asp:Panel>
-
-                        <!-- Step 1 Nav Footer -->
-                        <div class="step-nav-footer">
-                            <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="btn-action-secondary">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                                    <polyline points="12 19 5 12 12 5"></polyline>
-                                </svg>
-                                <span>Cancel &amp; Return</span>
-                            </a>
-
-                            <button type="button" class="btn-action-primary" onclick="switchStep(2)">
-                                <span>Proceed to Step 2: Student Information</span>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- =========================================================================
-                     STEP 2: VIEW ONLY STUDENT INFO
-                     ========================================================================= -->
-                <div id="step-panel-2" class="step-panel" style="display: none;">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                            <span>Step 2: Student Profile Verification (View-Only)</span>
+                            <asp:TextBox ID="txtSection" runat="server" CssClass="form-input" MaxLength="50" placeholder="e.g. SBIT-3C"></asp:TextBox>
                         </div>
                     </div>
 
-                    <div class="card-body">
-                        <p class="step-subtitle-desc">
-                            Verify that your official university credentials are correct. Your verified electronic event pass will be securely generated under this matriculation record.
+                    <!-- 3. COMMITMENT & GUIDELINES CONFIRMATION -->
+                    <div class="commitment-card">
+                        <label class="commitment-checkbox-label" for="<%= chkTerms.ClientID %>">
+                            <asp:CheckBox ID="chkTerms" runat="server" />
+                            <span>I confirm that I will attend this event and agree to follow all official university event guidelines and campus health/safety protocols.</span>
+                        </label>
+                        <p class="commitment-subtext">
+                            Note: Reserved seats that result in unexcused absences will be audited as No-Shows in accordance with the campus extracurricular attendance charter.
                         </p>
+                    </div>
 
-                        <div class="form-grid-2col">
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <span>Student ID Number</span>
-                                    <span class="form-label-muted">Matriculation Code</span>
-                                </label>
-                                <div class="form-control-display">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="4" width="18" height="16" rx="2"></rect>
-                                        <line x1="7" y1="8" x2="17" y2="8"></line>
-                                        <line x1="7" y1="12" x2="13" y2="12"></line>
-                                    </svg>
-                                    <strong><asp:Literal ID="litProfileStudentId" runat="server" Text="24-1611" /></strong>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <span>Full Name</span>
-                                    <span class="form-label-muted">Official University Record</span>
-                                </label>
-                                <div class="form-control-display">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="12" cy="7" r="4"></circle>
-                                    </svg>
-                                    <span><asp:Literal ID="litProfileFullName" runat="server" Text="--" /></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <span>Institutional Email Address</span>
-                                    <span class="form-label-muted">University Account</span>
-                                </label>
-                                <div class="form-control-display">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                        <polyline points="22,6 12,13 2,6"></polyline>
-                                    </svg>
-                                    <span><asp:Literal ID="litProfileEmail" runat="server" Text="--" /></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <span>Campus / Branch</span>
-                                    <span class="form-label-muted">Assigned Campus</span>
-                                </label>
-                                <div class="form-control-display">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                    </svg>
-                                    <span><asp:Literal ID="litProfileCampus" runat="server" Text="--" /></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <span>Academic Department / College</span>
-                                    <span class="form-label-muted">Division</span>
-                                </label>
-                                <div class="form-control-display">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                                    </svg>
-                                    <span><asp:Literal ID="litProfileDepartment" runat="server" Text="--" /></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <span>Degree Program / Course</span>
-                                    <span class="form-label-muted">Registered Curriculum</span>
-                                </label>
-                                <div class="form-control-display">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                                    </svg>
-                                    <span><asp:Literal ID="litProfileProgram" runat="server" Text="--" /></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- University Sync Notice -->
-                        <div class="info-notice-banner">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    <!-- 4. ACTION BUTTONS -->
+                    <div class="form-actions-footer">
+                        <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="btn-secondary">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
                             </svg>
-                            <div>
-                                <strong>Official University Synchronization:</strong> These profile details are synchronized directly from your university registrar record. If any information is out of date, please contact the University Registrar's Office.
-                            </div>
-                        </div>
+                            <span>Back to Events Dashboard</span>
+                        </a>
 
-                        <!-- Step 2 Nav Footer -->
-                        <div class="step-nav-footer">
-                            <button type="button" class="btn-action-secondary" onclick="switchStep(1)">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                                    <polyline points="12 19 5 12 12 5"></polyline>
-                                </svg>
-                                <span>Back to Step 1: Core Information</span>
-                            </button>
-
-                            <button type="button" class="btn-action-primary" onclick="switchStep(3)">
-                                <span>Proceed to Step 3: Year &amp; Section</span>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                </svg>
-                            </button>
-                        </div>
+                        <asp:Button ID="btnConfirmRegistration" runat="server" 
+                            CssClass="btn-primary-confirm" 
+                            Text="Confirm & Complete Registration" 
+                            OnClick="btnConfirmRegistration_Click" />
                     </div>
                 </div>
-
-                <!-- =========================================================================
-                     STEP 3: FILLING OF YEAR AND SECTION
-                     ========================================================================= -->
-                <div id="step-panel-3" class="step-panel" style="display: none;">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                            <span>Step 3: Academic Standing &amp; Final Confirmation</span>
-                        </div>
-                    </div>
-
-                    <div class="card-body">
-                        <p class="step-subtitle-desc">
-                            Provide your current academic year level and class section to ensure accurate cohort auditing and entry pass validation.
-                        </p>
-
-                        <div class="form-grid-2col">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= ddlYearLevel.ClientID %>">
-                                    <span>Current Year Level <span class="req">*</span></span>
-                                    <span class="form-label-muted">Academic Standing</span>
-                                </label>
-                                <asp:DropDownList ID="ddlYearLevel" runat="server" CssClass="form-select">
-                                    <asp:ListItem Value="1" Text="1st Year"></asp:ListItem>
-                                    <asp:ListItem Value="2" Text="2nd Year"></asp:ListItem>
-                                    <asp:ListItem Value="3" Text="3rd Year" Selected="True"></asp:ListItem>
-                                    <asp:ListItem Value="4" Text="4th Year"></asp:ListItem>
-                                    <asp:ListItem Value="5" Text="Irregular"></asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtSection.ClientID %>">
-                                    <span>Class Section <span class="req">*</span></span>
-                                    <span class="form-label-muted">e.g. SBIT-3A, SBIT-3C</span>
-                                </label>
-                                <asp:TextBox ID="txtSection" runat="server" CssClass="form-input" MaxLength="50" placeholder="e.g. SBIT-3C"></asp:TextBox>
-                            </div>
-                        </div>
-
-                        <!-- Commitment & Terms Card -->
-                        <div class="commitment-card">
-                            <label class="commitment-checkbox-label" for="<%= chkTerms.ClientID %>">
-                                <asp:CheckBox ID="chkTerms" runat="server" />
-                                <span>I confirm that I will attend this event and agree to follow all official university event guidelines and campus health/safety protocols.</span>
-                            </label>
-                            <p style="font-size:0.78rem; color:var(--text-muted); margin-left: 28px;">
-                                Note: Reserved seats that result in unexcused absences will be audited as No-Shows in accordance with the campus extracurricular attendance charter.
-                            </p>
-                        </div>
-
-                        <!-- Step 3 Nav Footer -->
-                        <div class="step-nav-footer">
-                            <button type="button" class="btn-action-secondary" onclick="switchStep(2)">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                                    <polyline points="12 19 5 12 12 5"></polyline>
-                                </svg>
-                                <span>Back to Step 2: Student Information</span>
-                            </button>
-
-                            <asp:Button ID="btnConfirmRegistration" runat="server" 
-                                CssClass="btn-action-primary" 
-                                Text="Confirm & Complete Registration" 
-                                OnClick="btnConfirmRegistration_Click" />
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </main>
 
         <!-- Enterprise Floating Lower-Right Toast Container -->
         <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
     </form>
-
-    <!-- Client-side Stepper Switcher Script -->
-    <script>
-        function switchStep(step) {
-            if (step < 1 || step > 3) return;
-
-            // Update hidden field
-            var hf = document.getElementById('<%= hfCurrentStep.ClientID %>');
-            if (hf) {
-                hf.value = step;
-            }
-
-            // Update panels & tabs
-            for (var i = 1; i <= 3; i++) {
-                var panel = document.getElementById('step-panel-' + i);
-                var tab = document.getElementById('tab-step-' + i);
-
-                if (panel) {
-                    panel.style.display = (i === step) ? 'block' : 'none';
-                }
-
-                if (tab) {
-                    tab.classList.remove('active', 'completed');
-                    if (i === step) {
-                        tab.classList.add('active');
-                        tab.setAttribute('aria-selected', 'true');
-                    } else if (i < step) {
-                        tab.classList.add('completed');
-                        tab.setAttribute('aria-selected', 'false');
-                    } else {
-                        tab.setAttribute('aria-selected', 'false');
-                    }
-                }
-            }
-        }
-
-        // Initialize state based on server-rendered step value
-        document.addEventListener('DOMContentLoaded', function () {
-            var hf = document.getElementById('<%= hfCurrentStep.ClientID %>');
-            var initialStep = (hf && parseInt(hf.value)) ? parseInt(hf.value) : 1;
-            switchStep(initialStep);
-        });
-    </script>
 
     <!-- Universal Toast Engine -->
     <script type="text/javascript" src="<%= ResolveUrl("~/Frontend/Assets/js/toast.js") %>"></script>

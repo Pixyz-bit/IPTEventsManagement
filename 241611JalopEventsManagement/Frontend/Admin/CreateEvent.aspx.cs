@@ -267,6 +267,41 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     System.Diagnostics.Debug.WriteLine("Photo upload error: " + uploadEx.Message);
                 }
             }
+            else if (!string.IsNullOrWhiteSpace(hfPhotoBase64.Value))
+            {
+                try
+                {
+                    string base64Data = hfPhotoBase64.Value;
+                    int commaIdx = base64Data.IndexOf(',');
+                    if (commaIdx >= 0)
+                    {
+                        base64Data = base64Data.Substring(commaIdx + 1);
+                    }
+                    byte[] imageBytes = Convert.FromBase64String(base64Data);
+
+                    string origName = hfPhotoFileName.Value;
+                    string ext = ".jpg";
+                    if (!string.IsNullOrWhiteSpace(origName))
+                    {
+                        ext = System.IO.Path.GetExtension(origName).ToLowerInvariant();
+                    }
+                    if (string.IsNullOrWhiteSpace(ext)) ext = ".jpg";
+
+                    string uploadFolder = Server.MapPath("~/Frontend/Assets/Events/");
+                    if (!System.IO.Directory.Exists(uploadFolder))
+                    {
+                        System.IO.Directory.CreateDirectory(uploadFolder);
+                    }
+                    string safeFileName = $"{Guid.NewGuid():N}_banner{ext}";
+                    string physicalPath = System.IO.Path.Combine(uploadFolder, safeFileName);
+                    System.IO.File.WriteAllBytes(physicalPath, imageBytes);
+                    photoPath = "~/Frontend/Assets/Events/" + safeFileName;
+                }
+                catch (Exception b64Ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Base64 banner save error: " + b64Ex.Message);
+                }
+            }
 
             var newEvent = new EventModel
             {
@@ -310,6 +345,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 txtVenueLocation.Text = string.Empty;
                 txtMaxCapacity.Text = "150";
                 hfSelectedPrograms.Value = string.Empty;
+                hfPhotoBase64.Value = string.Empty;
+                hfPhotoFileName.Value = string.Empty;
                 hfActiveStep.Value = "1";
                 InitializeFormDefaults();
                 UpdatePreviewCard();

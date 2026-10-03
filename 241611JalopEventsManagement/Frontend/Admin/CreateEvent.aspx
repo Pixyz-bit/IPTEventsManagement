@@ -160,7 +160,7 @@
                             <div class="step1-left-col">
                                 <div class="form-group">
                                     <label class="form-label" for="<%= txtTitle.ClientID %>">Event Title <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtTitle" runat="server" CssClass="form-input" placeholder="e.g. Annual University Tech Symposium 2026" MaxLength="200" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                    <asp:TextBox ID="txtTitle" runat="server" CssClass="form-input" placeholder="e.g. Annual University Tech Symposium 2026" MaxLength="200" />
                                 </div>
 
                                 <div class="form-group">
@@ -171,13 +171,13 @@
                                 <div class="form-grid-2">
                                     <div class="form-group">
                                         <label class="form-label" for="<%= txtVenueLocation.ClientID %>">Venue Location <span class="required-mark">*</span></label>
-                                        <asp:TextBox ID="txtVenueLocation" runat="server" CssClass="form-input" placeholder="e.g. Central Auditorium, Hall A" MaxLength="200" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                        <asp:TextBox ID="txtVenueLocation" runat="server" CssClass="form-input" placeholder="e.g. Central Auditorium, Hall A" MaxLength="200" />
                                         <span class="form-hint">Physical room, auditorium, or laboratory venue.</span>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="form-label" for="<%= txtMaxCapacity.ClientID %>">Max Capacity (Seats) <span class="required-mark">*</span></label>
-                                        <asp:TextBox ID="txtMaxCapacity" runat="server" TextMode="Number" CssClass="form-input" Text="150" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                        <asp:TextBox ID="txtMaxCapacity" runat="server" TextMode="Number" CssClass="form-input" Text="150" />
                                         <span class="form-hint">Attendance Ceiling (Seats)</span>
                                     </div>
                                 </div>
@@ -189,14 +189,33 @@
                                     <label class="form-label" for="<%= fuEventPhoto.ClientID %>">Promotional Banner / Poster</label>
                                     <span class="form-hint" style="margin-top:-0.2rem; margin-bottom:0.75rem;">(Optional Asset Upload)</span>
 
-                                    <div class="upload-dropzone">
+                                    <asp:HiddenField ID="hfPhotoBase64" runat="server" />
+                                    <asp:HiddenField ID="hfPhotoFileName" runat="server" />
+
+                                    <div id="dropzoneContent" class="upload-dropzone" style="cursor:pointer;" onclick="triggerPhotoUpload();">
                                         <svg class="upload-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                             <polyline points="17 8 12 3 7 8"></polyline>
                                             <line x1="12" y1="3" x2="12" y2="15"></line>
                                         </svg>
-                                        <asp:FileUpload ID="fuEventPhoto" runat="server" CssClass="form-input banner-file-input" accept="image/*" />
+                                        <asp:FileUpload ID="fuEventPhoto" runat="server" CssClass="form-input banner-file-input" accept="image/*" onchange="handleBannerFileSelect(this);" style="display:none;" />
+                                        <span style="font-weight:600; color:var(--text-heading); margin-bottom:0.25rem;">Click to Upload Promotional Banner</span>
                                         <span class="upload-formats-hint">Supported formats: PNG, JPG, JPEG, WEBP</span>
+                                    </div>
+
+                                    <!-- Live Interactive Banner Preview -->
+                                    <div id="bannerPreviewContainer" style="display:none; margin-top:0.75rem; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--card-bg);">
+                                        <img id="imgBannerPreview" src="" alt="Selected Banner Preview" style="width:100%; height:160px; object-fit:cover; display:block;" />
+                                        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.65rem 0.85rem; background:rgba(0,0,0,0.03);">
+                                            <div style="display:flex; align-items:center; gap:0.5rem; overflow:hidden;">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                <span id="lblBannerFileName" style="font-size:0.82rem; font-weight:600; color:var(--text-heading); text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:180px;"></span>
+                                            </div>
+                                            <div style="display:flex; gap:0.5rem;">
+                                                <button type="button" onclick="triggerPhotoUpload();" style="background:#e0f2fe; color:#0284c7; border:none; border-radius:4px; padding:4px 8px; font-size:0.75rem; font-weight:600; cursor:pointer;">Change</button>
+                                                <button type="button" onclick="removeSelectedBanner();" style="background:#fee2e2; color:#ef4444; border:none; border-radius:4px; padding:4px 8px; font-size:0.75rem; font-weight:600; cursor:pointer;">Remove</button>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <span class="form-hint" style="margin-top:0.75rem;">Stored persistently in the dedicated assets folder.</span>
@@ -243,19 +262,19 @@
 
                                 <div class="form-group">
                                     <label class="form-label" for="<%= txtEventDate.ClientID %>">Event Date <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtEventDate" runat="server" TextMode="Date" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                    <asp:TextBox ID="txtEventDate" runat="server" TextMode="Date" CssClass="form-input" />
                                     <span class="form-hint">Designated calendar date (Format: MM/DD/YYYY)</span>
                                 </div>
 
                                 <div class="form-grid-2">
                                     <div class="form-group" style="margin-bottom:0;">
                                         <label class="form-label" for="<%= txtEventStartTime.ClientID %>">Kickoff Time <span class="required-mark">*</span></label>
-                                        <asp:TextBox ID="txtEventStartTime" runat="server" TextMode="Time" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                        <asp:TextBox ID="txtEventStartTime" runat="server" TextMode="Time" CssClass="form-input" />
                                         <span class="form-hint">Kickoff (e.g. 09:00 AM)</span>
                                     </div>
                                     <div class="form-group" style="margin-bottom:0;">
                                         <label class="form-label" for="<%= txtEventEndTime.ClientID %>">End Time <span class="required-mark">*</span></label>
-                                        <asp:TextBox ID="txtEventEndTime" runat="server" TextMode="Time" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                        <asp:TextBox ID="txtEventEndTime" runat="server" TextMode="Time" CssClass="form-input" />
                                         <span class="form-hint">End (e.g. 05:00 PM)</span>
                                     </div>
                                 </div>
@@ -267,13 +286,13 @@
 
                                 <div class="form-group">
                                     <label class="form-label" for="<%= txtRegStart.ClientID %>">Registration Open Date & Time <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtRegStart" runat="server" TextMode="DateTimeLocal" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                    <asp:TextBox ID="txtRegStart" runat="server" TextMode="DateTimeLocal" CssClass="form-input" />
                                     <span class="form-hint">Initial access timestamp (Format: MM/DD/YYYY HH:MM)</span>
                                 </div>
 
                                 <div class="form-group" style="margin-bottom:0;">
                                     <label class="form-label" for="<%= txtRegEnd.ClientID %>">Registration Deadline <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtRegEnd" runat="server" TextMode="DateTimeLocal" CssClass="form-input" AutoPostBack="true" OnTextChanged="FormField_Changed" />
+                                    <asp:TextBox ID="txtRegEnd" runat="server" TextMode="DateTimeLocal" CssClass="form-input" />
                                     <span class="form-hint">Strict enrollment cutoff (Format: MM/DD/YYYY HH:MM)</span>
                                 </div>
                             </div>
@@ -321,7 +340,7 @@
 
                                 <div class="form-group">
                                     <label class="form-label" for="<%= ddlBranch.ClientID %>">1. Campus Branch</label>
-                                    <asp:DropDownList ID="ddlBranch" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
+                                    <asp:DropDownList ID="ddlBranch" runat="server" CssClass="form-select">
                                         <asp:ListItem Value="" Text="All Branches (Open)" />
                                         <asp:ListItem Value="San Bartolome" Text="San Bartolome (Main Campus)" />
                                         <asp:ListItem Value="Batasan" Text="Batasan Campus" />
@@ -331,7 +350,7 @@
 
                                 <div class="form-group" style="margin-top: 1rem;">
                                     <label class="form-label" for="<%= ddlDepartment.ClientID %>">2. Academic College / Dept</label>
-                                    <asp:DropDownList ID="ddlDepartment" runat="server" CssClass="form-select" onchange="filterProgramsByDepartment(this.value);" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
+                                    <asp:DropDownList ID="ddlDepartment" runat="server" CssClass="form-select" onchange="filterProgramsByDepartment(this.value);">
                                         <asp:ListItem Value="" Text="All Colleges / Open" />
                                         <asp:ListItem Value="College of Computer Studies" Text="College of Computer Studies (CCS)" />
                                         <asp:ListItem Value="College of Engineering" Text="College of Engineering (COE)" />
@@ -342,7 +361,7 @@
 
                                 <div class="form-group" style="margin-top: 1rem; margin-bottom: 0;">
                                     <label class="form-label" for="<%= ddlYearLevel.ClientID %>">4. Year Level Eligibility</label>
-                                    <asp:DropDownList ID="ddlYearLevel" runat="server" CssClass="form-select" AutoPostBack="true" OnSelectedIndexChanged="FormField_Changed">
+                                    <asp:DropDownList ID="ddlYearLevel" runat="server" CssClass="form-select">
                                         <asp:ListItem Value="" Text="All Year Levels (1-4)" />
                                         <asp:ListItem Value="1" Text="1st Year Students Only" />
                                         <asp:ListItem Value="2" Text="2nd Year Students Only" />
@@ -560,10 +579,15 @@
                                             </div>
                                         </div>
 
-                                        <!-- Right Side: Description -->
+                                        <!-- Right Side: Description & Banner Preview -->
                                         <div class="event-identity-right">
                                             <span class="bento-kv-label" style="display:block; margin-bottom:0.35rem;">DESC:</span>
                                             <div id="sumDesc" class="bento-kv-val summary-desc-text">-</div>
+
+                                            <div id="sumBannerContainer" style="margin-top:0.75rem; border-top:1px dashed #e2e8f0; padding-top:0.75rem; display:none;">
+                                                <span class="bento-kv-label" style="display:block; margin-bottom:0.35rem;">ATTACHED PROMOTIONAL BANNER:</span>
+                                                <img id="sumBannerImg" src="" alt="Attached Promotional Banner" style="width:100%; max-height:130px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1; display:block;" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -648,7 +672,7 @@
                                         </svg>
                                         <span>&lt; Back to Edit</span>
                                     </button>
-                                    <asp:Button ID="btnConfirmPublish" runat="server" Text="Confirm &amp; Publish Event" CssClass="btn-action-primary" OnClick="btnPublishEvent_Click" />
+                                    <asp:Button ID="btnConfirmPublish" runat="server" Text="Confirm &amp; Publish Event" CssClass="btn-action-primary" OnClick="btnPublishEvent_Click" OnClientClick="return validateFinalPublish();" />
                                 </div>
                             </div>
                         </div>
@@ -657,70 +681,6 @@
             </div>
         </div>
 
-    </div>
-
-    <!-- Proper Schedule & Registration Policy Validation Modal -->
-    <div id="modalDateValidation" class="modal-overlay" style="display:none;" onclick="handleDateModalBackdrop(event)">
-        <div class="modal-box-validation" onclick="event.stopPropagation()">
-            <div class="modal-header-warning">
-                <div class="modal-title-wrap">
-                    <div class="modal-icon-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="modal-title" id="valModalTitle">Registration Window Requirement</h3>
-                        <p class="modal-subtitle">University Event Policy Directive</p>
-                    </div>
-                </div>
-                <button type="button" class="modal-close-btn" onclick="closeDateValidationModal(false)" aria-label="Close dialog">&times;</button>
-            </div>
-
-            <div class="modal-body">
-                <div class="validation-message-alert" id="valModalMessage">
-                    Registration opening date and registration deadline must both conclude <strong>before the event date itself</strong>.
-                </div>
-
-                <div class="date-comparison-card">
-                    <div class="date-comparison-row">
-                        <div class="date-comp-col">
-                            <span class="date-comp-label">Event Date (MM/DD/YYYY)</span>
-                            <span class="date-comp-value" id="valModalEventDate">-</span>
-                        </div>
-                    </div>
-                    <div class="date-comparison-grid">
-                        <div class="date-comp-col">
-                            <span class="date-comp-label">Registration Opens (MM/DD/YYYY)</span>
-                            <span class="date-comp-value" id="valModalRegOpen">-</span>
-                        </div>
-                        <div class="date-comp-col">
-                            <span class="date-comp-label">Registration Deadline (MM/DD/YYYY)</span>
-                            <span class="date-comp-value" id="valModalRegEnd">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="policy-note-box">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
-                    <span><strong>Policy Mandate:</strong> The registration window must conclude strictly before the event date (MM/DD/YYYY) so administrative rosters and QR passes can be finalized.</span>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn-action-primary" onclick="closeDateValidationModal(true)">
-                    <span>Adjust Schedule</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
     </div>
 
     <!-- Stepper Tab Controller Script -->
@@ -770,65 +730,123 @@
             }
         }
 
-        // ─── Modal State & Validation Helpers ───
-        var pendingFocusFieldId = null;
-
-        function showDateValidationModal(title, message, fieldToFocus) {
-            var modal = document.getElementById('modalDateValidation');
-            var titleEl = document.getElementById('valModalTitle');
-            var msgEl = document.getElementById('valModalMessage');
-            var evDateEl = document.getElementById('valModalEventDate');
-            var regOpenEl = document.getElementById('valModalRegOpen');
-            var regEndEl = document.getElementById('valModalRegEnd');
-
-            var evDate = document.getElementById('<%= txtEventDate.ClientID %>');
-            var regStart = document.getElementById('<%= txtRegStart.ClientID %>');
-            var regEnd = document.getElementById('<%= txtRegEnd.ClientID %>');
-
-            if (titleEl && title) titleEl.innerText = title;
-            if (msgEl && message) msgEl.innerHTML = message;
-
-            if (evDateEl) {
-                evDateEl.innerText = (evDate && evDate.value) ? formatDateOnlyPretty(evDate.value) : 'Not Specified';
-            }
-            if (regOpenEl) {
-                regOpenEl.innerText = (regStart && regStart.value) ? formatDateTimePretty(regStart.value) : 'Not Specified';
-            }
-            if (regEndEl) {
-                regEndEl.innerText = (regEnd && regEnd.value) ? formatDateTimePretty(regEnd.value) : 'Not Specified';
+        // ─── Schedule & Form Validation Feedback (Toast Notification) ───
+        function showDateValidationToast(title, message, fieldToFocus) {
+            // Trigger floating toast notification via global AppToast engine
+            if (window.AppToast && typeof window.AppToast.show === 'function') {
+                window.AppToast.show({
+                    type: 'warning',
+                    title: title || 'Validation Notice',
+                    message: message || 'Please review and complete the required event details.',
+                    duration: 6500
+                });
+            } else if (typeof window.showToast === 'function') {
+                window.showToast(message, 'warning', title || 'Validation Notice', 6500);
             }
 
-            pendingFocusFieldId = fieldToFocus || null;
-
-            if (modal) {
-                modal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
-        }
-
-        function closeDateValidationModal(shouldFocus) {
-            var modal = document.getElementById('modalDateValidation');
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-            // Always return to Step 2 so coordinator can correct the schedule
-            switchStep(2);
-            if (shouldFocus && pendingFocusFieldId) {
-                var el = document.getElementById(pendingFocusFieldId);
+            // Smoothly focus and scroll to the invalid field if supplied
+            if (fieldToFocus) {
+                var el = (typeof fieldToFocus === 'string') ? document.getElementById(fieldToFocus) : fieldToFocus;
                 if (el) {
                     setTimeout(function () {
                         el.focus();
                         if (typeof el.select === 'function') el.select();
-                    }, 50);
+                        if (typeof el.scrollIntoView === 'function') {
+                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }, 120);
                 }
             }
         }
 
-        function handleDateModalBackdrop(event) {
-            if (event.target && event.target.id === 'modalDateValidation') {
-                closeDateValidationModal(false);
+        // Backward compatibility alias for any existing invocation
+        function showDateValidationModal(title, message, fieldToFocus) {
+            showDateValidationToast(title, message, fieldToFocus);
+        }
+
+        // Safe stubs for legacy call sites
+        function closeDateValidationModal(shouldFocus) { }
+        function handleDateModalBackdrop(event) { }
+
+        function validateFinalPublish() {
+            // Validate Step 1 before final submit
+            var title = document.getElementById('<%= txtTitle.ClientID %>');
+            var venue = document.getElementById('<%= txtVenueLocation.ClientID %>');
+            var cap = document.getElementById('<%= txtMaxCapacity.ClientID %>');
+
+            if (!title || !title.value.trim()) {
+                showDateValidationToast('Event Title Required', 'Please enter the <strong>Event Title</strong> before publishing.', '<%= txtTitle.ClientID %>');
+                switchStep(1);
+                return false;
             }
+            if (!venue || !venue.value.trim()) {
+                showDateValidationToast('Venue Location Required', 'Please specify the <strong>Venue / Room Location</strong> before publishing.', '<%= txtVenueLocation.ClientID %>');
+                switchStep(1);
+                return false;
+            }
+            if (!cap || !cap.value.trim() || parseInt(cap.value) <= 0) {
+                showDateValidationToast('Invalid Seat Capacity', 'Please enter a valid seat capacity greater than 0.', '<%= txtMaxCapacity.ClientID %>');
+                switchStep(1);
+                return false;
+            }
+
+            // Validate Step 2 before final submit
+            var evDate = document.getElementById('<%= txtEventDate.ClientID %>');
+            var startTime = document.getElementById('<%= txtEventStartTime.ClientID %>');
+            var endTime = document.getElementById('<%= txtEventEndTime.ClientID %>');
+            var regStart = document.getElementById('<%= txtRegStart.ClientID %>');
+            var regEnd = document.getElementById('<%= txtRegEnd.ClientID %>');
+
+            if (!evDate || !evDate.value) {
+                showDateValidationToast('Event Date Required', 'Please specify the designated <strong>Event Date (Format: MM/DD/YYYY)</strong>.', '<%= txtEventDate.ClientID %>');
+                switchStep(2);
+                return false;
+            }
+            if (!startTime || !startTime.value) {
+                showDateValidationToast('Kickoff Time Required', 'Please specify the <strong>Event Kickoff Time</strong>.', '<%= txtEventStartTime.ClientID %>');
+                switchStep(2);
+                return false;
+            }
+            if (!endTime || !endTime.value) {
+                showDateValidationToast('End Time Required', 'Please specify the <strong>Event End Time</strong>.', '<%= txtEventEndTime.ClientID %>');
+                switchStep(2);
+                return false;
+            }
+            if (startTime.value >= endTime.value) {
+                showDateValidationToast('Invalid Time Window', 'Event Kickoff Time must be <strong>earlier</strong> than Event End Time.', '<%= txtEventStartTime.ClientID %>');
+                switchStep(2);
+                return false;
+            }
+            if (!regStart || !regStart.value) {
+                showDateValidationToast('Registration Open Date Required', 'Please specify the <strong>Registration Opening Date &amp; Time</strong>.', '<%= txtRegStart.ClientID %>');
+                switchStep(2);
+                return false;
+            }
+            if (!regEnd || !regEnd.value) {
+                showDateValidationToast('Registration Deadline Required', 'Please specify the <strong>Registration Deadline</strong>.', '<%= txtRegEnd.ClientID %>');
+                switchStep(2);
+                return false;
+            }
+            if (new Date(regStart.value) >= new Date(regEnd.value)) {
+                showDateValidationToast('Invalid Registration Window', 'Registration Opening Date &amp; Time must be <strong>earlier</strong> than the Registration Deadline.', '<%= txtRegStart.ClientID %>');
+                switchStep(2);
+                return false;
+            }
+            var evDateStr = evDate.value;
+            var regStartDateStr = regStart.value.split('T')[0];
+            var regEndDateStr = regEnd.value.split('T')[0];
+            if (regStartDateStr >= evDateStr || regEndDateStr >= evDateStr) {
+                var formattedEvDate = formatDateOnlyPretty(evDateStr);
+                showDateValidationToast(
+                    'Registration Must Precede Event Date',
+                    'Registration Opening Date and Registration Deadline must both conclude <strong>before the Event Date (' + formattedEvDate + ')</strong>.',
+                    '<%= txtRegEnd.ClientID %>'
+                );
+                switchStep(2);
+                return false;
+            }
+
+            return true;
         }
 
         function validateAndGoStep(targetStep) {
@@ -849,7 +867,7 @@
                 var cap = document.getElementById('<%= txtMaxCapacity.ClientID %>');
 
                 if (title && !title.value.trim()) {
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'Event Title Required',
                         'Please enter the <strong>Event Title</strong> before proceeding to subsequent steps.',
                         '<%= txtTitle.ClientID %>'
@@ -858,7 +876,7 @@
                     return;
                 }
                 if (venue && !venue.value.trim()) {
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'Venue Location Required',
                         'Please specify the <strong>Venue / Room Location</strong>.',
                         '<%= txtVenueLocation.ClientID %>'
@@ -867,7 +885,7 @@
                     return;
                 }
                 if (cap && (!cap.value.trim() || parseInt(cap.value) <= 0)) {
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'Invalid Seat Capacity',
                         'Please enter a valid seat capacity greater than 0.',
                         '<%= txtMaxCapacity.ClientID %>'
@@ -886,51 +904,57 @@
                 var regEnd = document.getElementById('<%= txtRegEnd.ClientID %>');
 
                 if (evDate && !evDate.value) {
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'Event Date Required',
                         'Please specify the designated <strong>Event Date (Format: MM/DD/YYYY)</strong> before proceeding to Target Audience.',
                         '<%= txtEventDate.ClientID %>'
                     );
+                    switchStep(2);
                     return;
                 }
                 if (startTime && !startTime.value) {
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'Kickoff Time Required',
                         'Please specify the <strong>Event Kickoff Time</strong> (e.g. 09:00 AM).',
                         '<%= txtEventStartTime.ClientID %>'
                     );
+                    switchStep(2);
                     return;
                 }
                 if (endTime && !endTime.value) {
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'End Time Required',
                         'Please specify the <strong>Event End Time</strong> (e.g. 05:00 PM).',
                         '<%= txtEventEndTime.ClientID %>'
                     );
+                    switchStep(2);
                     return;
                 }
                 if (startTime && endTime && startTime.value >= endTime.value) {
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'Invalid Time Window',
                         'Event Kickoff Time must be <strong>earlier</strong> than Event End Time.',
                         '<%= txtEventStartTime.ClientID %>'
                     );
+                    switchStep(2);
                     return;
                 }
                 if (regStart && !regStart.value) {
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'Registration Open Date Required',
                         'Please specify the <strong>Registration Opening Date &amp; Time (Format: MM/DD/YYYY)</strong>.',
                         '<%= txtRegStart.ClientID %>'
                     );
+                    switchStep(2);
                     return;
                 }
                 if (regEnd && !regEnd.value) {
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'Registration Deadline Required',
                         'Please specify the <strong>Registration Deadline (Format: MM/DD/YYYY)</strong>.',
                         '<%= txtRegEnd.ClientID %>'
                     );
+                    switchStep(2);
                     return;
                 }
 
@@ -938,11 +962,12 @@
                 var dtRegStart = new Date(regStart.value);
                 var dtRegEnd = new Date(regEnd.value);
                 if (dtRegStart >= dtRegEnd) {
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'Invalid Registration Window',
                         'Registration Opening Date &amp; Time must be <strong>earlier</strong> than the Registration Deadline.',
                         '<%= txtRegStart.ClientID %>'
                     );
+                    switchStep(2);
                     return;
                 }
 
@@ -953,11 +978,12 @@
 
                 if (regStartDateStr >= evDateStr || regEndDateStr >= evDateStr) {
                     var formattedEvDate = formatDateOnlyPretty(evDateStr);
-                    showDateValidationModal(
+                    showDateValidationToast(
                         'Registration Must Precede Event Date',
                         'The <strong>Registration Opening Date</strong> and <strong>Registration Deadline</strong> must both conclude <strong>before the Event Date itself (' + formattedEvDate + ')</strong>.<br><br>Please adjust your registration dates so they occur strictly prior to the scheduled event date.',
                         '<%= txtRegEnd.ClientID %>'
                     );
+                    switchStep(2);
                     return;
                 }
             }
@@ -1155,6 +1181,17 @@
             if (sumCapacity) sumCapacity.innerText = (cap && cap.value) ? (cap.value + ' seats') : '150 seats';
             if (sumDesc) sumDesc.innerText = (desc && desc.value.trim()) ? desc.value.trim() : '(No description provided)';
 
+            // Promotional Banner Preview in Step 5
+            var hfData = document.getElementById('<%= hfPhotoBase64.ClientID %>');
+            var sumBannerBox = document.getElementById('sumBannerContainer');
+            var sumBannerImg = document.getElementById('sumBannerImg');
+            if (hfData && hfData.value && sumBannerBox && sumBannerImg) {
+                sumBannerImg.src = hfData.value;
+                sumBannerBox.style.display = 'block';
+            } else if (sumBannerBox) {
+                sumBannerBox.style.display = 'none';
+            }
+
             // Schedule & Timeline
             var evDate = document.getElementById('<%= txtEventDate.ClientID %>');
             var startTime = document.getElementById('<%= txtEventStartTime.ClientID %>');
@@ -1258,11 +1295,67 @@
             });
         }
 
+        function triggerPhotoUpload() {
+            var fu = document.getElementById('<%= fuEventPhoto.ClientID %>');
+            if (fu) fu.click();
+        }
+
+        function handleBannerFileSelect(input) {
+            if (input.files && input.files[0]) {
+                var file = input.files[0];
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var preview = document.getElementById('imgBannerPreview');
+                    var nameLabel = document.getElementById('lblBannerFileName');
+                    var container = document.getElementById('bannerPreviewContainer');
+                    var dropzone = document.getElementById('dropzoneContent');
+                    if (preview) preview.src = e.target.result;
+                    if (nameLabel) nameLabel.innerText = file.name;
+                    if (container) container.style.display = 'block';
+                    if (dropzone) dropzone.style.display = 'none';
+
+                    var hfData = document.getElementById('<%= hfPhotoBase64.ClientID %>');
+                    var hfName = document.getElementById('<%= hfPhotoFileName.ClientID %>');
+                    if (hfData) hfData.value = e.target.result;
+                    if (hfName) hfName.value = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeSelectedBanner() {
+            var fu = document.getElementById('<%= fuEventPhoto.ClientID %>');
+            if (fu) fu.value = '';
+            var hfData = document.getElementById('<%= hfPhotoBase64.ClientID %>');
+            var hfName = document.getElementById('<%= hfPhotoFileName.ClientID %>');
+            if (hfData) hfData.value = '';
+            if (hfName) hfName.value = '';
+            var container = document.getElementById('bannerPreviewContainer');
+            var dropzone = document.getElementById('dropzoneContent');
+            if (container) container.style.display = 'none';
+            if (dropzone) dropzone.style.display = 'block';
+        }
+
         // Initialize state on page load
         document.addEventListener('DOMContentLoaded', function () {
             restoreCourseSelection();
             initLiveTicketListeners();
             updateTicketPreview();
+
+            // Check if photo was previously stored in hidden field
+            var hfData = document.getElementById('<%= hfPhotoBase64.ClientID %>');
+            var hfName = document.getElementById('<%= hfPhotoFileName.ClientID %>');
+            if (hfData && hfData.value) {
+                var preview = document.getElementById('imgBannerPreview');
+                var nameLabel = document.getElementById('lblBannerFileName');
+                var container = document.getElementById('bannerPreviewContainer');
+                var dropzone = document.getElementById('dropzoneContent');
+                if (preview) preview.src = hfData.value;
+                if (nameLabel && hfName && hfName.value) nameLabel.innerText = hfName.value;
+                if (container) container.style.display = 'block';
+                if (dropzone) dropzone.style.display = 'none';
+            }
+
             var hf = document.getElementById('<%= hfActiveStep.ClientID %>');
             var initialStep = (hf && hf.value) ? parseInt(hf.value) : 1;
             switchStep(initialStep);

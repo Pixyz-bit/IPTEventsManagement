@@ -187,8 +187,16 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             txtRegEnd.Text = ev.RegEnd.ToString("yyyy-MM-ddTHH:mm");
 
             // Section 3: Dual-Ratio Banners
-            imgWideBanner.ImageUrl = ResolveUrl("~/Frontend/Assets/campus-clean.jpg");
-            imgSquareBanner.ImageUrl = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg");
+            if (!string.IsNullOrWhiteSpace(ev.EventPhotoPath))
+            {
+                imgWideBanner.ImageUrl = ResolveUrl(ev.EventPhotoPath);
+                imgSquareBanner.ImageUrl = ResolveUrl(ev.EventPhotoPath);
+            }
+            else
+            {
+                imgWideBanner.ImageUrl = ResolveUrl("~/Frontend/Assets/campus-clean.jpg");
+                imgSquareBanner.ImageUrl = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg");
+            }
 
             // Section 4: Target Demographics
             litBranchView.Text = string.IsNullOrWhiteSpace(ev.TargetBranch) ? "All University Branches (Open to All)" : Server.HtmlEncode(ev.TargetBranch);
@@ -420,6 +428,34 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     return;
                 }
 
+                string photoPath = existing?.EventPhotoPath;
+
+                // Handle Banner Uploads if provided
+                if (fuWideBanner != null && fuWideBanner.HasFile)
+                {
+                    string uploaded = HandleBannerUpload(fuWideBanner, "wide_banner");
+                    if (!string.IsNullOrEmpty(uploaded))
+                    {
+                        photoPath = uploaded;
+                    }
+                }
+                else if (hfEditPhotoBase64 != null && !string.IsNullOrWhiteSpace(hfEditPhotoBase64.Value))
+                {
+                    string uploaded = HandleBase64BannerUpload(hfEditPhotoBase64.Value, hfEditPhotoFileName.Value, "wide_banner");
+                    if (!string.IsNullOrEmpty(uploaded))
+                    {
+                        photoPath = uploaded;
+                    }
+                }
+                else if (fuSquareBanner != null && fuSquareBanner.HasFile)
+                {
+                    string uploaded = HandleBannerUpload(fuSquareBanner, "square_banner");
+                    if (!string.IsNullOrEmpty(uploaded))
+                    {
+                        photoPath = uploaded;
+                    }
+                }
+
                 var updated = new EventModel
                 {
                     EventId = CurrentEventId,
@@ -438,7 +474,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     TargetBranch = string.IsNullOrWhiteSpace(ddlBranch.SelectedValue) ? null : ddlBranch.SelectedValue,
                     TargetDepartment = string.IsNullOrWhiteSpace(ddlDepartment.SelectedValue) ? null : ddlDepartment.SelectedValue,
                     TargetProgram = string.IsNullOrWhiteSpace(txtPrograms.Text) ? null : txtPrograms.Text.Trim(),
-                    TargetYearLevel = int.TryParse(ddlYearLevel.SelectedValue, out int yl) ? (int?)yl : null
+                    TargetYearLevel = int.TryParse(ddlYearLevel.SelectedValue, out int yl) ? (int?)yl : null,
+                    EventPhotoPath = photoPath
                 };
 
                 bool success = _eventRepository.UpdateEvent(updated);
@@ -457,10 +494,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     // Graceful handling for test database setups
                 }
 
-                // 5. Handle Banner Uploads if provided
-                HandleBannerUpload(fuWideBanner, "wide_banner");
-                HandleBannerUpload(fuSquareBanner, "square_banner");
-
                 litSuccessMsg.Text = $"<strong>Success!</strong> Event specifications for <em>&ldquo;{Server.HtmlEncode(title)}&rdquo;</em> (Event #{CurrentEventId}) were updated successfully in the authoritative database record.";
                 pnlSuccess.Visible = true;
                 IsEditMode = false;
@@ -473,7 +506,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
         }
 
-        private void HandleBannerUpload(FileUpload fu, string prefix)
+        private string HandleBannerUpload(FileUpload fu, string prefix)
         {
             if (fu != null && fu.HasFile)
             {
@@ -482,19 +515,55 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     string ext = Path.GetExtension(fu.FileName).ToLowerInvariant();
                     if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".webp")
                     {
-                        string uploadsDir = Server.MapPath("~/Frontend/Assets/uploads/");
+                        string uploadsDir = Server.MapPath("~/Frontend/Assets/Events/");
                         if (!Directory.Exists(uploadsDir))
                         {
                             Directory.CreateDirectory(uploadsDir);
                         }
-                        string fileName = $"{prefix}_{CurrentEventId}{ext}";
+                        string fileName = $"{prefix}_{CurrentEventId}_{Guid.NewGuid():N}{ext}";
                         fu.SaveAs(Path.Combine(uploadsDir, fileName));
+                        return "~/Frontend/Assets/Events/" + fileName;
                     }
                 }
                 catch
                 {
                     // Fall back cleanly
                 }
+            }
+            return null;
+        }
+
+        private string HandleBase64BannerUpload(string base64Data, string originalFileName, string prefix)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(base64Data)) return null;
+                int commaIdx = base64Data.IndexOf(',');
+                if (commaIdx >= 0)
+                {
+                    base64Data = base64Data.Substring(commaIdx + 1);
+                }
+                byte[] imageBytes = Convert.FromBase64String(base64Data);
+                string ext = ".jpg";
+                if (!string.IsNullOrWhiteSpace(originalFileName))
+                {
+                    ext = Path.GetExtension(originalFileName).ToLowerInvariant();
+                }
+                if (string.IsNullOrWhiteSpace(ext)) ext = ".jpg";
+
+                string uploadsDir = Server.MapPath("~/Frontend/Assets/Events/");
+                if (!Directory.Exists(uploadsDir))
+                {
+                    Directory.CreateDirectory(uploadsDir);
+                }
+                string fileName = $"{prefix}_{CurrentEventId}_{Guid.NewGuid():N}{ext}";
+                File.WriteAllBytes(Path.Combine(uploadsDir, fileName), imageBytes);
+                return "~/Frontend/Assets/Events/" + fileName;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("HandleBase64BannerUpload error: " + ex.Message);
+                return null;
             }
         }
 

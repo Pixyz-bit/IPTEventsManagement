@@ -45,6 +45,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             public int MaxCapacity { get; set; }
             public string MatrixStatus { get; set; }
             public string TargetDepartment { get; set; }
+            public string EventPhotoPath { get; set; }
+            public string BannerThumbnailUrl => !string.IsNullOrWhiteSpace(EventPhotoPath)
+                ? EventPhotoPath
+                : "~/Frontend/Assets/campus-clean.jpg";
         }
 
         private void BindEventsMatrix()
@@ -130,7 +134,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 CurrentRegistrations = ev.CurrentRegistrations,
                 MaxCapacity = ev.MaxCapacity,
                 MatrixStatus = GetEventMatrixStatus(ev),
-                TargetDepartment = ev.TargetDepartment
+                TargetDepartment = ev.TargetDepartment,
+                EventPhotoPath = ev.EventPhotoPath
             }).ToList();
 
             rptEventsMatrix.DataSource = rowViewModels;

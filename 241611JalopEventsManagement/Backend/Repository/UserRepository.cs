@@ -55,7 +55,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                        s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, s.CampusBranch, s.Department, s.Program
                 FROM dbo.UserTable u
                 LEFT JOIN dbo.StudentTable s ON u.UserId = s.UserId
-                WHERE u.Email = @Identifier;";
+                WHERE u.Email = @Identifier OR s.StudentId = @Identifier;";
 
             var param = new SqlParameter("@Identifier", SqlDbType.NVarChar, 150) { Value = identifier.Trim() };
             DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);

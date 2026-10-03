@@ -146,64 +146,76 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         /// Evaluates preliminary states (Valid Ticket, Duplicate Warning, Wrong Event, Cancelled)
         /// WITHOUT committing to the database.
         /// </summary>
-        [WebMethod]
+        [WebMethod(EnableSession = true)]
         public static ScanLookupResult LookupAttendee(int eventId, string query)
         {
-            var repo = new RegistrationRepository();
-            var reg = repo.GetRegistrationForScan(eventId, query);
+            try
+            {
+                var repo = new RegistrationRepository();
+                var reg = repo.GetRegistrationForScan(eventId, query);
 
-            if (reg == null)
+                if (reg == null)
+                {
+                    return new ScanLookupResult
+                    {
+                        Success = false,
+                        State = "NotFound",
+                        Message = "No matching attendee registration found for the provided code or ID."
+                    };
+                }
+
+                var result = new ScanLookupResult
+                {
+                    Success = true,
+                    EventRegistrationId = reg.EventRegistrationId,
+                    EventId = reg.EventId,
+                    EventTitle = reg.EventTitle,
+                    TicketReference = reg.TicketReference,
+                    StudentId = reg.StudentId,
+                    FullName = reg.StudentFullName,
+                    Email = reg.StudentEmail,
+                    Branch = reg.StudentCampusBranch,
+                    Department = reg.StudentDepartment,
+                    Course = reg.StudentProgram,
+                    YearLevel = reg.CurrentYearLvl,
+                    Section = reg.CurrentSection,
+                    CheckInTimestamp = reg.CheckInTimestamp.HasValue ? reg.CheckInTimestamp.Value.ToString("MM/dd/yyyy hh:mm:ss tt") : string.Empty
+                };
+
+                // State Validation Evaluation
+                if (reg.EventId != eventId)
+                {
+                    result.State = "WrongEventWarning";
+                    result.Message = $"Warning: This ticket pass is for Event #{reg.EventId} '{reg.EventTitle}', not the current active gate.";
+                }
+                else if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.State = "DuplicateWarning";
+                    string timeStr = reg.CheckInTimestamp.HasValue ? reg.CheckInTimestamp.Value.ToString("MM/dd/yyyy hh:mm:ss tt") : "earlier today";
+                    result.Message = $"Duplicate Check-In Warning: This pass was already checked in on {timeStr}.";
+                }
+                else if (string.Equals(reg.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.State = "CancelledWarning";
+                    result.Message = "Warning: This student's registration pass was revoked / cancelled.";
+                }
+                else
+                {
+                    result.State = "ValidPending";
+                    result.Message = "Valid Ticket: Attendee profile staged. Please verify student University ID card before confirming check-in.";
+                }
+
+                return result;
+            }
+            catch (Exception ex)
             {
                 return new ScanLookupResult
                 {
                     Success = false,
                     State = "NotFound",
-                    Message = "No matching attendee registration found for the provided code or ID."
+                    Message = "Lookup service error: " + ex.Message
                 };
             }
-
-            var result = new ScanLookupResult
-            {
-                Success = true,
-                EventRegistrationId = reg.EventRegistrationId,
-                EventId = reg.EventId,
-                EventTitle = reg.EventTitle,
-                TicketReference = reg.TicketReference,
-                StudentId = reg.StudentId,
-                FullName = reg.StudentFullName,
-                Email = reg.StudentEmail,
-                Branch = reg.StudentCampusBranch,
-                Department = reg.StudentDepartment,
-                Course = reg.StudentProgram,
-                YearLevel = reg.CurrentYearLvl,
-                Section = reg.CurrentSection,
-                CheckInTimestamp = reg.CheckInTimestamp.HasValue ? reg.CheckInTimestamp.Value.ToString("MM/dd/yyyy hh:mm:ss tt") : string.Empty
-            };
-
-            // State Validation Evaluation
-            if (reg.EventId != eventId)
-            {
-                result.State = "WrongEventWarning";
-                result.Message = $"Warning: This ticket pass is for Event #{reg.EventId} '{reg.EventTitle}', not the current active gate.";
-            }
-            else if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
-            {
-                result.State = "DuplicateWarning";
-                string timeStr = reg.CheckInTimestamp.HasValue ? reg.CheckInTimestamp.Value.ToString("MM/dd/yyyy hh:mm:ss tt") : "earlier today";
-                result.Message = $"Duplicate Check-In Warning: This pass was already checked in on {timeStr}.";
-            }
-            else if (string.Equals(reg.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
-            {
-                result.State = "CancelledWarning";
-                result.Message = "Warning: This student's registration pass was revoked / cancelled.";
-            }
-            else
-            {
-                result.State = "ValidPending";
-                result.Message = "Valid Ticket: Attendee profile staged. Please verify student University ID card before confirming check-in.";
-            }
-
-            return result;
         }
 
         /// <summary>
@@ -211,46 +223,57 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         /// Officially commits attendance (Status = 'Present', CheckInTimestamp = GETDATE())
         /// ONLY after explicit administrative confirmation.
         /// </summary>
-        [WebMethod]
+        [WebMethod(EnableSession = true)]
         public static CheckInResult CommitCheckIn(int eventRegistrationId, string verificationMethod)
         {
-            var repo = new RegistrationRepository();
-            bool success = repo.ConfirmCheckIn(eventRegistrationId, out string errorMsg);
+            try
+            {
+                var repo = new RegistrationRepository();
+                bool success = repo.ConfirmCheckIn(eventRegistrationId, out string errorMsg);
 
-            if (!success)
+                if (!success)
+                {
+                    return new CheckInResult
+                    {
+                        Success = false,
+                        Message = errorMsg
+                    };
+                }
+
+                var reg = repo.GetRegistrationById(eventRegistrationId);
+                DateTime checkInTime = reg?.CheckInTimestamp ?? DateTime.Now;
+
+                int checkedInCount = 0;
+                if (reg != null)
+                {
+                    checkedInCount = repo.GetCheckedInAttendees(reg.EventId).Count;
+                }
+
+                string adminUser = SessionHelper.CurrentEmail ?? "admin@gmail.com";
+
+                return new CheckInResult
+                {
+                    Success = true,
+                    Message = "Attendee successfully checked in.",
+                    CheckInTimestamp = checkInTime.ToString("MM/dd/yyyy hh:mm:ss tt"),
+                    EventRegistrationId = eventRegistrationId,
+                    TicketReference = reg?.TicketReference ?? $"TCK-{eventRegistrationId:D5}",
+                    StudentId = reg?.StudentId,
+                    FullName = reg?.StudentFullName,
+                    CourseAndYear = $"{reg?.StudentProgram} (Yr {reg?.CurrentYearLvl} - {reg?.CurrentSection})",
+                    VerificationMethod = string.IsNullOrWhiteSpace(verificationMethod) ? "Gate Scan" : verificationMethod,
+                    AdminUser = adminUser,
+                    UpdatedCheckedInCount = checkedInCount
+                };
+            }
+            catch (Exception ex)
             {
                 return new CheckInResult
                 {
                     Success = false,
-                    Message = errorMsg
+                    Message = "Database execution error: " + ex.Message
                 };
             }
-
-            var reg = repo.GetRegistrationById(eventRegistrationId);
-            DateTime checkInTime = reg?.CheckInTimestamp ?? DateTime.Now;
-
-            int checkedInCount = 0;
-            if (reg != null)
-            {
-                checkedInCount = repo.GetCheckedInAttendees(reg.EventId).Count;
-            }
-
-            string adminUser = SessionHelper.CurrentEmail ?? "admin@gmail.com";
-
-            return new CheckInResult
-            {
-                Success = true,
-                Message = "Attendee successfully checked in.",
-                CheckInTimestamp = checkInTime.ToString("MM/dd/yyyy hh:mm:ss tt"),
-                EventRegistrationId = eventRegistrationId,
-                TicketReference = reg?.TicketReference ?? $"TCK-{eventRegistrationId:D5}",
-                StudentId = reg?.StudentId,
-                FullName = reg?.StudentFullName,
-                CourseAndYear = $"{reg?.StudentProgram} (Yr {reg?.CurrentYearLvl} - {reg?.CurrentSection})",
-                VerificationMethod = string.IsNullOrWhiteSpace(verificationMethod) ? "Gate Scan" : verificationMethod,
-                AdminUser = adminUser,
-                UpdatedCheckedInCount = checkedInCount
-            };
         }
 
         #endregion
