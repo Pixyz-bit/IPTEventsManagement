@@ -161,179 +161,166 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           VERTICAL TICKET CARD - STRICT 15:9 RATIO
-           360px Width x 600px Height (720x1200 2x Retina Export)
-           Top Ivory Body: 355px | Bottom Navy Stub: 245px
+           RESPONSIVE TICKET CARD
+           Ivory credential body on left, navy QR stub on right, vertical perforation
            ═══════════════════════════════════════════════════════════════════════ */
-        .ticket-scroll-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0.5rem 0 1rem 0;
-        }
-
         .boarding-pass-card {
-            width: 360px;
-            max-width: 100%;
-            height: 600px;
-            aspect-ratio: 9 / 15;
+            width: 100%;
+            min-height: 340px;
+            height: auto;
             background: transparent;
             border-radius: 20px;
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) clamp(220px, 28%, 280px);
             position: relative;
-            box-shadow: 0 24px 56px -14px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.12);
+            box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12);
             overflow: hidden;
             font-family: var(--font-sans);
-            margin: 0 auto;
         }
 
-        /* Top Ticket Body (Ivory) - 355px */
+        /* Left Ticket Body (Ivory) */
         .ticket-left-body {
-            width: 100%;
-            height: 355px;
+            flex: 1;
             background-color: #FAF8F5;
-            padding: 24px 22px 20px 22px;
+            padding: clamp(24px, 3vw, 32px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            gap: 28px;
             position: relative;
+            min-width: 0;
             font-family: var(--font-sans);
-            box-sizing: border-box;
         }
 
-        /* Header Row: Brand Lockup */
+        /* Header Row: Logo & Portal Title (Left) + Student Number (Right) */
         .ticket-top-row {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            width: 100%;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(100px, 0.48fr);
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
         }
 
         .ticket-brand-lockup {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.85rem;
             min-width: 0;
-            flex-shrink: 0;
         }
 
         .ticket-crest-img {
-            width: 32px;
-            height: 32px;
-            aspect-ratio: 1;
+            width: 44px;
+            height: 44px;
             object-fit: contain;
             flex-shrink: 0;
         }
 
-        .ticket-issuer-text {
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
         .ticket-issuer-text h4 {
             font-family: var(--font-sans);
-            font-size: 0.68rem;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
             font-weight: 800;
             color: #0F1E60;
-            letter-spacing: -0.01em;
-            line-height: 1.2;
+            letter-spacing: -0.015em;
+            line-height: 1.15;
             text-transform: uppercase;
-            white-space: nowrap;
         }
 
         .ticket-issuer-text span {
             font-family: var(--font-sans);
-            font-size: 0.52rem;
+            font-size: 0.65rem;
             font-weight: 700;
             color: #3B4A7D;
             letter-spacing: 0.08em;
             text-transform: uppercase;
             display: block;
-            line-height: 1.2;
-            white-space: nowrap;
+            margin-top: 0.15rem;
         }
 
-        /* Middle Event Details Block (Vertically Centered in Available Space) */
-        .ticket-mid-block {
+        .ticket-student-number-block {
+            text-align: right;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            flex: 1;
-            min-height: 0;
-            width: 100%;
-            margin: auto 0;
+            align-items: flex-end;
+            flex-shrink: 0;
+            min-width: 0;
         }
 
+        .ticket-meta-label {
+            font-family: var(--font-sans);
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #4B5E94;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin-bottom: 0.15rem;
+        }
+
+        .ticket-student-number-val {
+            font-family: var(--font-sans);
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            font-weight: 800;
+            color: #0F1E60;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            overflow-wrap: anywhere;
+        }
+
+        /* Middle Event Headline */
         .ticket-headline-block {
-            margin: 0 0 1.25rem 0;
+            margin: 0.4rem 0;
             min-width: 0;
         }
 
         .ticket-event-title {
             font-family: var(--font-sans);
-            font-size: 1.26rem;
+            font-size: clamp(1.5rem, 3vw, 2.1rem);
             font-weight: 800;
             color: #0F1E60;
             text-transform: uppercase;
-            letter-spacing: -0.025em;
-            line-height: 1.24;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
             overflow-wrap: anywhere;
         }
 
-        /* Event Schedule Specs (Below ticket-event-title) */
+        /* Bottom Row: Date/Time/Venue (Left) + Student Name (Right) */
+        .ticket-bottom-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1.5rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(15, 30, 96, 0.12);
+        }
+
         .ticket-schedule-specs {
             display: flex;
             flex-direction: column;
-            gap: 0.55rem;
+            gap: 0.4rem;
             min-width: 0;
-            width: 100%;
         }
 
         .ticket-spec-line {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            align-items: flex-start;
+            gap: 0.55rem;
             font-family: var(--font-sans);
-            font-size: 0.78rem;
+            font-size: 0.88rem;
             font-weight: 700;
             color: #0F1E60;
-            line-height: 1.3;
+            line-height: 1.5;
             letter-spacing: -0.01em;
             overflow-wrap: anywhere;
         }
 
         .ticket-spec-line svg {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             stroke: #0F1E60;
             stroke-width: 2.2;
             flex-shrink: 0;
-        }
-
-        /* Bottom Row: Student Number (Left) + Student Full Name (Right) Side-by-Side */
-        .ticket-bottom-row {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding-top: 14px;
-            border-top: 1px solid rgba(15, 30, 96, 0.12);
-            margin-top: auto;
-            width: 100%;
-        }
-
-        .ticket-student-number-block {
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            flex-shrink: 0;
-            min-width: 0;
+            margin-top: 3px;
         }
 
         .ticket-student-name-block {
@@ -343,95 +330,69 @@
             align-items: flex-end;
             flex-shrink: 0;
             min-width: 0;
-            max-width: 180px;
-        }
-
-        .ticket-meta-label {
-            font-family: var(--font-sans);
-            font-size: 0.60rem;
-            font-weight: 700;
-            color: #4B5E94;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            line-height: 1.2;
-            margin-bottom: 0.2rem;
-        }
-
-        .ticket-student-number-val {
-            font-family: var(--font-sans);
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: #0F1E60;
-            letter-spacing: -0.02em;
-            line-height: 1.05;
-            overflow-wrap: anywhere;
         }
 
         .ticket-student-name-val {
             font-family: var(--font-sans);
-            font-size: 1.05rem;
+            font-size: clamp(1rem, 1.8vw, 1.2rem);
             font-weight: 800;
             color: #0F1E60;
             letter-spacing: -0.02em;
-            line-height: 1.05;
+            line-height: 1.4;
             text-transform: uppercase;
+            max-width: 100%;
             overflow-wrap: anywhere;
         }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           PERFORATION NOTCHES & HORIZONTAL TEAR SEAM
+           PERFORATION NOTCHES & VERTICAL DIVIDER
            ═══════════════════════════════════════════════════════════════════════ */
         .ticket-perforation-divider {
-            position: relative;
-            width: 100%;
-            height: 26px;
-            margin-top: -13px;
-            margin-bottom: -13px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: clamp(220px, 28%, 280px);
+            transform: translateX(50%);
+            width: 24px;
             background-color: transparent;
-            z-index: 10;
+            margin-left: 0;
+            z-index: 5;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: space-between;
-            pointer-events: none;
-        }
-
-        .ticket-perforation-dash {
-            flex: 1;
-            height: 0;
-            border-top: 2px dashed rgba(15, 30, 96, 0.22);
-            margin: 0 4px;
-        }
-
-        .ticket-notch-hole {
-            width: 26px;
-            height: 26px;
-            background-color: var(--bg-canvas); /* #090D16 */
-            border-radius: 50%;
+            align-items: center;
             flex-shrink: 0;
-            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
         }
 
-        .ticket-notch-left {
-            margin-left: -13px;
+        /* 6 Circular Notch Cutouts along the vertical seam */
+        .ticket-notch-hole {
+            width: 30px;
+            height: 30px;
+            background-color: #FFFFFF;
+            border-radius: 50%;
+            margin: 0;
+            flex-shrink: 0;
         }
 
-        .ticket-notch-right {
-            margin-right: -13px;
+        .ticket-notch-top {
+            margin-top: -12px;
         }
 
-        /* Bottom Ticket Stub (Navy) - 245px (Exact 15:9 ratio complement) */
+        .ticket-notch-bottom {
+            margin-bottom: -12px;
+        }
+
+        /* Right Ticket Stub (Navy) */
         .ticket-right-stub {
-            width: 100%;
-            height: 245px;
+            min-width: 0;
             background-color: #0F1E60;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 18px 20px;
+            padding: 28px 24px;
             position: relative;
             flex-shrink: 0;
-            box-sizing: border-box;
         }
 
         .ticket-qr-container {
@@ -439,28 +400,25 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0.55rem;
+            gap: 0.65rem;
             width: 100%;
             min-width: 0;
         }
 
         #qrCanvas {
             display: block;
-            width: 130px;
-            height: 130px;
-            border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 190px;
+            height: auto;
+            aspect-ratio: 1;
+            border-radius: 8px;
         }
 
         .ticket-stub-ref {
             font-family: var(--font-mono);
-            font-size: 0.74rem;
+            font-size: 0.75rem;
             font-weight: 700;
-            color: rgba(255, 255, 255, 0.88);
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 6px;
-            padding: 2px 10px;
+            color: rgba(255, 255, 255, 0.75);
             letter-spacing: 0.08em;
             text-transform: uppercase;
             text-align: center;
@@ -468,31 +426,17 @@
             max-width: 100%;
         }
 
-        .ticket-stub-instruction {
-            font-family: var(--font-sans);
-            font-size: 0.56rem;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.52);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            text-align: center;
-            margin-top: 1px;
-        }
-
         /* Action Buttons */
         .pass-actions-row {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            width: 100%;
-            max-width: 360px;
-            margin: 1.5rem auto 0 auto;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .btn-download-pass {
-            width: 100%;
+            flex: 1;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -502,15 +446,13 @@
             font-family: var(--font-sans);
             font-weight: 700;
             font-size: 0.9rem;
-            padding: 0.85rem 1.4rem;
+            padding: 0.85rem 1.5rem;
             border-radius: 12px;
             border: 1px solid var(--border-medium);
             cursor: pointer;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
             transition: all 0.15s ease;
             text-decoration: none;
-            white-space: nowrap;
-            box-sizing: border-box;
         }
 
         .btn-download-pass:hover {
@@ -520,7 +462,7 @@
         }
 
         .btn-return-dashboard {
-            width: 100%;
+            flex: 1;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -530,15 +472,13 @@
             font-family: var(--font-sans);
             font-weight: 700;
             font-size: 0.9rem;
-            padding: 0.85rem 1.4rem;
+            padding: 0.85rem 1.5rem;
             border-radius: 12px;
             border: none;
             cursor: pointer;
             box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
             transition: all 0.15s ease;
             text-decoration: none;
-            white-space: nowrap;
-            box-sizing: border-box;
         }
 
         .btn-return-dashboard:hover {
@@ -547,15 +487,39 @@
             box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
         }
 
-        @media screen and (max-width: 480px) {
-            .pass-container { margin-top: 1.25rem; padding-inline: 0.75rem; }
-            .ticket-left-body { padding: 22px 18px 18px 18px; }
-            .ticket-event-title { font-size: 1.25rem; }
-            .ticket-bottom-row { gap: 0.75rem; }
-            .ticket-spec-line { font-size: 0.78rem; }
-            .ticket-student-name-val { font-size: 0.95rem; }
+        @media screen and (max-width: 700px) {
+            .pass-container { margin-top: 1.25rem; padding-inline: 1rem; }
+            .boarding-pass-card { grid-template-columns: minmax(0, 1fr); }
+            .ticket-left-body { padding: 24px; gap: 24px; }
+            .ticket-perforation-divider {
+                top: auto;
+                bottom: 248px;
+                left: 0;
+                right: 0;
+                width: auto;
+                height: 24px;
+                transform: translateY(50%);
+                flex-direction: row;
+            }
+            .ticket-notch-top { margin-top: 0; margin-left: -12px; }
+            .ticket-notch-bottom { margin-bottom: 0; margin-right: -12px; }
+            .ticket-right-stub { height: 248px; padding: 24px; }
+            .ticket-issuer-text h4 { font-size: 0.9rem; }
             .pass-actions-row { flex-direction: column; align-items: stretch; }
-            .btn-download-pass, .btn-return-dashboard { width: 100%; }
+            .portal-navbar { padding-inline: 1rem; }
+            .navbar-inner { gap: 12px; }
+            .nav-brand-title { font-size: 0.85rem; }
+            .nav-brand-subtitle { font-size: 0.6rem; }
+            .nav-link-dashboard { padding: 10px; }
+            .nav-link-dashboard span { display: none; }
+        }
+
+        @media screen and (max-width: 420px) {
+            .ticket-top-row, .ticket-bottom-row { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+            .ticket-student-number-block, .ticket-student-name-block { text-align: left; align-items: flex-start; }
+            .ticket-left-body { padding: 22px; }
+            .ticket-event-title { font-size: 1.5rem; }
+            .success-status-banner { padding: 1rem; align-items: flex-start; }
         }
 
         /* Print Media Styles (Prints only the boarding pass card) */
