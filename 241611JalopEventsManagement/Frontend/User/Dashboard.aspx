@@ -71,9 +71,6 @@
 
             <!-- Main Hero Headline & Metadata -->
             <div class="hero-body-content" id="heroBodyContent">
-                <div class="hero-badge-tag">
-                    <span>FEATURED UNIVERSITY EVENT</span>
-                </div>
                 <h1 class="hero-title" id="heroTitle">--</h1>
                 <p class="hero-description" id="heroDescription">--</p>
 
@@ -106,7 +103,7 @@
                 </div>
 
                 <div style="margin-top:1.5rem; display:flex; align-items:center; gap:1rem;">
-                    <a id="heroActionBtn" href="#events-section" class="btn-hero-action" style="display:inline-flex; align-items:center; gap:0.6rem; background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:#FFFFFF; padding:0.85rem 1.85rem; border-radius:9999px; font-weight:800; font-size:0.88rem; letter-spacing:0.02em; text-decoration:none; box-shadow:0 6px 20px rgba(2,132,199,0.45); transition:transform 0.2s ease, box-shadow 0.2s ease;">
+                    <a id="heroActionBtn" href="#events-section" class="btn-hero-action">
                         <span>VIEW EVENT &amp; REGISTER</span>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -156,19 +153,17 @@
                 <!-- Section Header Row & Segmented Tab Toggle -->
                 <div class="section-header-row">
                     <div class="section-title-block">
-                        <h2 id="viewSectionTitle">Campus Event Matrix</h2>
+                        <h2 id="viewSectionTitle">Campus Events</h2>
                         <p id="viewSectionSubtitle">Explore open registrations or inspect your booked electronic passes.</p>
                     </div>
 
                     <!-- Tab-like Toggle (Modern Segmented Control) -->
                     <div class="tab-toggle-container">
                         <button type="button" class="tab-btn active" id="tabCatalogBtn" onclick="switchTab('catalog')">
-                            <span>All Open Events</span>
-                            <span class="tab-count-pill" id="openEventsCount">4 OPEN</span>
+                            <span>Available Events</span>
                         </button>
                         <button type="button" class="tab-btn" id="tabRegisteredBtn" onclick="switchTab('registered')">
                             <span>My Registered Events</span>
-                            <span class="tab-count-pill">MY PASSES</span>
                         </button>
                     </div>
                 </div>
@@ -261,40 +256,81 @@
                         </HeaderTemplate>
                         <ItemTemplate>
                             <div class="registered-pass-card">
-                                <div class="pass-card-banner" style='background-image: url("<%# Eval("BannerImageUrl") %>"); height: 72px; background-size: cover; background-position: center; border-radius: 12px 12px 0 0; border-bottom: 1px solid rgba(255,255,255,0.08);'></div>
-                                <div class="pass-card-top">
-                                    <span class='status-badge-reg <%# GetStatusBadgeCss(Eval("Status")?.ToString()) %>'>
-                                        <%# Eval("Status") %>
-                                    </span>
-                                    <span class="pass-id-chip">PASS #<%# Eval("EventRegistrationId") %></span>
+                                <!-- Edge-to-Edge Ticket Banner with Gradient Shade -->
+                                <div class="pass-card-banner-wrap">
+                                    <div class="pass-card-banner-img" style='background-image: url("<%# Eval("BannerImageUrl") %>");'></div>
+                                    <div class="pass-banner-gradient-overlay"></div>
+                                    <div class="pass-card-top-chips">
+                                        <span class='status-badge-reg <%# GetStatusBadgeCss(Eval("Status")?.ToString()) %>'>
+                                            <span class="status-indicator-dot"></span>
+                                            <span><%# Eval("Status")?.ToString().ToUpper() == "NOSHOW" ? "CONFIRMED PASS" : Eval("Status") %></span>
+                                        </span>
+                                        <span class="pass-id-chip">
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                <rect x="3" y="3" width="7" height="7"></rect>
+                                                <rect x="14" y="3" width="7" height="7"></rect>
+                                                <rect x="14" y="14" width="7" height="7"></rect>
+                                                <rect x="3" y="14" width="7" height="7"></rect>
+                                            </svg>
+                                            <span>PASS #<%# Eval("EventRegistrationId") %></span>
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <div class="pass-card-body">
-                                    <h3 class="pass-card-title"><%# Eval("EventTitle") %></h3>
+                                <!-- Ticket Core Details -->
+                                <div class="pass-card-content">
+                                    <div class="pass-event-badge-label">OFFICIAL ADMISSION TICKET</div>
+                                    <h3 class="pass-card-title" title='<%# Eval("EventTitle") %>'><%# Eval("EventTitle") %></h3>
 
                                     <div class="pass-meta-list">
                                         <div class="pass-meta-row">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                                <circle cx="12" cy="10" r="3"></circle>
-                                            </svg>
-                                            <span><%# Eval("VenueLocation") %></span>
+                                            <div class="pass-meta-icon-box">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                    <circle cx="12" cy="10" r="3"></circle>
+                                                </svg>
+                                            </div>
+                                            <div class="pass-meta-text">
+                                                <span class="pass-meta-label">VENUE LOCATION</span>
+                                                <span class="pass-meta-val"><%# Eval("VenueLocation") %></span>
+                                            </div>
                                         </div>
 
                                         <div class="pass-meta-row">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <polyline points="12 6 12 12 16 14"></polyline>
-                                            </svg>
-                                            <span><%# Eval("EventDateFormatted") %></span>
+                                            <div class="pass-meta-icon-box">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                                </svg>
+                                            </div>
+                                            <div class="pass-meta-text">
+                                                <span class="pass-meta-label">EVENT SCHEDULE</span>
+                                                <span class="pass-meta-val"><%# Eval("EventDateFormatted") %></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                <!-- Perforated Ticket Stub Divider with Notch Cutouts -->
+                                <div class="pass-stub-divider">
+                                    <span class="pass-stub-notch-left"></span>
+                                    <span class="pass-stub-line"></span>
+                                    <span class="pass-stub-notch-right"></span>
+                                </div>
+
+                                <!-- Ticket Footer Actions -->
                                 <div class="pass-card-footer">
                                     <a href='<%# ResolveUrl("~/Frontend/User/EventPass.aspx?regId=" + Eval("EventRegistrationId")) %>' class="btn-pass-view">
-                                        <span>VIEW PASS</span>
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                                            <rect x="3" y="3" width="7" height="7"></rect>
+                                            <rect x="14" y="3" width="7" height="7"></rect>
+                                            <rect x="14" y="14" width="7" height="7"></rect>
+                                            <rect x="3" y="14" width="7" height="7"></rect>
+                                        </svg>
+                                        <span>VIEW PASS &amp; QR</span>
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                             <line x1="5" y1="12" x2="19" y2="12"></line>
                                             <polyline points="12 5 19 12 12 19"></polyline>
                                         </svg>
@@ -306,8 +342,9 @@
                                         CommandArgument='<%# Eval("EventRegistrationId") %>'
                                         Visible='<%# Eval("CanCancel") %>'
                                         OnClientClick="return confirm('Confirm cancellation of your attendance pass for this event?');"
-                                        CausesValidation="false">
-                                        Cancel Pass
+                                        CausesValidation="false"
+                                        ToolTip="Release reserved seat registration">
+                                        <span>Cancel Pass</span>
                                     </asp:LinkButton>
                                 </div>
                             </div>

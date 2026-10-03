@@ -45,7 +45,7 @@
         }
 
         .navbar-inner {
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto;
             display: flex;
             align-items: center;
@@ -103,13 +103,24 @@
         /* Pass Container Workspace */
         .pass-container {
             flex: 1;
-            max-width: 680px;
+            max-width: 1000px;
             width: 100%;
             margin: 2rem auto;
             padding: 0 1.25rem 3rem;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+        }
+
+        .ticket-scroll-container {
+            width: 100%;
+            min-width: 0;
+            font-family: var(--font-sans);
+        }
+
+        .ticket-scroll-container .boarding-pass-card {
+            min-width: 0;
+            font-family: var(--font-sans);
         }
 
         /* Success Banner */
@@ -150,227 +161,269 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           PREMIUM EDITORIAL DIGITAL BOARDING PASS CARD
-           Institutional White Body with High-Contrast Layout
+           RESPONSIVE TICKET CARD
+           Ivory credential body on left, navy QR stub on right, vertical perforation
            ═══════════════════════════════════════════════════════════════════════ */
         .boarding-pass-card {
-            background: #FFFFFF;
+            width: 100%;
+            min-height: 340px;
+            height: auto;
+            background: transparent;
             border-radius: 20px;
-            color: #0F172A;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) clamp(220px, 28%, 280px);
             position: relative;
+            box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12);
+            overflow: hidden;
+            font-family: var(--font-sans);
         }
 
-        /* Pass Header Bar (Deep Navy Accent) */
-        .pass-header-bar {
-            background: #090D16;
-            color: #FFFFFF;
-            padding: 1.35rem 1.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 2px solid #2563eb;
-        }
-
-        .pass-brand-lockup {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .pass-crest-img {
-            width: 34px;
-            height: 34px;
-            object-fit: contain;
-        }
-
-        .pass-issuer-text h4 {
-            font-size: 0.875rem;
-            font-weight: 800;
-            color: #FFFFFF;
-            letter-spacing: -0.01em;
-        }
-
-        .pass-issuer-text span {
-            font-size: 0.7rem;
-            font-family: var(--font-mono);
-            color: #94A3B8;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .pass-status-pill {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 0.3rem 0.75rem;
-            border-radius: 9999px;
-            background: #064E3B;
-            color: #34D399;
-            border: 1px solid #059669;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* Pass Main Details */
-        .pass-body {
-            padding: 1.75rem;
+        /* Left Ticket Body (Ivory) */
+        .ticket-left-body {
+            flex: 1;
+            background-color: #FAF8F5;
+            padding: clamp(24px, 3vw, 32px);
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            justify-content: space-between;
+            gap: 28px;
+            position: relative;
+            min-width: 0;
+            font-family: var(--font-sans);
         }
 
-        .pass-event-headline {
+        /* Header Row: Logo & Portal Title (Left) + Student Number (Right) */
+        .ticket-top-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(100px, 0.48fr);
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .ticket-brand-lockup {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            min-width: 0;
+        }
+
+        .ticket-crest-img {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .ticket-issuer-text h4 {
+            font-family: var(--font-sans);
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            font-weight: 800;
+            color: #0F1E60;
+            letter-spacing: -0.015em;
+            line-height: 1.15;
+            text-transform: uppercase;
+        }
+
+        .ticket-issuer-text span {
+            font-family: var(--font-sans);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #3B4A7D;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            display: block;
+            margin-top: 0.15rem;
+        }
+
+        .ticket-student-number-block {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            flex-shrink: 0;
+            min-width: 0;
+        }
+
+        .ticket-meta-label {
+            font-family: var(--font-sans);
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #4B5E94;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin-bottom: 0.15rem;
+        }
+
+        .ticket-student-number-val {
+            font-family: var(--font-sans);
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            font-weight: 800;
+            color: #0F1E60;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            overflow-wrap: anywhere;
+        }
+
+        /* Middle Event Headline */
+        .ticket-headline-block {
+            margin: 0.4rem 0;
+            min-width: 0;
+        }
+
+        .ticket-event-title {
+            font-family: var(--font-sans);
+            font-size: clamp(1.5rem, 3vw, 2.1rem);
+            font-weight: 800;
+            color: #0F1E60;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+        }
+
+        /* Bottom Row: Date/Time/Venue (Left) + Student Name (Right) */
+        .ticket-bottom-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1.5rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(15, 30, 96, 0.12);
+        }
+
+        .ticket-schedule-specs {
             display: flex;
             flex-direction: column;
             gap: 0.4rem;
+            min-width: 0;
         }
 
-        .pass-event-headline .event-tag {
-            font-family: var(--font-mono);
-            font-size: 0.72rem;
-            font-weight: 800;
-            color: var(--brand-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .ticket-spec-line {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.55rem;
+            font-family: var(--font-sans);
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #0F1E60;
+            line-height: 1.5;
+            letter-spacing: -0.01em;
+            overflow-wrap: anywhere;
         }
 
-        .pass-event-headline h1 {
-            font-size: 1.45rem;
+        .ticket-spec-line svg {
+            width: 16px;
+            height: 16px;
+            stroke: #0F1E60;
+            stroke-width: 2.2;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .ticket-student-name-block {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            flex-shrink: 0;
+            min-width: 0;
+        }
+
+        .ticket-student-name-val {
+            font-family: var(--font-sans);
+            font-size: clamp(1rem, 1.8vw, 1.2rem);
             font-weight: 800;
-            color: #0F172A;
-            line-height: 1.25;
+            color: #0F1E60;
             letter-spacing: -0.02em;
-        }
-
-        /* Pass Spec Grid */
-        .pass-specs-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.25rem 1.5rem;
-            border-top: 1px dashed #CBD5E1;
-            border-bottom: 1px dashed #CBD5E1;
-            padding: 1.25rem 0;
-        }
-
-        .pass-spec-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-
-        .pass-spec-label {
-            font-size: 0.725rem;
-            font-family: var(--font-mono);
-            color: #64748B;
-            font-weight: 700;
+            line-height: 1.4;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            max-width: 100%;
+            overflow-wrap: anywhere;
         }
 
-        .pass-spec-val {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #0F172A;
-        }
-
-        .pass-spec-val-highlight {
-            color: var(--brand-primary);
-            font-family: var(--font-mono);
-            font-size: 1.05rem;
-            font-weight: 800;
-        }
-
-        /* Perforated Notch Divider */
-        .pass-notch-divider {
-            position: relative;
-            height: 24px;
-            display: flex;
-            align-items: center;
-        }
-
-        .pass-notch-left, .pass-notch-right {
+        /* ═══════════════════════════════════════════════════════════════════════
+           PERFORATION NOTCHES & VERTICAL DIVIDER
+           ═══════════════════════════════════════════════════════════════════════ */
+        .ticket-perforation-divider {
             position: absolute;
-            width: 24px;
-            height: 24px;
-            background: var(--bg-canvas);
-            border-radius: 50%;
             top: 0;
+            bottom: 0;
+            right: clamp(220px, 28%, 280px);
+            transform: translateX(50%);
+            width: 24px;
+            background-color: transparent;
+            margin-left: 0;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
         }
 
-        .pass-notch-left {
-            left: -12px;
+        /* 6 Circular Notch Cutouts along the vertical seam */
+        .ticket-notch-hole {
+            width: 30px;
+            height: 30px;
+            background-color: #FFFFFF;
+            border-radius: 50%;
+            margin: 0;
+            flex-shrink: 0;
         }
 
-        .pass-notch-right {
-            right: -12px;
+        .ticket-notch-top {
+            margin-top: -12px;
         }
 
-        .pass-dash-line {
-            width: 100%;
-            height: 1px;
-            border-top: 2px dashed #CBD5E1;
-            margin: 0 16px;
+        .ticket-notch-bottom {
+            margin-bottom: -12px;
         }
 
-        /* Pass Bottom QR Section */
-        .pass-qr-stub {
-            padding: 1rem 1.75rem 1.75rem;
+        /* Right Ticket Stub (Navy) */
+        .ticket-right-stub {
+            min-width: 0;
+            background-color: #0F1E60;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
-            background: #FAFBFD;
+            padding: 28px 24px;
+            position: relative;
+            flex-shrink: 0;
         }
 
-        .qr-frame-box {
-            background: #FFFFFF;
-            padding: 14px;
-            border-radius: 16px;
-            border: 2px solid #E2E8F0;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-            display: inline-flex;
+        .ticket-qr-container {
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 0.65rem;
+            width: 100%;
+            min-width: 0;
         }
 
         #qrCanvas {
             display: block;
-            width: 180px;
-            height: 180px;
+            width: 100%;
+            max-width: 190px;
+            height: auto;
+            aspect-ratio: 1;
+            border-radius: 8px;
         }
 
-        .qr-meta-block {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-        }
-
-        .qr-ref-code {
+        .ticket-stub-ref {
             font-family: var(--font-mono);
-            font-size: 1.15rem;
-            font-weight: 800;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.75);
             letter-spacing: 0.08em;
-            color: var(--brand-primary);
-        }
-
-        .qr-notice-text {
-            font-size: 0.775rem;
-            color: #64748B;
-            max-width: 420px;
-            line-height: 1.45;
-        }
-
-        .qr-security-hash {
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            color: #94A3B8;
-            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            text-align: center;
+            overflow-wrap: anywhere;
+            max-width: 100%;
         }
 
         /* Action Buttons */
@@ -434,6 +487,41 @@
             box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
         }
 
+        @media screen and (max-width: 700px) {
+            .pass-container { margin-top: 1.25rem; padding-inline: 1rem; }
+            .boarding-pass-card { grid-template-columns: minmax(0, 1fr); }
+            .ticket-left-body { padding: 24px; gap: 24px; }
+            .ticket-perforation-divider {
+                top: auto;
+                bottom: 248px;
+                left: 0;
+                right: 0;
+                width: auto;
+                height: 24px;
+                transform: translateY(50%);
+                flex-direction: row;
+            }
+            .ticket-notch-top { margin-top: 0; margin-left: -12px; }
+            .ticket-notch-bottom { margin-bottom: 0; margin-right: -12px; }
+            .ticket-right-stub { height: 248px; padding: 24px; }
+            .ticket-issuer-text h4 { font-size: 0.9rem; }
+            .pass-actions-row { flex-direction: column; align-items: stretch; }
+            .portal-navbar { padding-inline: 1rem; }
+            .navbar-inner { gap: 12px; }
+            .nav-brand-title { font-size: 0.85rem; }
+            .nav-brand-subtitle { font-size: 0.6rem; }
+            .nav-link-dashboard { padding: 10px; }
+            .nav-link-dashboard span { display: none; }
+        }
+
+        @media screen and (max-width: 420px) {
+            .ticket-top-row, .ticket-bottom-row { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+            .ticket-student-number-block, .ticket-student-name-block { text-align: left; align-items: flex-start; }
+            .ticket-left-body { padding: 22px; }
+            .ticket-event-title { font-size: 1.5rem; }
+            .success-status-banner { padding: 1rem; align-items: flex-start; }
+        }
+
         /* Print Media Styles (Prints only the boarding pass card) */
         @media print {
             body {
@@ -449,6 +537,8 @@
                 max-width: 100% !important;
             }
             .boarding-pass-card {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
                 box-shadow: none !important;
                 border: 2px solid #000000 !important;
                 page-break-inside: avoid;

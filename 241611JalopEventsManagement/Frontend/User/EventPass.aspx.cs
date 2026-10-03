@@ -90,11 +90,15 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             if (reg.EventStart.HasValue)
             {
-                litPassEventSchedule.Text = $"{reg.EventStart:MMM dd, yyyy} | {reg.EventStart:hh:mm tt} - {reg.EventEnd:hh:mm tt}";
+                litPassEventDate.Text = reg.EventStart.Value.ToString("MMM dd, yyyy");
+                litPassEventTime.Text = reg.EventEnd.HasValue
+                    ? $"{reg.EventStart:hh:mm tt} - {reg.EventEnd:hh:mm tt}"
+                    : $"{reg.EventStart:hh:mm tt}";
             }
             else
             {
-                litPassEventSchedule.Text = "TBD";
+                litPassEventDate.Text = "Date TBD";
+                litPassEventTime.Text = "Schedule TBD";
             }
 
             litPassVenue.Text = Server.HtmlEncode(reg.VenueLocation ?? "Campus Grounds");

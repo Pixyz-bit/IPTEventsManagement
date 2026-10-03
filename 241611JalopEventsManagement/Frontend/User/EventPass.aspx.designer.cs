@@ -18,7 +18,8 @@ namespace _241611JalopEventsManagement.Frontend.User
         protected global::System.Web.UI.WebControls.Literal litPassStudentId;
         protected global::System.Web.UI.WebControls.Literal litPassCourse;
         protected global::System.Web.UI.WebControls.Literal litPassYearSection;
-        protected global::System.Web.UI.WebControls.Literal litPassEventSchedule;
+        protected global::System.Web.UI.WebControls.Literal litPassEventDate;
+        protected global::System.Web.UI.WebControls.Literal litPassEventTime;
         protected global::System.Web.UI.WebControls.Literal litPassVenue;
 
         protected global::System.Web.UI.WebControls.Literal litPassTicketRef;

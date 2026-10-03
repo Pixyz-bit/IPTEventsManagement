@@ -93,7 +93,7 @@ The post-registration confirmation destination and persistent digital boarding p
    - Centered scannable barcode rendered on `<canvas>` using embedded JavaScript with zero third-party internet dependencies.
    - Encodes authenticated Ticket Reference payload (`TCK-{EventId:D4}-{RegistrationId:D5}`) and security hash token.
 4. **Utility Actions:**
-   - `[ Download / Print Pass ]`: Triggers `window.print()` with print-specific stylesheets (`@media print`) that hide navigation chrome and print exclusively the high-resolution boarding pass card.
+   - `[ Download Pass (PNG) ]`: Renders and downloads a high-fidelity PNG image of the `boarding-pass-card`, preserving its exact canonical width and length dimensions (with transparent rounded corners and ticket notch cutouts), directly incorporating the scanned QR code canvas.
    - `[ Return to My Events Dashboard ]`: Links directly back to `Frontend/User/Dashboard.aspx`.
 
 ### Security & Gate Scanner Interoperability
