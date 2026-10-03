@@ -227,22 +227,6 @@
             border: 1px solid var(--accent-amber-border);
         }
 
-        /* White Container Surface (Prevents Floating Appearance) */
-        .white-container,
-        .attendance-white-container {
-            background-color: #ffffff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-card);
-        }
-
-        .white-container .unified-attendance-card,
-        .attendance-white-container .unified-attendance-card {
-            box-shadow: none;
-            border: 1px solid var(--border-subtle);
-        }
-
         /* Unified Attendance Container Card */
         .unified-attendance-card {
             background-color: #ffffff;

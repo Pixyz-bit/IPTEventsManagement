@@ -630,30 +630,7 @@
             transform: scale(1.04);
         }
 
-        .pie-donut-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            pointer-events: none;
-        }
 
-        .pie-center-count {
-            font-size: 1.45rem;
-            font-weight: 800;
-            color: var(--text-heading);
-            line-height: 1;
-            display: block;
-        }
-
-        .pie-center-label {
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-        }
 
         .pie-chart-legend {
             display: flex;

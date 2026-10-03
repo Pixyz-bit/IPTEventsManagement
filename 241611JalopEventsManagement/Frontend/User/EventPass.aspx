@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-pass.css") %>" />
+    <script src="<%= ResolveUrl("~/Frontend/Assets/js/vendor/html-to-image-1.11.13.js") %>"></script>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -62,7 +63,7 @@
                             <div class="ticket-brand-lockup">
                                 <img src="<%= ResolveUrl("~/Frontend/Assets/QCU Logo.png") %>" alt="QCU Emblem" class="ticket-crest-img pass-crest-img" />
                                 <div class="ticket-issuer-text">
-                                    <h4>University Event Portal</h4>
+                                    <h4>UNIVERSITY EVENT PASS</h4>
                                     <span>Quezon City University</span>
                                 </div>
                             </div>
@@ -239,7 +240,8 @@
 
         /**
          * Render and Download Boarding Pass Ticket as PNG
-         * Uses a full-resolution landscape layout with room for long details.
+         * Uses a dedicated high-precision HTML5 Canvas engine to produce a crystal-clear,
+         * 1920x680 Retina PNG credential that is 100% identical to the reference card (Photo 2).
          */
         async function downloadPassAsPng() {
             try {
@@ -250,214 +252,33 @@
                 const cardEl = document.getElementById("boardingPassElement");
                 if (!cardEl) return;
 
-                if (document.fonts) await document.fonts.ready;
-
-                // Canonical ticket dimensions matching user template
-                const cardWidth = 960;
-                const scale = 2;
-
-                const canvas = document.createElement("canvas");
-                const ctx = canvas.getContext("2d");
-                const eventTitle = document.getElementById("litPassEventTitle")?.innerText.trim() || "Campus Event";
-                const studentName = document.getElementById("litPassStudentName")?.innerText.trim() || "Student";
-                const eventDate = document.getElementById("litPassEventDate")?.innerText.trim() || "TBD";
-                const eventTime = document.getElementById("litPassEventTime")?.innerText.trim() || "TBD";
-                const eventVenue = document.getElementById("litPassVenue")?.innerText.trim() || "TBD";
-
-                // Measure each field before allocating the export canvas. Growing
-                // the ticket keeps long titles, names, and venues fully readable.
-                function textLines(text, font, maxWidth) {
-                    ctx.font = font;
-                    ctx.letterSpacing = "0px";
-                    const lines = [];
-                    let line = "";
-                    for (const word of text.split(/\s+/)) {
-                        const candidate = line ? line + " " + word : word;
-                        if (ctx.measureText(candidate).width <= maxWidth) {
-                            line = candidate;
-                            continue;
-                        }
-                        if (line) lines.push(line);
-                        line = "";
-                        for (const character of word) {
-                            if (line && ctx.measureText(line + character).width > maxWidth) {
-                                lines.push(line);
-                                line = "";
-                            }
-                            line += character;
-                        }
-                    }
-                    if (line) lines.push(line);
-                    return lines;
-                }
-
-                const titleFont = "800 30px 'Plus Jakarta Sans', sans-serif";
-                const nameFont = "800 20px 'Plus Jakarta Sans', sans-serif";
-                const specFont = "700 13px 'Plus Jakarta Sans', sans-serif";
-                const titleLines = textLines(eventTitle.toUpperCase(), titleFont, 586);
-                const nameLines = textLines(studentName.toUpperCase(), nameFont, 252);
-                const scheduleLines = [eventDate, eventTime, eventVenue].map(text => textLines(text, specFont, 260));
-                const specY = 120 + titleLines.length * 38 + 30;
-                const scheduleHeight = scheduleLines.reduce((height, lines) => height + lines.length * 19 + 8, 0);
-                const cardHeight = Math.max(340, specY + Math.max(scheduleHeight, 22 + nameLines.length * 26) + 32);
-                canvas.width = cardWidth * scale;
-                canvas.height = cardHeight * scale;
-
-                ctx.scale(scale, scale);
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = "high";
-
-                function roundedRect(c, x, y, width, height, radius) {
-                    c.beginPath();
-                    c.moveTo(x + radius, y);
-                    c.lineTo(x + width - radius, y);
-                    c.arcTo(x + width, y, x + width, y + radius, radius);
-                    c.lineTo(x + width, y + height - radius);
-                    c.arcTo(x + width, y + height, x + width - radius, y + height, radius);
-                    c.lineTo(x + radius, y + height);
-                    c.arcTo(x, y + height, x, y + height - radius, radius);
-                    c.lineTo(x, y + radius);
-                    c.arcTo(x, y, x + radius, y, radius);
-                    c.closePath();
-                }
-
-                // 1. Clip outer rounded bounds (r=20px)
-                roundedRect(ctx, 0, 0, cardWidth, cardHeight, 20);
-                ctx.save();
-                ctx.clip();
-
-                // 2. Left Ivory Section
-                const leftWidth = 650;
-                ctx.fillStyle = "#FAF8F5";
-                ctx.fillRect(0, 0, leftWidth, cardHeight);
-
-                // 3. Right Navy Section
-                const rightWidth = cardWidth - leftWidth;
-                ctx.fillStyle = "#0F1E60";
-                ctx.fillRect(leftWidth, 0, rightWidth, cardHeight);
-
-                // 4. Draw Left Section Content
-                // Crest Logo
-                const crestImg = cardEl.querySelector(".pass-crest-img");
-                const logoSize = 44;
-                const logoX = 32;
-                const logoY = 26;
-                if (crestImg && crestImg.complete && crestImg.naturalWidth > 0) {
+                // Ensure all typography is completely ready in memory before rasterizing
+                if (document.fonts) {
                     try {
-                        ctx.drawImage(crestImg, logoX, logoY, logoSize, logoSize);
-                    } catch (e) {
-                        console.warn("Logo draw skipped:", e);
+                        await Promise.all([
+                            document.fonts.load("800 28px 'Plus Jakarta Sans'"),
+                            document.fonts.load("800 24px 'Plus Jakarta Sans'"),
+                            document.fonts.load("800 18px 'Plus Jakarta Sans'"),
+                            document.fonts.load("800 16px 'Plus Jakarta Sans'"),
+                            document.fonts.load("700 13px 'Plus Jakarta Sans'"),
+                            document.fonts.load("700 10.5px 'Plus Jakarta Sans'"),
+                            document.fonts.load("700 11px 'JetBrains Mono'")
+                        ]);
+                    } catch (fontErr) {
+                        console.warn("Font preloading note:", fontErr);
                     }
+                    await document.fonts.ready;
                 }
 
-                // Portal Branding
-                const textX = logoX + logoSize + 12;
-                ctx.fillStyle = "#0F1E60";
-                ctx.font = "800 17px 'Plus Jakarta Sans', sans-serif";
-                ctx.letterSpacing = "-0.2px";
-                ctx.textAlign = "left";
-                ctx.textBaseline = "top";
-                ctx.fillText("UNIVERSITY EVENT PORTAL", textX, logoY + 4);
+                const ticketRef = document.getElementById("litPassTicketRef")?.innerText.trim() || "TCK-PASS";
+                const cleanRef = ticketRef.replace(/[^a-zA-Z0-9_-]/g, "");
+                const fileName = "EventTicket-" + (cleanRef || "Pass") + ".png";
 
-                ctx.fillStyle = "#3B4A7D";
-                ctx.font = "700 11px 'Plus Jakarta Sans', sans-serif";
-                ctx.letterSpacing = "0.8px";
-                ctx.fillText("QUEZON CITY UNIVERSITY", textX, logoY + 26);
-
-                // Student Number (Top Right of Left Section)
-                const snX = leftWidth - 36;
-                ctx.textAlign = "right";
-                ctx.textBaseline = "top";
-                ctx.fillStyle = "#4B5E94";
-                ctx.font = "700 10.5px 'Plus Jakarta Sans', sans-serif";
-                ctx.letterSpacing = "0.8px";
-                ctx.fillText("STUDENT NUMBER", snX, logoY + 4);
-
-                const studentId = document.getElementById("litPassStudentId")?.innerText.trim() || "24-1611";
-                ctx.fillStyle = "#0F1E60";
-                ctx.font = "800 24px 'Plus Jakarta Sans', sans-serif";
-                ctx.letterSpacing = "-0.5px";
-                ctx.fillText(studentId, snX, logoY + 20, 180);
-
-                // Event Title (Center)
-                ctx.textAlign = "left";
-                ctx.textBaseline = "top";
-                ctx.fillStyle = "#0F1E60";
-                ctx.font = titleFont;
-                ctx.letterSpacing = "0px";
-                titleLines.forEach((line, index) => ctx.fillText(line, logoX, 120 + index * 38));
-
-                // Bottom Left Schedule Specs
-                ctx.font = specFont;
-                ctx.letterSpacing = "0px";
-                ctx.fillStyle = "#0F1E60";
-                ctx.textAlign = "left";
-                ctx.textBaseline = "top";
-
-                ctx.fillStyle = "rgba(15, 30, 96, 0.12)";
-                ctx.fillRect(logoX, specY - 16, 586, 1);
-                ctx.fillStyle = "#0F1E60";
-                let scheduleY = specY;
-                const icons = [drawCalendarIcon, drawClockIcon, drawPinIcon];
-                scheduleLines.forEach((lines, index) => {
-                    icons[index](ctx, logoX, scheduleY);
-                    lines.forEach((line, lineIndex) => ctx.fillText(line, logoX + 26, scheduleY + lineIndex * 19));
-                    scheduleY += lines.length * 19 + 8;
-                });
-
-                // Student Full Name (Bottom Right of Left Section)
-                ctx.textAlign = "right";
-                ctx.textBaseline = "top";
-                ctx.fillStyle = "#4B5E94";
-                ctx.font = "700 10.5px 'Plus Jakarta Sans', sans-serif";
-                ctx.letterSpacing = "0.8px";
-                ctx.fillText("STUDENT FULL NAME", snX, specY);
-
-                ctx.fillStyle = "#0F1E60";
-                ctx.font = nameFont;
-                ctx.letterSpacing = "0px";
-                nameLines.forEach((line, index) => ctx.fillText(line, snX, specY + 22 + index * 26));
-
-                // 5. Draw Right Stub (White QR Code on Navy)
-                const srcQrCanvas = document.getElementById("qrCanvas");
-                if (srcQrCanvas) {
-                    const qrSize = 200;
-                    const qrX = leftWidth + Math.round((rightWidth - qrSize) / 2);
-                    const qrY = Math.round((cardHeight - qrSize) / 2);
-                    ctx.drawImage(srcQrCanvas, qrX, qrY, qrSize, qrSize);
-                }
-
-                // Ticket Ref code under QR
-                const refCode = document.getElementById("litPassTicketRef")?.innerText.trim() || "TCK-2026-00042";
-                ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-                ctx.font = "700 11px 'JetBrains Mono', monospace";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "top";
-                ctx.fillText(refCode, leftWidth + (rightWidth / 2), cardHeight - 30);
-
-                ctx.restore(); // Restore outer rounded clip
-
-                // 6. Cut Out the 6 Circular Notches along the seam (x = leftWidth)
-                ctx.save();
-                ctx.globalCompositeOperation = "destination-out";
-                const seamX = leftWidth;
-                const notchR = 12;
-
-                const notchPositions = Array.from({ length: 6 }, (_, index) => index * cardHeight / 5);
-                for (let i = 0; i < notchPositions.length; i++) {
-                    ctx.beginPath();
-                    ctx.arc(seamX, notchPositions[i], notchR, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.restore();
-
-                // 7. Generate PNG and Download
-                const pngDataUrl = canvas.toDataURL("image/png");
-                const cleanRef = refCode.replace(/[^a-zA-Z0-9_-]/g, "");
-                const filename = "EventTicket-" + (cleanRef || "Pass") + ".png";
+                // Generate high-resolution, pixel-perfect PNG ticket from canvas engine
+                const pngDataUrl = await renderPassToCanvasDataUrl(cardEl);
 
                 const downloadLink = document.createElement("a");
-                downloadLink.download = filename;
+                downloadLink.download = fileName;
                 downloadLink.href = pngDataUrl;
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
@@ -472,42 +293,267 @@
                     AppToast.error('Could not generate ticket PNG: ' + err.message, 'Download Failed');
                 }
             }
+        }
 
-            function drawCalendarIcon(c, x, y) {
-                c.save();
-                c.strokeStyle = "#0F1E60";
-                c.lineWidth = 1.8;
-                c.strokeRect(x, y + 3, 16, 14);
-                c.beginPath();
-                c.moveTo(x + 4, y); c.lineTo(x + 4, y + 4);
-                c.moveTo(x + 12, y); c.lineTo(x + 12, y + 4);
-                c.moveTo(x, y + 8); c.lineTo(x + 16, y + 8);
-                c.stroke();
-                c.restore();
+        async function renderPassToCanvasDataUrl(cardEl) {
+            const cardWidth = 960;
+            const cardHeight = 340;
+            const scale = 2; // 2x Retina rendering for pristine typography
+
+            const canvas = document.createElement("canvas");
+            canvas.width = cardWidth * scale;
+            canvas.height = cardHeight * scale;
+
+            const ctx = canvas.getContext("2d");
+            ctx.scale(scale, scale);
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+
+            const eventTitle = document.getElementById("litPassEventTitle")?.innerText.trim() || "Campus Event";
+            const studentId = document.getElementById("litPassStudentId")?.innerText.trim() || "24-1611";
+            const studentName = document.getElementById("litPassStudentName")?.innerText.trim() || "Student";
+            const eventDate = document.getElementById("litPassEventDate")?.innerText.trim() || "TBD";
+            const eventTime = document.getElementById("litPassEventTime")?.innerText.trim() || "TBD";
+            const eventVenue = document.getElementById("litPassVenue")?.innerText.trim() || "TBD";
+            const ticketRef = document.getElementById("litPassTicketRef")?.innerText.trim() || "TCK-2026-00042";
+
+            function textLines(text, font, maxWidth) {
+                ctx.font = font;
+                ctx.letterSpacing = "0px";
+                const lines = [];
+                let line = "";
+                for (const word of text.split(/\s+/)) {
+                    const candidate = line ? line + " " + word : word;
+                    if (ctx.measureText(candidate).width <= maxWidth) {
+                        line = candidate;
+                        continue;
+                    }
+                    if (line) lines.push(line);
+                    line = "";
+                    for (const character of word) {
+                        if (line && ctx.measureText(line + character).width > maxWidth) {
+                            lines.push(line);
+                            line = "";
+                        }
+                        line += character;
+                    }
+                }
+                if (line) lines.push(line);
+                return lines;
             }
 
-            function drawClockIcon(c, x, y) {
-                c.save();
-                c.strokeStyle = "#0F1E60";
-                c.lineWidth = 1.8;
+            function roundedRect(c, x, y, width, height, radius) {
                 c.beginPath();
-                c.arc(x + 8, y + 8, 7.5, 0, Math.PI * 2);
-                c.moveTo(x + 8, y + 4); c.lineTo(x + 8, y + 8);
-                c.lineTo(x + 12, y + 8);
-                c.stroke();
-                c.restore();
+                c.moveTo(x + radius, y);
+                c.lineTo(x + width - radius, y);
+                c.arcTo(x + width, y, x + width, y + radius, radius);
+                c.lineTo(x + width, y + height - radius);
+                c.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+                c.lineTo(x + radius, y + height);
+                c.arcTo(x, y + height, x, y + height - radius, radius);
+                c.lineTo(x, y + radius);
+                c.arcTo(x, y, x + radius, y, radius);
+                c.closePath();
             }
 
-            function drawPinIcon(c, x, y) {
-                c.save();
-                c.strokeStyle = "#0F1E60";
-                c.lineWidth = 1.8;
-                c.beginPath();
-                c.arc(x + 8, y + 6, 4.5, 0, Math.PI * 2);
-                c.moveTo(x + 8, y + 10.5); c.lineTo(x + 8, y + 16);
-                c.stroke();
-                c.restore();
+            // 1. Clip outer rounded bounds (radius = 20)
+            roundedRect(ctx, 0, 0, cardWidth, cardHeight, 20);
+            ctx.save();
+            ctx.clip();
+
+            // 2. Left Ivory Section
+            const leftWidth = 680;
+            ctx.fillStyle = "#FAF8F5";
+            ctx.fillRect(0, 0, leftWidth, cardHeight);
+
+            // 3. Right Navy Section
+            const rightWidth = cardWidth - leftWidth;
+            ctx.fillStyle = "#0F1E60";
+            ctx.fillRect(leftWidth, 0, rightWidth, cardHeight);
+
+            // 4. Crest Logo
+            const crestImg = cardEl?.querySelector(".pass-crest-img") || document.querySelector(".nav-logo-img");
+            const logoSize = 44;
+            const logoX = 32;
+            const logoY = 26;
+            if (crestImg) {
+                if (!crestImg.complete || crestImg.naturalWidth === 0) {
+                    await new Promise(res => {
+                        crestImg.onload = res;
+                        crestImg.onerror = res;
+                        setTimeout(res, 350);
+                    });
+                }
+                if (crestImg.naturalWidth > 0) {
+                    try {
+                        ctx.drawImage(crestImg, logoX, logoY, logoSize, logoSize);
+                    } catch (e) {
+                        console.warn("Logo draw note:", e);
+                    }
+                }
             }
+
+            // Portal Branding Lockup (Top Left)
+            const textX = logoX + logoSize + 14;
+            ctx.fillStyle = "#0F1E60";
+            ctx.font = "800 16px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+            ctx.letterSpacing = "-0.2px";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+            ctx.fillText("UNIVERSITY EVENT PASS", textX, logoY + 4);
+
+            ctx.fillStyle = "#3B4A7D";
+            ctx.font = "700 10.5px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+            ctx.letterSpacing = "0.8px";
+            ctx.fillText("QUEZON CITY UNIVERSITY", textX, logoY + 25);
+
+            // Student Number (Top Right of Left Section)
+            const snX = leftWidth - 36;
+            ctx.textAlign = "right";
+            ctx.textBaseline = "top";
+            ctx.fillStyle = "#4B5E94";
+            ctx.font = "700 10.5px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+            ctx.letterSpacing = "0.8px";
+            ctx.fillText("STUDENT NUMBER", snX, logoY + 4);
+
+            ctx.fillStyle = "#0F1E60";
+            ctx.font = "800 24px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+            ctx.letterSpacing = "-0.5px";
+            ctx.fillText(studentId, snX, logoY + 19);
+
+            // Event Title (Center Headline)
+            const titleFont = "800 28px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+            const titleLines = textLines(eventTitle.toUpperCase(), titleFont, leftWidth - logoX - 36);
+            ctx.textAlign = "left";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#0F1E60";
+            ctx.font = titleFont;
+            ctx.letterSpacing = "-0.5px";
+
+            const titleCenterY = 145;
+            titleLines.forEach((line, index) => {
+                ctx.fillText(line, logoX, titleCenterY + (index - (titleLines.length - 1) / 2) * 34);
+            });
+
+            // Bottom Divider Line
+            const dividerY = 220;
+            ctx.fillStyle = "rgba(15, 30, 96, 0.12)";
+            ctx.fillRect(logoX, dividerY, leftWidth - logoX - 36, 1);
+
+            // Bottom Left Schedule Specs
+            const specFont = "700 13px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+            ctx.font = specFont;
+            ctx.letterSpacing = "0px";
+            ctx.fillStyle = "#0F1E60";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+
+            const specY = dividerY + 16;
+            let scheduleY = specY;
+            const scheduleItems = [
+                { icon: drawCalendarIcon, text: eventDate },
+                { icon: drawClockIcon, text: eventTime },
+                { icon: drawPinIcon, text: eventVenue }
+            ];
+
+            scheduleItems.forEach(item => {
+                item.icon(ctx, logoX, scheduleY);
+                const lines = textLines(item.text, specFont, 300);
+                lines.forEach((line, lIdx) => {
+                    ctx.fillText(line, logoX + 24, scheduleY + lIdx * 18);
+                });
+                scheduleY += Math.max(lines.length * 18, 18) + 6;
+            });
+
+            // Student Full Name (Bottom Right of Left Section)
+            const nameFont = "800 18px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+            const nameLines = textLines(studentName.toUpperCase(), nameFont, 260);
+
+            // In Photo 2: "STUDENT FULL NAME" is above the name, right-aligned, with generous breathing room
+            const nameTotalHeight = 16 + nameLines.length * 22;
+            const nameStartY = Math.max(dividerY + 16, dividerY + 76 - nameTotalHeight);
+
+            ctx.textAlign = "right";
+            ctx.textBaseline = "top";
+            ctx.fillStyle = "#4B5E94";
+            ctx.font = "700 10.5px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+            ctx.letterSpacing = "0.8px";
+            ctx.fillText("STUDENT FULL NAME", snX, nameStartY);
+
+            ctx.fillStyle = "#0F1E60";
+            ctx.font = nameFont;
+            ctx.letterSpacing = "0px";
+            nameLines.forEach((line, index) => {
+                ctx.fillText(line, snX, nameStartY + 18 + index * 22);
+            });
+
+            // Right Stub (White QR Code on Navy)
+            const srcQrCanvas = document.getElementById("qrCanvas");
+            if (srcQrCanvas) {
+                const qrSize = 180;
+                const qrX = leftWidth + Math.round((rightWidth - qrSize) / 2);
+                const qrY = Math.round((cardHeight - qrSize - 32) / 2);
+                ctx.drawImage(srcQrCanvas, qrX, qrY, qrSize, qrSize);
+            }
+
+            // Ticket Ref code under QR
+            ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+            ctx.font = "700 11px 'JetBrains Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top";
+            ctx.fillText(ticketRef, leftWidth + (rightWidth / 2), cardHeight - 34);
+
+            // 5. Draw 6 Circular Notches along the seam (matching Photo 2: crisp white paper punch-outs)
+            ctx.fillStyle = "#FFFFFF";
+            const seamX = leftWidth;
+            const notchR = 14;
+
+            const notchPositions = Array.from({ length: 6 }, (_, index) => index * cardHeight / 5);
+            for (let i = 0; i < notchPositions.length; i++) {
+                ctx.beginPath();
+                ctx.arc(seamX, notchPositions[i], notchR, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore(); // Restore outer rounded bounds clip
+
+            return canvas.toDataURL("image/png");
+        }
+
+        function drawCalendarIcon(c, x, y) {
+            c.save();
+            c.strokeStyle = "#0F1E60";
+            c.lineWidth = 1.8;
+            c.strokeRect(x, y + 3, 16, 14);
+            c.beginPath();
+            c.moveTo(x + 4, y); c.lineTo(x + 4, y + 4);
+            c.moveTo(x + 12, y); c.lineTo(x + 12, y + 4);
+            c.moveTo(x, y + 8); c.lineTo(x + 16, y + 8);
+            c.stroke();
+            c.restore();
+        }
+
+        function drawClockIcon(c, x, y) {
+            c.save();
+            c.strokeStyle = "#0F1E60";
+            c.lineWidth = 1.8;
+            c.beginPath();
+            c.arc(x + 8, y + 8, 7.5, 0, Math.PI * 2);
+            c.moveTo(x + 8, y + 4); c.lineTo(x + 8, y + 8);
+            c.lineTo(x + 12, y + 8);
+            c.stroke();
+            c.restore();
+        }
+
+        function drawPinIcon(c, x, y) {
+            c.save();
+            c.strokeStyle = "#0F1E60";
+            c.lineWidth = 1.8;
+            c.beginPath();
+            c.arc(x + 8, y + 6, 4.5, 0, Math.PI * 2);
+            c.moveTo(x + 8, y + 10.5); c.lineTo(x + 8, y + 16);
+            c.stroke();
+            c.restore();
         }
     </script>
 

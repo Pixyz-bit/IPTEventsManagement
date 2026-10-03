@@ -11,6 +11,41 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
 <div class="attendance-container">
 
+    <!-- Breadcrumb Global Trail -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <ol class="breadcrumb-list">
+            <li class="breadcrumb-item">
+                <a href="<%= ResolveUrl("~/Frontend/Admin/Dashboard.aspx") %>">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                    </svg>
+                    <span>Admin Console</span>
+                </a>
+            </li>
+            <li class="breadcrumb-separator">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>">
+                    <span>Campus Events Matrix</span>
+                </a>
+            </li>
+            <li class="breadcrumb-separator">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <span>Live Event Attendance Roster</span>
+            </li>
+        </ol>
+    </nav>
+
     <!-- Context Header Banner -->
     <div class="event-context-card">
         <div class="event-context-top">
@@ -68,10 +103,8 @@
         <asp:Literal ID="litKpiLatestCheckIn" runat="server" Text="--:--:--"></asp:Literal>
     </asp:PlaceHolder>
 
-    <!-- White Surface Container -->
-    <div class="white-container attendance-white-container">
-        <!-- Connected Search, Filters, and Live Attendance Roster Container -->
-        <div class="unified-attendance-card">
+    <!-- Connected Search, Filters, and Live Attendance Roster Container -->
+    <div class="unified-attendance-card">
                     <!-- Live Checked-In Attendance Header Bar -->
         <div class="table-header-bar">
             <div class="table-header-title">
@@ -121,13 +154,11 @@
             <table class="attendance-table" id="tblAttendance">
                 <thead>
                     <tr>
-                        <th style="width: 17%;">Verified Timestamp</th>
-                        <th style="width: 14%;">Ticket Ref</th>
-                        <th style="width: 12%;">Student ID</th>
-                        <th style="width: 20%;">Attendee Full Name</th>
-                        <th style="width: 21%;">Program &amp; Year / Section</th>
-                        <th style="width: 16%;">Verification Method</th>
-                        <th>Inspecting Admin</th>
+                        <th style="width: 22%;">Verified Timestamp</th>
+                        <th style="width: 18%;">Ticket Ref</th>
+                        <th style="width: 15%;">Student ID</th>
+                        <th style="width: 23%;">Attendee Full Name</th>
+                        <th style="width: 22%;">Program &amp; Year / Section</th>
                     </tr>
                 </thead>
                 <tbody id="tbodyAttendance">
@@ -160,17 +191,6 @@
                                 <td>
                                     <%# Eval("StudentProgram") %> (Yr <%# Eval("CurrentYearLvl") %> - <%# Eval("CurrentSection") %>)
                                 </td>
-                                <td>
-                                    <span class="method-pill">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                        <span>Gate Verification</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span style="color:var(--text-muted);"><%= CurrentAdminEmail %></span>
-                                </td>
                             </tr>
                         </ItemTemplate>
                     </asp:Repeater>
@@ -185,7 +205,6 @@
                 <div style="font-size:0.825rem;">Gate entries confirmed by administrative inspection will appear chronologically here.</div>
             </asp:Panel>
         </div>
-    </div>
     </div>
 
 </div>

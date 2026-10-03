@@ -11,6 +11,41 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
 <div class="analytics-container">
 
+    <!-- Breadcrumb Global Trail -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <ol class="breadcrumb-list">
+            <li class="breadcrumb-item">
+                <a href="<%= ResolveUrl("~/Frontend/Admin/Dashboard.aspx") %>">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                    </svg>
+                    <span>Admin Console</span>
+                </a>
+            </li>
+            <li class="breadcrumb-separator">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>">
+                    <span>Campus Events Matrix</span>
+                </a>
+            </li>
+            <li class="breadcrumb-separator">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <span>Event Telemetry &amp; Analytics</span>
+            </li>
+        </ol>
+    </nav>
+
     <!-- Context Header Banner -->
     <div class="event-context-card">
         <div class="event-context-top">
@@ -107,8 +142,6 @@
                     <span class="analytics-card-label">Total Pre-Registered</span>
                     <span class="analytics-card-value"><asp:Literal ID="litBeforePreRegistered" runat="server" Text="0"></asp:Literal></span>
                 </div>
-                <div class="analytics-card-badge" style="background-color:var(--brand-subtle); color:var(--brand-primary); border:1px solid var(--brand-border);">
-                </div>
             </div>
 
             <!-- 2. Total Reserved -->
@@ -117,8 +150,6 @@
                     <span class="analytics-card-label">Total Reserved</span>
                     <span class="analytics-card-value"><asp:Literal ID="litBeforeTotalReserved" runat="server" Text="0"></asp:Literal></span>
                 </div>
-                <div class="analytics-card-badge" style="background-color:var(--accent-indigo-subtle); color:var(--accent-indigo); border:1px solid var(--accent-indigo-border);">
-                </div>
             </div>
 
             <!-- 3. Cancelled -->
@@ -126,8 +157,6 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Cancelled</span>
                     <span class="analytics-card-value"><asp:Literal ID="litBeforeCancelled" runat="server" Text="0"></asp:Literal></span>
-                </div>
-                <div class="analytics-card-badge" style="background-color:var(--accent-rose-subtle); color:var(--accent-rose); border:1px solid var(--accent-rose-border);">
                 </div>
             </div>
 
@@ -146,8 +175,6 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Available Capacity Pool</span>
                     <span class="analytics-card-value"><asp:Literal ID="litBeforeAvailableQuota" runat="server" Text="0"></asp:Literal></span>
-                </div>
-                <div class="analytics-card-badge" style="background-color:var(--brand-subtle); color:var(--brand-primary); border:1px solid var(--brand-border);">
                 </div>
             </div>
         </div>
@@ -258,10 +285,6 @@
                     <div class="pie-dashboard-layout">
                         <div class="pie-chart-container" id="pieChartWrapper">
                             <svg id="demographicsPieSvg" class="pie-chart-svg" viewBox="0 0 240 240"></svg>
-                            <div class="pie-donut-center">
-                                <span id="pieCenterCount" class="pie-center-count">0</span>
-                                <span id="pieCenterLabel" class="pie-center-label">Department</span>
-                            </div>
                         </div>
                         <div id="demographicsLegend" class="pie-chart-legend">
                             <!-- Populated via JS -->
@@ -293,16 +316,12 @@
                     <span class="analytics-card-label">Total Verified Checked-In</span>
                     <span class="analytics-card-value"><asp:Literal ID="litDuringCheckedIn" runat="server" Text="0"></asp:Literal></span>
                 </div>
-                <div class="analytics-card-badge" style="background-color:var(--accent-emerald-subtle); color:var(--accent-emerald); border:1px solid var(--accent-emerald-border);">
-                </div>
             </div>
 
             <div class="analytics-card">
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Real-Time Turnout Rate</span>
                     <span class="analytics-card-value"><asp:Literal ID="litDuringTurnoutRate" runat="server" Text="0.0%"></asp:Literal></span>
-                </div>
-                <div class="analytics-card-badge" style="background-color:var(--brand-subtle); color:var(--brand-primary); border:1px solid var(--brand-border);">
                 </div>
             </div>
 
@@ -311,16 +330,12 @@
                     <span class="analytics-card-label">Venue Physical Occupancy</span>
                     <span class="analytics-card-value"><asp:Literal ID="litDuringVenueOccupancy" runat="server" Text="0.0%"></asp:Literal></span>
                 </div>
-                <div class="analytics-card-badge" style="background-color:var(--accent-amber-subtle); color:var(--accent-amber); border:1px solid var(--accent-amber-border);">
-                </div>
             </div>
 
             <div class="analytics-card">
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Unscanned Attendees</span>
                     <span class="analytics-card-value"><asp:Literal ID="litDuringUnscannedCohort" runat="server" Text="0"></asp:Literal></span>
-                </div>
-                <div class="analytics-card-badge" style="background-color:var(--bg-hover); color:var(--text-muted); border:1px solid var(--border-medium);">
                 </div>
             </div>
         </div>
@@ -407,16 +422,12 @@
                     <span class="analytics-card-label">Pre-Registered Roster</span>
                     <span class="analytics-card-value"><asp:Literal ID="litAfterPreRegisteredTotal" runat="server" Text="0"></asp:Literal></span>
                 </div>
-                <div class="analytics-card-badge" style="background-color:var(--brand-subtle); color:var(--brand-primary); border:1px solid var(--brand-border);">
-                </div>
             </div>
 
             <div class="analytics-card">
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Actual Attended</span>
                     <span class="analytics-card-value"><asp:Literal ID="litAfterActualAttended" runat="server" Text="0"></asp:Literal></span>
-                </div>
-                <div class="analytics-card-badge" style="background-color:var(--accent-emerald-subtle); color:var(--accent-emerald); border:1px solid var(--accent-emerald-border);">
                 </div>
             </div>
 
@@ -425,16 +436,12 @@
                     <span class="analytics-card-label">Verified No-Shows</span>
                     <span class="analytics-card-value"><asp:Literal ID="litAfterNoShows" runat="server" Text="0"></asp:Literal></span>
                 </div>
-                <div class="analytics-card-badge" style="background-color:var(--accent-amber-subtle); color:var(--accent-amber); border:1px solid var(--accent-amber-border);">
-                </div>
             </div>
 
             <div class="analytics-card">
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Voided Cancellations</span>
                     <span class="analytics-card-value"><asp:Literal ID="litAfterCancellations" runat="server" Text="0"></asp:Literal></span>
-                </div>
-                <div class="analytics-card-badge" style="background-color:var(--accent-rose-subtle); color:var(--accent-rose); border:1px solid var(--accent-rose-border);">
                 </div>
             </div>
         </div>
@@ -615,8 +622,8 @@
         legend.innerHTML = '';
 
         const totalStudents = list.reduce(function (sum, item) { return sum + item.count; }, 0);
-        centerCount.textContent = totalStudents.toLocaleString();
-        centerLabel.textContent = displayLabel;
+        if (centerCount) centerCount.textContent = totalStudents.toLocaleString();
+        if (centerLabel) centerLabel.textContent = displayLabel;
 
         if (totalStudents === 0 || list.length === 0) {
             svg.innerHTML = '<circle cx="120" cy="120" r="80" fill="none" stroke="#e2e8f0" stroke-width="26" />' +

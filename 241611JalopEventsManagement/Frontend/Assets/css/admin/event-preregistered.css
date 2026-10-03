@@ -358,23 +358,7 @@
             color: var(--text-heading);
         }
 
-        /* White Container Surface (Prevents Floating Appearance) */
-        .white-container,
-        .roster-white-container {
-            background-color: #ffffff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-card);
-        }
-
-        .white-container .unified-roster-card,
-        .roster-white-container .unified-roster-card {
-            box-shadow: none;
-            border: 1px solid var(--border-subtle);
-        }
-
-        /* Unified Connected Roster Card (Image 2 Architecture) */
+        /* Unified Connected Roster Card */
         .unified-roster-card {
             background-color: #ffffff;
             border: 1px solid var(--border-subtle);
@@ -388,7 +372,7 @@
         .unified-roster-card .sheet-tabs-container {
             padding: 0.5rem 1.25rem 0 1.25rem;
             margin-bottom: 0;
-            background-color: #fafbfc;
+            background-color: #ffffff;
             border-bottom: 1px solid var(--border-subtle);
         }
 
