@@ -8,7 +8,7 @@
     <!-- Optical QR Decoding Library -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/attendance-scanner.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/attendance-scanner.css") %>?v=<%= DateTime.UtcNow.Ticks %>" />
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
@@ -19,27 +19,13 @@
         <div class="event-context-top">
             <div class="event-title-group">
                 <h1>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
-                        <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
-                    </svg>
                     <asp:Literal ID="litEventTitle" runat="server" Text="Select an Event"></asp:Literal>
                 </h1>
                 <div class="event-meta-chips">
                     <span class="meta-chip">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <!-- Strict MM/dd/yyyy date standard -->
                         <span>Date: <strong><asp:Literal ID="litEventDate" runat="server" Text="--/--/----"></asp:Literal></strong></span>
                     </span>
                     <span class="meta-chip">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
                         <span>Venue: <strong><asp:Literal ID="litEventVenue" runat="server" Text="--"></asp:Literal></strong></span>
                     </span>
                     <span class="meta-chip">
@@ -48,7 +34,7 @@
                 </div>
             </div>
 
-            <!-- Event Dropdown Switcher -->
+            <!-- Event Selector Switcher -->
             <div class="event-switcher">
                 <label for="<%= ddlEvents.ClientID %>">Active Event:</label>
                 <asp:DropDownList ID="ddlEvents" runat="server" CssClass="event-dropdown-select" AutoPostBack="true" OnSelectedIndexChanged="ddlEvents_SelectedIndexChanged">
@@ -56,45 +42,22 @@
             </div>
         </div>
 
-        <!-- Sub-Module Pipeline Tabs -->
+        <!-- Sub-Module Pipeline Progression Tabs -->
         <div class="pipeline-tabs-wrapper">
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventDetails.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
-                <span>1. Event Details</span>
+                <span>Event Details</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventPreRegistered.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <polyline points="17 11 19 13 23 9"></polyline>
-                </svg>
-                <span>2. Pre-Registered</span>
+                <span>Pre-Registered</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/AttendanceScanner.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item active">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
-                </svg>
-                <span>3. Attendance Scanner</span>
+                <span>Attendance Scanner</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventAttendance.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 11l3 3L22 4"></path>
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                </svg>
-                <span>4. Event Attendance</span>
+                <span>Event Attendance</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventAnalytics.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-                <span>5. Event Analytics</span>
+                <span>Event Analytics</span>
             </a>
         </div>
     </div>
@@ -117,10 +80,6 @@
             <div class="viewfinder-card">
                 <div class="card-header-bar">
                     <div class="card-header-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                            <circle cx="12" cy="13" r="4"></circle>
-                        </svg>
                         <span>Optical QR Viewfinder Stream</span>
                     </div>
                     <div style="display:flex; align-items:center; gap:0.85rem;">
@@ -170,10 +129,6 @@
             <!-- Manual Fallback Console -->
             <div class="manual-console-card">
                 <div class="manual-console-title">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                        <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M6 16h12"></path>
-                    </svg>
                     <span>Manual Fallback Console</span>
                 </div>
                 <div class="manual-input-row">
@@ -199,11 +154,6 @@
         <div class="staging-card">
             <div class="staging-header-bar">
                 <div class="staging-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <circle cx="10" cy="13" r="2"></circle>
-                        <path d="M14 17h-8"></path>
-                    </svg>
                     <span>Verification Panel (Staging Area)</span>
                 </div>
                 <div id="stagingStatusBadge" class="staging-status-badge badge-awaiting">
@@ -267,18 +217,11 @@
             <!-- Operator Confirmation Controls (Mandatory Inspection Gate: No Auto Check-In) -->
             <div class="staging-actions-container">
                 <button type="button" id="btnConfirmCheckIn" class="btn-confirm-checkin" disabled onclick="executeCheckInCommit()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
                     <span>CONFIRM & CHECK-IN</span>
                     <span class="keyboard-hint-badge">ENTER</span>
                 </button>
 
                 <button type="button" id="btnDiscardStaging" class="btn-discard-staging" onclick="discardStagedAttendee()">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
                     <span>DISCARD / CLEAR</span>
                     <span class="keyboard-hint-badge">ESC</span>
                 </button>
@@ -776,7 +719,7 @@
         .finally(() => {
             isCommitting = false;
             if (btnConfirm) {
-                btnConfirm.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"></polyline></svg><span>CONFIRM & CHECK-IN</span><span class="keyboard-hint-badge">ENTER</span>`;
+                btnConfirm.innerHTML = `<span>CONFIRM & CHECK-IN</span><span class="keyboard-hint-badge">ENTER</span>`;
             }
         });
     }

@@ -41,7 +41,6 @@
     gap: 0.875rem;
     background: #f0fdf4;
     border: 1px solid #bbf7d0;
-    border-left: 4px solid var(--accent-emerald);
     border-radius: var(--radius-lg);
     padding: 0.875rem 1.25rem;
     margin-bottom: 1.25rem;

@@ -72,16 +72,11 @@
     pointer-events: none;
 }
 
-/* ─── Toast Variants & Accent Indicators ─── */
+/* ─── Toast Variants & Accent Indicators (No Left Border, No SVG) ─── */
 
 /* Success Variant */
 .app-toast.toast-success {
-    border-left: 4px solid #10b981;
-}
-.app-toast.toast-success .toast-icon-badge {
-    background: rgba(16, 185, 129, 0.16);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
 }
 .app-toast.toast-success .toast-title {
     color: #34d399;
@@ -93,13 +88,7 @@
 /* Error / Danger Variant */
 .app-toast.toast-error,
 .app-toast.toast-danger {
-    border-left: 4px solid #ef4444;
-}
-.app-toast.toast-error .toast-icon-badge,
-.app-toast.toast-danger .toast-icon-badge {
-    background: rgba(239, 68, 68, 0.16);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
 }
 .app-toast.toast-error .toast-title,
 .app-toast.toast-danger .toast-title {
@@ -112,12 +101,7 @@
 
 /* Warning Variant */
 .app-toast.toast-warning {
-    border-left: 4px solid #f59e0b;
-}
-.app-toast.toast-warning .toast-icon-badge {
-    background: rgba(245, 158, 11, 0.16);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
 }
 .app-toast.toast-warning .toast-title {
     color: #fbbf24;
@@ -128,12 +112,7 @@
 
 /* Info Variant */
 .app-toast.toast-info {
-    border-left: 4px solid #3b82f6;
-}
-.app-toast.toast-info .toast-icon-badge {
-    background: rgba(59, 130, 246, 0.16);
-    color: #60a5fa;
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
 }
 .app-toast.toast-info .toast-title {
     color: #60a5fa;
@@ -144,19 +123,9 @@
 
 /* ─── Internal Toast Layout Elements ─── */
 
-.toast-icon-badge {
-    flex-shrink: 0;
-    width: 34px;
-    height: 34px;
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1px;
-}
-.toast-icon-badge svg {
-    width: 18px;
-    height: 18px;
+.toast-icon-badge,
+.app-toast svg {
+    display: none !important;
 }
 
 .toast-content {

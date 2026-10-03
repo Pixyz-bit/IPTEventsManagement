@@ -286,13 +286,13 @@
 
                                 <div class="form-group">
                                     <label class="form-label" for="<%= txtRegStart.ClientID %>">Registration Open Date & Time <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtRegStart" runat="server" TextMode="DateTimeLocal" CssClass="form-input" />
+                                    <asp:TextBox ID="txtRegStart" runat="server" TextMode="Date" CssClass="form-input" />
                                     <span class="form-hint">Initial access timestamp (Format: MM/DD/YYYY HH:MM)</span>
                                 </div>
 
                                 <div class="form-group" style="margin-bottom:0;">
                                     <label class="form-label" for="<%= txtRegEnd.ClientID %>">Registration Deadline <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtRegEnd" runat="server" TextMode="DateTimeLocal" CssClass="form-input" />
+                                    <asp:TextBox ID="txtRegEnd" runat="server" TextMode="Date" CssClass="form-input" />
                                     <span class="form-hint">Strict enrollment cutoff (Format: MM/DD/YYYY HH:MM)</span>
                                 </div>
                             </div>
@@ -626,9 +626,6 @@
                                 <div class="bento-col-box sponsors-bento-box">
                                     <div class="bento-box-label">SPONSORS</div>
                                     <div id="sumSponsors" class="summary-chips-wrap"></div>
-                                    <div class="sponsors-footer-tag">
-                                        <span class="badge-active-partners">ACTIVE PARTNERS</span>
-                                    </div>
                                 </div>
 
                                 <!-- Box 4: Audience Specifications -->
@@ -663,14 +660,14 @@
                                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
                                     </svg>
-                                    <span><strong>Compliance:</strong> All specs, seat limits, and cohorts follow university policies.</span>
+                                    <span><strong>Ready to Publish:</strong> Event details and registration rules verified.</span>
                                 </div>
                                 <div class="bento-confirm-actions">
                                     <button type="button" class="btn-action-secondary" onclick="switchStep(4)">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                             <polyline points="15 18 9 12 15 6"></polyline>
                                         </svg>
-                                        <span>&lt; Back to Edit</span>
+                                        <span>Back to Edit</span>
                                     </button>
                                     <asp:Button ID="btnConfirmPublish" runat="server" Text="Confirm &amp; Publish Event" CssClass="btn-action-primary" OnClick="btnPublishEvent_Click" OnClientClick="return validateFinalPublish();" />
                                 </div>

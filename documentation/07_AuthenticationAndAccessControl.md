@@ -89,3 +89,16 @@ Upon successful credential validation, the following session keys are populated:
 * **When it is used:** Triggered immediately when the user clicks "Sign In to Portal" on [`Login.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Login/Login.aspx).
 * **Why:** Enforces the institutional security rule where students must authenticate using their registered institutional email address:
   * `[UserTable.Email, UserTable.UserId, StudentTable.StudentId]`
+
+---
+
+## 5. Development & Testing Credentials
+
+| Role | Email / Identifier | Password | Access Area |
+| :--- | :--- | :--- | :--- |
+| **Administrator** | `admin@gmail.com` | `admin@gmail.com` | `~/Frontend/Admin/*` |
+| **Student** | Registered Institutional Email (e.g. `*.qcu.edu.ph`) | Configured Student Password | `~/Frontend/User/*` |
+
+> [!NOTE]
+> Use `admin@gmail.com` / `admin@gmail.com` as the authoritative administrative test account across all automated browser testing and manual admin verification flows.
+

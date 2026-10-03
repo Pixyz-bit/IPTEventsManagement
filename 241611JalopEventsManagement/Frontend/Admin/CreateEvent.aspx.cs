@@ -51,8 +51,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             DateTime defaultRegStart = now;
             DateTime defaultRegEnd = defaultEventDate.AddDays(-1).AddHours(23).AddMinutes(59);
 
-            txtRegStart.Text = defaultRegStart.ToString("yyyy-MM-ddTHH:mm");
-            txtRegEnd.Text = defaultRegEnd.ToString("yyyy-MM-ddTHH:mm");
+            txtRegStart.Text = defaultRegStart.ToString("yyyy-MM-dd");
+            txtRegEnd.Text = defaultRegEnd.ToString("yyyy-MM-dd");
 
             hfSelectedPrograms.Value = string.Empty;
 
@@ -197,7 +197,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             DateTime eventStart = eventDate.Date.Add(startTime);
             DateTime eventEnd = eventDate.Date.Add(endTime);
 
-            string[] dtFormats = new[] { "MM/dd/yyyy HH:mm", "MM/dd/yyyy hh:mm tt", "yyyy-MM-ddTHH:mm", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-dd HH:mm" };
+            string[] dtFormats = new[] { "yyyy-MM-dd", "MM/dd/yyyy", "M/d/yyyy", "MM/dd/yyyy HH:mm", "MM/dd/yyyy hh:mm tt", "yyyy-MM-ddTHH:mm", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-dd HH:mm" };
             if (!DateTime.TryParseExact(txtRegStart.Text.Trim(), dtFormats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime regStart)
                 && !DateTime.TryParse(txtRegStart.Text.Trim(), out regStart))
             {

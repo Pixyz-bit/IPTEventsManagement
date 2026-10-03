@@ -5,7 +5,7 @@
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/event-analytics.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/event-analytics.css") %>?v=<%= DateTime.UtcNow.Ticks %>" />
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
@@ -16,28 +16,13 @@
         <div class="event-context-top">
             <div class="event-title-group">
                 <h1>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
-                        <line x1="18" y1="20" x2="18" y2="10"></line>
-                        <line x1="12" y1="20" x2="12" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="14"></line>
-                    </svg>
                     <asp:Literal ID="litEventTitle" runat="server" Text="Select an Event"></asp:Literal>
                 </h1>
                 <div class="event-meta-chips">
                     <span class="meta-chip">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
                         <span>Date: <strong><asp:Literal ID="litEventDate" runat="server" Text="--/--/----"></asp:Literal></strong></span>
                     </span>
                     <span class="meta-chip">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
                         <span>Venue: <strong><asp:Literal ID="litEventVenue" runat="server" Text="--"></asp:Literal></strong></span>
                     </span>
                     <span class="meta-chip">
@@ -58,42 +43,19 @@
         <!-- Sub-Module Pipeline Progression Tabs -->
         <div class="pipeline-tabs-wrapper">
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventDetails.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <span>1. Event Details</span>
+                <span>Event Details</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventPreRegistered.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <polyline points="17 11 19 13 23 9"></polyline>
-                </svg>
-                <span>2. Pre-Registered</span>
+                <span>Pre-Registered</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/AttendanceScanner.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
-                </svg>
-                <span>3. Attendance Scanner</span>
+                <span>Attendance Scanner</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventAttendance.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 11l3 3L22 4"></path>
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                </svg>
-                <span>4. Event Attendance</span>
+                <span>Event Attendance</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventAnalytics.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item active">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-                <span>5. Event Analytics</span>
+                <span>Event Analytics</span>
             </a>
         </div>
     </div>
@@ -102,24 +64,13 @@
     <div class="lifecycle-tabs-bar">
         <div class="lifecycle-tabs-group">
             <button type="button" id="tabPhaseBefore" class="lifecycle-tab-btn active" onclick="switchLifecycleTab('before')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <span>Before: Pre-Event Analytics</span>
+                <span>(Before) Pre-Event Analytics</span>
             </button>
             <button type="button" id="tabPhaseDuring" class="lifecycle-tab-btn" onclick="switchLifecycleTab('during')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                <span>During: Live Gate Telemetry</span>
+                <span>(During) Live Gate Telemetry</span>
             </button>
             <button type="button" id="tabPhaseAfter" class="lifecycle-tab-btn" onclick="switchLifecycleTab('after')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <span>After: Post-Event Performance Audit</span>
+                <span>(After) Post-Event Performance Audit</span>
             </button>
         </div>
 
@@ -155,13 +106,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Total Pre-Registered</span>
                     <span class="analytics-card-value"><asp:Literal ID="litBeforePreRegistered" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Active student enrollments</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--brand-subtle); color:var(--brand-primary); border:1px solid var(--brand-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                    </svg>
                 </div>
             </div>
 
@@ -170,15 +116,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Total Reserved</span>
                     <span class="analytics-card-value"><asp:Literal ID="litBeforeTotalReserved" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">EventsTable allocated quota</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--accent-indigo-subtle); color:var(--accent-indigo); border:1px solid var(--accent-indigo-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="16" rx="2"></rect>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                    </svg>
                 </div>
             </div>
 
@@ -187,22 +126,19 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Cancelled</span>
                     <span class="analytics-card-value"><asp:Literal ID="litBeforeCancelled" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Slots released back to pool</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--accent-rose-subtle); color:var(--accent-rose); border:1px solid var(--accent-rose-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                    </svg>
                 </div>
             </div>
 
-            <!-- Hidden State Holders for Removed Attrition and Saturation Cards -->
+            <!-- Hidden State Holders for Removed Controls/Cards -->
             <asp:PlaceHolder ID="phAttritionAndSaturationHidden" runat="server" Visible="false">
                 <asp:Literal ID="litBeforeAttritionRate" runat="server" Text="0.0%"></asp:Literal>
                 <asp:Literal ID="litBeforeSaturationRate" runat="server" Text="0.0%"></asp:Literal>
                 <asp:Literal ID="litBeforeSaturationStatus" runat="server" Text="Undersubscribed"></asp:Literal>
+                <asp:Literal ID="litBeforeDaysUntilLaunch" runat="server" Text="0 Days"></asp:Literal>
+                <asp:Literal ID="litDuringRosterTotal" runat="server" Text="0"></asp:Literal>
+                <asp:Literal ID="litAfterRetentionRate" runat="server" Text="0.0%"></asp:Literal>
             </asp:PlaceHolder>
 
             <!-- 6. Available Capacity Pool -->
@@ -210,14 +146,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Available Capacity Pool</span>
                     <span class="analytics-card-value"><asp:Literal ID="litBeforeAvailableQuota" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Seats remaining open (<asp:Literal ID="litBeforeDaysUntilLaunch" runat="server" Text="0 Days"></asp:Literal> left)</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--brand-subtle); color:var(--brand-primary); border:1px solid var(--brand-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                    </svg>
                 </div>
             </div>
         </div>
@@ -362,12 +292,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Total Verified Checked-In</span>
                     <span class="analytics-card-value"><asp:Literal ID="litDuringCheckedIn" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Out of <asp:Literal ID="litDuringRosterTotal" runat="server" Text="0"></asp:Literal> pre-registered cohort</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--accent-emerald-subtle); color:var(--accent-emerald); border:1px solid var(--accent-emerald-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 6L9 17l-5-5"></path>
-                    </svg>
                 </div>
             </div>
 
@@ -375,13 +301,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Real-Time Turnout Rate</span>
                     <span class="analytics-card-value"><asp:Literal ID="litDuringTurnoutRate" runat="server" Text="0.0%"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Present vs pre-registered cohort</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--brand-subtle); color:var(--brand-primary); border:1px solid var(--brand-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                        <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                    </svg>
                 </div>
             </div>
 
@@ -389,13 +310,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Venue Physical Occupancy</span>
                     <span class="analytics-card-value"><asp:Literal ID="litDuringVenueOccupancy" runat="server" Text="0.0%"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Of maximum venue safety limit</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--accent-amber-subtle); color:var(--accent-amber); border:1px solid var(--accent-amber-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                    </svg>
                 </div>
             </div>
 
@@ -403,14 +319,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Unscanned Attendees</span>
                     <span class="analytics-card-value"><asp:Literal ID="litDuringUnscannedCohort" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Pending door arrival</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--bg-hover); color:var(--text-muted); border:1px solid var(--border-medium);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
                 </div>
             </div>
         </div>
@@ -496,13 +406,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Pre-Registered Roster</span>
                     <span class="analytics-card-value"><asp:Literal ID="litAfterPreRegisteredTotal" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Original baseline cohort</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--brand-subtle); color:var(--brand-primary); border:1px solid var(--brand-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="8.5" cy="7" r="4"></circle>
-                    </svg>
                 </div>
             </div>
 
@@ -510,13 +415,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Actual Attended</span>
                     <span class="analytics-card-value"><asp:Literal ID="litAfterActualAttended" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Verified present (<asp:Literal ID="litAfterRetentionRate" runat="server" Text="0.0%"></asp:Literal> retention)</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--accent-emerald-subtle); color:var(--accent-emerald); border:1px solid var(--accent-emerald-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
                 </div>
             </div>
 
@@ -524,13 +424,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Verified No-Shows</span>
                     <span class="analytics-card-value"><asp:Literal ID="litAfterNoShows" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Absent reserved attendees</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--accent-amber-subtle); color:var(--accent-amber); border:1px solid var(--accent-amber-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="8" y1="12" x2="16" y2="12"></line>
-                    </svg>
                 </div>
             </div>
 
@@ -538,14 +433,8 @@
                 <div class="analytics-card-info">
                     <span class="analytics-card-label">Voided Cancellations</span>
                     <span class="analytics-card-value"><asp:Literal ID="litAfterCancellations" runat="server" Text="0"></asp:Literal></span>
-                    <span class="analytics-card-subtext">Revoked passes</span>
                 </div>
                 <div class="analytics-card-badge" style="background-color:var(--accent-rose-subtle); color:var(--accent-rose); border:1px solid var(--accent-rose-border);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                    </svg>
                 </div>
             </div>
         </div>

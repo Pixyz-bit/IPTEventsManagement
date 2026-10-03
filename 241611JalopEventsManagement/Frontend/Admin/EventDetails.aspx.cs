@@ -183,8 +183,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             txtEventDate.Text = ev.EventStart.ToString("yyyy-MM-dd");
             txtStartTime.Text = ev.EventStart.ToString("HH:mm");
             txtEndTime.Text = ev.EventEnd.ToString("HH:mm");
-            txtRegStart.Text = ev.RegStart.ToString("yyyy-MM-ddTHH:mm");
-            txtRegEnd.Text = ev.RegEnd.ToString("yyyy-MM-ddTHH:mm");
+            txtRegStart.Text = ev.RegStart.ToString("yyyy-MM-dd");
+            txtRegEnd.Text = ev.RegEnd.ToString("yyyy-MM-dd");
 
             // Section 3: Dual-Ratio Banners
             if (!string.IsNullOrWhiteSpace(ev.EventPhotoPath))

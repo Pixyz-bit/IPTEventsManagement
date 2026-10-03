@@ -66,29 +66,13 @@
         <div class="event-context-top">
             <div class="event-title-group">
                 <h1>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                    </svg>
                     <asp:Literal ID="litHeaderTitle" runat="server" Text="Event Specifications" />
                 </h1>
                 <div class="event-meta-chips">
                     <span class="meta-chip">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
                         <span>Date: <strong><asp:Literal ID="litEventDate" runat="server" Text="--/--/----"></asp:Literal></strong></span>
                     </span>
                     <span class="meta-chip">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
                         <span>Venue: <strong><asp:Literal ID="litEventVenue" runat="server" Text="--"></asp:Literal></strong></span>
                     </span>
                     <span class="meta-chip">
@@ -97,62 +81,30 @@
                 </div>
             </div>
 
-            <!-- Event Selector Switcher & Back Link -->
-            <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
-                <div class="event-switcher">
-                    <label for="<%= ddlEvents.ClientID %>">Active Event:</label>
-                    <asp:DropDownList ID="ddlEvents" runat="server" CssClass="event-dropdown-select" AutoPostBack="true" OnSelectedIndexChanged="ddlEvents_SelectedIndexChanged">
-                    </asp:DropDownList>
-                </div>
-                <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="btn-action-secondary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    <span>Back to Events Matrix</span>
-                </a>
+            <!-- Event Selector Switcher -->
+            <div class="event-switcher">
+                <label for="<%= ddlEvents.ClientID %>">Active Event:</label>
+                <asp:DropDownList ID="ddlEvents" runat="server" CssClass="event-dropdown-select" AutoPostBack="true" OnSelectedIndexChanged="ddlEvents_SelectedIndexChanged">
+                </asp:DropDownList>
             </div>
         </div>
 
         <!-- Sub-Module Pipeline Progression Tabs -->
         <div class="pipeline-tabs-wrapper">
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventDetails.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item active">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
-                <span>1. Event Details</span>
+                <span>Event Details</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventPreRegistered.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <polyline points="17 11 19 13 23 9"></polyline>
-                </svg>
-                <span>2. Pre-Registered</span>
+                <span>Pre-Registered</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/AttendanceScanner.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 9h6v6H9z"></path>
-                </svg>
-                <span>3. Attendance Scanner</span>
+                <span>Attendance Scanner</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventAttendance.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 11l3 3L22 4"></path>
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                </svg>
-                <span>4. Event Attendance</span>
+                <span>Event Attendance</span>
             </a>
             <a href="<%= ResolveUrl(string.Format("~/Frontend/Admin/EventAnalytics.aspx?eventId={0}", CurrentEventId)) %>" class="pipeline-tab-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-                <span>5. Event Analytics</span>
+                <span>Event Analytics</span>
             </a>
         </div>
     </div>
@@ -177,6 +129,9 @@
         </div>
         <div class="mode-actions">
             <asp:PlaceHolder ID="phViewActions" runat="server">
+                <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="btn-action-secondary">
+                    <span>&larr; Back to Events Matrix</span>
+                </a>
                 <asp:Button ID="btnToggleEdit" runat="server" Text="Edit Specifications" CssClass="btn-action-primary" OnClick="btnToggleEdit_Click" CausesValidation="false" />
             </asp:PlaceHolder>
             <asp:PlaceHolder ID="phEditActions" runat="server" Visible="false">
@@ -193,10 +148,6 @@
         <div class="bento-card bento-span-8">
             <div class="bento-card-header">
                 <div class="bento-card-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                    </svg>
                     <span>General Event Overview &amp; Branding</span>
                 </div>
                 <span class="event-id-tag">SECTION 01</span>
@@ -324,10 +275,6 @@
         <div class="bento-card bento-span-4">
             <div class="bento-card-header">
                 <div class="bento-card-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
                     <span>Gate Occupancy &amp; Quota</span>
                 </div>
                 <span class="status-pill <%= HeaderStatusBadgeClass %>">
@@ -364,12 +311,6 @@
         <div class="bento-card bento-span-6">
             <div class="bento-card-header">
                 <div class="bento-card-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
                     <span>Execution Schedule &amp; Lifecycle</span>
                 </div>
                 <span class="event-id-tag">SECTION 02</span>
@@ -433,11 +374,11 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="<%= txtRegStart.ClientID %>">Registration Start <span style="color:#ef4444;">*</span></label>
-                        <asp:TextBox ID="txtRegStart" runat="server" CssClass="form-control" TextMode="DateTimeLocal" />
+                        <asp:TextBox ID="txtRegStart" runat="server" CssClass="form-control" TextMode="Date" />
                     </div>
                     <div class="form-group" style="margin-bottom:0;">
                         <label class="form-label" for="<%= txtRegEnd.ClientID %>">Registration Deadline <span style="color:#ef4444;">*</span></label>
-                        <asp:TextBox ID="txtRegEnd" runat="server" CssClass="form-control" TextMode="DateTimeLocal" />
+                        <asp:TextBox ID="txtRegEnd" runat="server" CssClass="form-control" TextMode="Date" />
                     </div>
                 </asp:PlaceHolder>
 
@@ -458,13 +399,7 @@
         <div class="bento-card bento-span-6">
             <div class="bento-card-header">
                 <div class="bento-card-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                    <span>Target Demographics (4-Tier Matrix)</span>
+                    <span>Target Demographics</span>
                 </div>
                 <span class="event-id-tag">SECTION 03</span>
             </div>
@@ -552,9 +487,6 @@
         <div class="bento-card bento-span-12">
             <div class="bento-card-header">
                 <div class="bento-card-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
                     <span>Institutional Partners &amp; Sponsors</span>
                 </div>
                 <span class="event-id-tag"><asp:Literal ID="litMetaSponsorCount" runat="server" Text="0" /> PARTNERS</span>

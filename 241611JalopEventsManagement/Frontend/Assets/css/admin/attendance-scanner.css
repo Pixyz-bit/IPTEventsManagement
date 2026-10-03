@@ -15,7 +15,6 @@
         .event-context-card {
             background-color: #ffffff;
             border: 1px solid var(--border-subtle);
-            border-left: 4px solid var(--brand-primary);
             border-radius: var(--radius-lg);
             padding: 1.5rem 1.75rem;
             display: flex;
@@ -314,25 +313,25 @@
         }
 
         .btn-scanner-toggle:focus-visible {
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.35);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.35);
         }
 
-        /* Active: Purple Vibrant State (Matching User Reference Image) */
+        /* Active: Clean Green State */
         .btn-scanner-toggle.is-active {
-            background-color: #8b5cf6;
+            background-color: #10b981;
         }
 
         .btn-scanner-toggle.is-active:hover {
-            background-color: #7c3aed;
+            background-color: #059669;
         }
 
-        /* Inactive: Muted Neutral State */
+        /* Inactive: Muted Gray State */
         .btn-scanner-toggle.is-inactive {
-            background-color: #cbd5e1;
+            background-color: #94a3b8;
         }
 
         .btn-scanner-toggle.is-inactive:hover {
-            background-color: #94a3b8;
+            background-color: #64748b;
         }
 
         /* White Sliding Thumb Knob */
@@ -784,8 +783,8 @@
             border: 1px solid var(--border-medium);
             padding: 0.85rem 1.15rem;
             border-radius: var(--radius-md);
-            font-size: 0.875rem;
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 700;
             font-family: inherit;
             cursor: pointer;
             box-shadow: var(--shadow-subtle);

@@ -65,7 +65,12 @@ namespace _241611JalopEventsManagement.Frontend.User
             public string EventTitle { get; set; }
             public string VenueLocation { get; set; }
             public string EventDateFormatted { get; set; }
+            public string FormattedDate { get; set; }
+            public string FormattedTime { get; set; }
             public string Status { get; set; }
+            public string RegStatusBadgeHtml { get; set; }
+            public string PassIdChipText { get; set; }
+            public string SponsorBadgesHtml { get; set; }
             public bool CanCancel { get; set; }
             public string EventPhotoPath { get; set; }
             public string BannerImageUrl { get; set; }
@@ -588,14 +593,42 @@ namespace _241611JalopEventsManagement.Frontend.User
                 {
                     foreach (var reg in registrations)
                     {
+                        DateTime? start = reg.EventStart;
+                        DateTime? end = reg.EventEnd;
+
+                        string formattedDate = start.HasValue ? start.Value.ToString("MMM dd, yyyy") : "TBA";
+                        string formattedTime = "TBA";
+                        if (start.HasValue)
+                        {
+                            if (!end.HasValue || end.Value == start.Value)
+                                formattedTime = start.Value.ToString("h:mm tt");
+                            else
+                                formattedTime = $"{start.Value:h:mm tt} to {end.Value:h:mm tt}";
+                        }
+
+                        string badgeHtml = "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> CONFIRMED PASS</div>";
+                        if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
+                        {
+                            badgeHtml = "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> ATTENDED</div>";
+                        }
+                        else if (string.Equals(reg.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
+                        {
+                            badgeHtml = "<div class=\"card-status-pill card-status-closed\">CANCELLED</div>";
+                        }
+
                         list.Add(new StudentRegistrationViewModel
                         {
                             EventRegistrationId = reg.EventRegistrationId,
                             EventId = reg.EventId,
                             EventTitle = reg.EventTitle,
                             VenueLocation = reg.VenueLocation,
-                            EventDateFormatted = reg.EventStart.HasValue ? reg.EventStart.Value.ToString("MM/dd/yyyy • hh:mm tt") : "TBA",
+                            EventDateFormatted = start.HasValue ? start.Value.ToString("MM/dd/yyyy • hh:mm tt") : "TBA",
+                            FormattedDate = formattedDate,
+                            FormattedTime = formattedTime,
                             Status = reg.Status,
+                            RegStatusBadgeHtml = badgeHtml,
+                            PassIdChipText = $"PASS #{reg.EventRegistrationId}",
+                            SponsorBadgesHtml = "<span class=\"sponsor-pill\">OFFICIAL PASS</span>",
                             CanCancel = reg.CanCancel,
                             EventPhotoPath = reg.EventPhotoPath,
                             BannerImageUrl = !string.IsNullOrWhiteSpace(reg.EventPhotoPath) ? ResolveUrl(reg.EventPhotoPath) : ResolveUrl("~/Frontend/Assets/campus-clean.jpg")
@@ -611,14 +644,20 @@ namespace _241611JalopEventsManagement.Frontend.User
             if (list.Count == 0 && pnlPreviewBanner.Visible)
             {
                 // Mock registered event in preview mode
+                DateTime demoDate = DateTime.Today.AddDays(7);
                 list.Add(new StudentRegistrationViewModel
                 {
                     EventRegistrationId = 501,
                     EventId = 101,
                     EventTitle = "AI & Cloud Architecture Workshop",
                     VenueLocation = "QCU San Bartolome - Tech Lab 3",
-                    EventDateFormatted = $"{DateTime.Today.AddDays(7):MMM dd, yyyy} • 10:00 AM",
+                    EventDateFormatted = $"{demoDate:MMM dd, yyyy} • 10:00 AM",
+                    FormattedDate = demoDate.ToString("MMM dd, yyyy"),
+                    FormattedTime = "10:00 AM - 03:00 PM",
                     Status = "NoShow", // Default status per business rule #1
+                    RegStatusBadgeHtml = "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> CONFIRMED PASS</div>",
+                    PassIdChipText = "PASS #501",
+                    SponsorBadgesHtml = "<span class=\"sponsor-pill\">OFFICIAL PASS</span>",
                     CanCancel = true, // Active registration period
                     BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg")
                 });

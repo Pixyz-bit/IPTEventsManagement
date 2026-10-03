@@ -43,7 +43,6 @@
         .event-hub-header {
             background-color: #ffffff;
             border: 1px solid var(--border-subtle);
-            border-left: 4px solid var(--brand-primary);
             border-radius: var(--radius-lg);
             padding: 1.5rem 1.75rem;
             margin-bottom: 1.25rem;
@@ -241,8 +240,8 @@
         .pipeline-tab-item.active,
         .pipeline-tab.active {
             color: var(--brand-primary);
-            background-color: #eff6ff;
-            border-color: #bfdbfe;
+            background-color: var(--brand-subtle);
+            border-color: var(--brand-border);
             font-weight: 700;
         }
 
