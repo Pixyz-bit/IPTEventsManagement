@@ -14,7 +14,14 @@ body {
     min-height: 100vh;
     background-color: #0b1528;
     background-image: 
-        linear-gradient(180deg, rgba(11, 21, 40, 0.62) 0%, rgba(15, 23, 42, 0.72) 40%, rgba(11, 21, 40, 0.88) 100%),
+        linear-gradient(180deg, 
+            rgba(29, 78, 216, 0.88) 0%, 
+            rgba(37, 99, 235, 0.75) 22%, 
+            rgba(37, 99, 235, 0.42) 40%, 
+            rgba(37, 99, 235, 0.10) 58%, 
+            rgba(0, 0, 0, 0) 72%, 
+            rgba(0, 0, 0, 0) 100%
+        ),
         url('../../QCU%20Background.png');
     background-size: cover;
     background-position: center center;
@@ -83,14 +90,14 @@ body {
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
-/* ─── Auth Card Container (Reference Photo Style) ─── */
+/* ─── Auth Card Container (Clean Solid White Style) ─── */
 .auth-card {
     width: 100%;
     margin-top: 1.75rem;
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.95);
     border-radius: 16px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
+    box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.22), 0 8px 20px -4px rgba(15, 23, 42, 0.12);
     overflow: hidden;
 }
 
@@ -106,7 +113,7 @@ body {
 .form-label {
     font-size: 0.88rem;
     font-weight: 600;
-    color: #FFFFFF;
+    color: #1e293b;
     margin-bottom: 0.5rem;
     display: block;
     letter-spacing: 0.01em;
@@ -118,21 +125,22 @@ body {
     font-size: 0.92rem;
     font-family: var(--font-sans);
     font-weight: 500;
-    color: #FFFFFF;
-    background: #1e293b;
-    border: 1px solid #334155;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
     border-radius: 8px;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 
 .form-control:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    background: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
 }
 
 .form-control::placeholder {
-    color: #64748b;
+    color: #94a3b8;
     font-size: 0.88rem;
     font-weight: 400;
 }
@@ -157,7 +165,7 @@ body {
     border: none;
     cursor: pointer;
     padding: 0.25rem;
-    color: #94a3b8;
+    color: #64748b;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -166,7 +174,7 @@ body {
 }
 
 .btn-toggle-password:hover {
-    color: #FFFFFF;
+    color: #1e293b;
 }
 
 .form-options {
@@ -180,23 +188,28 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.65rem;
-    color: #94a3b8;
+    color: #475569;
     font-size: 0.88rem;
     font-weight: 500;
     cursor: pointer;
     user-select: none;
+    transition: color 0.15s ease;
+}
+
+.checkbox-label:hover {
+    color: #1e293b;
 }
 
 .checkbox-label input[type="checkbox"] {
     width: 16px;
     height: 16px;
-    border: 1px solid #475569;
+    border: 1px solid #cbd5e1;
     border-radius: 4px;
     cursor: pointer;
     accent-color: #2563eb;
 }
 
-/* ─── Blue Submit Button Matching Photo ─── */
+/* ─── Blue Submit Button ─── */
 .btn-submit {
     width: 100%;
     padding: 0.85rem 1.25rem;
@@ -208,7 +221,7 @@ body {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -218,22 +231,22 @@ body {
 
 .btn-submit:hover {
     background: #1d4ed8;
-    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.55);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
 }
 
 .btn-submit:active {
     transform: translateY(1px);
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
-/* ─── Clean Alert Box ─── */
+/* ─── Clean Alert Box (Light Theme) ─── */
 .alert-error {
-    background: rgba(239, 68, 68, 0.14);
-    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: #fef2f2;
+    border: 1px solid #fecaca;
     border-radius: 8px;
     padding: 0.85rem 1rem;
     margin-bottom: 1.35rem;
-    color: #FCA5A5;
+    color: #991b1b;
     font-size: 0.84rem;
     line-height: 1.4;
     display: flex;
@@ -242,8 +255,9 @@ body {
 }
 
 .alert-error-tag {
-    background: rgba(239, 68, 68, 0.3);
-    color: #FFFFFF;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
     font-family: var(--font-mono);
     font-size: 0.7rem;
     font-weight: 800;
