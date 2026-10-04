@@ -49,6 +49,10 @@
                 <span>Close</span>
                 <span class="tab-badge"><asp:Literal ID="litBadgeClose" runat="server" Text="0" /></span>
             </asp:LinkButton>
+            <asp:LinkButton ID="btnTabArchived" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Archived" CausesValidation="false" OnClientClick="filterMatrixByStatus('Archived', this); return false;">
+                <span>Archived</span>
+                <span class="tab-badge"><asp:Literal ID="litBadgeArchived" runat="server" Text="0" /></span>
+            </asp:LinkButton>
         </div>
 
         <div class="filters-right-group">
@@ -83,14 +87,14 @@
                                 <th>Venue and Date</th>
                                 <th>Reg. Deadline</th>
                                 <th style="width: 130px;">Occupancy</th>
-                                <th style="text-align: right; width: 85px;"></th>
+                                <th style="text-align: right; width: 150px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                 </HeaderTemplate>
                 <ItemTemplate>
-                    <tr class="event-matrix-row" data-status='<%# Eval("MatrixStatus") %>' data-dept='<%# Eval("TargetDepartment") %>'>
-                        <!-- 1. Status: Close, Open, Soon -->
+                    <tr class='event-matrix-row <%# (bool)Eval("IsArchived") ? "is-archived-row" : "" %>' data-status='<%# Eval("MatrixStatus") %>' data-dept='<%# Eval("TargetDepartment") %>'>
+                        <!-- 1. Status: Close, Open, Soon, Archived -->
                         <td>
                             <span class='status-pill <%# GetMatrixStatusClass(Eval("MatrixStatus")) %>'>
                                 <%# Eval("MatrixStatus") %>
@@ -101,7 +105,10 @@
                         <td>
                             <div style="display:flex; align-items:center; gap:0.75rem;">
                                 <img src='<%# ResolveUrl(Eval("BannerThumbnailUrl").ToString()) %>' alt="Banner" style="width:48px; height:32px; object-fit:cover; border-radius:5px; border:1px solid var(--border-color); flex-shrink:0;" />
-                                <div class="cell-event-title"><%# Eval("Title") %></div>
+                                <div>
+                                    <div class="cell-event-title"><%# Eval("Title") %></div>
+                                    <%# (bool)Eval("IsArchived") ? "<span style='font-size:0.7rem; color:#dc2626; font-weight:700;'>[HIDDEN FROM STUDENTS]</span>" : "" %>
+                                </div>
                             </div>
                         </td>
 
@@ -128,8 +135,16 @@
                             </div>
                         </td>
 
-                        <!-- 6. View Action (Routes to Event Details in sub-module pipeline) -->
-                        <td style="text-align: right;">
+                        <!-- 6. View & Archive Actions -->
+                        <td style="text-align: right; white-space: nowrap;">
+                            <asp:LinkButton ID="btnToggleArchiveRow" runat="server"
+                                CommandName="ToggleArchive"
+                                CommandArgument='<%# Eval("EventId") %>'
+                                CssClass='<%# (bool)Eval("IsArchived") ? "btn-matrix-unarchive" : "btn-matrix-archive" %>'
+                                ToolTip='<%# (bool)Eval("IsArchived") ? "Make visible to students (Unarchive)" : "Hide from students (Archive)" %>'
+                                CausesValidation="false">
+                                <%# (bool)Eval("IsArchived") ? "Restore" : "Archive" %>
+                            </asp:LinkButton>
                             <a href='<%# ResolveUrl("~/Frontend/Admin/EventDetails.aspx?eventId=" + Eval("EventId")) %>' class="link-matrix-view">View &gt;</a>
                         </td>
                     </tr>

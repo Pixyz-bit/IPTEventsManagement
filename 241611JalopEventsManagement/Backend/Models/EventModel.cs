@@ -67,6 +67,8 @@ namespace _241611JalopEventsManagement.Backend.Models
             {
                 if (string.Equals(Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
                     return "Cancelled";
+                if (string.Equals(Status, "Archived", StringComparison.OrdinalIgnoreCase))
+                    return "Archived";
                 if (string.Equals(Status, "Completed", StringComparison.OrdinalIgnoreCase))
                     return "Completed";
                 if (DateTime.Now > EventEnd)
@@ -74,6 +76,8 @@ namespace _241611JalopEventsManagement.Backend.Models
                 return Status ?? "Upcoming";
             }
         }
+
+        public bool IsArchived => string.Equals(Status, "Archived", StringComparison.OrdinalIgnoreCase);
 
         public bool IsRegistrationOpen
         {

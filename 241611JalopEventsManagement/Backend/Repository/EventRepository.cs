@@ -276,6 +276,44 @@ namespace _241611JalopEventsManagement.Backend.Repository
         }
 
         /// <summary>
+        /// Archives an event by setting Status = 'Archived', hiding it from student dashboards and registrations.
+        /// </summary>
+        public bool ArchiveEvent(int eventId)
+        {
+            if (eventId <= 0)
+            {
+                return false;
+            }
+
+            const string sql = @"
+                UPDATE dbo.EventsTable 
+                SET Status = 'Archived'
+                WHERE EventId = @EventId;";
+
+            var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
+            return DatabaseConnection.ExecuteNonQuery(sql, param) > 0;
+        }
+
+        /// <summary>
+        /// Unarchives an event by setting Status = 'Upcoming', restoring visibility to student dashboards.
+        /// </summary>
+        public bool UnarchiveEvent(int eventId)
+        {
+            if (eventId <= 0)
+            {
+                return false;
+            }
+
+            const string sql = @"
+                UPDATE dbo.EventsTable 
+                SET Status = 'Upcoming'
+                WHERE EventId = @EventId;";
+
+            var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
+            return DatabaseConnection.ExecuteNonQuery(sql, param) > 0;
+        }
+
+        /// <summary>
         /// Atomically increments the CurrentRegistrations counter if remaining capacity exists.
         /// Prevents concurrent registration overbooking without table locks.
         /// </summary>

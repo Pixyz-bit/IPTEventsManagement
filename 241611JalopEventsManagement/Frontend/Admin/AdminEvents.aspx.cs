@@ -44,6 +44,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             public int CurrentRegistrations { get; set; }
             public int MaxCapacity { get; set; }
             public string MatrixStatus { get; set; }
+            public string RawStatus { get; set; }
+            public bool IsArchived => string.Equals(RawStatus, "Archived", StringComparison.OrdinalIgnoreCase);
             public string TargetDepartment { get; set; }
             public string EventPhotoPath { get; set; }
             public string BannerThumbnailUrl => !string.IsNullOrWhiteSpace(EventPhotoPath)
@@ -70,11 +72,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 allEvents = GetDemonstrationEvents();
             }
 
-            // 1. Evaluate 3 Statuses: Close, Open, Soon
+            // 1. Evaluate Statuses: Close, Open, Soon, Archived
             int totalCount = allEvents.Count;
             int openCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Open");
             int soonCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Soon");
             int closeCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Close");
+            int archivedCount = allEvents.Count(ev => ev.IsArchived);
 
             // Update Summary KPI Cards (if present in markup)
             if (litTotalMatrixCount != null) litTotalMatrixCount.Text = totalCount.ToString();
@@ -87,11 +90,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             litBadgeOpen.Text = openCount.ToString();
             litBadgeSoon.Text = soonCount.ToString();
             litBadgeClose.Text = closeCount.ToString();
+            if (litBadgeArchived != null) litBadgeArchived.Text = archivedCount.ToString();
 
             // 3. Highlight Active Tab
             UpdateTabStyles();
 
-            // 4. Apply Tab Filter (All, Open, Soon, Close)
+            // 4. Apply Tab Filter (All, Open, Soon, Close, Archived)
             IEnumerable<EventModel> filtered = allEvents;
             if (!string.Equals(CurrentStatusFilter, "All", StringComparison.OrdinalIgnoreCase))
             {
@@ -116,7 +120,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
 
             // 7. Chronological Ordering: From the most upcoming to the furthest out
-            // Rows naturally arrange in Close, Open, Soon based on which event happens sooner
             List<EventModel> resultList = filtered
                 .OrderBy(ev => ev.EventStart)
                 .ToList();
@@ -134,6 +137,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 CurrentRegistrations = ev.CurrentRegistrations,
                 MaxCapacity = ev.MaxCapacity,
                 MatrixStatus = GetEventMatrixStatus(ev),
+                RawStatus = ev.Status,
                 TargetDepartment = ev.TargetDepartment,
                 EventPhotoPath = ev.EventPhotoPath
             }).ToList();
@@ -151,6 +155,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             btnTabOpen.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Open", StringComparison.OrdinalIgnoreCase) ? " active" : "");
             btnTabSoon.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Soon", StringComparison.OrdinalIgnoreCase) ? " active" : "");
             btnTabClose.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Close", StringComparison.OrdinalIgnoreCase) ? " active" : "");
+            if (btnTabArchived != null)
+            {
+                btnTabArchived.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Archived", StringComparison.OrdinalIgnoreCase) ? " active" : "");
+            }
         }
 
         protected void FilterTab_Click(object sender, EventArgs e)
@@ -182,6 +190,33 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void rptEventsMatrix_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
+            if (string.Equals(e.CommandName, "ToggleArchive", StringComparison.OrdinalIgnoreCase))
+            {
+                if (int.TryParse(e.CommandArgument?.ToString(), out int eventId))
+                {
+                    EventModel ev = _eventRepository.GetEventById(eventId);
+                    if (ev != null)
+                    {
+                        if (ev.IsArchived)
+                        {
+                            _eventRepository.UnarchiveEvent(eventId);
+                            pnlFeedback.Visible = true;
+                            pnlFeedback.CssClass = "feedback-alert alert-success";
+                            litFeedbackMessage.Text = $"<strong>Event Restored:</strong> &ldquo;{Server.HtmlEncode(ev.Title)}&rdquo; is now visible to students.";
+                        }
+                        else
+                        {
+                            _eventRepository.ArchiveEvent(eventId);
+                            pnlFeedback.Visible = true;
+                            pnlFeedback.CssClass = "feedback-alert alert-success";
+                            litFeedbackMessage.Text = $"<strong>Event Archived:</strong> &ldquo;{Server.HtmlEncode(ev.Title)}&rdquo; has been hidden from the student portal.";
+                        }
+                        BindEventsMatrix();
+                    }
+                }
+                return;
+            }
+
             if (string.Equals(e.CommandName, "RequestCancel", StringComparison.OrdinalIgnoreCase))
             {
                 if (int.TryParse(e.CommandArgument?.ToString(), out int eventId))
@@ -272,6 +307,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         public static string GetEventMatrixStatus(EventModel ev)
         {
             if (ev == null) return "Close";
+            if (ev.IsArchived) return "Archived";
             DateTime now = DateTime.Now;
 
             // 1. If cancelled or completed, it's Close
@@ -306,6 +342,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     return "status-open";
                 case "soon":
                     return "status-soon";
+                case "archived":
+                    return "status-archived";
                 case "close":
                 default:
                     return "status-close";

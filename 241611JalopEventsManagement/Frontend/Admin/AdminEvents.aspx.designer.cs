@@ -28,6 +28,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litBadgeSoon;
         protected global::System.Web.UI.WebControls.LinkButton btnTabClose;
         protected global::System.Web.UI.WebControls.Literal litBadgeClose;
+        protected global::System.Web.UI.WebControls.LinkButton btnTabArchived;
+        protected global::System.Web.UI.WebControls.Literal litBadgeArchived;
 
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
         protected global::System.Web.UI.WebControls.DropDownList ddlDepartmentFilter;

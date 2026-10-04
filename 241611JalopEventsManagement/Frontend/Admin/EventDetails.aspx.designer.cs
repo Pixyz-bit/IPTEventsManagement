@@ -33,10 +33,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected global::System.Web.UI.WebControls.Literal litModeDescription;
         protected global::System.Web.UI.WebControls.PlaceHolder phViewActions;
+        protected global::System.Web.UI.WebControls.Button btnToggleArchive;
         protected global::System.Web.UI.WebControls.Button btnToggleEdit;
         protected global::System.Web.UI.WebControls.PlaceHolder phEditActions;
         protected global::System.Web.UI.WebControls.Button btnCancelEdit;
         protected global::System.Web.UI.WebControls.Button btnSaveChanges;
+        protected global::System.Web.UI.WebControls.Panel pnlArchivedNotice;
 
         protected global::System.Web.UI.WebControls.PlaceHolder phGeneralView;
         protected global::System.Web.UI.WebControls.Literal litTitleView;

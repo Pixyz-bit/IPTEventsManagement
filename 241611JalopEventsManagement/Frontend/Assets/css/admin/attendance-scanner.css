@@ -747,11 +747,11 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            background-color: var(--accent-emerald);
+            background-color: var(--accent-emerald, #059669);
             color: #ffffff;
-            border: none;
+            border: 1px solid transparent;
             padding: 0.85rem 1.5rem;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-md, 8px);
             font-size: 0.95rem;
             font-weight: 700;
             font-family: inherit;
@@ -762,8 +762,14 @@
 
         .btn-confirm-checkin:hover:not(:disabled) {
             transform: translateY(-1px);
-            background-color: var(--accent-emerald-hover);
-            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+            background-color: var(--accent-emerald-hover, #047857);
+            color: #ffffff;
+            box-shadow: 0 6px 18px rgba(4, 120, 87, 0.35);
+        }
+
+        .btn-confirm-checkin:active:not(:disabled) {
+            transform: translateY(0);
+            background-color: #065f46;
         }
 
         .btn-confirm-checkin:disabled {

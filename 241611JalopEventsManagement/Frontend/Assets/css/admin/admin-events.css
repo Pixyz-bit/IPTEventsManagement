@@ -409,6 +409,55 @@
             border: 1px solid #cbd5e1;
         }
 
+        .status-archived {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .is-archived-row {
+            background-color: #fbfbfb;
+            opacity: 0.88;
+        }
+
+        .btn-matrix-archive,
+        .btn-matrix-unarchive {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.28rem 0.65rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-right: 0.5rem;
+        }
+
+        .btn-matrix-archive {
+            background-color: #f8fafc;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-matrix-archive:hover {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #fca5a5;
+        }
+
+        .btn-matrix-unarchive {
+            background-color: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .btn-matrix-unarchive:hover {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
         /* ─── Wireframe Matrix Elements ─── */
         .cell-event-title {
             font-size: 0.92rem;

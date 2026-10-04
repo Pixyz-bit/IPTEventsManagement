@@ -72,9 +72,10 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             // 1. Fetch Event Context
             var ev = _eventRepo.GetEventById(eventId);
-            if (ev == null)
+            if (ev == null || ev.IsArchived || string.Equals(ev.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
             {
-                ShowError("Selected event could not be found or has been removed.");
+                ShowError("Selected event could not be found, is cancelled, or has been archived by the administrator.");
+                if (btnConfirmRegistration != null) btnConfirmRegistration.Visible = false;
                 return;
             }
 

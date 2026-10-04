@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-pass.css") %>" />
     <script src="<%= ResolveUrl("~/Frontend/Assets/js/vendor/html-to-image-1.11.13.js") %>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -167,10 +168,10 @@
         <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
     </form>
 
-    <!-- Embedded High-Fidelity Standalone QR Engine (White on Navy) -->
+    <!-- Standalone High-Contrast Scannable QR Engine -->
     <script>
-        (function() {
-            const rawPayload = "<%= QrPayload %>";
+        function initializePassQrCode() {
+            const rawPayload = "<%= QrPayload %>" || "TCK-0000-00000";
             const canvas = document.getElementById("qrCanvas");
             if (!canvas) return;
 
@@ -180,62 +181,74 @@
             canvas.height = size * 2;
             ctx.scale(2, 2);
 
-            // Draw crisp white QR code on navy background
+            function drawPlateBacking() {
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(0, 0, size, size);
+            }
+
+            // Attempt 1: Standalone Client-Side QRCode Engine (100% Offline, ISO-compliant)
+            if (typeof QRCode !== "undefined") {
+                try {
+                    const tempHolder = document.createElement("div");
+                    new QRCode(tempHolder, {
+                        text: rawPayload,
+                        width: 256,
+                        height: 256,
+                        colorDark: "#0B1229",
+                        colorLight: "#FFFFFF",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+
+                    setTimeout(() => {
+                        const qrCanvasEl = tempHolder.querySelector("canvas");
+                        const qrImgEl = tempHolder.querySelector("img");
+                        drawPlateBacking();
+
+                        if (qrCanvasEl) {
+                            ctx.drawImage(qrCanvasEl, 8, 8, size - 16, size - 16);
+                        } else if (qrImgEl && qrImgEl.src) {
+                            const img = new Image();
+                            img.onload = () => {
+                                drawPlateBacking();
+                                ctx.drawImage(img, 8, 8, size - 16, size - 16);
+                            };
+                            img.src = qrImgEl.src;
+                        }
+                    }, 40);
+                    return;
+                } catch (err) {
+                    console.warn("Client QR engine exception, attempting fallback:", err);
+                }
+            }
+
+            // Attempt 2: High-contrast Dark on White cloud QR engine
+            drawPlateBacking();
             const qrImg = new Image();
             qrImg.crossOrigin = "anonymous";
             qrImg.onload = function() {
-                ctx.fillStyle = "#0F1E60";
-                ctx.fillRect(0, 0, size, size);
-                ctx.drawImage(qrImg, 0, 0, size, size);
+                drawPlateBacking();
+                ctx.drawImage(qrImg, 8, 8, size - 16, size - 16);
             };
             qrImg.onerror = function() {
-                drawWhiteOnNavyQr(ctx, size, rawPayload);
+                // Offline fallback without library: Draw readable ref plate
+                drawPlateBacking();
+                ctx.fillStyle = "#0B1229";
+                ctx.font = "bold 11px 'JetBrains Mono', monospace";
+                ctx.textAlign = "center";
+                ctx.fillText(rawPayload, size / 2, size / 2);
             };
-            qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=380x380&color=ffffff&bgcolor=0f1e60&data=" + encodeURIComponent(rawPayload);
+            // Note: Dark Navy on Pure White (#0b1229 on #ffffff) with quiet zone margin for camera detection
+            qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=380x380&color=0b1229&bgcolor=ffffff&margin=2&data=" + encodeURIComponent(rawPayload);
+        }
 
-            // Draw initial offline fallback immediately so canvas is never blank
-            drawWhiteOnNavyQr(ctx, size, rawPayload);
-
-            function drawWhiteOnNavyQr(ctx, size, text) {
-                ctx.fillStyle = "#0F1E60";
-                ctx.fillRect(0, 0, size, size);
-
-                ctx.fillStyle = "#FFFFFF";
-
-                // Locator Corners
-                drawWhiteFinder(ctx, 12, 12, 38);
-                drawWhiteFinder(ctx, size - 50, 12, 38);
-                drawWhiteFinder(ctx, 12, size - 50, 38);
-
-                // Deterministic grid
-                let hash = 0;
-                for (let i = 0; i < text.length; i++) {
-                    hash = ((hash << 5) - hash) + text.charCodeAt(i);
-                    hash |= 0;
-                }
-                const step = 8;
-                for (let y = 12; y < size - 12; y += step) {
-                    for (let x = 12; x < size - 12; x += step) {
-                        const inCorner1 = (x < 56 && y < 56);
-                        const inCorner2 = (x > size - 56 && y < 56);
-                        const inCorner3 = (x < 56 && y > size - 56);
-                        if (!inCorner1 && !inCorner2 && !inCorner3) {
-                            if (((hash ^ (x * y)) % 7) === 0 || ((x + y + hash) % 3 === 0)) {
-                                ctx.fillRect(x, y, step - 2, step - 2);
-                            }
-                        }
-                    }
-                }
+        // Initialize immediately and after DOM/scripts are ready
+        (function() {
+            if (document.readyState === "complete" || document.readyState === "interactive") {
+                setTimeout(initializePassQrCode, 50);
+            } else {
+                window.addEventListener("DOMContentLoaded", initializePassQrCode);
             }
-
-            function drawWhiteFinder(ctx, x, y, s) {
-                ctx.fillStyle = "#FFFFFF";
-                ctx.fillRect(x, y, s, s);
-                ctx.fillStyle = "#0F1E60";
-                ctx.fillRect(x + 5, y + 5, s - 10, s - 10);
-                ctx.fillStyle = "#FFFFFF";
-                ctx.fillRect(x + 9, y + 9, s - 18, s - 18);
-            }
+            window.addEventListener("load", initializePassQrCode);
         })();
 
         /**
@@ -487,12 +500,23 @@
                 ctx.fillText(line, snX, nameStartY + 18 + index * 22);
             });
 
-            // Right Stub (White QR Code on Navy)
+            // Right Stub (High-Contrast Scannable QR Plate on Navy)
             const srcQrCanvas = document.getElementById("qrCanvas");
             if (srcQrCanvas) {
                 const qrSize = 180;
                 const qrX = leftWidth + Math.round((rightWidth - qrSize) / 2);
                 const qrY = Math.round((cardHeight - qrSize - 32) / 2);
+
+                // Draw white badge plate background
+                ctx.fillStyle = "#FFFFFF";
+                if (ctx.roundRect) {
+                    ctx.beginPath();
+                    ctx.roundRect(qrX - 4, qrY - 4, qrSize + 8, qrSize + 8, 8);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(qrX - 4, qrY - 4, qrSize + 8, qrSize + 8);
+                }
+
                 ctx.drawImage(srcQrCanvas, qrX, qrY, qrSize, qrSize);
             }
 
