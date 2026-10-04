@@ -14,6 +14,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
     {
         private readonly EventRepository _eventRepository = new EventRepository();
         private readonly SponsorRepository _sponsorRepository = new SponsorRepository();
+        private readonly RegistrationRepository _registrationRepository = new RegistrationRepository();
 
         public int CurrentEventId
         {
@@ -229,16 +230,37 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             // Section 5: Sponsors
             LoadSponsors(ev.EventId, isDemo);
 
-            // Occupancy Bar & Ratios
-            int cap = Math.Max(1, ev.MaxCapacity);
-            int reg = Math.Max(0, ev.CurrentRegistrations);
-            int pct = (int)Math.Round((double)reg / cap * 100);
-            OccupancyBarWidth = pct;
+            // Fetch live attendance data via RegistrationRepository
+            RegistrationRepository.EventAttendanceSummary attendanceSummary = null;
+            if (!isDemo && ev.EventId > 0)
+            {
+                try
+                {
+                    attendanceSummary = _registrationRepository.GetEventAttendanceSummary(ev.EventId);
+                }
+                catch
+                {
+                    // Fallback to model values
+                }
+            }
 
-            litOccupancyCount.Text = $"{reg} / {cap}";
-            litOccupancyPct.Text = $"{pct}%";
-            int remaining = Math.Max(0, cap - reg);
-            litRemainingSpots.Text = remaining == 0 ? "Capacity Saturated" : $"{remaining} spots remaining";
+            int totalReg = (attendanceSummary != null && attendanceSummary.TotalRegistered > 0)
+                ? attendanceSummary.TotalRegistered
+                : Math.Max(0, ev.CurrentRegistrations);
+
+            int checkedIn = (attendanceSummary != null)
+                ? attendanceSummary.TotalCheckedIn
+                : (isDemo ? (int)Math.Round(totalReg * 0.846) : 0);
+
+            int maxCap = Math.Max(1, ev.MaxCapacity);
+
+            // Gate Occupancy & Quota cockpit calculations
+            double occupancy = maxCap > 0 ? ((double)totalReg / maxCap) * 100.0 : 0.0;
+            OccupancyBarWidth = (int)Math.Max(0, Math.Min(100, Math.Round(occupancy)));
+            litOccupancyCount.Text = $"{totalReg} / {maxCap}";
+            litOccupancyPct.Text = $"{occupancy:F1}%";
+            int remSpots = Math.Max(0, maxCap - totalReg);
+            litRemainingSpots.Text = remSpots == 0 ? "Capacity Saturated" : $"{remSpots} spots open";
         }
 
         private void LoadSponsors(int eventId, bool isDemo)

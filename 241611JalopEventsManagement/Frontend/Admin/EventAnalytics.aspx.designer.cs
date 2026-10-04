@@ -11,6 +11,16 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 {
     public partial class EventAnalytics
     {
+        protected global::System.Web.UI.WebControls.PlaceHolder phBreadcrumbMatrix;
+        protected global::System.Web.UI.WebControls.PlaceHolder phBreadcrumbHistory;
+        protected global::System.Web.UI.WebControls.Panel pnlEventContextCard;
+        protected global::System.Web.UI.WebControls.PlaceHolder phHistoryBack;
+        protected global::System.Web.UI.WebControls.Panel pnlHistorySubtitle;
+        protected global::System.Web.UI.WebControls.Literal litSubEventTitle;
+        protected global::System.Web.UI.WebControls.Literal litSubEventDate;
+        protected global::System.Web.UI.WebControls.Literal litSubEventVenue;
+        protected global::System.Web.UI.WebControls.Literal litSubEventCapacity;
+
         protected global::System.Web.UI.WebControls.Literal litEventTitle;
         protected global::System.Web.UI.WebControls.Literal litEventDate;
         protected global::System.Web.UI.WebControls.Literal litEventVenue;
@@ -57,5 +67,28 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litAfterRetentionRate;
         protected global::System.Web.UI.WebControls.Literal litAfterTopDepartment;
         protected global::System.Web.UI.WebControls.Repeater rptDemographicAudit;
+
+        // Gate Telemetry & Saturation Console Controls
+        protected global::System.Web.UI.WebControls.Literal litTurnoutRate;
+        protected global::System.Web.UI.WebControls.Literal litCheckedInCount;
+        protected global::System.Web.UI.WebControls.Literal litRegisteredCount;
+        protected global::System.Web.UI.WebControls.Literal litNoShowCount;
+        protected global::System.Web.UI.WebControls.Literal litNoShowPct;
+        protected global::System.Web.UI.WebControls.Literal litTurnoutStatus;
+
+        protected global::System.Web.UI.WebControls.Literal litVenueLoadRate;
+        protected global::System.Web.UI.WebControls.Literal litPresentOnSite;
+        protected global::System.Web.UI.WebControls.Literal litVenueLimit;
+        protected global::System.Web.UI.WebControls.Literal litSeatsRemainingCount;
+        protected global::System.Web.UI.WebControls.Literal litSeatsRemainingPct;
+        protected global::System.Web.UI.WebControls.Literal litCapacityStatus;
+
+        // Attendee Cohorts Audit Controls
+        protected global::System.Web.UI.WebControls.Literal litTabCountPresent;
+        protected global::System.Web.UI.WebControls.Literal litTabCountNoShow;
+        protected global::System.Web.UI.WebControls.Literal litTabCountCancelled;
+        protected global::System.Web.UI.WebControls.Repeater rptPresentAttendees;
+        protected global::System.Web.UI.WebControls.Repeater rptNoShowAttendees;
+        protected global::System.Web.UI.WebControls.Repeater rptCancelledAttendees;
     }
 }

@@ -24,6 +24,9 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         public string CurrentAdminEmail => SessionHelper.CurrentEmail ?? "admin@gmail.com";
 
+        public int TurnoutRateBarWidth { get; set; } = 0;
+        public int VenueLoadBarWidth { get; set; } = 0;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!SessionHelper.IsAuthenticated || !SessionHelper.IsAdmin)
@@ -102,6 +105,17 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             if (litEventStatusBadge != null) litEventStatusBadge.Text = $"<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">&#9679; {Server.HtmlEncode(status.ToUpper())}</span>";
             if (litEventCapacitySummary != null) litEventCapacitySummary.Text = evt != null ? $"{evt.CurrentRegistrations} / {maxCapacity}" : $"0 / {maxCapacity}";
 
+            bool isFromHistory = string.Equals(Request.QueryString["from"], "history", StringComparison.OrdinalIgnoreCase);
+            if (pnlEventContextCard != null) pnlEventContextCard.Visible = !isFromHistory;
+            if (phBreadcrumbMatrix != null) phBreadcrumbMatrix.Visible = !isFromHistory;
+            if (phBreadcrumbHistory != null) phBreadcrumbHistory.Visible = isFromHistory;
+            if (phHistoryBack != null) phHistoryBack.Visible = isFromHistory;
+            if (pnlHistorySubtitle != null) pnlHistorySubtitle.Visible = isFromHistory;
+            if (litSubEventTitle != null) litSubEventTitle.Text = Server.HtmlEncode(evtTitle);
+            if (litSubEventDate != null) litSubEventDate.Text = evtStart.ToString("MM/dd/yyyy");
+            if (litSubEventVenue != null) litSubEventVenue.Text = Server.HtmlEncode(evtVenue ?? "Campus Grounds");
+            if (litSubEventCapacity != null) litSubEventCapacity.Text = evt != null ? $"{evt.CurrentRegistrations} / {maxCapacity}" : $"0 / {maxCapacity}";
+
             // Active (non-cancelled) registrations
             var activeCohort = registrations.Where(r => !string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase)).ToList();
             var presentCohort = registrations.Where(r => string.Equals(r.Status, "Present", StringComparison.OrdinalIgnoreCase)).ToList();
@@ -118,7 +132,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             int totalReservedCount = evt != null ? evt.CurrentRegistrations : preRegisteredCount;
             if (litBeforeTotalReserved != null) litBeforeTotalReserved.Text = totalReservedCount.ToString("N0");
 
-            // Cancelled count (Photo 5: count of registrations where Status = 'Cancelled' before EventStart)
+            int checkedInCount = presentCohort.Count;
+            if (litDuringCheckedIn != null) litDuringCheckedIn.Text = checkedInCount.ToString();
+            if (litDuringRosterTotal != null) litDuringRosterTotal.Text = preRegisteredCount.ToString();
+
+            // Cancelled count
             int cancelledCount = cancelledCohort.Count;
             if (litBeforeCancelled != null) litBeforeCancelled.Text = cancelledCount.ToString("N0");
 
@@ -127,10 +145,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             double attritionRate = totalLoggedTransactions > 0 ? ((double)cancelledCount / totalLoggedTransactions) * 100.0 : 0.0;
             if (litBeforeAttritionRate != null) litBeforeAttritionRate.Text = $"{attritionRate:F1}%";
 
-            // Capacity Saturation Meter (Photo 4: CurrentRegistrations / MaxCapacity from EventsTable)
-            double saturationRate = maxCapacity > 0 ? ((double)totalReservedCount / maxCapacity) * 100.0 : 0.0;
+            // Capacity Saturation = Present / Total Seat Capacity
+            double saturationRate = maxCapacity > 0 ? ((double)checkedInCount / maxCapacity) * 100.0 : 0.0;
             if (litBeforeSaturationRate != null) litBeforeSaturationRate.Text = $"{saturationRate:F1}%";
-            if (litSaturationPercentDisplay != null) litSaturationPercentDisplay.Text = $"{saturationRate:F1}%";
+            if (litSaturationPercentDisplay != null) litSaturationPercentDisplay.Text = $"{checkedInCount} / {maxCapacity}";
             if (litCapacityMaxDisplay != null) litCapacityMaxDisplay.Text = maxCapacity.ToString("N0");
 
             // Saturation Status Indicator
@@ -153,7 +171,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
             if (litBeforeSaturationStatus != null) litBeforeSaturationStatus.Text = saturationStatusText;
 
-            int availableQuota = Math.Max(0, maxCapacity - totalReservedCount);
+            int availableQuota = Math.Max(0, maxCapacity - checkedInCount);
             if (litBeforeAvailableQuota != null) litBeforeAvailableQuota.Text = availableQuota.ToString("N0");
 
             int daysUntilLaunch = Math.Max(0, (evtStart.Date - DateTime.Now.Date).Days);
@@ -232,17 +250,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             rptYearDistribution.DataSource = yearGroups;
             rptYearDistribution.DataBind();
 
-            // Serialize Demographics cohorts for interactive Pie Chart
-            var serializer = new JavaScriptSerializer();
-            var demographicsPayload = new
-            {
-                department = deptGroups.Select(d => new { label = d.Label, count = d.Count, percentage = Math.Round(d.Percentage, 1) }),
-                course = courseGroups.Select(c => new { label = c.Label, count = c.Count, percentage = Math.Round(c.Percentage, 1) }),
-                branch = branchGroups.Select(b => new { label = b.Label, count = b.Count, percentage = Math.Round(b.Percentage, 1) }),
-                year = yearGroups.Select(y => new { label = y.Label, count = y.Count, percentage = Math.Round(y.Percentage, 1) })
-            };
-            litDemographicsJson.Text = serializer.Serialize(demographicsPayload);
-
             // Registration Velocity Over Time
             var velocityList = new List<VelocityItem>();
             int cumulative = 0;
@@ -265,17 +272,20 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             {
                 velocityList.Add(new VelocityItem { DateLabel = DateTime.Today.ToString("MM/dd/yyyy"), RegistrationsCount = preRegisteredCount, CumulativeCount = preRegisteredCount });
             }
-            rptRegistrationVelocity.DataSource = velocityList;
-            rptRegistrationVelocity.DataBind();
+            if (rptRegistrationVelocity != null)
+            {
+                rptRegistrationVelocity.DataSource = velocityList;
+                rptRegistrationVelocity.DataBind();
+            }
 
             // =========================================================================
             // PHASE 2: LIVE GATE TELEMETRY (DURING)
             // =========================================================================
-            int checkedInCount = presentCohort.Count;
+            checkedInCount = presentCohort.Count;
             if (litDuringCheckedIn != null) litDuringCheckedIn.Text = checkedInCount.ToString();
             if (litDuringRosterTotal != null) litDuringRosterTotal.Text = preRegisteredCount.ToString();
 
-            double turnoutRate = preRegisteredCount > 0 ? ((double)checkedInCount / preRegisteredCount) * 100.0 : 0.0;
+            double turnoutRate = totalReservedCount > 0 ? ((double)checkedInCount / totalReservedCount) * 100.0 : 0.0;
             if (litDuringTurnoutRate != null) litDuringTurnoutRate.Text = $"{turnoutRate:F1}%";
 
             double occupancyPercent = maxCapacity > 0 ? ((double)checkedInCount / maxCapacity) * 100.0 : 0.0;
@@ -283,6 +293,63 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             int unscanned = Math.Max(0, preRegisteredCount - checkedInCount);
             if (litDuringUnscannedCohort != null) litDuringUnscannedCohort.Text = unscanned.ToString();
+
+            // Gate Telemetry & Saturation Console: Attendance Turnout Panel
+            if (litTurnoutRate != null) litTurnoutRate.Text = $"{turnoutRate:F1}%";
+            TurnoutRateBarWidth = (int)Math.Max(0, Math.Min(100, Math.Round(turnoutRate)));
+            if (litCheckedInCount != null) litCheckedInCount.Text = checkedInCount.ToString();
+            if (litRegisteredCount != null) litRegisteredCount.Text = totalReservedCount.ToString();
+
+            int noShowCount = noShowCohort.Count;
+            if (noShowCount == 0 && totalReservedCount > checkedInCount)
+            {
+                noShowCount = Math.Max(0, totalReservedCount - checkedInCount);
+            }
+            double noShowPct = totalReservedCount > 0 ? ((double)noShowCount / totalReservedCount) * 100.0 : 0.0;
+            if (litNoShowCount != null) litNoShowCount.Text = noShowCount.ToString();
+            if (litNoShowPct != null) litNoShowPct.Text = $"{noShowPct:F1}%";
+
+            if (litTurnoutStatus != null)
+            {
+                if (checkedInCount == 0 && totalReservedCount == 0)
+                    litTurnoutStatus.Text = "AWAITING REGISTRATIONS";
+                else if (turnoutRate >= 80.0)
+                    litTurnoutStatus.Text = "OPTIMAL ATTENDANCE";
+                else if (turnoutRate >= 60.0)
+                    litTurnoutStatus.Text = "STRONG TURNOUT";
+                else if (turnoutRate >= 40.0)
+                    litTurnoutStatus.Text = "MODERATE TURNOUT";
+                else if (turnoutRate > 0.0)
+                    litTurnoutStatus.Text = "LOW TURNOUT";
+                else
+                    litTurnoutStatus.Text = "PENDING CHECK-IN";
+            }
+
+            // Gate Telemetry & Saturation Console: Capacity Saturation Panel
+            int presentOnSite = checkedInCount;
+            if (litVenueLoadRate != null) litVenueLoadRate.Text = $"{saturationRate:F1}%";
+            VenueLoadBarWidth = (int)Math.Max(0, Math.Min(100, Math.Round(saturationRate)));
+            if (litPresentOnSite != null) litPresentOnSite.Text = presentOnSite.ToString();
+            if (litVenueLimit != null) litVenueLimit.Text = maxCapacity.ToString();
+
+            int seatsRemaining = Math.Max(0, maxCapacity - presentOnSite);
+            double seatsRemainingPct = maxCapacity > 0 ? ((double)seatsRemaining / maxCapacity) * 100.0 : 0.0;
+            if (litSeatsRemainingCount != null) litSeatsRemainingCount.Text = seatsRemaining.ToString();
+            if (litSeatsRemainingPct != null) litSeatsRemainingPct.Text = $"{seatsRemainingPct:F1}%";
+
+            if (litCapacityStatus != null)
+            {
+                if (saturationRate >= 98.0)
+                    litCapacityStatus.Text = "FULL CAPACITY";
+                else if (saturationRate >= 85.0)
+                    litCapacityStatus.Text = "NEAR SATURATION";
+                else if (saturationRate >= 60.0)
+                    litCapacityStatus.Text = "OPTIMAL LOAD";
+                else if (saturationRate >= 30.0)
+                    litCapacityStatus.Text = "MODERATE LOAD";
+                else
+                    litCapacityStatus.Text = "SEATS AVAILABLE";
+            }
 
             // 15-Minute Peak Surge Velocity
             var intervalList = new List<IntervalTelemetryItem>();
@@ -319,6 +386,44 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             {
                 rptCheckInIntervals.DataSource = intervalList;
                 rptCheckInIntervals.DataBind();
+            }
+
+            // Bind Attendee Cohorts (Present, No-Show, Cancelled)
+            if (rptPresentAttendees != null)
+            {
+                rptPresentAttendees.DataSource = presentCohort;
+                rptPresentAttendees.DataBind();
+            }
+            if (litTabCountPresent != null) litTabCountPresent.Text = presentCohort.Count.ToString();
+
+            if (rptNoShowAttendees != null)
+            {
+                rptNoShowAttendees.DataSource = noShowCohort;
+                rptNoShowAttendees.DataBind();
+            }
+            if (litTabCountNoShow != null) litTabCountNoShow.Text = noShowCohort.Count.ToString();
+
+            if (rptCancelledAttendees != null)
+            {
+                rptCancelledAttendees.DataSource = cancelledCohort;
+                rptCancelledAttendees.DataBind();
+            }
+            if (litTabCountCancelled != null) litTabCountCancelled.Text = cancelledCohort.Count.ToString();
+
+            // Serialize Unified Telemetry & Demographics cohorts for interactive client graphs
+            var serializer = new JavaScriptSerializer();
+            var telemetryPayload = new
+            {
+                turnoutRate = Math.Round(turnoutRate, 1),
+                department = deptGroups.Select(d => new { label = d.Label, count = d.Count, percentage = Math.Round(d.Percentage, 1) }),
+                course = courseGroups.Select(c => new { label = c.Label, count = c.Count, percentage = Math.Round(c.Percentage, 1) }),
+                branch = branchGroups.Select(b => new { label = b.Label, count = b.Count, percentage = Math.Round(b.Percentage, 1) }),
+                year = yearGroups.Select(y => new { label = y.Label, count = y.Count, percentage = Math.Round(y.Percentage, 1) }),
+                intervals = intervalList.Select(i => new { window = i.IntervalWindow, count = i.CheckInCount, intensity = Math.Round(i.IntensityPercent, 1) })
+            };
+            if (litDemographicsJson != null)
+            {
+                litDemographicsJson.Text = serializer.Serialize(telemetryPayload);
             }
 
             // =========================================================================
@@ -403,6 +508,15 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         {
             if (string.IsNullOrEmpty(value)) return string.Empty;
             return value.Replace("\"", "\"\"");
+        }
+
+        protected string FormatTimestamp(object timestampObj)
+        {
+            if (timestampObj is DateTime dt && dt != DateTime.MinValue)
+            {
+                return dt.ToString("MM/dd/yyyy hh:mm tt");
+            }
+            return "Pending";
         }
     }
 

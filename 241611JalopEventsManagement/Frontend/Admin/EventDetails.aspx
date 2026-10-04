@@ -1,7 +1,7 @@
 <%@ Page Title="Event Specifications & Configuration | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventDetails.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventDetails" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/event-details.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/event-details.css") %>?v=<%= DateTime.UtcNow.Ticks %>" />
 </asp:Content>
 
 <asp:Content ID="MainArea" ContentPlaceHolderID="MainContent" runat="server">
@@ -196,10 +196,10 @@
 
                         <div class="bento-hero-media">
                             <div class="media-preview-container">
-                                <div class="banner-preview-box ratio-wide" style="height: 100%; min-height: 160px;">
+                                <div class="banner-preview-box ratio-wide" style="height: 100%; min-height: 160px; position: relative; overflow: hidden; border-radius: 8px;">
                                     <asp:Image ID="imgWideBanner" runat="server" CssClass="banner-img" ImageUrl="~/Frontend/Assets/campus-clean.jpg" AlternateText="Wide Banner Preview" />
-                                    <div class="banner-badge-overlay">
-                                        <span class="banner-ratio-tag">16:9 PROMOTIONAL BANNER</span>
+                                    <div class="banner-badge-overlay" style="position: absolute; top: 0.5rem; right: 0.5rem; z-index: 2;">
+                                        <span class="banner-ratio-tag" style="white-space: nowrap; font-size: 0.65rem; padding: 0.2rem 0.45rem;">16:9 BANNER</span>
                                     </div>
                                 </div>
                             </div>
@@ -294,10 +294,10 @@
                     </div>
                 </div>
 
-                <div class="cockpit-meta-grid" style="margin-top:auto;">
+                <div class="cockpit-meta-grid">
                     <div class="cockpit-meta-tile">
-                        <span class="cockpit-meta-label">Availability</span>
-                        <span class="cockpit-meta-value"><asp:Literal ID="litRemainingSpots" runat="server" Text="150 spots open" /></span>
+                        <span class="cockpit-meta-label">Remaining Spots</span>
+                        <span class="cockpit-meta-value"><asp:Literal ID="litRemainingSpots" runat="server" Text="0 spots open" /></span>
                     </div>
                     <div class="cockpit-meta-tile">
                         <span class="cockpit-meta-label">Record Key</span>
@@ -337,23 +337,6 @@
                             <span class="telemetry-val mono rose"><asp:Literal ID="litRegEndView" runat="server" /></span>
                         </div>
                     </div>
-
-                    <div class="bento-timeline-strip">
-                        <div class="timeline-step">
-                            <span class="timeline-step-label">1. Reg Opens</span>
-                            <span class="timeline-step-val">Window Starts</span>
-                        </div>
-                        <span class="timeline-arrow">&rarr;</span>
-                        <div class="timeline-step">
-                            <span class="timeline-step-label">2. Deadline</span>
-                            <span class="timeline-step-val">Gate Closes</span>
-                        </div>
-                        <span class="timeline-arrow">&rarr;</span>
-                        <div class="timeline-step">
-                            <span class="timeline-step-label">3. Kickoff</span>
-                            <span class="timeline-step-val">Auditorium Live</span>
-                        </div>
-                    </div>
                 </asp:PlaceHolder>
 
                 <!-- Editable Controls -->
@@ -381,17 +364,6 @@
                         <asp:TextBox ID="txtRegEnd" runat="server" CssClass="form-control" TextMode="Date" />
                     </div>
                 </asp:PlaceHolder>
-
-                <div class="enforcement-callout" style="margin-top:auto;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 14 14"></polyline>
-                    </svg>
-                    <div class="enforcement-callout-text">
-                        <h5>Sequencing Policy</h5>
-                        <p>Registration deadline must conclude before or at event kickoff.</p>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -470,16 +442,6 @@
                         </div>
                     </div>
                 </asp:PlaceHolder>
-
-                <div class="enforcement-callout" style="margin-top:auto;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
-                    <div class="enforcement-callout-text">
-                        <h5>Registration Gate Enforcement</h5>
-                        <p>The student registration engine cross-checks demographic profiles against these rules. Ineligible students cannot claim e-tickets.</p>
-                    </div>
-                </div>
             </div>
         </div>
 

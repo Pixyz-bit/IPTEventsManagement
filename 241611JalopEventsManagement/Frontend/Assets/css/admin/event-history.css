@@ -396,6 +396,19 @@
     color: var(--text-body);
 }
 
+.status-pill-upcoming {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: var(--brand-subtle);
+    border: 1px solid var(--brand-border);
+    color: var(--brand-primary);
+}
+
 /* ─── Row Action Buttons ─── */
 .btn-archive-view {
     display: inline-flex;

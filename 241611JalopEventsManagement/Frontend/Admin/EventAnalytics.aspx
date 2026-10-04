@@ -30,11 +30,20 @@
                     <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
             </li>
-            <li class="breadcrumb-item">
-                <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>">
-                    <span>Campus Events Matrix</span>
-                </a>
-            </li>
+            <asp:PlaceHolder ID="phBreadcrumbMatrix" runat="server">
+                <li class="breadcrumb-item">
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>">
+                        <span>Campus Events Matrix</span>
+                    </a>
+                </li>
+            </asp:PlaceHolder>
+            <asp:PlaceHolder ID="phBreadcrumbHistory" runat="server" Visible="false">
+                <li class="breadcrumb-item">
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventHistory.aspx") %>">
+                        <span>Events History</span>
+                    </a>
+                </li>
+            </asp:PlaceHolder>
             <li class="breadcrumb-separator">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <polyline points="9 18 15 12 9 6"></polyline>
@@ -47,7 +56,7 @@
     </nav>
 
     <!-- Context Header Banner -->
-    <div class="event-context-card">
+    <asp:Panel ID="pnlEventContextCard" runat="server" CssClass="event-context-card">
         <div class="event-context-top">
             <div class="event-title-group">
                 <h1>
@@ -93,22 +102,33 @@
                 <span>Event Analytics</span>
             </a>
         </div>
-    </div>
+    </asp:Panel>
 
-    <!-- 3-Phase Lifecycle Master Navigation Tabs (Before, During, After) -->
-    <div class="lifecycle-tabs-bar">
-        <div class="lifecycle-tabs-group">
-            <button type="button" id="tabPhaseBefore" class="lifecycle-tab-btn active" onclick="switchLifecycleTab('before')">
-                <span>(Before) Pre-Event Analytics</span>
-            </button>
-            <button type="button" id="tabPhaseDuring" class="lifecycle-tab-btn" onclick="switchLifecycleTab('during')">
-                <span>(During) Live Gate Telemetry</span>
-            </button>
-            <button type="button" id="tabPhaseAfter" class="lifecycle-tab-btn" onclick="switchLifecycleTab('after')">
-                <span>(After) Post-Event Performance Audit</span>
-            </button>
+    <!-- Unified Executive Action Bar -->
+    <div class="dashboard-action-bar">
+        <div class="dashboard-action-title">
+            <asp:PlaceHolder ID="phHistoryBack" runat="server" Visible="false">
+                <div style="margin-bottom:0.5rem;">
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventHistory.aspx") %>" class="btn-action-secondary" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.35rem 0.75rem; text-decoration:none; font-size:0.8rem; font-weight:600; border-radius:var(--radius-md); border:1px solid var(--border-medium); background:#ffffff; color:var(--text-heading);">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        <span>Back to Events History</span>
+                    </a>
+                </div>
+            </asp:PlaceHolder>
+            <h2>Unified Event Analytics &amp; Performance Audit</h2>
+            <asp:Panel ID="pnlHistorySubtitle" runat="server" Visible="false" Style="margin-top:0.35rem; display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap; font-size:0.825rem; color:var(--text-muted);">
+                <span>Event: <strong style="color:var(--text-heading);"><asp:Literal ID="litSubEventTitle" runat="server" /></strong></span>
+                <span>&bull;</span>
+                <span>Date: <strong style="color:var(--text-heading);"><asp:Literal ID="litSubEventDate" runat="server" /></strong></span>
+                <span>&bull;</span>
+                <span>Venue: <strong style="color:var(--text-heading);"><asp:Literal ID="litSubEventVenue" runat="server" /></strong></span>
+                <span>&bull;</span>
+                <span>Capacity: <strong style="color:var(--text-heading);"><asp:Literal ID="litSubEventCapacity" runat="server" /></strong></span>
+            </asp:Panel>
         </div>
-
         <div class="export-actions-group">
             <asp:LinkButton ID="btnExportSummaryPdf" runat="server" CssClass="btn-export-pdf" OnClientClick="window.print(); return false;" ToolTip="Print / Export Official University Summary PDF">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -130,360 +150,237 @@
         </div>
     </div>
 
-    <!-- =========================================================================
-         PHASE 1: BEFORE - PRE-EVENT ANALYTICS
-         ========================================================================= -->
-    <div id="sectionPhaseBefore" class="lifecycle-phase-section">
-        <!-- Before KPI Grid -->
-        <div class="analytics-kpi-grid">
-            <!-- 1. Total Pre-Registered -->
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Total Pre-Registered</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litBeforePreRegistered" runat="server" Text="0"></asp:Literal></span>
-                </div>
-            </div>
-
-            <!-- 2. Total Reserved -->
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Total Reserved</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litBeforeTotalReserved" runat="server" Text="0"></asp:Literal></span>
-                </div>
-            </div>
-
-            <!-- 3. Cancelled -->
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Cancelled</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litBeforeCancelled" runat="server" Text="0"></asp:Literal></span>
-                </div>
-            </div>
-
-            <!-- Hidden State Holders for Removed Controls/Cards -->
-            <asp:PlaceHolder ID="phAttritionAndSaturationHidden" runat="server" Visible="false">
-                <asp:Literal ID="litBeforeAttritionRate" runat="server" Text="0.0%"></asp:Literal>
-                <asp:Literal ID="litBeforeSaturationRate" runat="server" Text="0.0%"></asp:Literal>
-                <asp:Literal ID="litBeforeSaturationStatus" runat="server" Text="Undersubscribed"></asp:Literal>
-                <asp:Literal ID="litBeforeDaysUntilLaunch" runat="server" Text="0 Days"></asp:Literal>
-                <asp:Literal ID="litDuringRosterTotal" runat="server" Text="0"></asp:Literal>
-                <asp:Literal ID="litAfterRetentionRate" runat="server" Text="0.0%"></asp:Literal>
-            </asp:PlaceHolder>
-
-            <!-- 6. Available Capacity Pool -->
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Available Capacity Pool</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litBeforeAvailableQuota" runat="server" Text="0"></asp:Literal></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Before Telemetry Grid -->
-        <div class="telemetry-dashboard-grid" style="margin-top:1.5rem;">
-            <!-- Left: Capacity Saturation & Pre-Event Attrition Formula Callouts + Timeline -->
-            <div class="telemetry-panel">
-                <div class="panel-header-bar">
-                    <div class="panel-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="20" x2="18" y2="10"></line>
-                            <line x1="12" y1="20" x2="12" y2="4"></line>
-                            <line x1="6" y1="20" x2="6" y2="14"></line>
-                        </svg>
-                        <span>Capacity Saturation Meter &amp; Attrition Audit</span>
-                    </div>
-                    <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">LIVE QUOTA TELEMETRY</span>
-                </div>
-                <div class="panel-body">
-                    <!-- Photo 4 Formula Card -->
-                    <div class="formula-spec-card">
-                        <div class="formula-spec-top">
-                            <span class="formula-title">Capacity Saturation Meter</span>
-                            <span class="formula-code">CurrentRegistrations / MaxCapacity</span>
-                        </div>
-                        <div class="formula-desc">Real-time gauge showing whether the event is undersubscribed, at capacity, or needs a larger venue.</div>
-                    </div>
-
-                    <!-- Photo 5 Formula Card -->
-                    <div class="formula-spec-card">
-                        <div class="formula-spec-top">
-                            <span class="formula-title">Pre-Event Attrition Rate</span>
-                            <span class="formula-code">Status = 'Cancelled' before EventStart</span>
-                        </div>
-                        <div class="formula-desc">Identifies drop-offs and tickets released back into the pool.</div>
-                    </div>
-
-                    <!-- Real-time Quota Saturation Gauge -->
-                    <div style="margin-top:0.25rem;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; font-weight:700; margin-bottom:0.4rem;">
-                            <span>Target Quota Utilization</span>
-                            <span style="font-family:var(--font-mono); font-size:0.875rem;"><asp:Literal ID="litSaturationPercentDisplay" runat="server">0.0%</asp:Literal></span>
-                        </div>
-                        <div class="progress-bar-container">
-                            <asp:Literal ID="litSaturationProgressBar" runat="server"></asp:Literal>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
-                            <span>0 Enrolled</span>
-                            <span>Max Capacity: <asp:Literal ID="litCapacityMaxDisplay" runat="server">100</asp:Literal> Seats</span>
-                        </div>
-                    </div>
-
-                    <!-- Registration Velocity Timeline Table -->
-                    <div style="margin-top:0.75rem;">
-                        <h4 style="font-size:0.875rem; font-weight:700; margin-bottom:0.75rem; color:var(--text-heading);">Registration Velocity Timeline</h4>
-                        <table class="analytics-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Daily Enrollees</th>
-                                    <th>Cumulative Cohort</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <asp:Repeater ID="rptRegistrationVelocity" runat="server">
-                                    <ItemTemplate>
-                                        <tr>
-                                            <td><strong><%# Eval("DateLabel") %></strong></td>
-                                            <td>+<%# Eval("RegistrationsCount") %> Students</td>
-                                            <td><span class="rate-badge rate-badge-mid"><%# Eval("CumulativeCount") %> Total</span></td>
-                                        </tr>
-                                    </ItemTemplate>
-                                </asp:Repeater>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right: Target Demographics Distribution (Interactive SVG Pie / Donut Chart) -->
-            <div class="telemetry-panel">
-                <div class="panel-header-bar">
-                    <div class="panel-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                            <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                        </svg>
-                        <span>Target Demographics Distribution</span>
-                    </div>
-                    <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">INTERACTIVE COHORT AUDIT</span>
-                </div>
-                <div class="panel-body">
-                    <!-- Dimension Switcher Bar -->
-                    <div class="dimension-switcher-bar">
-                        <div class="dim-dropdown-group">
-                            <label for="ddlDemographicDimension" class="dim-dropdown-label">Cohort Breakdown:</label>
-                            <select id="ddlDemographicDimension" class="dim-dropdown-select" onchange="switchDemographicDimension(this.value)">
-                                <option value="department" selected="selected">Department</option>
-                                <option value="course">Program / Course</option>
-                                <option value="branch">Campus Branch</option>
-                                <option value="year">Year Level</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Pie Chart & Legend Grid -->
-                    <div class="pie-dashboard-layout">
-                        <div class="pie-chart-container" id="pieChartWrapper">
-                            <svg id="demographicsPieSvg" class="pie-chart-svg" viewBox="0 0 240 240"></svg>
-                        </div>
-                        <div id="demographicsLegend" class="pie-chart-legend">
-                            <!-- Populated via JS -->
-                        </div>
-                    </div>
-
-                    <!-- Hidden Demographics Data JSON Literal -->
-                    <script id="demographicsJsonData" type="application/json"><asp:Literal ID="litDemographicsJson" runat="server"></asp:Literal></script>
-
-                    <!-- Hidden Legacy Repeaters for Seamless Designer / Backward Compatibility -->
-                    <div style="display:none;" aria-hidden="true">
-                        <asp:Repeater ID="rptBranchDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
-                        <asp:Repeater ID="rptDepartmentDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
-                        <asp:Repeater ID="rptCourseDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
-                        <asp:Repeater ID="rptYearDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- =========================================================================
-         PHASE 2: DURING - LIVE GATE TELEMETRY
-         ========================================================================= -->
-    <div id="sectionPhaseDuring" class="lifecycle-phase-section" style="display:none;">
-        <div class="analytics-kpi-grid">
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Total Verified Checked-In</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litDuringCheckedIn" runat="server" Text="0"></asp:Literal></span>
-                </div>
-            </div>
-
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Real-Time Turnout Rate</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litDuringTurnoutRate" runat="server" Text="0.0%"></asp:Literal></span>
-                </div>
-            </div>
-
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Venue Physical Occupancy</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litDuringVenueOccupancy" runat="server" Text="0.0%"></asp:Literal></span>
-                </div>
-            </div>
-
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Unscanned Attendees</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litDuringUnscannedCohort" runat="server" Text="0"></asp:Literal></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="telemetry-dashboard-grid" style="margin-top:1.5rem;">
-            <!-- 15-Minute Peak Surge Velocity -->
-            <div class="telemetry-panel">
-                <div class="panel-header-bar">
-                    <div class="panel-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                        </svg>
-                        <span>Check-In Velocity Timeline (15-Min Surges)</span>
-                    </div>
-                    <span style="font-size:0.75rem; color:var(--brand-primary); font-weight:700;">PEAK: <asp:Literal ID="litDuringPeakWindow" runat="server"></asp:Literal></span>
-                </div>
-                <div class="panel-body">
-                    <table class="analytics-table">
-                        <thead>
-                            <tr>
-                                <th>15-Minute Time Interval</th>
-                                <th>Admitted Attendees</th>
-                                <th>Gate Surge Intensity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <asp:Repeater ID="rptCheckInIntervals" runat="server">
-                                <ItemTemplate>
-                                    <tr>
-                                        <td><strong><%# Eval("IntervalWindow") %></strong></td>
-                                        <td><span class="rate-badge rate-badge-high"><%# Eval("CheckInCount") %> Check-Ins</span></td>
-                                        <td>
-                                            <div class="dist-track" style="height:6px; max-width:180px;">
-                                                <div class="dist-fill-emerald" style='width:<%# Eval("IntensityPercent") %>%;'></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </ItemTemplate>
-                            </asp:Repeater>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Terminal Operations Integrity -->
-            <div class="telemetry-panel">
-                <div class="panel-header-bar">
-                    <div class="panel-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
-                        <span>Terminal Gate Integrity &amp; Flow Control</span>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div class="accreditation-block">
-                        <div class="accreditation-seal">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
-                            <span>Live Transactional State Active</span>
-                        </div>
-                        <p style="color:var(--text-body); line-height:1.5;">
-                            All attendance entries are cryptographically stamped with high-precision server timestamps. 
-                            Duplicate check-ins and un-registered pass attempts are atomically intercepted at the gate.
-                        </p>
-                        <div style="font-size:0.75rem; color:var(--text-muted);">
-                            Active Admin Operator: <strong><%= CurrentAdminEmail %></strong> &bull; Database Connection: <strong>ONLINE</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- =========================================================================
-         PHASE 3: AFTER - POST-EVENT PERFORMANCE AUDIT
-         ========================================================================= -->
-    <div id="sectionPhaseAfter" class="lifecycle-phase-section" style="display:none;">
-        <div class="analytics-kpi-grid">
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Pre-Registered Roster</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litAfterPreRegisteredTotal" runat="server" Text="0"></asp:Literal></span>
-                </div>
-            </div>
-
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Actual Attended</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litAfterActualAttended" runat="server" Text="0"></asp:Literal></span>
-                </div>
-            </div>
-
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Verified No-Shows</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litAfterNoShows" runat="server" Text="0"></asp:Literal></span>
-                </div>
-            </div>
-
-            <div class="analytics-card">
-                <div class="analytics-card-info">
-                    <span class="analytics-card-label">Voided Cancellations</span>
-                    <span class="analytics-card-value"><asp:Literal ID="litAfterCancellations" runat="server" Text="0"></asp:Literal></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Comparative Demographic Turnout Audit Table -->
-        <div class="telemetry-panel" style="margin-top:1.5rem;">
-            <div class="panel-header-bar">
-                <div class="panel-title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <!-- ROW 1: EXECUTIVE TELEMETRY BENTO GRID -->
+    <div class="executive-bento-grid">
+        <!-- 1. Attendance Turnout (Bento Subpanel) -->
+        <div class="telemetry-subpanel turnout-bento-card">
+            <div class="telemetry-panel-header">
+                <span class="telemetry-panel-title">Attendance Turnout</span>
+                <span class="telemetry-panel-icon turnout-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
-                    <span>Comparative Departmental Engagement Audit</span>
-                </div>
-                <span style="font-size:0.75rem; color:var(--brand-primary); font-weight:700;">TOP ENGAGED: <asp:Literal ID="litAfterTopDepartment" runat="server"></asp:Literal></span>
+                </span>
             </div>
-            <div class="panel-body" style="padding:0;">
-                <table class="analytics-table">
+
+            <div class="telemetry-rate-row">
+                <span class="telemetry-rate-label">Rate</span>
+                <span class="telemetry-rate-value turnout-accent">
+                    <asp:Literal ID="litTurnoutRate" runat="server" Text="0.0%" />
+                </span>
+            </div>
+
+            <div class="telemetry-bar-wrapper">
+                <div class="telemetry-bar-track">
+                    <div class="telemetry-bar-fill turnout-fill" style="width: <%= TurnoutRateBarWidth %>%;"></div>
+                </div>
+            </div>
+
+            <ul class="telemetry-stats-list">
+                <li>
+                    <span class="stat-dot registered-dot"></span>
+                    <span class="stat-name">Registered:</span>
+                    <span class="stat-val"><asp:Literal ID="litRegisteredCount" runat="server" Text="0" /></span>
+                </li>
+                <li>
+                    <span class="stat-dot turnout-dot"></span>
+                    <span class="stat-name">Checked In:</span>
+                    <span class="stat-val"><asp:Literal ID="litCheckedInCount" runat="server" Text="0" /></span>
+                </li>
+                <li>
+                    <span class="stat-dot noshow-dot"></span>
+                    <span class="stat-name">No-Show:</span>
+                    <span class="stat-val"><asp:Literal ID="litNoShowCount" runat="server" Text="0" /> <span class="stat-sub-pct">(<asp:Literal ID="litNoShowPct" runat="server" Text="0.0%" />)</span></span>
+                </li>
+            </ul>
+
+            <div class="telemetry-status-row">
+                <span class="telemetry-status-label">Status</span>
+                <span class="telemetry-status-tag turnout-status">
+                    <asp:Literal ID="litTurnoutStatus" runat="server" Text="AWAITING REGISTRATIONS" />
+                </span>
+            </div>
+        </div>
+
+        <!-- 2. Capacity Saturation (Bento Subpanel) -->
+        <div class="telemetry-subpanel capacity-bento-card">
+            <div class="telemetry-panel-header">
+                <span class="telemetry-panel-title">Capacity Saturation</span>
+                <span class="telemetry-panel-icon capacity-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                </span>
+            </div>
+
+            <div class="telemetry-rate-row">
+                <span class="telemetry-rate-label">Venue Load</span>
+                <span class="telemetry-rate-value capacity-accent">
+                    <asp:Literal ID="litVenueLoadRate" runat="server" Text="0.0%" />
+                </span>
+            </div>
+
+            <div class="telemetry-bar-wrapper">
+                <div class="telemetry-bar-track">
+                    <div class="telemetry-bar-fill capacity-fill" style="width: <%= VenueLoadBarWidth %>%;"></div>
+                </div>
+            </div>
+
+            <ul class="telemetry-stats-list">
+                <li>
+                    <span class="stat-dot limit-dot"></span>
+                    <span class="stat-name">Venue Limit:</span>
+                    <span class="stat-val"><asp:Literal ID="litVenueLimit" runat="server" Text="100" /></span>
+                </li>
+                <li>
+                    <span class="stat-dot present-dot"></span>
+                    <span class="stat-name">Present On-Site:</span>
+                    <span class="stat-val"><asp:Literal ID="litPresentOnSite" runat="server" Text="0" /></span>
+                </li>
+                <li>
+                    <span class="stat-dot remaining-dot"></span>
+                    <span class="stat-name">Seats Remaining:</span>
+                    <span class="stat-val"><asp:Literal ID="litSeatsRemainingCount" runat="server" Text="100" /> <span class="stat-sub-pct">(<asp:Literal ID="litSeatsRemainingPct" runat="server" Text="100.0%" />)</span></span>
+                </li>
+            </ul>
+
+            <div class="telemetry-status-row">
+                <span class="telemetry-status-label">Status</span>
+                <span class="telemetry-status-tag capacity-status">
+                    <asp:Literal ID="litCapacityStatus" runat="server" Text="SEATS AVAILABLE" />
+                </span>
+            </div>
+        </div>
+
+        <!-- 3. Target Demographics Distribution (Square Bento Card) -->
+        <div class="telemetry-panel demographics-bento-card">
+            <div class="panel-header-bar demographics-header-compact">
+                <div class="panel-title">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                        <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                    </svg>
+                    <span>Target Demographics</span>
+                </div>
+                <div class="dim-dropdown-group" style="width:auto; margin:0;">
+                    <select id="ddlDemographicDimension" class="dim-dropdown-select dim-select-compact" onchange="switchDemographicDimension(this.value)" title="Cohort Dimension">
+                        <option value="course" selected="selected">Program</option>
+                        <option value="department">Department</option>
+                        <option value="year">Year Level</option>
+                        <option value="branch">Branch</option>
+                    </select>
+                </div>
+            </div>
+            <div class="panel-body demographics-bento-body">
+                <div class="pie-chart-container-bento" id="pieChartWrapper">
+                    <div class="pie-svg-wrapper">
+                        <svg id="demographicsPieSvg" class="pie-chart-svg" viewBox="0 0 240 240"></svg>
+                        <div class="pie-center-label-box" style="position:absolute; text-align:center; pointer-events:none;">
+                            <div id="pieCenterCount" style="font-size:1.25rem; font-weight:800; color:var(--text-heading); font-family:var(--font-mono); line-height:1.1;">0</div>
+                            <div id="pieCenterLabel" style="font-size:0.65rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">Attendees</div>
+                        </div>
+                    </div>
+                    <div id="demographicsLegend" class="pie-chart-legend">
+                        <!-- Dynamically populated via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Cancelled Reservations (Horizontal Bento Strip) -->
+        <div class="analytics-card cancelled-bento-card">
+            <div class="cancelled-bento-content">
+                <div class="cancelled-bento-left">
+                    <span class="telemetry-panel-icon cancelled-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                    </span>
+                    <div class="cancelled-bento-titles">
+                        <span class="analytics-card-label">Cancelled Reservations</span>
+                        <span class="cancelled-bento-desc">Revoked or released registrations prior to gate check-in</span>
+                    </div>
+                </div>
+                <div class="cancelled-bento-right">
+                    <span class="analytics-card-value cancelled-accent">
+                        <asp:Literal ID="litBeforeCancelled" runat="server" Text="0" />
+                    </span>
+                    <span class="cancelled-unit-label">Students</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROW 2: ATTENDEE COHORT ROSTER AUDIT (PRESENT, NO-SHOW, CANCELLED) -->
+    <div class="telemetry-panel attendee-roster-panel">
+        <div class="sheet-tabs-container">
+            <button type="button" id="tabPresent" class="sheet-tab-btn active active-present" onclick="switchSheet('present')">
+                <span>Present</span>
+                <span class="sheet-badge sheet-badge-present">
+                    <asp:Literal ID="litTabCountPresent" runat="server" Text="0"></asp:Literal>
+                </span>
+            </button>
+
+            <button type="button" id="tabNoShow" class="sheet-tab-btn" onclick="switchSheet('noshow')">
+                <span>No Show</span>
+                <span class="sheet-badge sheet-badge-noshow">
+                    <asp:Literal ID="litTabCountNoShow" runat="server" Text="0"></asp:Literal>
+                </span>
+            </button>
+
+            <button type="button" id="tabCancelled" class="sheet-tab-btn" onclick="switchSheet('cancelled')">
+                <span>Cancelled</span>
+                <span class="sheet-badge sheet-badge-cancelled">
+                    <asp:Literal ID="litTabCountCancelled" runat="server" Text="0"></asp:Literal>
+                </span>
+            </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="roster-toolbar">
+            <div class="search-box-wrapper">
+                <svg class="search-box-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="txtCohortSearch" class="search-input" placeholder="Search by Student ID, Name, or Ticket Reference..." onkeyup="filterCohortTable()" />
+            </div>
+            <div style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">
+                Showing real-time student check-in status
+            </div>
+        </div>
+
+        <!-- 1. Present Table -->
+        <div id="sheetPresent" class="cohort-sheet-view" style="display:block;">
+            <div class="table-responsive">
+                <table class="roster-table" id="tblPresent">
                     <thead>
                         <tr>
-                            <th>Academic Department</th>
-                            <th>Pre-Registered Total</th>
-                            <th>Actual Attended</th>
-                            <th>Verified No-Shows</th>
-                            <th>Turnout Engagement Rate</th>
+                            <th style="width: 16%;">Ticket Ref</th>
+                            <th style="width: 14%;">Student ID</th>
+                            <th style="width: 24%;">Student Name</th>
+                            <th style="width: 24%;">Department &amp; Program</th>
+                            <th style="width: 10%;">Year &amp; Section</th>
+                            <th style="width: 12%;">Verified At</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <asp:Repeater ID="rptDemographicAudit" runat="server">
+                        <asp:Repeater ID="rptPresentAttendees" runat="server">
                             <ItemTemplate>
-                                <tr>
-                                    <td><strong><%# Eval("Department") %></strong></td>
-                                    <td><%# Eval("PreRegistered") %> Students</td>
-                                    <td><strong style="color:var(--accent-emerald-text);"><%# Eval("Attended") %></strong></td>
-                                    <td><span style="color:var(--text-muted);"><%# Eval("NoShows") %></span></td>
-                                    <td>
-                                        <span class='<%# Convert.ToDouble(Eval("AttendanceRate")) >= 80 ? "rate-badge rate-badge-high" : (Convert.ToDouble(Eval("AttendanceRate")) >= 50 ? "rate-badge rate-badge-mid" : "rate-badge rate-badge-low") %>'>
-                                            <%# Eval("AttendanceRate", "{0:F1}") %>% Turnout
-                                        </span>
-                                    </td>
+                                <tr class="roster-row" data-search='<%# string.Format("{0} {1} {2}", Eval("StudentId"), Eval("StudentFullName"), Eval("TicketReference")).ToLower() %>'>
+                                    <td><span class="ticket-code"><%# Eval("TicketReference") %></span></td>
+                                    <td><span class="student-id-text"><%# Eval("StudentId") %></span></td>
+                                    <td><strong style="color:var(--text-heading);"><%# Eval("StudentFullName") %></strong></td>
+                                    <td><%# Eval("StudentProgram") %></td>
+                                    <td>Yr <%# Eval("CurrentYearLvl") %> - <%# Eval("CurrentSection") %></td>
+                                    <td><span class="rate-badge rate-badge-high" style="font-size:0.75rem;"><%# FormatTimestamp(Eval("CheckInTimestamp")) %></span></td>
                                 </tr>
                             </ItemTemplate>
                         </asp:Repeater>
@@ -492,113 +389,197 @@
             </div>
         </div>
 
-        <!-- Institutional Compliance Certificate -->
-        <div class="telemetry-panel" style="margin-top:1.5rem;">
-            <div class="panel-header-bar">
-                <div class="panel-title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="8" r="7"></circle>
-                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                    </svg>
-                    <span>Official University Accreditation &amp; Academic Credit Audit Certification</span>
-                </div>
+        <!-- 2. No Show Table -->
+        <div id="sheetNoShow" class="cohort-sheet-view" style="display:none;">
+            <div class="table-responsive">
+                <table class="roster-table" id="tblNoShow">
+                    <thead>
+                        <tr>
+                            <th style="width: 16%;">Ticket Ref</th>
+                            <th style="width: 14%;">Student ID</th>
+                            <th style="width: 24%;">Student Name</th>
+                            <th style="width: 24%;">Department &amp; Program</th>
+                            <th style="width: 10%;">Year &amp; Section</th>
+                            <th style="width: 12%;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <asp:Repeater ID="rptNoShowAttendees" runat="server">
+                            <ItemTemplate>
+                                <tr class="roster-row" data-search='<%# string.Format("{0} {1} {2}", Eval("StudentId"), Eval("StudentFullName"), Eval("TicketReference")).ToLower() %>'>
+                                    <td><span class="ticket-code"><%# Eval("TicketReference") %></span></td>
+                                    <td><span class="student-id-text"><%# Eval("StudentId") %></span></td>
+                                    <td><strong style="color:var(--text-heading);"><%# Eval("StudentFullName") %></strong></td>
+                                    <td><%# Eval("StudentProgram") %></td>
+                                    <td>Yr <%# Eval("CurrentYearLvl") %> - <%# Eval("CurrentSection") %></td>
+                                    <td><span class="rate-badge rate-badge-mid" style="font-size:0.75rem;">No-Show</span></td>
+                                </tr>
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </tbody>
+                </table>
             </div>
-            <div class="panel-body">
-                <div class="accreditation-block">
-                    <div class="accreditation-seal">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <span>Official Compliance Verification Statement</span>
-                    </div>
-                    <p style="color:var(--text-body); line-height:1.6;">
-                        This document certifies that the event attendance telemetry recorded herein represents authentic, verified physical door entries 
-                        conducted in strict compliance with Quezon City University academic activity guidelines. 
-                        Records are validated for institutional accreditation credits, extracurricular participation logs, and CHED compliance audits.
-                    </p>
-                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:1.5rem; flex-wrap:wrap; gap:1rem;">
-                        <div>
-                            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Auditing Administrator</div>
-                            <div style="font-weight:700; color:var(--text-heading); font-size:0.95rem;"><%= CurrentAdminEmail %></div>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">Office of Student Affairs &amp; University Events Console</div>
-                        </div>
-                        <div>
-                            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Certified Audit Date</div>
-                            <div style="font-weight:700; color:var(--text-heading); font-size:0.95rem;"><%= DateTime.Now.ToString("MM/dd/yyyy") %></div>
-                        </div>
-                    </div>
-                </div>
+        </div>
+
+        <!-- 3. Cancelled Table -->
+        <div id="sheetCancelled" class="cohort-sheet-view" style="display:none;">
+            <div class="table-responsive">
+                <table class="roster-table" id="tblCancelled">
+                    <thead>
+                        <tr>
+                            <th style="width: 16%;">Ticket Ref</th>
+                            <th style="width: 14%;">Student ID</th>
+                            <th style="width: 24%;">Student Name</th>
+                            <th style="width: 24%;">Department &amp; Program</th>
+                            <th style="width: 10%;">Year &amp; Section</th>
+                            <th style="width: 12%;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <asp:Repeater ID="rptCancelledAttendees" runat="server">
+                            <ItemTemplate>
+                                <tr class="roster-row" data-search='<%# string.Format("{0} {1} {2}", Eval("StudentId"), Eval("StudentFullName"), Eval("TicketReference")).ToLower() %>'>
+                                    <td><span class="ticket-code ticket-code-cancelled"><%# Eval("TicketReference") %></span></td>
+                                    <td><span class="student-id-text"><%# Eval("StudentId") %></span></td>
+                                    <td><strong style="color:var(--text-heading);"><%# Eval("StudentFullName") %></strong></td>
+                                    <td><%# Eval("StudentProgram") %></td>
+                                    <td>Yr <%# Eval("CurrentYearLvl") %> - <%# Eval("CurrentSection") %></td>
+                                    <td><span class="rate-badge rate-badge-low" style="font-size:0.75rem;">Cancelled</span></td>
+                                </tr>
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
+    <!-- Hidden State Holders for Legacy References & Backward Compatibility -->
+    <asp:PlaceHolder ID="phLegacyStateHolders" runat="server" Visible="false">
+        <asp:Literal ID="litBeforePreRegistered" runat="server" Text="0"></asp:Literal>
+        <asp:Literal ID="litBeforeDaysUntilLaunch" runat="server" Text="0 Days"></asp:Literal>
+        <asp:Literal ID="litDuringRosterTotal" runat="server" Text="0"></asp:Literal>
+        <asp:Literal ID="litDuringVenueOccupancy" runat="server" Text="0.0%"></asp:Literal>
+        <asp:Literal ID="litAfterPreRegisteredTotal" runat="server" Text="0"></asp:Literal>
+        <asp:Literal ID="litAfterCancellations" runat="server" Text="0"></asp:Literal>
+        <asp:Literal ID="litAfterRetentionRate" runat="server" Text="0.0%"></asp:Literal>
+        <asp:Literal ID="litAfterTopDepartment" runat="server" Text=""></asp:Literal>
+        <asp:Repeater ID="rptDemographicAudit" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
+        <asp:Repeater ID="rptBranchDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
+        <asp:Repeater ID="rptDepartmentDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
+        <asp:Repeater ID="rptCourseDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
+        <asp:Repeater ID="rptYearDistribution" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
+        <asp:Literal ID="litSaturationPercentDisplay" runat="server" Text="0 / 100"></asp:Literal>
+        <asp:Literal ID="litBeforeSaturationRate" runat="server" Text="0.0%"></asp:Literal>
+        <asp:Literal ID="litSaturationProgressBar" runat="server"></asp:Literal>
+        <asp:Literal ID="litBeforeSaturationStatus" runat="server" Text="Undersubscribed"></asp:Literal>
+        <asp:Literal ID="litBeforeAttritionRate" runat="server" Text="0.0%"></asp:Literal>
+        <asp:Literal ID="litBeforeAvailableQuota" runat="server" Text="0"></asp:Literal>
+        <asp:Literal ID="litDuringPeakWindow" runat="server" Text="Awaiting Traffic"></asp:Literal>
+        <asp:Repeater ID="rptRegistrationVelocity" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
+        <asp:Repeater ID="rptCheckInIntervals" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
+    </asp:PlaceHolder>
+
+    <!-- Hidden Demographics & Telemetry Data JSON Literal -->
+    <script id="demographicsJsonData" type="application/json"><asp:Literal ID="litDemographicsJson" runat="server"></asp:Literal></script>
+
 </div>
 
-<!-- Floating interactive tooltip for mouse hover over pie slices and legend items -->
+<!-- Floating interactive tooltip for mouse hover over pie slices, points, and legend items -->
 <div id="pieInteractiveTooltip" class="pie-interactive-tooltip">
-    <div id="pieTooltipTitle" class="tooltip-title">Demographic Category</div>
+    <div id="pieTooltipTitle" class="tooltip-title">Category</div>
     <div id="pieTooltipBody" class="tooltip-body">
-        <span id="pieTooltipCount" style="font-weight:700;">0 Students</span>
-        <span id="pieTooltipPercent" style="opacity:0.85;">(0.0%)</span>
+        <span id="pieTooltipCount" style="font-weight:700;">0</span>
+        <span id="pieTooltipPercent" style="opacity:0.85;"></span>
     </div>
 </div>
 
 <script type="text/javascript">
-    function switchLifecycleTab(phase) {
-        // Tab buttons
-        document.getElementById('tabPhaseBefore').classList.remove('active');
-        document.getElementById('tabPhaseDuring').classList.remove('active');
-        document.getElementById('tabPhaseAfter').classList.remove('active');
+    let telemetryData = {};
 
-        // Content sections
-        document.getElementById('sectionPhaseBefore').style.display = 'none';
-        document.getElementById('sectionPhaseDuring').style.display = 'none';
-        document.getElementById('sectionPhaseAfter').style.display = 'none';
-
-        if (phase === 'before') {
-            document.getElementById('tabPhaseBefore').classList.add('active');
-            document.getElementById('sectionPhaseBefore').style.display = 'block';
-        } else if (phase === 'during') {
-            document.getElementById('tabPhaseDuring').classList.add('active');
-            document.getElementById('sectionPhaseDuring').style.display = 'block';
-        } else if (phase === 'after') {
-            document.getElementById('tabPhaseAfter').classList.add('active');
-            document.getElementById('sectionPhaseAfter').style.display = 'block';
-        }
-    }
-
-    // =========================================================================
-    // INTERACTIVE PIE / DONUT GRAPH FOR TARGET DEMOGRAPHICS
-    // =========================================================================
-    let demographicsData = {};
-
-    function initDemographicsPieChart() {
+    function initUnifiedDashboard() {
         const rawDataEl = document.getElementById('demographicsJsonData');
         if (rawDataEl && rawDataEl.textContent.trim()) {
             try {
-                demographicsData = JSON.parse(rawDataEl.textContent);
+                telemetryData = JSON.parse(rawDataEl.textContent);
             } catch (e) {
-                console.error("Failed to parse demographics data:", e);
+                console.error("Failed to parse telemetry data:", e);
             }
         }
+
+        // 1. Render Demographic Donut Chart
         const select = document.getElementById('ddlDemographicDimension');
-        const initialDim = select ? select.value : 'department';
-        let label = 'Department';
-        if (initialDim === 'course') label = 'Program';
-        else if (initialDim === 'branch') label = 'Branch';
-        else if (initialDim === 'year') label = 'Year Level';
-        renderDemographicDimension(initialDim, label);
+        const initialDim = select ? select.value : 'course';
+        let initialLabel = 'Program';
+        if (initialDim === 'department') initialLabel = 'Department';
+        else if (initialDim === 'branch') initialLabel = 'Branch';
+        else if (initialDim === 'year') initialLabel = 'Year Level';
+
+        renderDemographicDimension(initialDim, initialLabel);
     }
 
+        // =========================================================================
+    // 1. DUAL/MULTI SHEET COHORT SWITCHER & CLIENT SEARCH
+    // =========================================================================
+    let currentCohortSheet = 'present';
+
+    function switchSheet(sheetName) {
+        currentCohortSheet = sheetName;
+        const tabPresent = document.getElementById('tabPresent');
+        const tabNoShow = document.getElementById('tabNoShow');
+        const tabCancelled = document.getElementById('tabCancelled');
+
+        const sheetPresent = document.getElementById('sheetPresent');
+        const sheetNoShow = document.getElementById('sheetNoShow');
+        const sheetCancelled = document.getElementById('sheetCancelled');
+
+        if (tabPresent) tabPresent.className = 'sheet-tab-btn';
+        if (tabNoShow) tabNoShow.className = 'sheet-tab-btn';
+        if (tabCancelled) tabCancelled.className = 'sheet-tab-btn';
+
+        if (sheetPresent) sheetPresent.style.display = 'none';
+        if (sheetNoShow) sheetNoShow.style.display = 'none';
+        if (sheetCancelled) sheetCancelled.style.display = 'none';
+
+        if (sheetName === 'present') {
+            if (tabPresent) tabPresent.className = 'sheet-tab-btn active active-present';
+            if (sheetPresent) sheetPresent.style.display = 'block';
+        } else if (sheetName === 'noshow') {
+            if (tabNoShow) tabNoShow.className = 'sheet-tab-btn active active-noshow';
+            if (sheetNoShow) sheetNoShow.style.display = 'block';
+        } else if (sheetName === 'cancelled') {
+            if (tabCancelled) tabCancelled.className = 'sheet-tab-btn active active-cancelled';
+            if (sheetCancelled) sheetCancelled.style.display = 'block';
+        }
+
+        filterCohortTable();
+    }
+
+    function filterCohortTable() {
+        const searchEl = document.getElementById('txtCohortSearch');
+        const query = (searchEl ? searchEl.value : '').trim().toLowerCase();
+        let tableId = 'tblPresent';
+        if (currentCohortSheet === 'noshow') tableId = 'tblNoShow';
+        else if (currentCohortSheet === 'cancelled') tableId = 'tblCancelled';
+
+        const rows = document.querySelectorAll('#' + tableId + ' tbody tr.roster-row');
+        rows.forEach(function (row) {
+            const dataSearch = (row.getAttribute('data-search') || row.innerText || '').toLowerCase();
+            row.style.display = (!query || dataSearch.includes(query)) ? '' : 'none';
+        });
+    }
+
+    // =========================================================================
+    // 2. DEMOGRAPHIC BREAKDOWN (DONUT + DROPDOWN SWITCHER)
+    // =========================================================================
     function switchDemographicDimension(dimensionKey) {
         const select = document.getElementById('ddlDemographicDimension');
         if (select && select.value !== dimensionKey) {
             select.value = dimensionKey;
         }
 
-        let label = 'Department';
-        if (dimensionKey === 'course') label = 'Program';
+        let label = 'Program';
+        if (dimensionKey === 'department') label = 'Department';
         else if (dimensionKey === 'branch') label = 'Branch';
         else if (dimensionKey === 'year') label = 'Year Level';
 
@@ -606,7 +587,7 @@
     }
 
     function renderDemographicDimension(dimensionKey, displayLabel) {
-        const list = (demographicsData && demographicsData[dimensionKey]) ? demographicsData[dimensionKey] : [];
+        const list = (telemetryData && telemetryData[dimensionKey]) ? telemetryData[dimensionKey] : [];
         const svg = document.getElementById('demographicsPieSvg');
         const legend = document.getElementById('demographicsLegend');
         const centerCount = document.getElementById('pieCenterCount');
@@ -649,7 +630,7 @@
         const cy = 120;
         const outerR = 96;
         const innerR = 58;
-        let currentAngle = -Math.PI / 2; // start at top (12 o'clock)
+        let currentAngle = -Math.PI / 2; // start at 12 o'clock
 
         list.forEach(function (item, index) {
             const color = palette[index % palette.length];
@@ -661,7 +642,6 @@
 
             let pathD = '';
             if (fraction >= 0.999) {
-                // Single 100% slice donut
                 pathD = 'M ' + cx + ' ' + (cy - outerR) +
                         ' A ' + outerR + ' ' + outerR + ' 0 1 1 ' + cx + ' ' + (cy + outerR) +
                         ' A ' + outerR + ' ' + outerR + ' 0 1 1 ' + cx + ' ' + (cy - outerR) +
@@ -706,7 +686,7 @@
                 '<span class="pie-legend-meta">' + item.count.toLocaleString() + ' (' + item.percentage.toFixed(1) + '%)</span>';
             legend.appendChild(row);
 
-            // Hover handlers for both slice & legend row
+            // Hover interactions
             function onHover(e) {
                 path.style.filter = 'drop-shadow(0 6px 12px rgba(0,0,0,0.22))';
                 path.style.transform = 'scale(1.045)';
@@ -758,7 +738,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        initDemographicsPieChart();
+        initUnifiedDashboard();
     });
 </script>
 

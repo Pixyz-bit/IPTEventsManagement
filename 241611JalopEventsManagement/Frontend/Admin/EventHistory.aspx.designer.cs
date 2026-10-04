@@ -28,24 +28,5 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Repeater rptEventHistory;
         protected global::System.Web.UI.WebControls.Panel pnlNoRecords;
         protected global::System.Web.UI.WebControls.Button btnResetZeroState;
-        protected global::System.Web.UI.WebControls.Panel pnlReportModal;
-        protected global::System.Web.UI.WebControls.Literal litModalEventCode;
-        protected global::System.Web.UI.WebControls.Literal litModalEventTitle;
-        protected global::System.Web.UI.WebControls.LinkButton btnCloseModal;
-        protected global::System.Web.UI.WebControls.Literal litModalStatusPill;
-        protected global::System.Web.UI.WebControls.Literal litModalAcademicTerm;
-        protected global::System.Web.UI.WebControls.Literal litModalVenue;
-        protected global::System.Web.UI.WebControls.Literal litModalDateTime;
-        protected global::System.Web.UI.WebControls.Literal litModalDepartment;
-        protected global::System.Web.UI.WebControls.Literal litModalProgram;
-        protected global::System.Web.UI.WebControls.Panel pnlModalCancellationReason;
-        protected global::System.Web.UI.WebControls.Literal litModalCancellationReason;
-        protected global::System.Web.UI.WebControls.Literal litModalCapacity;
-        protected global::System.Web.UI.WebControls.Literal litModalPreReg;
-        protected global::System.Web.UI.WebControls.Literal litModalAttended;
-        protected global::System.Web.UI.WebControls.Literal litModalTurnoutPct;
-        protected global::System.Web.UI.WebControls.HiddenField hfModalEventId;
-        protected global::System.Web.UI.WebControls.Button btnExportSingleReportCsv;
-        protected global::System.Web.UI.WebControls.Button btnDismissModal;
     }
 }

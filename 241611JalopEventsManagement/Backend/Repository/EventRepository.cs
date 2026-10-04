@@ -344,7 +344,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     FROM dbo.EventRegistrationTable
                     GROUP BY EventId
                 ) regStats ON e.EventId = regStats.EventId
-                WHERE (e.Status IN ('Completed', 'Cancelled') OR (e.Status = 'Upcoming' AND e.EventEnd < GETDATE()))";
+                WHERE 1 = 1";
 
             var parameters = new List<SqlParameter>();
 
@@ -372,6 +372,15 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 else if (string.Equals(outcomeStatus, "Concluded", StringComparison.OrdinalIgnoreCase))
                 {
                     sql += " AND e.EventEnd < GETDATE() AND e.Status != 'Cancelled'";
+                }
+                else if (string.Equals(outcomeStatus, "Upcoming", StringComparison.OrdinalIgnoreCase))
+                {
+                    sql += " AND e.Status = 'Upcoming' AND (e.EventEnd IS NULL OR e.EventEnd >= GETDATE())";
+                }
+                else
+                {
+                    sql += " AND e.Status = @OutcomeStatus";
+                    parameters.Add(new SqlParameter("@OutcomeStatus", SqlDbType.VarChar, 50) { Value = outcomeStatus });
                 }
             }
 
@@ -422,7 +431,6 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT DISTINCT YEAR(EventStart) AS EvtYear, MONTH(EventStart) AS EvtMonth
                 FROM dbo.EventsTable
-                WHERE (Status IN ('Completed', 'Cancelled') OR (Status = 'Upcoming' AND EventEnd < GETDATE()))
                 ORDER BY EvtYear DESC;";
 
             DataTable dt = DatabaseConnection.ExecuteDataTable(sql);

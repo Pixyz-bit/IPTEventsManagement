@@ -505,6 +505,8 @@
         .bento-hero-media {
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            border-radius: 8px;
         }
 
         .media-preview-container {
@@ -512,6 +514,26 @@
             flex-direction: column;
             gap: 0.75rem;
             height: 100%;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        .banner-preview-box {
+            position: relative !important;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            min-height: 150px;
+            background: #0f172a;
+            border: 1px solid #e2e8f0;
+        }
+
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .banner-badge-overlay {
@@ -519,6 +541,18 @@
             top: 0.5rem;
             right: 0.5rem;
             z-index: 2;
+            pointer-events: none;
+        }
+
+        .banner-ratio-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            padding: 0.25rem 0.55rem;
+            border-radius: 4px;
+            letter-spacing: 0.04em;
         }
 
         .ticket-preview-chip {
@@ -688,47 +722,210 @@
             color: #e11d48;
         }
 
-        /* ─── Linear Timeline Tracker ─── */
-        .bento-timeline-strip {
-            display: flex;
-            align-items: center;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 0.65rem 0.85rem;
-            margin-top: auto;
-            gap: 0.5rem;
+        /* ─── Bento Cockpit: Turnout & Saturation Telemetry ─── */
+        .telemetry-bento-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            height: 100%;
+            align-items: stretch;
         }
 
-        .timeline-step {
-            flex: 1;
+        .telemetry-panel {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 1.1rem 1.15rem;
             display: flex;
             flex-direction: column;
-            gap: 0.15rem;
-            min-width: 0;
+            transition: all 0.2s ease;
         }
 
-        .timeline-step-label {
-            font-size: 0.66rem;
-            font-weight: 700;
+        .telemetry-panel:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            background-color: #ffffff;
+        }
+
+        .telemetry-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.65rem;
+        }
+
+        .telemetry-panel-title {
+            font-size: 0.72rem;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.06em;
             color: var(--text-muted);
+        }
+
+        .telemetry-panel-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .telemetry-panel-icon.turnout-icon {
+            background-color: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .telemetry-panel-icon.capacity-icon {
+            background-color: #ecfdf5;
+            color: #059669;
+        }
+
+        .telemetry-rate-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+
+        .telemetry-rate-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-heading);
+        }
+
+        .telemetry-rate-value {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .telemetry-rate-value.turnout-accent {
+            color: #0284c7;
+        }
+
+        .telemetry-rate-value.capacity-accent {
+            color: #059669;
+        }
+
+        .telemetry-bar-wrapper {
+            margin: 0.5rem 0 0.85rem 0;
+        }
+
+        .telemetry-bar-track {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .telemetry-bar-fill {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.4s ease;
+        }
+
+        .telemetry-bar-fill.turnout-fill {
+            background: linear-gradient(90deg, #38bdf8, #0284c7);
+        }
+
+        .telemetry-bar-fill.capacity-fill {
+            background: linear-gradient(90deg, #34d399, #059669);
+        }
+
+        .telemetry-stats-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 0.85rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            flex: 1;
+        }
+
+        .telemetry-stats-list li {
+            display: flex;
+            align-items: center;
+            font-size: 0.82rem;
+            color: var(--text-body);
+        }
+
+        .stat-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            margin-right: 0.55rem;
+            flex-shrink: 0;
+        }
+
+        .stat-dot.turnout-dot { background-color: #0284c7; }
+        .stat-dot.registered-dot { background-color: #64748b; }
+        .stat-dot.noshow-dot { background-color: #ef4444; }
+        .stat-dot.present-dot { background-color: #059669; }
+        .stat-dot.limit-dot { background-color: #64748b; }
+        .stat-dot.remaining-dot { background-color: #3b82f6; }
+
+        .stat-name {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .stat-val {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-left: auto;
+            font-size: 0.82rem;
+        }
+
+        .stat-sub-pct {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.2rem;
+        }
+
+        .telemetry-status-row {
+            margin-top: auto;
+            padding-top: 0.65rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.78rem;
+        }
+
+        .telemetry-status-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
             letter-spacing: 0.04em;
         }
 
-        .timeline-step-val {
+        .telemetry-status-tag {
             font-family: var(--font-mono);
-            font-size: 0.73rem;
-            font-weight: 600;
-            color: var(--text-heading);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            letter-spacing: 0.03em;
         }
 
-        .timeline-arrow {
-            color: #94a3b8;
-            flex-shrink: 0;
+        .telemetry-status-tag.turnout-status {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+        }
+
+        .telemetry-status-tag.capacity-status {
+            background-color: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
         }
 
         /* ─── Audit / Governance Card (Card 6) ─── */
@@ -1100,37 +1297,7 @@
             border: 1px solid #bae6fd;
         }
 
-        /* Enforcement Callout */
-        .enforcement-callout {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 8px;
-            padding: 0.85rem 1rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.65rem;
-            margin-top: 0.75rem;
-        }
 
-        .enforcement-callout svg {
-            color: #16a34a;
-            flex-shrink: 0;
-            margin-top: 0.15rem;
-        }
-
-        .enforcement-callout-text h5 {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: #166534;
-            margin-bottom: 0.15rem;
-        }
-
-        .enforcement-callout-text p {
-            font-size: 0.74rem;
-            color: #15803d;
-            margin: 0;
-            line-height: 1.35;
-        }
 
         /* ─── Step 1 Bento Grid Layout (Overview & Location/Capacity + Media & Branding) ─── */
         .step1-bento-grid {
@@ -1261,16 +1428,8 @@
                 grid-template-columns: 1fr;
                 gap: 0.75rem;
             }
-            .telemetry-tile-grid {
+            .telemetry-bento-grid {
                 grid-template-columns: 1fr;
-            }
-            .bento-timeline-strip {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .timeline-arrow {
-                transform: rotate(90deg);
-                margin: 0.25rem 0;
             }
         }
 

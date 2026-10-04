@@ -115,15 +115,15 @@
             <div class="viewfinder-card">
                 <div class="card-header-bar">
                     <div class="card-header-title">
-                        <span>Optical QR Viewfinder Stream</span>
+                        <span>QR Code Scanner</span>
                     </div>
                     <div style="display:flex; align-items:center; gap:0.85rem;">
                         <select id="cameraDeviceSelect" class="camera-select-control" onchange="changeCameraDevice()">
-                            <option value="">Detecting Cameras...</option>
+                            <option value="">Scanner is Off</option>
                         </select>
                         <div class="camera-toggle-group">
-                            <span id="lblCameraToggleText" class="camera-toggle-title">Scanner ON</span>
-                            <button type="button" id="btnToggleCamera" class="btn-scanner-toggle is-active" onclick="toggleCameraPower()" role="switch" aria-checked="true" title="Toggle Optical Scanner Stream">
+                            <span id="lblCameraToggleText" class="camera-toggle-title">Scanner OFF</span>
+                            <button type="button" id="btnToggleCamera" class="btn-scanner-toggle is-inactive" onclick="toggleCameraPower()" role="switch" aria-checked="false" title="Toggle Optical Scanner Stream">
                                 <span class="toggle-thumb"></span>
                             </button>
                         </div>
@@ -134,7 +134,7 @@
                     <div id="qr-reader"></div>
 
                     <!-- Holographic Target Overlay -->
-                    <div class="scanner-hud-overlay">
+                    <div class="scanner-hud-overlay" style="display:none;">
                         <div class="scanner-hud-reticle">
                             <div class="scanner-laser-line"></div>
                             <div class="hud-corner hud-tl"></div>
@@ -146,14 +146,14 @@
                     </div>
 
                     <!-- Suspended/Paused Overlay when toggled OFF -->
-                    <div id="scannerOffOverlay" class="scanner-paused-overlay" style="display:none;">
+                    <div id="scannerOffOverlay" class="scanner-paused-overlay">
                         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2">
                             <line x1="1" y1="1" x2="23" y2="23"></line>
                             <path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34"></path>
                             <circle cx="12" cy="13" r="4"></circle>
                         </svg>
                         <span style="font-weight:700; font-size:0.95rem; color:#f1f5f9; margin-top:0.5rem;">Optical Scanner Suspended</span>
-                        <span style="font-size:0.75rem; color:#94a3b8;">Scanner stream is toggled OFF. Click "Scanner OFF" to resume or use manual lookup.</span>
+                        <span style="font-size:0.75rem; color:#94a3b8;">Scanner stream is toggled OFF. Click toggle switch to turn ON or use manual lookup.</span>
                     </div>
 
                     <!-- Visual Flash Confirmation Overlay -->
@@ -252,13 +252,11 @@
             <!-- Operator Confirmation Controls (Mandatory Inspection Gate: No Auto Check-In) -->
             <div class="staging-actions-container">
                 <button type="button" id="btnConfirmCheckIn" class="btn-confirm-checkin" disabled onclick="executeCheckInCommit()">
-                    <span>CONFIRM & CHECK-IN</span>
-                    <span class="keyboard-hint-badge">ENTER</span>
+                    <span>CONFIRM</span>
                 </button>
 
                 <button type="button" id="btnDiscardStaging" class="btn-discard-staging" onclick="discardStagedAttendee()">
-                    <span>DISCARD / CLEAR</span>
-                    <span class="keyboard-hint-badge">ESC</span>
+                    <span>DISCARD</span>
                 </button>
             </div>
         </div>
@@ -362,9 +360,11 @@
             return;
         }
 
+        const select = document.getElementById('cameraDeviceSelect');
+        if (select) select.innerHTML = '<option value="">Detecting Cameras...</option>';
+
         Html5Qrcode.getCameras().then(devices => {
-            const select = document.getElementById('cameraDeviceSelect');
-            select.innerHTML = '';
+            if (select) select.innerHTML = '';
 
             if (devices && devices.length > 0) {
                 devices.forEach((dev, idx) => {
@@ -422,7 +422,7 @@
         }
     }
 
-    let isCameraActive = true;
+    let isCameraActive = false;
 
     function toggleCameraPower() {
         const btn = document.getElementById('btnToggleCamera');
@@ -436,6 +436,7 @@
                 html5QrScanner.stop().then(() => {
                     isCameraActive = false;
                     btn.className = 'btn-scanner-toggle is-inactive';
+                    btn.setAttribute('aria-checked', 'false');
                     lbl.innerText = 'Scanner OFF';
                     if (overlay) overlay.style.display = 'flex';
                     if (hud) hud.style.display = 'none';
@@ -443,6 +444,7 @@
                     console.warn("Camera stop error:", err);
                     isCameraActive = false;
                     btn.className = 'btn-scanner-toggle is-inactive';
+                    btn.setAttribute('aria-checked', 'false');
                     lbl.innerText = 'Scanner OFF';
                     if (overlay) overlay.style.display = 'flex';
                     if (hud) hud.style.display = 'none';
@@ -450,6 +452,7 @@
             } else {
                 isCameraActive = false;
                 btn.className = 'btn-scanner-toggle is-inactive';
+                btn.setAttribute('aria-checked', 'false');
                 lbl.innerText = 'Scanner OFF';
                 if (overlay) overlay.style.display = 'flex';
                 if (hud) hud.style.display = 'none';
@@ -458,19 +461,21 @@
             // Turn ON
             const selectedId = document.getElementById('cameraDeviceSelect').value;
             if (selectedId) {
-                mountCamera(selectedId);
+                startCamera(selectedId);
                 isCameraActive = true;
                 btn.className = 'btn-scanner-toggle is-active';
+                btn.setAttribute('aria-checked', 'true');
                 lbl.innerText = 'Scanner ON';
                 if (overlay) overlay.style.display = 'none';
-                if (hud) hud.style.display = 'block';
+                if (hud) hud.style.display = 'flex';
             } else {
                 initScanner();
                 isCameraActive = true;
                 btn.className = 'btn-scanner-toggle is-active';
+                btn.setAttribute('aria-checked', 'true');
                 lbl.innerText = 'Scanner ON';
                 if (overlay) overlay.style.display = 'none';
-                if (hud) hud.style.display = 'block';
+                if (hud) hud.style.display = 'flex';
             }
         }
     }
@@ -831,9 +836,9 @@
         }
     });
 
-    // Start Scanner on Page Ready
+    // Scanner is OFF by default; do not auto-start camera on DOMContentLoaded
     window.addEventListener('DOMContentLoaded', () => {
-        initScanner();
+        // Initial state is scanner OFF. Camera will initialize when user clicks the toggle switch.
     });
 </script>
 

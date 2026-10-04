@@ -42,7 +42,7 @@
     <div class="history-kpi-grid">
         <div class="history-kpi-card">
             <div class="kpi-card-header">
-                <span class="kpi-card-title">Total Archived Events</span>
+                <span class="kpi-card-title">Total Events</span>
             </div>
             <div class="kpi-card-value"><asp:Literal ID="litTotalArchived" runat="server" Text="0" /></div>
         </div>
@@ -95,6 +95,7 @@
 
                 <asp:DropDownList ID="ddlOutcomeStatus" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
                     <asp:ListItem Value="ALL" Text="All Outcome Statuses" />
+                    <asp:ListItem Value="Upcoming" Text="Upcoming Only" />
                     <asp:ListItem Value="Completed" Text="Completed Only" />
                     <asp:ListItem Value="Cancelled" Text="Cancelled Only" />
                     <asp:ListItem Value="Concluded" Text="Concluded (Date Passed)" />
@@ -111,12 +112,12 @@
                     <table class="history-table">
                         <thead>
                             <tr>
-                                <th style="width: 110px;">Outcome</th>
-                                <th style="min-width: 260px;">Event Title &amp; Academic Scope</th>
-                                <th style="min-width: 180px;">Venue Location</th>
-                                <th style="width: 130px;">Registrations</th>
-                                <th style="width: 160px;">Turnout Ratio</th>
-                                <th style="width: 140px; text-align: right;">Accreditation Audit</th>
+                                <th style="width: 110px;">Status</th>
+                                <th style="min-width: 250px;">Event Title &amp; Scope</th>
+                                <th style="min-width: 170px;">Venue &amp; Schedule</th>
+                                <th style="width: 150px;">Capacity Saturation</th>
+                                <th style="width: 160px;">Attendance Turnout</th>
+                                <th style="width: 120px; text-align: right;">Report</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -138,20 +139,23 @@
                             </div>
                         </td>
 
-                        <!-- 3. Venue Location -->
+                        <!-- 3. Venue Location & Date -->
                         <td>
                             <div class="cell-venue-text"><%# Eval("VenueLocation") %></div>
+                            <div class="cell-date-text"><%# Convert.ToDateTime(Eval("EventStart")).ToString("MMM dd, yyyy") %></div>
                         </td>
 
-                        <!-- 5. Capacity Quota -->
+                        <!-- 4. Capacity Saturation -->
                         <td>
                             <div style="font-family:var(--font-mono); font-weight:600; color:var(--text-heading); font-size:0.85rem;">
                                 <%# Eval("CurrentRegistrations") %> / <%# Eval("MaxCapacity") %>
                             </div>
-                            <div style="font-size:0.725rem; color:var(--text-muted);">Capacity Saturation</div>
+                            <div style="font-size:0.725rem; color:var(--text-muted);">
+                                <%# Eval("AttendedCount") %> Present (<%# Eval("MaxCapacity") != null && Convert.ToInt32(Eval("MaxCapacity")) > 0 ? string.Format("{0:F1}%", (Convert.ToDouble(Eval("AttendedCount")) / Convert.ToDouble(Eval("MaxCapacity"))) * 100.0) : "0.0%" %>)
+                            </div>
                         </td>
 
-                        <!-- 6. Turnout Statistics Bar -->
+                        <!-- 5. Turnout Statistics Bar -->
                         <td>
                             <div class="turnout-stat-block">
                                 <div class="turnout-label-row">
@@ -164,16 +168,16 @@
                             </div>
                         </td>
 
-                        <!-- 7. Actions -->
+                        <!-- 6. Actions: Direct Navigation to EventAnalytics.aspx -->
                         <td style="text-align: right;">
                             <div style="display:flex; justify-content:flex-end; gap:0.35rem;">
-                                <asp:LinkButton ID="btnViewReport" runat="server" CssClass="btn-archive-view" CommandName="ViewReport" CommandArgument='<%# Eval("EventId") %>' CausesValidation="false" ToolTip="View Detailed Audit Report">
+                                <a href='<%# ResolveUrl(string.Format("~/Frontend/Admin/EventAnalytics.aspx?eventId={0}&from=history", Eval("EventId"))) %>' class="btn-archive-view" title="View Detailed Event Analytics &amp; Performance Telemetry">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
                                     </svg>
                                     <span>Report</span>
-                                </asp:LinkButton>
+                                </a>
                             </div>
                         </td>
                     </tr>
@@ -195,100 +199,4 @@
             </asp:Panel>
         </div>
     </div>
-
-    <!-- Archived Turnout Audit Modal Dialog -->
-    <asp:Panel ID="pnlReportModal" runat="server" Visible="false" CssClass="modal-overlay">
-        <div class="modal-box-lg">
-            <div class="modal-header">
-                <div>
-                    <asp:Literal ID="litModalEventCode" runat="server" Visible="false" />
-                    <h3 class="modal-title"><asp:Literal ID="litModalEventTitle" runat="server" /></h3>
-                </div>
-                <asp:LinkButton ID="btnCloseModal" runat="server" OnClick="btnCloseModal_Click" CausesValidation="false" Style="background:none; border:none; font-size:1.5rem; line-height:1; font-weight:bold; color:var(--text-muted); cursor:pointer;">&times;</asp:LinkButton>
-            </div>
-
-            <div class="modal-body">
-                <!-- Status Row -->
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
-                    <div>
-                        <span class="report-detail-label">Archive Outcome Status</span>
-                        <div style="margin-top:0.25rem;"><asp:Literal ID="litModalStatusPill" runat="server" /></div>
-                    </div>
-                    <asp:Literal ID="litModalAcademicTerm" runat="server" Visible="false" />
-                </div>
-
-                <!-- Event Details Section Grid -->
-                <div class="report-section-grid">
-                    <div class="report-detail-item">
-                        <div class="report-detail-label">Venue Location</div>
-                        <div class="report-detail-val"><asp:Literal ID="litModalVenue" runat="server" /></div>
-                    </div>
-                    <div class="report-detail-item">
-                        <div class="report-detail-label">Concluded Date &amp; Time</div>
-                        <div class="report-detail-val"><asp:Literal ID="litModalDateTime" runat="server" /></div>
-                    </div>
-                    <div class="report-detail-item">
-                        <div class="report-detail-label">Target Academic College</div>
-                        <div class="report-detail-val"><asp:Literal ID="litModalDepartment" runat="server" /></div>
-                    </div>
-                    <div class="report-detail-item">
-                        <div class="report-detail-label">Degree Program &amp; Year Level</div>
-                        <div class="report-detail-val"><asp:Literal ID="litModalProgram" runat="server" /></div>
-                    </div>
-                </div>
-
-                <!-- Cancellation Reason Callout if applicable -->
-                <asp:Panel ID="pnlModalCancellationReason" runat="server" Visible="false" Style="background:#fff1f2; border:1px solid #fecdd3; border-radius:var(--radius-md); padding:0.85rem 1rem; margin-bottom:1.25rem;">
-                    <div style="font-size:0.75rem; font-weight:700; color:var(--accent-rose); text-transform:uppercase; margin-bottom:0.25rem;">
-                        Official Cancellation Justification Log:
-                    </div>
-                    <div style="font-size:0.85rem; color:#9f1239; line-height:1.4;">
-                        <asp:Literal ID="litModalCancellationReason" runat="server" />
-                    </div>
-                </asp:Panel>
-
-                <!-- Quantitative Telemetry Audit Grid -->
-                <div style="margin-bottom:0.5rem; font-size:0.775rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">
-                    Accreditation Attendance Metrics
-                </div>
-                <div class="report-stats-grid">
-                    <div class="report-stat-box">
-                        <div class="report-stat-num"><asp:Literal ID="litModalCapacity" runat="server">0</asp:Literal></div>
-                        <div class="report-stat-sub">Max Quota</div>
-                    </div>
-                    <div class="report-stat-box">
-                        <div class="report-stat-num"><asp:Literal ID="litModalPreReg" runat="server">0</asp:Literal></div>
-                        <div class="report-stat-sub">Pre-Registered</div>
-                    </div>
-                    <div class="report-stat-box highlight">
-                        <div class="report-stat-num"><asp:Literal ID="litModalAttended" runat="server">0</asp:Literal></div>
-                        <div class="report-stat-sub">Actual Attended</div>
-                    </div>
-                    <div class="report-stat-box">
-                        <div class="report-stat-num"><asp:Literal ID="litModalTurnoutPct" runat="server">0.0%</asp:Literal></div>
-                        <div class="report-stat-sub">Turnout Rate</div>
-                    </div>
-                </div>
-
-                <!-- Auditor Disclaimer -->
-                <div style="background:#f8fafc; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:0.85rem 1rem; font-size:0.775rem; color:var(--text-muted); line-height:1.45;">
-                    <strong>Audit Verification Notice:</strong> This document represents an immutable post-event record extracted from the University Event Database. Attendance figures were validated at institutional entrance gates via cryptographic optical pass validation.
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <asp:HiddenField ID="hfModalEventId" runat="server" />
-                <asp:Button ID="btnExportSingleReportCsv" runat="server" Text="Export Event CSV" CssClass="btn-action-secondary" OnClick="btnExportSingleReportCsv_Click" CausesValidation="false" />
-                <button type="button" class="btn-action-primary" onclick="window.print();">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.35rem; vertical-align:middle;">
-                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                        <rect x="6" y="14" width="12" height="8"></rect>
-                    </svg>
-                    Print Audit PDF
-                </button>
-                <asp:Button ID="btnDismissModal" runat="server" Text="Close Record" CssClass="btn-action-secondary" OnClick="btnCloseModal_Click" CausesValidation="false" />
-            </div>
-        </div>
-    </asp:Panel>
 </asp:Content>
