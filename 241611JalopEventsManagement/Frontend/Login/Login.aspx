@@ -40,9 +40,9 @@
 
                     <!-- Student ID or Email Address Input -->
                     <div class="form-group">
-                        <label for="<%= txtIdentifier.ClientID %>" class="form-label">Student ID or Email Address</label>
+                        <label for="<%= txtIdentifier.ClientID %>" class="form-label">Email Address</label>
                         <asp:TextBox ID="txtIdentifier" runat="server" CssClass="form-control" 
-                            placeholder="Enter Student ID or University Email" autocomplete="username"></asp:TextBox>
+                            placeholder="Enter University Email" autocomplete="username"></asp:TextBox>
                     </div>
 
                     <!-- Password Input -->
@@ -64,11 +64,11 @@
                         </div>
                     </div>
 
-                    <!-- Remember Session Checkbox -->
+                    <!-- Remember Me Checkbox -->
                     <div class="form-options">
                         <label class="checkbox-label">
                             <asp:CheckBox ID="chkRememberMe" runat="server" />
-                            <span>Remember session</span>
+                            <span>Remember Me</span>
                         </label>
                     </div>
 
