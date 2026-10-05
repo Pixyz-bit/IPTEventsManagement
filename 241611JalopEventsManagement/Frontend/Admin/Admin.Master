@@ -22,7 +22,7 @@
         <div class="admin-layout">
             <!-- Sidebar Navigation Shell -->
             <aside class="admin-sidebar">
-                <a href="<%= ResolveUrl("~/Frontend/Admin/Dashboard.aspx") %>" class="sidebar-brand">
+                <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="sidebar-brand">
                     <img src="<%= ResolveUrl("~/Frontend/Assets/QCU Logo.png") %>" alt="QCU Emblem" class="brand-logo-img" />
                     <div class="brand-text">
                         <h1>QCU Admin</h1>
@@ -35,17 +35,6 @@
                     <div>
                         <div class="nav-group-title">Core Management</div>
                         <ul class="nav-list">
-                            <li class="nav-item <%= Request.Path.EndsWith("Dashboard.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
-                                <a href="<%= ResolveUrl("~/Frontend/Admin/Dashboard.aspx") %>">
-                                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-                                        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-                                        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-                                        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-                                    </svg>
-                                    <span>Admin Dashboard</span>
-                                </a>
-                            </li>
                             <li class="nav-item <%= Request.Path.EndsWith("AdminEvents.aspx", StringComparison.OrdinalIgnoreCase) ? "active" : "" %>">
                                 <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>">
                                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -175,15 +164,6 @@
                         </div>-->
                     </div>
                 </header>
-
-                <asp:Panel ID="pnlPreviewBanner" runat="server" CssClass="preview-banner" Visible="false">
-                    <div>
-                        <strong>Preview Mode:</strong> You are viewing the UI layout without an active authenticated session.
-                    </div>
-                    <div>
-                        <a href="<%= ResolveUrl("~/Frontend/Login/Login.aspx") %>">Go to Login Page &rarr;</a>
-                    </div>
-                </asp:Panel>
 
                 <!-- Injected Child Content -->
                 <main class="admin-workspace">

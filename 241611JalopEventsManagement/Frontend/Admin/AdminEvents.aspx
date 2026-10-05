@@ -77,7 +77,7 @@
     <!-- Main Events Matrix Table Panel -->
     <div class="matrix-panel">
         <div class="table-responsive">
-            <asp:Repeater ID="rptEventsMatrix" runat="server" EnableViewState="false" OnItemCommand="rptEventsMatrix_ItemCommand">
+            <asp:Repeater ID="rptEventsMatrix" runat="server" OnItemCommand="rptEventsMatrix_ItemCommand">
                 <HeaderTemplate>
                     <table class="matrix-table">
                         <thead>

@@ -51,7 +51,7 @@ namespace _241611JalopEventsManagement.Frontend
                     else if (string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
                     {
                         lnkPortal.Text = "Go to Admin Dashboard";
-                        lnkPortal.NavigateUrl = "~/Frontend/Admin/Dashboard.aspx";
+                        lnkPortal.NavigateUrl = "~/Frontend/Admin/AdminEvents.aspx";
                     }
                 }
             }

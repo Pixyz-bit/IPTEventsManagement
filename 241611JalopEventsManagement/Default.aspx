@@ -7,7 +7,7 @@
             string role = Session["Role"].ToString();
             if (string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
             {
-                Response.Redirect("~/Frontend/Admin/Dashboard.aspx", true);
+                Response.Redirect("~/Frontend/Admin/AdminEvents.aspx", true);
             }
             else
             {

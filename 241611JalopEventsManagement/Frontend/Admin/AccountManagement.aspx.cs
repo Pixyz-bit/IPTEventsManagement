@@ -11,7 +11,7 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.Admin
 {
-    public partial class AccountManagement : Page
+    public partial class AccountManagement : _241611JalopEventsManagement.Backend.Helpers.AdminPage
     {
         private readonly UserRepository _userRepo = new UserRepository();
         private readonly StudentRepository _studentRepo = new StudentRepository();

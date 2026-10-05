@@ -79,7 +79,6 @@
     <Content Include="Frontend\Admin\Admin.Master" />
     <Content Include="Frontend\Admin\AdminEvents.aspx" />
     <Content Include="Frontend\Admin\CreateEvent.aspx" />
-    <Content Include="Frontend\Admin\Dashboard.aspx" />
     <Content Include="Frontend\Admin\EventDetails.aspx" />
     <Content Include="Frontend\Admin\EventPreRegistered.aspx" />
     <Content Include="Frontend\Admin\AttendanceScanner.aspx" />
@@ -107,7 +106,6 @@
     <Content Include="Frontend\Assets\css\admin\event-details.css" />
     <Content Include="Frontend\Assets\css\admin\event-attendance.css" />
     <Content Include="Frontend\Assets\css\admin\event-analytics.css" />
-    <Content Include="Frontend\Assets\css\admin\dashboard.css" />
     <Content Include="Frontend\Assets\css\admin\create-event.css" />
     <Content Include="Frontend\Assets\css\admin\admin-events.css" />
     <Content Include="Frontend\Assets\css\admin\student-list.css" />
@@ -134,6 +132,7 @@
     <Compile Include="Backend\Repository\UserRepository.cs" />
     <Compile Include="Backend\Helpers\PasswordHelper.cs" />
     <Compile Include="Backend\Helpers\SessionHelper.cs" />
+    <Compile Include="Backend\Helpers\AdminPage.cs" />
     <Compile Include="Frontend\AccessDenied.aspx.cs">
       <DependentUpon>AccessDenied.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -161,13 +160,6 @@
     </Compile>
     <Compile Include="Frontend\Admin\CreateEvent.aspx.designer.cs">
       <DependentUpon>CreateEvent.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Frontend\Admin\Dashboard.aspx.cs">
-      <DependentUpon>Dashboard.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Frontend\Admin\Dashboard.aspx.designer.cs">
-      <DependentUpon>Dashboard.aspx</DependentUpon>
     </Compile>
     <Compile Include="Frontend\Admin\EventDetails.aspx.cs">
       <DependentUpon>EventDetails.aspx</DependentUpon>

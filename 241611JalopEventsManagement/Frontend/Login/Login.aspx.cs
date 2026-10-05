@@ -101,7 +101,7 @@ namespace _241611JalopEventsManagement.Frontend.Login
         {
             if (string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
             {
-                Response.Redirect("~/Frontend/Admin/Dashboard.aspx", endResponse: true);
+                Response.Redirect("~/Frontend/Admin/AdminEvents.aspx", endResponse: true);
             }
             else if (string.Equals(role, "Student", StringComparison.OrdinalIgnoreCase))
             {

@@ -17,7 +17,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litAvatarInitials;
         protected global::System.Web.UI.WebControls.Literal litAdminEmail;
         protected global::System.Web.UI.WebControls.LinkButton btnLogout;
-        protected global::System.Web.UI.WebControls.Panel pnlPreviewBanner;
         protected global::System.Web.UI.WebControls.ContentPlaceHolder MainContent;
     }
 }

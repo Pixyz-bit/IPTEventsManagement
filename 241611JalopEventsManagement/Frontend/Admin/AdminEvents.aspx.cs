@@ -8,7 +8,7 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.Admin
 {
-    public partial class AdminEvents : Page
+    public partial class AdminEvents : _241611JalopEventsManagement.Backend.Helpers.AdminPage
     {
         private readonly EventRepository _eventRepository = new EventRepository();
 
@@ -192,27 +192,40 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         {
             if (string.Equals(e.CommandName, "ToggleArchive", StringComparison.OrdinalIgnoreCase))
             {
-                if (int.TryParse(e.CommandArgument?.ToString(), out int eventId))
+                try
                 {
-                    EventModel ev = _eventRepository.GetEventById(eventId);
-                    if (ev != null)
+                    if (!int.TryParse(e.CommandArgument?.ToString(), out int eventId) || eventId <= 0)
                     {
-                        if (ev.IsArchived)
-                        {
-                            _eventRepository.UnarchiveEvent(eventId);
-                            pnlFeedback.Visible = true;
-                            pnlFeedback.CssClass = "feedback-alert alert-success";
-                            litFeedbackMessage.Text = $"<strong>Event Restored:</strong> &ldquo;{Server.HtmlEncode(ev.Title)}&rdquo; is now visible to students.";
-                        }
-                        else
-                        {
-                            _eventRepository.ArchiveEvent(eventId);
-                            pnlFeedback.Visible = true;
-                            pnlFeedback.CssClass = "feedback-alert alert-success";
-                            litFeedbackMessage.Text = $"<strong>Event Archived:</strong> &ldquo;{Server.HtmlEncode(ev.Title)}&rdquo; has been hidden from the student portal.";
-                        }
-                        BindEventsMatrix();
+                        ShowArchiveFeedback("Unable to identify the selected event. Refresh the page and try again.", false);
+                        return;
                     }
+
+                    EventModel ev = _eventRepository.GetEventById(eventId);
+                    if (ev == null)
+                    {
+                        ShowArchiveFeedback("This event no longer exists. Refresh the page before trying again.", false);
+                        return;
+                    }
+
+                    bool success = ev.IsArchived
+                        ? _eventRepository.UnarchiveEvent(eventId)
+                        : _eventRepository.ArchiveEvent(eventId);
+
+                    if (!success)
+                    {
+                        ShowArchiveFeedback("The event was not updated. Refresh the page and try again.", false);
+                        return;
+                    }
+
+                    BindEventsMatrix();
+                    ShowArchiveFeedback(ev.IsArchived
+                        ? $"Event restored: {ev.Title}. Its status is now Upcoming; registration still follows its schedule and capacity."
+                        : $"Event archived: {ev.Title}. It is hidden from students; registrations and attendance records are retained.", true);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Event archive action failed: {0}", ex);
+                    ShowArchiveFeedback("Unable to update the archive status. Check the database connection and refresh the page before trying again.", false);
                 }
                 return;
             }
@@ -237,6 +250,13 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     pnlCancelModal.Visible = true;
                 }
             }
+        }
+
+        private void ShowArchiveFeedback(string message, bool success)
+        {
+            pnlFeedback.Visible = true;
+            pnlFeedback.CssClass = success ? "feedback-alert alert-success" : "feedback-alert alert-error";
+            litFeedbackMessage.Text = Server.HtmlEncode(message);
         }
 
         protected void btnConfirmCancellation_Click(object sender, EventArgs e)

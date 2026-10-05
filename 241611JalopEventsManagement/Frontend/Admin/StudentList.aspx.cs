@@ -12,7 +12,7 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.Admin
 {
-    public partial class StudentList : Page
+    public partial class StudentList : _241611JalopEventsManagement.Backend.Helpers.AdminPage
     {
         private readonly StudentRepository _studentRepo = new StudentRepository();
 

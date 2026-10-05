@@ -6,7 +6,7 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.Admin
 {
-    public partial class TestConnection : Page
+    public partial class TestConnection : _241611JalopEventsManagement.Backend.Helpers.AdminPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

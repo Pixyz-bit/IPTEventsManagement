@@ -10,7 +10,7 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.Admin
 {
-    public partial class AttendanceScanner : Page
+    public partial class AttendanceScanner : _241611JalopEventsManagement.Backend.Helpers.AdminPage
     {
         private readonly EventRepository _eventRepo = new EventRepository();
         private readonly RegistrationRepository _registrationRepo = new RegistrationRepository();
@@ -149,6 +149,16 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         [WebMethod(EnableSession = true)]
         public static ScanLookupResult LookupAttendee(int eventId, string query)
         {
+            if (!SessionHelper.IsAuthenticated || !SessionHelper.IsAdmin)
+            {
+                return new ScanLookupResult
+                {
+                    Success = false,
+                    State = "Unauthorized",
+                    Message = "An authenticated administrator session is required. Please sign in again."
+                };
+            }
+
             try
             {
                 var repo = new RegistrationRepository();
@@ -226,6 +236,15 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         [WebMethod(EnableSession = true)]
         public static CheckInResult CommitCheckIn(int eventRegistrationId, string verificationMethod)
         {
+            if (!SessionHelper.IsAuthenticated || !SessionHelper.IsAdmin)
+            {
+                return new CheckInResult
+                {
+                    Success = false,
+                    Message = "An authenticated administrator session is required. Please sign in again."
+                };
+            }
+
             try
             {
                 var repo = new RegistrationRepository();

@@ -10,7 +10,7 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.Admin
 {
-    public partial class EventPreRegistered : Page
+    public partial class EventPreRegistered : _241611JalopEventsManagement.Backend.Helpers.AdminPage
     {
         private readonly EventRepository _eventRepo = new EventRepository();
         private readonly RegistrationRepository _registrationRepo = new RegistrationRepository();

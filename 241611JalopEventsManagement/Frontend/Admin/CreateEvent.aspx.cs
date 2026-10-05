@@ -9,7 +9,7 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.Admin
 {
-    public partial class CreateEvent : Page
+    public partial class CreateEvent : _241611JalopEventsManagement.Backend.Helpers.AdminPage
     {
         private readonly EventRepository _eventRepository = new EventRepository();
         private readonly SponsorRepository _sponsorRepository = new SponsorRepository();
@@ -239,7 +239,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
 
             // 2. Build Event Domain Model
-            int adminUserId = SessionHelper.CurrentUserId > 0 ? SessionHelper.CurrentUserId : 1;
+            int adminUserId = SessionHelper.CurrentUserId;
 
             string targetPrograms = string.IsNullOrWhiteSpace(hfSelectedPrograms.Value)
                 ? null

@@ -52,7 +52,7 @@ Upon successful credential validation, the following session keys are populated:
            ▼
 [Establish Session State]
            │
-           ├──► Role == "Admin"   ──► Redirect to ~/Frontend/Admin/Dashboard.aspx
+           ├──► Role == "Admin"   ──► Redirect to ~/Frontend/Admin/AdminEvents.aspx
            └──► Role == "Student" ──► Redirect to ~/Frontend/User/Dashboard.aspx
 ```
 
@@ -102,3 +102,7 @@ Upon successful credential validation, the following session keys are populated:
 > [!NOTE]
 > Use `admin@gmail.com` / `admin@gmail.com` as the authoritative administrative test account across all automated browser testing and manual admin verification flows.
 
+
+## Admin request enforcement (October 5, 2026)
+
+All admin pages inherit Backend/Helpers/AdminPage.cs. Its OnPreInit rejects anonymous sessions before controls load or postback handlers run, and rejects authenticated non-admin sessions. The master page also checks access. AttendanceScanner.LookupAttendee and CommitCheckIn enforce the same checks independently because static page methods bypass the normal page lifecycle. Anonymous admin preview access has been removed. The administrator landing page is AdminEvents.aspx; the former admin dashboard and its dedicated stylesheet have been removed.

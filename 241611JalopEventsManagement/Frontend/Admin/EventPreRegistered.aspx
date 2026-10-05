@@ -15,7 +15,7 @@
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
         <ol class="breadcrumb-list">
             <li class="breadcrumb-item">
-                <a href="<%= ResolveUrl("~/Frontend/Admin/Dashboard.aspx") %>">
+                <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
                         <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>

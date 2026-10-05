@@ -8,29 +8,21 @@ namespace _241611JalopEventsManagement.Frontend.Admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (SessionHelper.IsAuthenticated)
+            if (!SessionHelper.IsAuthenticated)
             {
-                if (!SessionHelper.IsAdmin)
-                {
-                    Response.Redirect("~/Frontend/AccessDenied.aspx?reason=admin_required", endResponse: true);
-                    return;
-                }
-
-                pnlPreviewBanner.Visible = false;
-                string email = SessionHelper.CurrentEmail ?? "admin@university.edu";
-                litAdminEmail.Text = Server.HtmlEncode(email);
-
-                // Compute initials from email
-                string initial = email.Length > 0 ? email.Substring(0, 1).ToUpper() : "A";
-                litAvatarInitials.Text = initial;
+                Response.Redirect("~/Frontend/Login/Login.aspx", endResponse: true);
+                return;
             }
-            else
+
+            if (!SessionHelper.IsAdmin)
             {
-                // UI Preview Mode enabled for immediate frontend visualization
-                pnlPreviewBanner.Visible = true;
-                litAdminEmail.Text = "preview.admin@univ.edu";
-                litAvatarInitials.Text = "PA";
+                Response.Redirect("~/Frontend/AccessDenied.aspx?reason=admin_required", endResponse: true);
+                return;
             }
+
+            string email = SessionHelper.CurrentEmail ?? string.Empty;
+            litAdminEmail.Text = Server.HtmlEncode(email);
+            litAvatarInitials.Text = Server.HtmlEncode(email.Length > 0 ? email.Substring(0, 1).ToUpper() : "A");
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)
