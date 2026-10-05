@@ -409,54 +409,44 @@
             border: 1px solid #cbd5e1;
         }
 
-        .status-archived {
+        .status-cancelled {
             background-color: #fef2f2;
             color: #991b1b;
             border: 1px solid #fecaca;
         }
 
-        .is-archived-row {
+        .is-cancelled-row {
             background-color: #fbfbfb;
             opacity: 0.88;
         }
 
-        .btn-matrix-archive,
-        .btn-matrix-unarchive {
+        .btn-matrix-cancel {
             display: inline-flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.3rem;
             padding: 0.28rem 0.65rem;
-            font-size: 0.72rem;
-            font-weight: 700;
-            border-radius: 5px;
+            font-size: 0.775rem;
+            font-weight: 600;
+            font-family: var(--font-sans);
+            border-radius: var(--radius-md);
             text-decoration: none;
             cursor: pointer;
             transition: all 0.15s ease;
-            margin-right: 0.5rem;
+            margin-right: 0.75rem;
+            background-color: var(--accent-rose-subtle);
+            color: var(--accent-rose);
+            border: 1px solid var(--accent-rose-border);
+            vertical-align: middle;
+            white-space: nowrap;
         }
 
-        .btn-matrix-archive {
-            background-color: #f8fafc;
-            color: #64748b;
-            border: 1px solid #cbd5e1;
+        .btn-matrix-cancel:hover {
+            background-color: var(--accent-rose);
+            color: #ffffff;
+            border-color: var(--accent-rose);
         }
 
-        .btn-matrix-archive:hover {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-color: #fca5a5;
-        }
 
-        .btn-matrix-unarchive {
-            background-color: #ecfdf5;
-            color: #047857;
-            border: 1px solid #a7f3d0;
-        }
-
-        .btn-matrix-unarchive:hover {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
 
         /* ─── Wireframe Matrix Elements ─── */
         .cell-event-title {
@@ -510,19 +500,28 @@
             color: var(--text-heading);
         }
 
+        /* View > Link (Underlined text link per Student Directory reference) */
+        .btn-view-link,
         .link-matrix-view {
-            font-size: 0.88rem;
-            font-weight: 700;
-            color: var(--brand-primary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-heading);
             text-decoration: underline;
             text-underline-offset: 3px;
+            text-decoration-thickness: 1.5px;
             cursor: pointer;
             transition: color 0.15s ease;
+            background: none;
+            border: none;
+            padding: 0;
+            font-family: inherit;
             white-space: nowrap;
+            vertical-align: middle;
         }
 
+        .btn-view-link:hover,
         .link-matrix-view:hover {
-            color: var(--brand-primary-hover);
+            color: var(--brand-primary);
         }
 
         /* Row Actions */
@@ -610,13 +609,14 @@
         }
 
         .modal-box {
+            max-height: calc(100vh - 2rem);
             background-color: #ffffff;
             border-radius: 10px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             border: 1px solid var(--border-subtle);
             width: 90%;
             max-width: 480px;
-            overflow: hidden;
+            overflow: auto;
             animation: modalFadeIn 0.2s ease-out;
         }
 
@@ -670,7 +670,7 @@
             padding: 0.6rem 0.85rem;
             border: 1px solid var(--border-subtle);
             border-radius: 6px;
-            font-size: 0.82rem;
+            font-size: 1rem;
             font-family: var(--font-sans);
             color: var(--text-heading);
             background-color: #f8fafc;
@@ -707,3 +707,5 @@
                 width: 100%;
             }
         }
+
+.cancellation-reason { color: #991b1b; font-size: 0.875rem; overflow-wrap: anywhere; max-width: 30ch; }

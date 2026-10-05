@@ -19,17 +19,6 @@
         <!-- Active Tab State Tracker -->
         <asp:HiddenField ID="hfActiveTab" runat="server" Value="profile" />
 
-        <!-- Preview Notification Banner (Shown when evaluating in demo mode) -->
-        <asp:Panel ID="pnlPreviewBanner" runat="server" CssClass="verified-notice-box" Visible="false" style="margin:0; border-radius:0; border-left:none; border-right:none; background:rgba(245, 158, 11, 0.12); border-color:rgba(245, 158, 11, 0.25); color:#FDE68A;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
-            <div>
-                <strong>DEMO PREVIEW:</strong> Viewing active student profile for <em><asp:Literal ID="litDemoName" runat="server" Text="Martin Jalop" /></em>. Authentication is required to update security credentials.
-            </div>
-        </asp:Panel>
 
         <!-- Top Navigation Bar (Consistent with Dashboard) -->
         <header class="portal-navbar">
@@ -49,7 +38,7 @@
                         </div>
                         <div class="nav-user-info">
                             <span class="nav-user-name"><asp:Literal ID="litNavName" runat="server" Text="Student Account" /></span>
-                            <span class="nav-user-id">[ <asp:Literal ID="litNavId" runat="server" Text="24-1611" /> ]</span>
+                            <span class="nav-user-id">[ <asp:Literal ID="litNavId" runat="server" Text="" /> ]</span>
                         </div>
                     </div>
 

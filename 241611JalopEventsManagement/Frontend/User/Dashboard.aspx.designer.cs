@@ -7,7 +7,6 @@ namespace _241611JalopEventsManagement.Frontend.User
         protected global::System.Web.UI.WebControls.Literal litStudentName;
         protected global::System.Web.UI.WebControls.Literal litStudentId;
         protected global::System.Web.UI.WebControls.LinkButton btnSignOut;
-        protected global::System.Web.UI.WebControls.Panel pnlPreviewBanner;
         protected global::System.Web.UI.WebControls.Panel pnlToast;
         protected global::System.Web.UI.WebControls.Literal litToastMsg;
         protected global::System.Web.UI.WebControls.Literal litCampusBranch;

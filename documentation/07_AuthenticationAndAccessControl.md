@@ -106,3 +106,5 @@ Upon successful credential validation, the following session keys are populated:
 ## Admin request enforcement (October 5, 2026)
 
 All admin pages inherit Backend/Helpers/AdminPage.cs. Its OnPreInit rejects anonymous sessions before controls load or postback handlers run, and rejects authenticated non-admin sessions. The master page also checks access. AttendanceScanner.LookupAttendee and CommitCheckIn enforce the same checks independently because static page methods bypass the normal page lifecycle. Anonymous admin preview access has been removed. The administrator landing page is AdminEvents.aspx; the former admin dashboard and its dedicated stylesheet have been removed.
+
+Student pages (Dashboard, StudentProfile, EventRegistration, and EventPass) inherit StudentPage. OnPreInit redirects anonymous requests to login and other roles to AccessDenied before controls load or postback handlers run. Student demo banners, fabricated profiles, events, registrations, and simulated cancellation success have been removed. Event passes and cancellation requests must belong to the current student.

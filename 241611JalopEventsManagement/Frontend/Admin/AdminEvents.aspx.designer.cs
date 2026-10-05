@@ -21,15 +21,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litCloseCount;
 
         protected global::System.Web.UI.WebControls.LinkButton btnTabAll;
-        protected global::System.Web.UI.WebControls.Literal litBadgeAll;
         protected global::System.Web.UI.WebControls.LinkButton btnTabOpen;
-        protected global::System.Web.UI.WebControls.Literal litBadgeOpen;
         protected global::System.Web.UI.WebControls.LinkButton btnTabSoon;
-        protected global::System.Web.UI.WebControls.Literal litBadgeSoon;
         protected global::System.Web.UI.WebControls.LinkButton btnTabClose;
-        protected global::System.Web.UI.WebControls.Literal litBadgeClose;
-        protected global::System.Web.UI.WebControls.LinkButton btnTabArchived;
-        protected global::System.Web.UI.WebControls.Literal litBadgeArchived;
+        protected global::System.Web.UI.WebControls.LinkButton btnTabCancelled;
 
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
         protected global::System.Web.UI.WebControls.DropDownList ddlDepartmentFilter;
@@ -41,8 +36,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Panel pnlCancelModal;
         protected global::System.Web.UI.WebControls.LinkButton btnDismissModal;
         protected global::System.Web.UI.WebControls.Literal litModalEventTitle;
-        protected global::System.Web.UI.WebControls.HiddenField hCancelEventId;
-        protected global::System.Web.UI.WebControls.HiddenField hfCancelEventId;
+        protected global::System.Web.UI.WebControls.Literal litCancellationError;
         protected global::System.Web.UI.WebControls.TextBox txtCancellationReason;
         protected global::System.Web.UI.WebControls.Button btnCancelDismiss;
         protected global::System.Web.UI.WebControls.Button btnConfirmCancellation;

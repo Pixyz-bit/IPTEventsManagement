@@ -13,8 +13,6 @@ namespace _241611JalopEventsManagement.Frontend.User
     {
         protected global::System.Web.UI.HtmlControls.HtmlForm studentProfileForm;
         protected global::System.Web.UI.WebControls.HiddenField hfActiveTab;
-        protected global::System.Web.UI.WebControls.Panel pnlPreviewBanner;
-        protected global::System.Web.UI.WebControls.Literal litDemoName;
         protected global::System.Web.UI.WebControls.Literal litNavAvatar;
         protected global::System.Web.UI.WebControls.Literal litNavName;
         protected global::System.Web.UI.WebControls.Literal litNavId;

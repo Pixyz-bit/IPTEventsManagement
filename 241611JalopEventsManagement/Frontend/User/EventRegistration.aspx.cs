@@ -7,7 +7,7 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.User
 {
-    public partial class EventRegistration : Page
+    public partial class EventRegistration : StudentPage
     {
         private readonly EventRepository _eventRepo = new EventRepository();
         private readonly StudentRepository _studentRepo = new StudentRepository();
@@ -34,15 +34,6 @@ namespace _241611JalopEventsManagement.Frontend.User
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!SessionHelper.IsAuthenticated)
-            {
-                // In local dev preview mode, allow fallback or redirect to Login
-                if (SessionHelper.CurrentUserId == 0 && string.IsNullOrEmpty(SessionHelper.CurrentStudentId))
-                {
-                    Response.Redirect("~/Frontend/Login/Login.aspx", true);
-                    return;
-                }
-            }
 
             if (!IsPostBack)
             {
@@ -72,9 +63,9 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             // 1. Fetch Event Context
             var ev = _eventRepo.GetEventById(eventId);
-            if (ev == null || ev.IsArchived || string.Equals(ev.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
+            if (ev == null || !string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase))
             {
-                ShowError("Selected event could not be found, is cancelled, or has been archived by the administrator.");
+                ShowError("This event is unavailable or cancelled. Registration is closed.");
                 if (btnConfirmRegistration != null) btnConfirmRegistration.Visible = false;
                 return;
             }
@@ -130,24 +121,13 @@ namespace _241611JalopEventsManagement.Frontend.User
             }
 
             // 2. Fetch Student Profile
-            string studentId = SessionHelper.CurrentStudentId ?? "24-1611";
+            string studentId = SessionHelper.CurrentStudentId;
             var student = _studentRepo.GetStudentByUserId(SessionHelper.CurrentUserId) ?? _studentRepo.GetStudentById(studentId);
 
             if (student == null)
             {
-                // Fallback demo profile for seamless experience
-                student = new StudentProfile
-                {
-                    StudentId = studentId,
-                    FirstName = "Martin",
-                    LastName = "Jalop",
-                    Email = SessionHelper.CurrentEmail ?? "24-1611@qcu.edu.ph",
-                    CampusBranch = "San Bartolome (Main)",
-                    Department = "College of Computer Studies",
-                    Program = "BS Information Technology",
-                    YearLevel = 3,
-                    Section = "SBIT-3A"
-                };
+                Response.Redirect("~/Frontend/User/StudentProfile.aspx", true);
+                return;
             }
 
             // Check if student already holds a reservation
@@ -215,10 +195,11 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             int yearLvl = int.TryParse(ddlYearLevel.SelectedValue, out int y) ? y : 3;
 
-            string studentId = SessionHelper.CurrentStudentId ?? litProfileStudentId.Text;
+            string studentId = SessionHelper.CurrentStudentId;
             if (string.IsNullOrWhiteSpace(studentId))
             {
-                studentId = "24-1611";
+                ShowError("Your student profile is unavailable. Please sign in again.");
+                return;
             }
 
             // Check if already registered

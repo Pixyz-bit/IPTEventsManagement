@@ -30,6 +30,7 @@ namespace _241611JalopEventsManagement.Backend.Models
         public DateTime? EventEnd { get; set; }
 
         public string EventStatus { get; set; }
+        public string EventCancellationReason { get; set; }
 
         public DateTime? RegStart { get; set; }
 
@@ -71,12 +72,15 @@ namespace _241611JalopEventsManagement.Backend.Models
         /// Indicates whether the registration was cancelled.
         /// </summary>
         public bool IsCancelled => string.Equals(Status, "Cancelled", StringComparison.OrdinalIgnoreCase);
+        public bool IsEventCancelled => string.Equals(EventStatus, "Cancelled", StringComparison.OrdinalIgnoreCase);
+        public bool IsPassValid => string.Equals(EventStatus, "Upcoming", StringComparison.OrdinalIgnoreCase)
+            && !IsCancelled && !IsCheckedIn;
 
         /// <summary>
         /// Students can only cancel during the active registration period (before RegEnd).
         /// After the registration period ends or if already checked in / cancelled, cancellation is locked.
         /// </summary>
-        public bool CanCancel => !IsCancelled && !IsCheckedIn && RegEnd.HasValue && DateTime.Now <= RegEnd.Value;
+        public bool CanCancel => IsPassValid && RegEnd.HasValue && DateTime.Now <= RegEnd.Value;
 
         #endregion
     }

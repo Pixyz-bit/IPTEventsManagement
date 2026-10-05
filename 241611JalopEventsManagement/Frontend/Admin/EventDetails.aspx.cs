@@ -161,20 +161,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             litSidebarStatus.Text = matrixStatus;
             litMetaEventId.Text = ev.EventId.ToString();
 
-            // Toggle Archive Button State & Notice
-            if (ev.IsArchived)
-            {
-                btnToggleArchive.Text = "Restore to Students (Unarchive)";
-                btnToggleArchive.CssClass = "btn-action-primary";
-                pnlArchivedNotice.Visible = true;
-            }
-            else
-            {
-                btnToggleArchive.Text = "Hide from Students (Archive)";
-                btnToggleArchive.CssClass = "btn-action-secondary";
-                pnlArchivedNotice.Visible = false;
-            }
-
+            lnkCancelEvent.Visible = !isDemo && ev.CanCancel;
+            lnkCancelEvent.NavigateUrl = "~/Frontend/Admin/AdminEvents.aspx?cancelEventId=" + ev.EventId;
+            btnToggleEdit.Enabled = !isDemo && string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase);
+            pnlCancelledNotice.Visible = ev.IsCancelled;
+            litCancellationReason.Text = Server.HtmlEncode(ev.CancellationReason ?? "No reason recorded.");
             // Section 1: General Info (View)
             litTitleView.Text = Server.HtmlEncode(ev.Title);
             litVenueView.Text = Server.HtmlEncode(ev.VenueLocation);
@@ -346,6 +337,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void btnToggleEdit_Click(object sender, EventArgs e)
         {
+            EventModel current = _eventRepository.GetEventById(CurrentEventId);
+            if (current == null || current.Status != "Upcoming")
+            {
+                ShowError("This event is inactive and cannot be edited.");
+                return;
+            }
             pnlError.Visible = false;
             pnlSuccess.Visible = false;
             IsEditMode = true;
@@ -456,6 +453,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             try
             {
                 EventModel existing = _eventRepository.GetEventById(CurrentEventId);
+                if (existing == null || existing.Status != "Upcoming")
+                {
+                    ShowError("This event is inactive and cannot be edited. Refresh to see its current status.");
+                    return;
+                }
                 int currentRegs = existing?.CurrentRegistrations ?? 0;
 
                 if (capacity < currentRegs)
@@ -515,6 +517,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 };
 
                 bool success = _eventRepository.UpdateEvent(updated);
+                if (!success)
+                {
+                    ShowError("The event was not updated. It may have been cancelled while you were editing. Refresh the page.");
+                    return;
+                }
 
                 // 4. Update Attached Sponsors
                 try
@@ -637,37 +644,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             pnlError.Visible = false;
         }
 
-        protected void btnToggleArchive_Click(object sender, EventArgs e)
-        {
-            if (CurrentEventId <= 0) return;
-
-            EventModel ev = _eventRepository.GetEventById(CurrentEventId);
-            if (ev == null) return;
-
-            if (ev.IsArchived)
-            {
-                bool success = _eventRepository.UnarchiveEvent(CurrentEventId);
-                if (success)
-                {
-                    litSuccessMsg.Text = $"<strong>Event Restored!</strong> &ldquo;{Server.HtmlEncode(ev.Title)}&rdquo; is now visible to students on their dashboard.";
-                    pnlSuccess.Visible = true;
-                    pnlError.Visible = false;
-                }
-            }
-            else
-            {
-                bool success = _eventRepository.ArchiveEvent(CurrentEventId);
-                if (success)
-                {
-                    litSuccessMsg.Text = $"<strong>Event Archived!</strong> &ldquo;{Server.HtmlEncode(ev.Title)}&rdquo; has been hidden from the student portal and registration form.";
-                    pnlSuccess.Visible = true;
-                    pnlError.Visible = false;
-                }
-            }
-
-            LoadEventData();
-        }
-
         private void ShowError(string message)
         {
             litErrorMsg.Text = $"<strong>Action Failed:</strong> {message}";
@@ -677,22 +653,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private static string EvaluateMatrixStatus(EventModel ev)
         {
-            if (ev == null) return "Close";
-            if (ev.IsArchived) return "Archived";
-            DateTime now = DateTime.Now;
-
-            if (string.Equals(ev.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
-                return "Close";
-
-            if (now >= ev.RegStart && now <= ev.RegEnd && ev.CurrentRegistrations < ev.MaxCapacity)
-                return "Open";
-
-            if (now < ev.RegStart)
-                return "Soon";
-
-            return "Close";
+            return AdminEvents.GetEventMatrixStatus(ev);
         }
-
         private static EventModel GetFallbackDemonstrationEvent()
         {
             DateTime now = DateTime.Now;

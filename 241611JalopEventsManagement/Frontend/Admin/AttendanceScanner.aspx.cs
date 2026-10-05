@@ -198,6 +198,13 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     result.State = "WrongEventWarning";
                     result.Message = $"Warning: This ticket pass is for Event #{reg.EventId} '{reg.EventTitle}', not the current active gate.";
                 }
+                else if (!string.Equals(reg.EventStatus, "Upcoming", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.State = "CancelledWarning";
+                    result.Message = reg.IsEventCancelled
+                        ? "Event cancelled. This pass is invalid. " + reg.EventCancellationReason
+                        : "This event is inactive. Check-in is unavailable.";
+                }
                 else if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
                 {
                     result.State = "DuplicateWarning";

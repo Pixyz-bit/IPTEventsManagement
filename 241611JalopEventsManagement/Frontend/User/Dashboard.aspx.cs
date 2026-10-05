@@ -9,7 +9,7 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.User
 {
-    public partial class Dashboard : Page
+    public partial class Dashboard : StudentPage
     {
         private readonly EventRepository _eventRepo = new EventRepository();
         private readonly SponsorRepository _sponsorRepo = new SponsorRepository();
@@ -104,7 +104,6 @@ namespace _241611JalopEventsManagement.Frontend.User
         {
             if (SessionHelper.IsAuthenticated && SessionHelper.IsStudent)
             {
-                pnlPreviewBanner.Visible = false;
                 string studentId = SessionHelper.CurrentStudentId;
 
                 StudentProfile profile = null;
@@ -122,7 +121,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 string fullName = $"{firstName} {lastName}".Trim();
 
                 litStudentName.Text = Server.HtmlEncode(string.IsNullOrEmpty(fullName) ? "Student User" : fullName);
-                litStudentId.Text = Server.HtmlEncode(studentId ?? "STU-2026");
+                litStudentId.Text = Server.HtmlEncode(studentId ?? "Not available");
                 litAvatarInitials.Text = GetInitials(firstName, lastName);
 
                 litCampusBranch.Text = Server.HtmlEncode(profile?.CampusBranch ?? SessionHelper.CurrentCampusBranch ?? "San Bartolome");
@@ -130,18 +129,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 litProgram.Text = Server.HtmlEncode(profile?.Program ?? SessionHelper.CurrentProgram ?? "BSIT");
                 litYearLevel.Text = "3rd Year";
             }
-            else
-            {
-                // Preview mode standard as per dev rules
-                pnlPreviewBanner.Visible = true;
-                litStudentName.Text = "Martin Jalop";
-                litStudentId.Text = "24-1611";
-                litAvatarInitials.Text = "MJ";
-                litCampusBranch.Text = "San Bartolome";
-                litDepartment.Text = "College of Computer Studies";
-                litProgram.Text = "BSIT";
-                litYearLevel.Text = "3rd Year";
-            }
+
         }
 
         private string GetInitials(string first, string last)
@@ -196,12 +184,6 @@ namespace _241611JalopEventsManagement.Frontend.User
                             vm.Sponsors = sponsors;
                         }
 
-                        // Ensure demo sponsors if none registered in DB
-                        if (vm.Sponsors.Count == 0)
-                        {
-                            vm.Sponsors = new List<string> { "AWS", "Microsoft", "LESIT" };
-                        }
-
                         vm.SponsorBadgesHtml = BuildSponsorBadgesHtml(vm.Sponsors);
                         viewModels.Add(vm);
                     }
@@ -209,13 +191,7 @@ namespace _241611JalopEventsManagement.Frontend.User
             }
             catch
             {
-                // Database query unavailable - fallback to demonstrative data
-            }
-
-            // Zero Blank-Screen Guarantee: Bind wireframe demo cards if DB is empty
-            if (viewModels.Count == 0)
-            {
-                viewModels = GetDemonstrationEvents();
+                // Keep the catalog empty when event data is unavailable.
             }
 
             rptEventCards.DataSource = viewModels;
@@ -273,59 +249,6 @@ namespace _241611JalopEventsManagement.Frontend.User
                         bgUrl = vm.BannerImageUrl,
                         regUrl = ResolveUrl($"~/Frontend/User/EventRegistration.aspx?eventId={vm.EventId}")
                     });
-                }
-            }
-
-            if (slidesList.Count < 4)
-            {
-                var fallbackPresets = new[]
-                {
-                    new {
-                        id = 0,
-                        title = "Cybersecurity and AI Convention",
-                        description = "Flagship cybersecurity conference and defensive hacking competition with enterprise penetration testers and student defense drills.",
-                        venue = "QCU Auditorium",
-                        date = "Oct 09, 2026",
-                        time = "10:00 AM - 03:00 PM",
-                        bgUrl = ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg"),
-                        regUrl = "#events-section"
-                    },
-                    new {
-                        id = 0,
-                        title = "AI & Cloud Architecture Workshop",
-                        description = "Deep dive into serverless cloud infrastructure, neural network deployments, and production container scaling with industry guest speakers.",
-                        venue = "QCU San Bartolome - Tech Lab 3",
-                        date = "Oct 09, 2026",
-                        time = "10:00 AM - 03:00 PM",
-                        bgUrl = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg"),
-                        regUrl = "#events-section"
-                    },
-                    new {
-                        id = 0,
-                        title = "Tech & Innovation Summit",
-                        description = "Annual academic showcase bringing together university students and tech sponsors for student capstone demonstrations and keynote sessions.",
-                        venue = "QCU Main Campus - University Hall",
-                        date = "Nov 12, 2026",
-                        time = "08:30 AM - 04:30 PM",
-                        bgUrl = ResolveUrl("~/Frontend/Assets/campus-clean.jpg"),
-                        regUrl = "#events-section"
-                    },
-                    new {
-                        id = 0,
-                        title = "Grand Org Fair & SportsFest",
-                        description = "Campus-wide student organization recruitment showcase, intramural games opening ceremony, and student creative exhibition.",
-                        venue = "QCU Main Plaza & Athletic Grounds",
-                        date = "Nov 20, 2026",
-                        time = "08:00 AM - 06:00 PM",
-                        bgUrl = ResolveUrl("~/Frontend/Assets/QCU Background.png"),
-                        regUrl = "#events-section"
-                    }
-                };
-
-                foreach (var fb in fallbackPresets)
-                {
-                    if (slidesList.Count >= 4) break;
-                    slidesList.Add(fb);
                 }
             }
 
@@ -458,125 +381,6 @@ namespace _241611JalopEventsManagement.Frontend.User
             return string.Join(" ", badges);
         }
 
-        private List<EventCardViewModel> GetDemonstrationEvents()
-        {
-            var list = new List<EventCardViewModel>
-            {
-                new EventCardViewModel
-                {
-                    EventId = 100,
-                    Title = "Hackathon Event 2026",
-                    Description = "Annual university-wide hackathon, software engineering challenge, and developer showcase.",
-                    VenueLocation = "Covered Court",
-                    MaxCapacity = 200,
-                    CurrentRegistrations = 150,
-                    EventStart = new DateTime(2026, 3, 1, 8, 0, 0),
-                    EventEnd = new DateTime(2026, 3, 1, 10, 0, 0),
-                    RegStart = DateTime.Today.AddDays(-5),
-                    RegEnd = DateTime.Today.AddDays(10),
-                    Status = "Upcoming",
-                    IsRegistrationOpen = true,
-                    FormattedSchedule = "March 1, 2026 | 8:00 AM - 10:00 AM",
-                    CategoryTag = "Hackathon",
-                    CategoryFilterKey = "hackathon",
-                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg"),
-                    Sponsors = new List<string> { "QCU Alumni Association", "AWS Educate", "DOST-NCR" },
-                    SponsorBadgesHtml = "<span class=\"sponsor-pill\">QCU Alumni Association</span> <span class=\"sponsor-pill\">AWS Educate</span> <span class=\"sponsor-pill\">DOST-NCR</span>"
-                },
-                new EventCardViewModel
-                {
-                    EventId = 101,
-                    Title = "AI & Cloud Architecture Workshop",
-                    Description = "Deep dive into serverless cloud infrastructure, neural network deployments, and production container scaling with industry guest speakers.",
-                    VenueLocation = "QCU San Bartolome - Tech Lab 3",
-                    MaxCapacity = 50,
-                    CurrentRegistrations = 42,
-                    EventStart = DateTime.Today.AddDays(7).AddHours(10),
-                    EventEnd = DateTime.Today.AddDays(7).AddHours(15),
-                    RegStart = DateTime.Today.AddDays(-2),
-                    RegEnd = DateTime.Today.AddDays(5),
-                    Status = "Upcoming",
-                    IsRegistrationOpen = true,
-                    FormattedSchedule = "Oct 09, 2026 | 10:00 AM - 03:00 PM",
-                    CategoryTag = "Workshop",
-                    CategoryFilterKey = "workshop",
-                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg"),
-                    Sponsors = new List<string> { "AWS", "Google" },
-                    SponsorBadgesHtml = "<span class=\"sponsor-pill\">AWS</span> <span class=\"sponsor-pill\">Google</span>"
-                },
-                new EventCardViewModel
-                {
-                    EventId = 102,
-                    Title = "National Cybersecurity & Ethical Hacking Forum",
-                    Description = "Interactive conference on enterprise penetration testing, offensive security, and student defense competitions.",
-                    VenueLocation = "Main Campus - University Gymnasium",
-                    MaxCapacity = 100,
-                    CurrentRegistrations = 86,
-                    EventStart = DateTime.Today.AddDays(12).AddHours(9),
-                    EventEnd = DateTime.Today.AddDays(12).AddHours(16),
-                    RegStart = DateTime.Today.AddDays(-3),
-                    RegEnd = DateTime.Today.AddDays(9),
-                    Status = "Upcoming",
-                    IsRegistrationOpen = true,
-                    FormattedSchedule = "Oct 24, 2026 | 09:00 AM - 04:00 PM",
-                    CategoryTag = "Hackathon",
-                    CategoryFilterKey = "hackathon",
-                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cyber_ai.jpg"),
-                    Sponsors = new List<string> { "Microsoft", "LESIT" },
-                    SponsorBadgesHtml = "<span class=\"sponsor-pill\">Microsoft</span> <span class=\"sponsor-pill\">LESIT</span>"
-                },
-                new EventCardViewModel
-                {
-                    EventId = 103,
-                    Title = "Annual University Tech & Innovation Summit",
-                    Description = "Flagship academic conference bringing together university students and tech sponsors for student capstone demonstrations and keynotes.",
-                    VenueLocation = "QCU Main Campus - University Hall",
-                    MaxCapacity = 200,
-                    CurrentRegistrations = 142,
-                    EventStart = DateTime.Today.AddDays(18).AddHours(8),
-                    EventEnd = DateTime.Today.AddDays(18).AddHours(17),
-                    RegStart = DateTime.Today.AddDays(-5),
-                    RegEnd = DateTime.Today.AddDays(14),
-                    Status = "Upcoming",
-                    IsRegistrationOpen = true,
-                    FormattedSchedule = "Nov 12, 2026 | 08:30 AM - 04:30 PM",
-                    CategoryTag = "Seminar",
-                    CategoryFilterKey = "seminar",
-                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/campus-clean.jpg"),
-                    Sponsors = new List<string> { "AWS", "Microsoft" },
-                    SponsorBadgesHtml = "<span class=\"sponsor-pill\">AWS</span> <span class=\"sponsor-pill\">Microsoft</span>"
-                },
-                new EventCardViewModel
-                {
-                    EventId = 104,
-                    Title = "Campus Grand Org Fair & SportsFest Kickoff",
-                    Description = "Annual student organization recruitment showcase, intramural games opening ceremony, and campus-wide creative exhibition.",
-                    VenueLocation = "QCU Main Plaza & Athletic Grounds",
-                    MaxCapacity = 350,
-                    CurrentRegistrations = 210,
-                    EventStart = DateTime.Today.AddDays(25).AddHours(8),
-                    EventEnd = DateTime.Today.AddDays(25).AddHours(18),
-                    RegStart = DateTime.Today.AddDays(3),
-                    RegEnd = DateTime.Today.AddDays(20),
-                    Status = "Upcoming",
-                    IsRegistrationOpen = false,
-                    FormattedSchedule = "Nov 20, 2026 | 08:00 AM - 06:00 PM",
-                    CategoryTag = "SportsFest",
-                    CategoryFilterKey = "sportsfest",
-                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/QCU Background.png"),
-                    Sponsors = new List<string> { "Red Bull", "Smart", "GCash" },
-                    SponsorBadgesHtml = "<span class=\"sponsor-pill\">Red Bull</span> <span class=\"sponsor-pill\">Smart</span> <span class=\"sponsor-pill\">GCash</span>"
-                }
-            };
-
-            foreach (var item in list)
-            {
-                PopulateRegistrationPresentation(item);
-            }
-
-            return list;
-        }
-
         #endregion
 
         #region Student Registrations
@@ -607,7 +411,11 @@ namespace _241611JalopEventsManagement.Frontend.User
                         }
 
                         string badgeHtml = "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> CONFIRMED PASS</div>";
-                        if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
+                        if (reg.IsEventCancelled)
+                        {
+                            badgeHtml = "<div class=\"card-status-pill card-status-closed\">EVENT CANCELLED</div>";
+                        }
+                        else if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
                         {
                             badgeHtml = "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> ATTENDED</div>";
                         }
@@ -638,29 +446,7 @@ namespace _241611JalopEventsManagement.Frontend.User
             }
             catch
             {
-                // Fallback for demonstration
-            }
-
-            if (list.Count == 0 && pnlPreviewBanner.Visible)
-            {
-                // Mock registered event in preview mode
-                DateTime demoDate = DateTime.Today.AddDays(7);
-                list.Add(new StudentRegistrationViewModel
-                {
-                    EventRegistrationId = 501,
-                    EventId = 101,
-                    EventTitle = "AI & Cloud Architecture Workshop",
-                    VenueLocation = "QCU San Bartolome - Tech Lab 3",
-                    EventDateFormatted = $"{demoDate:MMM dd, yyyy} • 10:00 AM",
-                    FormattedDate = demoDate.ToString("MMM dd, yyyy"),
-                    FormattedTime = "10:00 AM - 03:00 PM",
-                    Status = "NoShow", // Default status per business rule #1
-                    RegStatusBadgeHtml = "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> CONFIRMED PASS</div>",
-                    PassIdChipText = "PASS #501",
-                    SponsorBadgesHtml = "<span class=\"sponsor-pill\">OFFICIAL PASS</span>",
-                    CanCancel = true, // Active registration period
-                    BannerImageUrl = ResolveUrl("~/Frontend/Assets/hero_cloud_lab.jpg")
-                });
+                // Keep registrations empty when data is unavailable.
             }
 
             if (list.Count > 0)
@@ -749,11 +535,6 @@ namespace _241611JalopEventsManagement.Frontend.User
                 }
                 catch { }
 
-                if (sponsorNames.Count == 0)
-                {
-                    sponsorNames = new List<string> { "AWS", "Microsoft", "LESIT" };
-                }
-
                 litModalSponsors.Text = BuildSponsorBadgesHtml(sponsorNames);
 
                 DateTime now = DateTime.Now;
@@ -785,43 +566,9 @@ namespace _241611JalopEventsManagement.Frontend.User
             }
             else
             {
-                // Fallback demo matching wireframe
-                var demo = GetDemonstrationEvents().FirstOrDefault(x => x.EventId == eventId) ?? GetDemonstrationEvents()[0];
-
-                litModalTitle.Text = Server.HtmlEncode(demo.Title);
-                litModalDescription.Text = Server.HtmlEncode(demo.Description);
-                litModalVenue.Text = Server.HtmlEncode(demo.VenueLocation);
-                litModalSchedule.Text = demo.FormattedSchedule;
-                litModalCapacity.Text = $"{demo.CurrentRegistrations} / {demo.MaxCapacity} ({demo.MaxCapacity - demo.CurrentRegistrations} slots remaining)";
-                litModalRegPeriod.Text = $"{demo.RegStart:MMM dd} - {demo.RegEnd:MMM dd, yyyy}";
-                litModalSponsors.Text = demo.SponsorBadgesHtml;
-
-                DateTime now = DateTime.Now;
-                bool isUpcoming = string.Equals(demo.Status, "Upcoming", StringComparison.OrdinalIgnoreCase);
-                bool isBeforeReg = isUpcoming && now < demo.RegStart;
-                bool isOpen = isUpcoming && now >= demo.RegStart && now <= demo.RegEnd && demo.CurrentRegistrations < demo.MaxCapacity;
-                bool isFullyBooked = isUpcoming && now >= demo.RegStart && now <= demo.RegEnd && demo.CurrentRegistrations >= demo.MaxCapacity;
-
-                if (isBeforeReg)
-                {
-                    btnConfirmRegistration.Enabled = false;
-                    btnConfirmRegistration.Text = $"Registration Opens on {demo.RegStart:MMM dd, h:mm tt}";
-                }
-                else if (isOpen)
-                {
-                    btnConfirmRegistration.Enabled = true;
-                    btnConfirmRegistration.Text = "Register For Event";
-                }
-                else if (isFullyBooked)
-                {
-                    btnConfirmRegistration.Enabled = false;
-                    btnConfirmRegistration.Text = "Fully Booked";
-                }
-                else
-                {
-                    btnConfirmRegistration.Enabled = false;
-                    btnConfirmRegistration.Text = "Registration Closed";
-                }
+                pnlModalDetails.Visible = false;
+                ShowToast("This event is unavailable. Please refresh and try again.", false);
+                return;
             }
 
             pnlModalDetails.Visible = true;
@@ -849,7 +596,10 @@ namespace _241611JalopEventsManagement.Frontend.User
                 int regId = Convert.ToInt32(e.CommandArgument);
                 try
                 {
-                    bool cancelled = _regRepo.CancelRegistration(regId);
+                    var registration = _regRepo.GetRegistrationById(regId);
+                    bool cancelled = registration != null
+                        && string.Equals(registration.StudentId, SessionHelper.CurrentStudentId, StringComparison.OrdinalIgnoreCase)
+                        && _regRepo.CancelRegistration(regId);
                     if (cancelled)
                     {
                         ShowToast("Registration successfully cancelled. One seat has been released back to capacity.", true);
@@ -861,8 +611,8 @@ namespace _241611JalopEventsManagement.Frontend.User
                 }
                 catch
                 {
-                    // Simulated success in preview mode
-                    ShowToast("Registration cancelled in preview mode. Slot reopened for other students.", true);
+                    // Report failure without changing the displayed registration status.
+                    ShowToast("Unable to cancel registration right now. Please try again.", false);
                 }
 
                 LoadEventsCatalog();

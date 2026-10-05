@@ -3,10 +3,8 @@ using System.Web.UI;
 
 namespace _241611JalopEventsManagement.Backend.Helpers
 {
-    /// <summary>
-    /// Authorizes admin requests before page controls load or postback handlers run.
-    /// </summary>
-    public class AdminPage : Page
+    /// <summary>Authorizes student requests before controls or postback handlers run.</summary>
+    public class StudentPage : Page
     {
         protected override void OnPreInit(EventArgs e)
         {
@@ -15,13 +13,11 @@ namespace _241611JalopEventsManagement.Backend.Helpers
                 Response.Redirect("~/Frontend/Login/Login.aspx", true);
                 return;
             }
-
-            if (!SessionHelper.IsAdmin)
+            if (!SessionHelper.IsStudent)
             {
-                Response.Redirect("~/Frontend/AccessDenied.aspx?reason=admin_required", true);
+                Response.Redirect("~/Frontend/AccessDenied.aspx?reason=student_required", true);
                 return;
             }
-
             ViewStateUserKey = Session.SessionID;
             base.OnPreInit(e);
         }

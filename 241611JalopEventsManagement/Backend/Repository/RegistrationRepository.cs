@@ -140,7 +140,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
                        e.EventPhotoPath,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
@@ -176,7 +176,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
                        e.EventPhotoPath,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
@@ -216,7 +216,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
                        e.EventPhotoPath,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
@@ -252,23 +252,12 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = @"
-                UPDATE dbo.EventRegistrationTable
-                SET Status = 'Present',
-                    CheckInTimestamp = @CheckInTimestamp
-                WHERE EventId = @EventId 
-                  AND StudentId = @StudentId 
-                  AND Status != 'Cancelled';";
-
-            var parameters = new[]
-            {
+            const string sql = @"SELECT EventRegistrationId FROM dbo.EventRegistrationTable
+                WHERE EventId = @EventId AND StudentId = @StudentId;";
+            object id = DatabaseConnection.ExecuteScalar(sql,
                 new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId },
-                new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = studentId.Trim() },
-                new SqlParameter("@CheckInTimestamp", SqlDbType.DateTime) { Value = DateTime.Now }
-            };
-
-            int rows = DatabaseConnection.ExecuteNonQuery(sql, parameters);
-            return rows > 0;
+                new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = studentId.Trim() });
+            return id != null && id != DBNull.Value && ConfirmCheckIn(Convert.ToInt32(id), out _);
         }
 
         /// <summary>
@@ -342,11 +331,11 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 BEGIN TRANSACTION;
 
-                DECLARE @EvtId INT, @CurStatus VARCHAR(50), @RegEnd DATETIME;
+                DECLARE @EvtId INT, @CurStatus VARCHAR(50), @RegEnd DATETIME, @EvtStatus VARCHAR(50);
 
                 SELECT @EvtId = r.EventId, 
                        @CurStatus = r.Status, 
-                       @RegEnd = e.RegEnd
+                       @RegEnd = e.RegEnd, @EvtStatus = e.Status
                 FROM dbo.EventRegistrationTable r WITH (UPDLOCK, HOLDLOCK)
                 INNER JOIN dbo.EventsTable e WITH (UPDLOCK, HOLDLOCK) ON r.EventId = e.EventId
                 WHERE r.EventRegistrationId = @EventRegistrationId;
@@ -354,7 +343,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 -- Strictly enforce: 
                 -- 1. Status must be default 'NoShow' (cannot cancel if already 'Present' or 'Cancelled')
                 -- 2. Current time must be within registration window (GETDATE() <= RegEnd)
-                IF @EvtId IS NOT NULL AND @CurStatus = 'NoShow' AND GETDATE() <= @RegEnd
+                IF @EvtId IS NOT NULL AND @CurStatus = 'NoShow' AND GETDATE() <= @RegEnd AND @EvtStatus = 'Upcoming'
                 BEGIN
                     UPDATE dbo.EventRegistrationTable
                     SET Status = 'Cancelled'
@@ -471,7 +460,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sqlTargetEvent = @"
                 SELECT TOP 1 r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
                        e.EventPhotoPath,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
@@ -500,7 +489,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sqlAnyEvent = @"
                 SELECT TOP 1 r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
                        e.EventPhotoPath,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
@@ -541,18 +530,27 @@ namespace _241611JalopEventsManagement.Backend.Repository
             }
 
             const string sql = @"
+                SET XACT_ABORT ON;
                 BEGIN TRANSACTION;
 
-                DECLARE @CurStatus VARCHAR(50), @EventId INT;
+                DECLARE @CurStatus VARCHAR(50), @EventId INT, @EvtStatus VARCHAR(50);
 
                 SELECT @CurStatus = Status, @EventId = EventId
                 FROM dbo.EventRegistrationTable WITH (UPDLOCK, HOLDLOCK)
                 WHERE EventRegistrationId = @EventRegistrationId;
 
+                SELECT @EvtStatus = Status FROM dbo.EventsTable WITH (UPDLOCK, HOLDLOCK)
+                WHERE EventId = @EventId;
+
                 IF @CurStatus IS NULL
                 BEGIN
                     ROLLBACK TRANSACTION;
                     SELECT -1; -- Not found
+                END
+                ELSE IF @EvtStatus IS NULL OR @EvtStatus <> 'Upcoming'
+                BEGIN
+                    ROLLBACK TRANSACTION;
+                    SELECT -4; -- Cancelled or inactive event
                 END
                 ELSE IF @CurStatus = 'Present'
                 BEGIN
@@ -588,6 +586,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
             {
                 errorMessage = "This ticket has already been checked in.";
             }
+            else if (code == -4)
+            {
+                errorMessage = "This event is cancelled or inactive. Its passes cannot be checked in.";
+            }
             else if (code == -3)
             {
                 errorMessage = "This registration pass was previously cancelled.";
@@ -614,7 +616,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
                        r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus,
+                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
                        s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
                        s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
                        u.Email AS StudentEmail
@@ -687,6 +689,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
             if (row.Table.Columns.Contains("EventStatus") && row["EventStatus"] != DBNull.Value)
             {
                 reg.EventStatus = row["EventStatus"].ToString();
+            }
+            if (row.Table.Columns.Contains("EventCancellationReason") && row["EventCancellationReason"] != DBNull.Value)
+            {
+                reg.EventCancellationReason = row["EventCancellationReason"].ToString();
             }
 
             if (row.Table.Columns.Contains("StudentFirstName") && row["StudentFirstName"] != DBNull.Value)

@@ -19,7 +19,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             if (!IsPostBack)
             {
                 PopulateAcademicYears();
-                BindArchiveGrid();
+                BindKpiMetrics();
+                BindHistoryGrid();
             }
         }
 
@@ -27,7 +28,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         {
             try
             {
-                var years = _eventRepo.GetDistinctArchivedAcademicYears();
+                var years = _eventRepo.GetDistinctHistoricalAcademicYears();
                 ddlAcademicYear.Items.Clear();
                 ddlAcademicYear.Items.Add(new ListItem("All Academic Years", "ALL"));
 
@@ -44,39 +45,51 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
         }
 
-        private void BindArchiveGrid()
+        private void BindKpiMetrics()
+        {
+            List<EventModel> masterEvents = null;
+            try
+            {
+                masterEvents = _eventRepo.GetHistoricalEvents(null, null, null, null);
+            }
+            catch
+            {
+                masterEvents = new List<EventModel>();
+            }
+
+            int totalHistorical = masterEvents?.Count ?? 0;
+            int totalCompleted = masterEvents?.Count(e => string.Equals(e.EffectiveOutcomeStatus, "Completed", StringComparison.OrdinalIgnoreCase)) ?? 0;
+            int totalCancelled = masterEvents?.Count(e => string.Equals(e.EffectiveOutcomeStatus, "Cancelled", StringComparison.OrdinalIgnoreCase)) ?? 0;
+
+            double avgTurnout = 0.0;
+            if (masterEvents != null && masterEvents.Any(e => e.PreRegisteredCount > 0))
+            {
+                var validEvents = masterEvents.Where(e => e.PreRegisteredCount > 0).ToList();
+                avgTurnout = validEvents.Average(e => e.TurnoutPercentage);
+            }
+
+            litTotalHistorical.Text = totalHistorical.ToString();
+            litTotalCompleted.Text = totalCompleted.ToString();
+            litTotalCancelled.Text = totalCancelled.ToString();
+            litTurnoutAvg.Text = $"{avgTurnout:F1}%";
+        }
+
+        private void BindHistoryGrid()
         {
             string search = txtSearch.Text?.Trim();
             string ay = ddlAcademicYear.SelectedValue;
-            string sem = ddlSemester.SelectedValue;
             string outcome = ddlOutcomeStatus.SelectedValue;
 
             List<EventModel> events = null;
 
             try
             {
-                events = _eventRepo.GetArchivedEvents(sem, ay, outcome, search);
+                events = _eventRepo.GetHistoricalEvents(null, ay, outcome, search);
             }
             catch
             {
                 events = new List<EventModel>();
             }
-
-            int totalArchived = events?.Count ?? 0;
-            int totalCompleted = events?.Count(e => string.Equals(e.EffectiveOutcomeStatus, "Completed", StringComparison.OrdinalIgnoreCase)) ?? 0;
-            int totalCancelled = events?.Count(e => string.Equals(e.EffectiveOutcomeStatus, "Cancelled", StringComparison.OrdinalIgnoreCase)) ?? 0;
-
-            double avgTurnout = 0.0;
-            if (events != null && events.Any(e => e.PreRegisteredCount > 0))
-            {
-                var validEvents = events.Where(e => e.PreRegisteredCount > 0).ToList();
-                avgTurnout = validEvents.Average(e => e.TurnoutPercentage);
-            }
-
-            litTotalArchived.Text = totalArchived.ToString();
-            litTotalCompleted.Text = totalCompleted.ToString();
-            litTotalCancelled.Text = totalCancelled.ToString();
-            litTurnoutAvg.Text = $"{avgTurnout:F1}%";
 
             if (events != null && events.Count > 0)
             {
@@ -94,21 +107,20 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void FilterChanged(object sender, EventArgs e)
         {
-            BindArchiveGrid();
+            BindHistoryGrid();
         }
 
         protected void btnFilterApply_Click(object sender, EventArgs e)
         {
-            BindArchiveGrid();
+            BindHistoryGrid();
         }
 
         protected void btnResetFilter_Click(object sender, EventArgs e)
         {
             txtSearch.Text = string.Empty;
             ddlAcademicYear.SelectedValue = "ALL";
-            ddlSemester.SelectedValue = "ALL";
             ddlOutcomeStatus.SelectedValue = "ALL";
-            BindArchiveGrid();
+            BindHistoryGrid();
         }
 
         protected void rptEventHistory_ItemCommand(object source, RepeaterCommandEventArgs e)
@@ -120,17 +132,16 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
         }
 
-        protected void btnExportArchiveCsv_Click(object sender, EventArgs e)
+        protected void btnExportHistoryCsv_Click(object sender, EventArgs e)
         {
             string search = txtSearch.Text?.Trim();
             string ay = ddlAcademicYear.SelectedValue;
-            string sem = ddlSemester.SelectedValue;
             string outcome = ddlOutcomeStatus.SelectedValue;
 
             List<EventModel> events = null;
             try
             {
-                events = _eventRepo.GetArchivedEvents(sem, ay, outcome, search);
+                events = _eventRepo.GetHistoricalEvents(null, ay, outcome, search);
             }
             catch
             {
@@ -158,7 +169,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             Response.Clear();
             Response.ContentType = "text/csv";
-            Response.AddHeader("Content-Disposition", $"attachment;filename=QCU_Events_Archive_Ledger_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
+            Response.AddHeader("Content-Disposition", $"attachment;filename=QCU_Events_History_Ledger_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
             Response.Output.Write(sb.ToString());
             Response.Flush();
             Response.End();

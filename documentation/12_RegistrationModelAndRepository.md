@@ -1,5 +1,7 @@
 # Model & Repository Documentation: EventRegistration
 
+Event-wide cancellation is distinct from cancelling one registration. Joined projections include `EventStatus` and `EventCancellationReason`; `IsPassValid` and `CanCancel` reject inactive events. Both check-in entry points enforce event status in the transactional repository, so a saved QR cannot bypass cancellation. Existing attendance and registration rows are preserved. See [the cancellation flow](11_AdminDashboard.md).
+
 - **Model Component:** [`EventRegistrationModel`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Backend/Models/EventRegistrationModel.cs)
 - **Repository Component:** [`RegistrationRepository`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Backend/Repository/RegistrationRepository.cs)
 - **Namespace:** `_241611JalopEventsManagement.Backend.Models` / `_241611JalopEventsManagement.Backend.Repository`

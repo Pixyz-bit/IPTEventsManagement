@@ -11,17 +11,16 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 {
     public partial class EventHistory
     {
-        protected global::System.Web.UI.WebControls.LinkButton btnExportArchiveCsv;
+        protected global::System.Web.UI.WebControls.LinkButton btnExportHistoryCsv;
         protected global::System.Web.UI.WebControls.Panel pnlNotification;
         protected global::System.Web.UI.WebControls.Literal litNotificationMsg;
         protected global::System.Web.UI.WebControls.LinkButton btnCloseNotification;
-        protected global::System.Web.UI.WebControls.Literal litTotalArchived;
+        protected global::System.Web.UI.WebControls.Literal litTotalHistorical;
         protected global::System.Web.UI.WebControls.Literal litTotalCompleted;
         protected global::System.Web.UI.WebControls.Literal litTotalCancelled;
         protected global::System.Web.UI.WebControls.Literal litTurnoutAvg;
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
         protected global::System.Web.UI.WebControls.DropDownList ddlAcademicYear;
-        protected global::System.Web.UI.WebControls.DropDownList ddlSemester;
         protected global::System.Web.UI.WebControls.DropDownList ddlOutcomeStatus;
         protected global::System.Web.UI.WebControls.Button btnFilterApply;
         protected global::System.Web.UI.WebControls.Button btnResetFilter;

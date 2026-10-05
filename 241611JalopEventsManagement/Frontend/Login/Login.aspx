@@ -30,14 +30,6 @@
             <!-- Cinematic Modern Auth Card Container -->
             <div class="auth-card">        
                 <div class="card-inner">
-                    <!-- Server-Side Error Alert -->
-                    <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="alert-error">
-                        <span class="alert-error-tag">! ERROR</span>
-                        <div class="alert-error-msg">
-                            <asp:Label ID="lblErrorMessage" runat="server"></asp:Label>
-                        </div>
-                    </asp:Panel>
-
                     <!-- Student ID or Email Address Input -->
                     <div class="form-group">
                         <label for="<%= txtIdentifier.ClientID %>" class="form-label">Email Address</label>

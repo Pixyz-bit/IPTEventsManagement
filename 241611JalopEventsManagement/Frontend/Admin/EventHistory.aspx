@@ -1,4 +1,4 @@
-<%@ Page Title="Events History & Archive | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventHistory.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventHistory" EnableEventValidation="false" EnableSessionState="ReadOnly" %>
+<%@ Page Title="Events History & History | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventHistory.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventHistory" EnableEventValidation="false" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/event-history.css") %>" />
@@ -12,13 +12,13 @@
             <p>Official permanent records repository for concluded, completed, and cancelled campus events.</p>
         </div>
         <div class="history-actions">
-            <asp:LinkButton ID="btnExportArchiveCsv" runat="server" CssClass="btn-action-secondary" OnClick="btnExportArchiveCsv_Click" ToolTip="Export Master Archive Ledger (CSV)">
+            <asp:LinkButton ID="btnExportHistoryCsv" runat="server" CssClass="btn-action-secondary" OnClick="btnExportHistoryCsv_Click" ToolTip="Export Master History Ledger (CSV)">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
-                <span>Export Archive (CSV)</span>
+                <span>Export History (CSV)</span>
             </asp:LinkButton>
 
             <button type="button" class="btn-action-primary" onclick="window.print();" title="Print Accreditation Ledger Summary">
@@ -44,7 +44,7 @@
             <div class="kpi-card-header">
                 <span class="kpi-card-title">Total Events</span>
             </div>
-            <div class="kpi-card-value"><asp:Literal ID="litTotalArchived" runat="server" Text="0" /></div>
+            <div class="kpi-card-value"><asp:Literal ID="litTotalHistorical" runat="server" Text="0" /></div>
         </div>
 
         <div class="history-kpi-card">
@@ -69,7 +69,7 @@
         </div>
     </div>
 
-    <!-- Master Archive Table Card (Unified with Filter Toolbar & Zero Gap) -->
+    <!-- Master History Table Card (Unified with Filter Toolbar & Zero Gap) -->
     <div class="history-table-card">
         <!-- Filtering & Universal Search Toolbar -->
         <div class="history-toolbar">
@@ -84,13 +84,6 @@
             <div class="history-filters-group">
                 <asp:DropDownList ID="ddlAcademicYear" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
                     <asp:ListItem Value="ALL" Text="All Academic Years" />
-                </asp:DropDownList>
-
-                <asp:DropDownList ID="ddlSemester" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
-                    <asp:ListItem Value="ALL" Text="All Semesters" />
-                    <asp:ListItem Value="1st Semester" Text="1st Semester (Aug - Dec)" />
-                    <asp:ListItem Value="2nd Semester" Text="2nd Semester (Jan - May)" />
-                    <asp:ListItem Value="Summer Term" Text="Summer Term (Jun - Jul)" />
                 </asp:DropDownList>
 
                 <asp:DropDownList ID="ddlOutcomeStatus" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
@@ -117,7 +110,7 @@
                                 <th style="min-width: 170px;">Venue &amp; Schedule</th>
                                 <th style="width: 150px;">Capacity Saturation</th>
                                 <th style="width: 160px;">Attendance Turnout</th>
-                                <th style="width: 120px; text-align: right;">Report</th>
+                                <th style="width: 100px; text-align: right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -170,15 +163,7 @@
 
                         <!-- 6. Actions: Direct Navigation to EventAnalytics.aspx -->
                         <td style="text-align: right;">
-                            <div style="display:flex; justify-content:flex-end; gap:0.35rem;">
-                                <a href='<%# ResolveUrl(string.Format("~/Frontend/Admin/EventAnalytics.aspx?eventId={0}&from=history", Eval("EventId"))) %>' class="btn-archive-view" title="View Detailed Event Analytics &amp; Performance Telemetry">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg>
-                                    <span>Report</span>
-                                </a>
-                            </div>
+                            <a href='<%# ResolveUrl(string.Format("~/Frontend/Admin/EventAnalytics.aspx?eventId={0}&from=history", Eval("EventId"))) %>' class="btn-view-link" title="View Detailed Event Analytics &amp; Performance Telemetry">View &gt;</a>
                         </td>
                     </tr>
                 </ItemTemplate>

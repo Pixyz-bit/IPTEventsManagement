@@ -120,12 +120,14 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Backend\Models\EventModel.cs" />
+    <Compile Include="Backend\Models\EventCancellationModel.cs" />
     <Compile Include="Backend\Models\EventRegistrationModel.cs" />
     <Compile Include="Backend\Models\SponsorModel.cs" />
     <Compile Include="Backend\Models\StudentProfile.cs" />
     <Compile Include="Backend\Models\UserModel.cs" />
     <Compile Include="Backend\Repository\DatabaseConnection.cs" />
     <Compile Include="Backend\Repository\EventRepository.cs" />
+    <Compile Include="Backend\Repository\EventCancellationRepository.cs" />
     <Compile Include="Backend\Repository\RegistrationRepository.cs" />
     <Compile Include="Backend\Repository\SponsorRepository.cs" />
     <Compile Include="Backend\Repository\StudentRepository.cs" />
@@ -133,6 +135,7 @@
     <Compile Include="Backend\Helpers\PasswordHelper.cs" />
     <Compile Include="Backend\Helpers\SessionHelper.cs" />
     <Compile Include="Backend\Helpers\AdminPage.cs" />
+    <Compile Include="Backend\Helpers\StudentPage.cs" />
     <Compile Include="Frontend\AccessDenied.aspx.cs">
       <DependentUpon>AccessDenied.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

@@ -71,13 +71,13 @@
 
                             <div class="ticket-student-number-block">
                                 <span class="ticket-meta-label">STUDENT NUMBER</span>
-                                <span class="ticket-student-number-val" id="litPassStudentId"><asp:Literal ID="litPassStudentId" runat="server" Text="24-1611" /></span>
+                                <span class="ticket-student-number-val" id="litPassStudentId"><asp:Literal ID="litPassStudentId" runat="server" Text="" /></span>
                             </div>
                         </div>
 
                         <!-- Middle: Event Headline -->
                         <div class="ticket-headline-block">
-                            <h1 class="ticket-event-title" id="litPassEventTitle"><asp:Literal ID="litPassEventTitle" runat="server" Text="HACKATHON 2026" /></h1>
+                            <h1 class="ticket-event-title" id="litPassEventTitle"><asp:Literal ID="litPassEventTitle" runat="server" Text="" /></h1>
                         </div>
 
                         <!-- Bottom Row: Event Schedule Specs (Left) + Student Full Name (Right) -->
@@ -90,7 +90,7 @@
                                         <line x1="8" y1="2" x2="8" y2="6"></line>
                                         <line x1="3" y1="10" x2="21" y2="10"></line>
                                     </svg>
-                                    <span id="litPassEventDate"><asp:Literal ID="litPassEventDate" runat="server" Text="Oct 09, 2026" /></span>
+                                    <span id="litPassEventDate"><asp:Literal ID="litPassEventDate" runat="server" Text="" /></span>
                                 </div>
 
                                 <div class="ticket-spec-line">
@@ -98,7 +98,7 @@
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <polyline points="12 6 12 12 16 14"></polyline>
                                     </svg>
-                                    <span id="litPassEventTime"><asp:Literal ID="litPassEventTime" runat="server" Text="10:00 AM - 03:00 PM" /></span>
+                                    <span id="litPassEventTime"><asp:Literal ID="litPassEventTime" runat="server" Text="" /></span>
                                 </div>
 
                                 <div class="ticket-spec-line">
@@ -106,13 +106,13 @@
                                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                         <circle cx="12" cy="10" r="3"></circle>
                                     </svg>
-                                    <span id="litPassVenue"><asp:Literal ID="litPassVenue" runat="server" Text="QCU Auditorium" /></span>
+                                    <span id="litPassVenue"><asp:Literal ID="litPassVenue" runat="server" Text="" /></span>
                                 </div>
                             </div>
 
                             <div class="ticket-student-name-block">
                                 <span class="ticket-meta-label">STUDENT FULL NAME</span>
-                                <span class="ticket-student-name-val" id="litPassStudentName"><asp:Literal ID="litPassStudentName" runat="server" Text="ARLAN MARTIN N. JALOP" /></span>
+                                <span class="ticket-student-name-val" id="litPassStudentName"><asp:Literal ID="litPassStudentName" runat="server" Text="" /></span>
                             </div>
                         </div>
                     </div>
@@ -131,7 +131,7 @@
                     <div class="ticket-right-stub">
                         <div class="ticket-qr-container">
                             <canvas id="qrCanvas"></canvas>
-                            <span class="ticket-stub-ref" id="litPassTicketRef"><asp:Literal ID="litPassTicketRef" runat="server" Text="TCK-2026-00042" /></span>
+                            <span class="ticket-stub-ref" id="litPassTicketRef"><asp:Literal ID="litPassTicketRef" runat="server" Text="" /></span>
                         </div>
                     </div>
 
@@ -139,12 +139,16 @@
                     <asp:Literal ID="litPassCourse" runat="server" Visible="false" />
                     <asp:Literal ID="litPassYearSection" runat="server" Visible="false" />
                     <asp:Literal ID="litPassSecurityToken" runat="server" Visible="false" />
-                    <asp:Literal ID="litPassStatusPill" runat="server" Visible="false" />
+                    <div role="status"><asp:Literal ID="litPassStatusPill" runat="server" /></div>
                 </div>
             </div>
 
             <!-- Utility Actions Row -->
+            <% if (!IsPassValid) { %>
+            <p role="alert" style="color:#991b1b; padding:1rem; background:#fef2f2;"><%= Server.HtmlEncode(PassWarning) %></p>
+            <% } %>
             <div class="pass-actions-row">
+                <% if (IsPassValid) { %>
                 <button type="button" class="btn-download-pass" id="btnDownloadPass" onclick="downloadPassAsPng();">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -153,6 +157,7 @@
                     </svg>
                     <span>Download Pass (PNG)</span>
                 </button>
+                <% } %>
 
                 <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx") %>" class="btn-return-dashboard">
                     <span>Return to My Events Dashboard</span>
@@ -171,6 +176,7 @@
     <!-- Standalone High-Contrast Scannable QR Engine -->
     <script>
         function initializePassQrCode() {
+            if (!<%= IsPassValid ? "true" : "false" %>) return;
             const rawPayload = "<%= QrPayload %>" || "TCK-0000-00000";
             const canvas = document.getElementById("qrCanvas");
             if (!canvas) return;
@@ -257,6 +263,7 @@
          * 1920x680 Retina PNG credential that is 100% identical to the reference card (Photo 2).
          */
         async function downloadPassAsPng() {
+            if (!<%= IsPassValid ? "true" : "false" %>) return;
             try {
                 if (window.AppToast) {
                     AppToast.info('Rendering digital event ticket PNG...', 'Download Ticket', 2500);
@@ -323,12 +330,12 @@
             ctx.imageSmoothingQuality = "high";
 
             const eventTitle = document.getElementById("litPassEventTitle")?.innerText.trim() || "Campus Event";
-            const studentId = document.getElementById("litPassStudentId")?.innerText.trim() || "24-1611";
+            const studentId = document.getElementById("litPassStudentId")?.innerText.trim() || "";
             const studentName = document.getElementById("litPassStudentName")?.innerText.trim() || "Student";
             const eventDate = document.getElementById("litPassEventDate")?.innerText.trim() || "TBD";
             const eventTime = document.getElementById("litPassEventTime")?.innerText.trim() || "TBD";
             const eventVenue = document.getElementById("litPassVenue")?.innerText.trim() || "TBD";
-            const ticketRef = document.getElementById("litPassTicketRef")?.innerText.trim() || "TCK-2026-00042";
+            const ticketRef = document.getElementById("litPassTicketRef")?.innerText.trim() || "";
 
             function textLines(text, font, maxWidth) {
                 ctx.font = font;

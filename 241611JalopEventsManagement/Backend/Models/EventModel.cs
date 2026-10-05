@@ -25,7 +25,7 @@ namespace _241611JalopEventsManagement.Backend.Models
 
         public string EventPhotoPath { get; set; }
 
-        // Archived & Reporting Telemetry
+        // Historical reporting totals
         public int PreRegisteredCount { get; set; }
         public int AttendedCount { get; set; }
         public int NoShowCount { get; set; }
@@ -77,7 +77,11 @@ namespace _241611JalopEventsManagement.Backend.Models
             }
         }
 
-        public bool IsArchived => string.Equals(Status, "Archived", StringComparison.OrdinalIgnoreCase);
+        public bool IsCancelled => string.Equals(Status, "Cancelled", StringComparison.OrdinalIgnoreCase);
+
+        // Existing hidden records remain inactive until an administrator explicitly cancels them.
+        public bool CanCancel => string.Equals(Status, "Upcoming", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(Status, "Archived", StringComparison.OrdinalIgnoreCase);
 
         public bool IsRegistrationOpen
         {

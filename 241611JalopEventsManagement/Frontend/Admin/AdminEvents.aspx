@@ -1,4 +1,4 @@
-<%@ Page Title="Campus Events Matrix | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AdminEvents.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AdminEvents" EnableEventValidation="false" EnableSessionState="ReadOnly" %>
+<%@ Page Title="Campus Events Matrix | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AdminEvents.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AdminEvents" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/admin-events.css") %>" />
@@ -9,7 +9,7 @@
     <div class="page-header-row">
         <div class="header-title-block">
             <h2>Campus Events Matrix</h2>
-            <p>Lorem Ipsum</p>
+            <p>Manage registration, review events, and cancel unintended events safely.</p>
         </div>
         <div class="header-actions">
             <a href="<%= ResolveUrl("~/Frontend/Admin/CreateEvent.aspx") %>" class="btn-action-primary">
@@ -33,26 +33,11 @@
     <!-- Filter & Search Toolbar -->
     <div class="matrix-toolbar">
         <div class="status-tabs-group">
-            <asp:LinkButton ID="btnTabAll" runat="server" CssClass="tab-btn active" OnClick="FilterTab_Click" CommandArgument="All" CausesValidation="false" OnClientClick="filterMatrixByStatus('All', this); return false;">
-                <span>All Events</span>
-                <span class="tab-badge"><asp:Literal ID="litBadgeAll" runat="server" Text="0" /></span>
-            </asp:LinkButton>
-            <asp:LinkButton ID="btnTabOpen" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Open" CausesValidation="false" OnClientClick="filterMatrixByStatus('Open', this); return false;">
-                <span>Open</span>
-                <span class="tab-badge"><asp:Literal ID="litBadgeOpen" runat="server" Text="0" /></span>
-            </asp:LinkButton>
-            <asp:LinkButton ID="btnTabSoon" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Soon" CausesValidation="false" OnClientClick="filterMatrixByStatus('Soon', this); return false;">
-                <span>Soon</span>
-                <span class="tab-badge"><asp:Literal ID="litBadgeSoon" runat="server" Text="0" /></span>
-            </asp:LinkButton>
-            <asp:LinkButton ID="btnTabClose" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Close" CausesValidation="false" OnClientClick="filterMatrixByStatus('Close', this); return false;">
-                <span>Close</span>
-                <span class="tab-badge"><asp:Literal ID="litBadgeClose" runat="server" Text="0" /></span>
-            </asp:LinkButton>
-            <asp:LinkButton ID="btnTabArchived" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Archived" CausesValidation="false" OnClientClick="filterMatrixByStatus('Archived', this); return false;">
-                <span>Archived</span>
-                <span class="tab-badge"><asp:Literal ID="litBadgeArchived" runat="server" Text="0" /></span>
-            </asp:LinkButton>
+            <asp:LinkButton ID="btnTabAll" runat="server" CssClass="tab-btn active" OnClick="FilterTab_Click" CommandArgument="All" CausesValidation="false" Text="All Events" />
+            <asp:LinkButton ID="btnTabOpen" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Open" CausesValidation="false" Text="Open" />
+            <asp:LinkButton ID="btnTabSoon" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Soon" CausesValidation="false" Text="Soon" />
+            <asp:LinkButton ID="btnTabClose" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Close" CausesValidation="false" Text="Close" />
+            <asp:LinkButton ID="btnTabCancelled" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Cancelled" CausesValidation="false" Text="Cancelled" />
         </div>
 
         <div class="filters-right-group">
@@ -93,8 +78,8 @@
                         <tbody>
                 </HeaderTemplate>
                 <ItemTemplate>
-                    <tr class='event-matrix-row <%# (bool)Eval("IsArchived") ? "is-archived-row" : "" %>' data-status='<%# Eval("MatrixStatus") %>' data-dept='<%# Eval("TargetDepartment") %>'>
-                        <!-- 1. Status: Close, Open, Soon, Archived -->
+                    <tr class='event-matrix-row <%# (bool)Eval("IsCancelled") ? "is-cancelled-row" : "" %>' data-status='<%# Eval("MatrixStatus") %>' data-dept='<%# Eval("TargetDepartment") %>'>
+                        <!-- 1. Status: Close, Open, Soon, Cancelled -->
                         <td>
                             <span class='status-pill <%# GetMatrixStatusClass(Eval("MatrixStatus")) %>'>
                                 <%# Eval("MatrixStatus") %>
@@ -106,8 +91,9 @@
                             <div style="display:flex; align-items:center; gap:0.75rem;">
                                 <img src='<%# ResolveUrl(Eval("BannerThumbnailUrl").ToString()) %>' alt="Banner" style="width:48px; height:32px; object-fit:cover; border-radius:5px; border:1px solid var(--border-color); flex-shrink:0;" />
                                 <div>
-                                    <div class="cell-event-title"><%# Eval("Title") %></div>
-                                    <%# (bool)Eval("IsArchived") ? "<span style='font-size:0.7rem; color:#dc2626; font-weight:700;'>[HIDDEN FROM STUDENTS]</span>" : "" %>
+                                    <div class="cell-event-title"><%#: Eval("Title") %></div>
+                                    <div class="cancellation-reason"><%#: Eval("CancellationReason") %></div>
+                                    <%# (bool)Eval("IsCancelled") ? "<span style='font-size:0.7rem; color:#dc2626; font-weight:700;'>[EVENT CANCELLED]</span>" : "" %>
                                 </div>
                             </div>
                         </td>
@@ -135,17 +121,16 @@
                             </div>
                         </td>
 
-                        <!-- 6. View & Archive Actions -->
+                        <!-- 6. View & Cancellation Actions -->
                         <td style="text-align: right; white-space: nowrap;">
-                            <asp:LinkButton ID="btnToggleArchiveRow" runat="server"
-                                CommandName="ToggleArchive"
+                            <asp:LinkButton ID="btnCancelEventRow" runat="server"
+                                CommandName="RequestCancel"
                                 CommandArgument='<%# Eval("EventId") %>'
-                                CssClass='<%# (bool)Eval("IsArchived") ? "btn-matrix-unarchive" : "btn-matrix-archive" %>'
-                                ToolTip='<%# (bool)Eval("IsArchived") ? "Make visible to students (Unarchive)" : "Hide from students (Archive)" %>'
-                                CausesValidation="false">
-                                <%# (bool)Eval("IsArchived") ? "Restore" : "Archive" %>
-                            </asp:LinkButton>
-                            <a href='<%# ResolveUrl("~/Frontend/Admin/EventDetails.aspx?eventId=" + Eval("EventId")) %>' class="link-matrix-view">View &gt;</a>
+                                CssClass="btn-matrix-cancel"
+                                Visible='<%# Eval("CanCancel") %>'
+                                ToolTip="Cancel this event and close registration and check-in"
+                                CausesValidation="false">Cancel Event</asp:LinkButton>
+                            <a href='<%# ResolveUrl("~/Frontend/Admin/EventDetails.aspx?eventId=" + Eval("EventId")) %>' class="btn-view-link link-matrix-view">View &gt;</a>
                         </td>
                     </tr>
                 </ItemTemplate>
@@ -172,19 +157,19 @@
 
     <!-- Cancellation Confirmation Modal Dialog -->
     <asp:Panel ID="pnlCancelModal" runat="server" Visible="false" CssClass="modal-overlay">
-        <div class="modal-box">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="cancelDialogTitle">
             <div class="modal-header">
-                <span class="modal-title">Confirm Event Cancellation</span>
-                <asp:LinkButton ID="btnDismissModal" runat="server" OnClick="btnDismissModal_Click" CausesValidation="false" Style="background:none; border:none; font-size:1.25rem; font-weight:bold; color:var(--text-muted); cursor:pointer;">&times;</asp:LinkButton>
+                <span class="modal-title" id="cancelDialogTitle">Confirm Event Cancellation</span>
+                <asp:LinkButton ID="btnDismissModal" runat="server" OnClick="btnDismissModal_Click" CausesValidation="false" aria-label="Keep event and close dialog" Style="background:none; border:none; font-size:1.25rem; font-weight:bold; color:var(--text-muted); cursor:pointer;">&times;</asp:LinkButton>
             </div>
             <div class="modal-body">
                 <p style="font-size: 0.85rem; color: var(--text-body); margin-bottom: 1rem;">
-                    Are you sure you want to cancel <strong id="modalEventTitle"><asp:Literal ID="litModalEventTitle" runat="server" /></strong>? This will permanently close registration and notify attached cohort channels.
+                    Are you sure you want to cancel <strong id="modalEventTitle"><asp:Literal ID="litModalEventTitle" runat="server" /></strong>? Registration and check-in will close. Existing registrations and attendance records will be kept. Cancellation cannot be undone here, and no automatic email notifications are sent.
                 </p>
-                <asp:HiddenField ID="hfCancelEventId" runat="server" />
                 <div class="form-group">
-                    <label class="form-label">Official Cancellation Reason *</label>
-                    <asp:TextBox ID="txtCancellationReason" runat="server" TextMode="MultiLine" CssClass="form-textarea" placeholder="e.g., Venue maintenance scheduling conflict or typhoon advisory..." />
+                    <label class="form-label" for="<%= txtCancellationReason.ClientID %>">Cancellation reason (required, up to 500 characters)</label>
+                    <asp:TextBox ID="txtCancellationReason" runat="server" TextMode="MultiLine" MaxLength="500" CssClass="form-textarea" aria-describedby="cancellationError" placeholder="e.g., Created this event by mistake" />
+                    <p id="cancellationError" role="alert" style="color:#991b1b;"><asp:Literal ID="litCancellationError" runat="server" /></p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -194,50 +179,24 @@
         </div>
     </asp:Panel>
 
-    <script type="text/javascript">
-        function filterMatrixByStatus(status, clickedTab) {
-            // 1. Update active tab pill styling
-            var tabs = document.querySelectorAll('.status-tabs-group .tab-btn');
-            tabs.forEach(function (tab) {
-                tab.classList.remove('active');
-            });
-            if (clickedTab) {
-                clickedTab.classList.add('active');
-            }
-
-            // 2. Filter table rows
-            var rows = document.querySelectorAll('.matrix-table tbody tr.event-matrix-row');
-            var visibleCount = 0;
-            var normalizedStatus = (status || 'All').toLowerCase();
-
-            rows.forEach(function (row) {
-                var rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
-                if (normalizedStatus === 'all' || rowStatus === normalizedStatus) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var dialog = document.querySelector('[role="dialog"]');
+            if (!dialog) return;
+            var reason = document.getElementById('<%= txtCancellationReason.ClientID %>');
+            reason.setAttribute('maxlength', '500');
+            reason.focus();
+            dialog.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    document.getElementById('<%= btnCancelDismiss.ClientID %>').click();
                 }
+                if (event.key !== 'Tab') return;
+                var controls = dialog.querySelectorAll('a[href], button, input:not([type="hidden"]), textarea');
+                var first = controls[0], last = controls[controls.length - 1];
+                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+                else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
             });
-
-            // 3. Toggle Zero State / Empty State message
-            var noEventsPnl = document.getElementById('<%= pnlNoEvents.ClientID %>');
-            var tableElement = document.querySelector('.matrix-table');
-            if (noEventsPnl) {
-                if (visibleCount === 0 && rows.length > 0) {
-                    noEventsPnl.style.display = 'block';
-                    if (tableElement) tableElement.style.display = 'none';
-                } else {
-                    noEventsPnl.style.display = 'none';
-                    if (tableElement) tableElement.style.display = '';
-                }
-            }
-
-            // 4. Update browser URL without reload
-            if (window.history && window.history.replaceState) {
-                var newUrl = window.location.pathname + (normalizedStatus === 'all' ? '' : '?status=' + encodeURIComponent(status));
-                window.history.replaceState(null, '', newUrl);
-            }
-        }
+        });
     </script>
 </asp:Content>

@@ -11,6 +11,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
     public partial class AdminEvents : _241611JalopEventsManagement.Backend.Helpers.AdminPage
     {
         private readonly EventRepository _eventRepository = new EventRepository();
+        private readonly EventCancellationRepository _cancellationRepository = new EventCancellationRepository();
 
         private string CurrentStatusFilter
         {
@@ -23,12 +24,13 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             if (!IsPostBack)
             {
                 string tabParam = Request.QueryString["status"];
-                if (!string.IsNullOrWhiteSpace(tabParam))
+                if (new[] { "All", "Open", "Soon", "Close", "Cancelled" }.Contains(tabParam, StringComparer.OrdinalIgnoreCase))
                 {
                     CurrentStatusFilter = tabParam.Trim();
                 }
 
                 BindEventsMatrix();
+                if (int.TryParse(Request.QueryString["cancelEventId"], out int eventId)) OpenCancellationDialog(eventId);
             }
         }
 
@@ -44,8 +46,9 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             public int CurrentRegistrations { get; set; }
             public int MaxCapacity { get; set; }
             public string MatrixStatus { get; set; }
-            public string RawStatus { get; set; }
-            public bool IsArchived => string.Equals(RawStatus, "Archived", StringComparison.OrdinalIgnoreCase);
+            public bool IsCancelled { get; set; }
+            public bool CanCancel { get; set; }
+            public string CancellationReason { get; set; }
             public string TargetDepartment { get; set; }
             public string EventPhotoPath { get; set; }
             public string BannerThumbnailUrl => !string.IsNullOrWhiteSpace(EventPhotoPath)
@@ -55,29 +58,25 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private void BindEventsMatrix()
         {
-            DateTime now = DateTime.Now;
             List<EventModel> allEvents = null;
 
             try
             {
                 allEvents = _eventRepository.GetAllEvents();
-                if (allEvents == null || allEvents.Count == 0)
-                {
-                    allEvents = GetDemonstrationEvents();
-                }
             }
-            catch
+            catch (Exception ex)
             {
-                // Fallback for database migration / unseeded preview
-                allEvents = GetDemonstrationEvents();
+                System.Diagnostics.Trace.TraceError("Loading events failed: {0}", ex);
+                ShowFeedback("Unable to load events. Check the database connection and refresh this page.", false);
             }
+            allEvents = allEvents ?? new List<EventModel>();
 
-            // 1. Evaluate Statuses: Close, Open, Soon, Archived
+            // 1. Evaluate statuses including explicit cancellation.
             int totalCount = allEvents.Count;
             int openCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Open");
             int soonCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Soon");
             int closeCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Close");
-            int archivedCount = allEvents.Count(ev => ev.IsArchived);
+            int cancelledCount = allEvents.Count(ev => ev.IsCancelled);
 
             // Update Summary KPI Cards (if present in markup)
             if (litTotalMatrixCount != null) litTotalMatrixCount.Text = totalCount.ToString();
@@ -86,16 +85,16 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             if (litCloseCount != null) litCloseCount.Text = closeCount.ToString();
 
             // 2. Update Status Filter Badges
-            litBadgeAll.Text = totalCount.ToString();
-            litBadgeOpen.Text = openCount.ToString();
-            litBadgeSoon.Text = soonCount.ToString();
-            litBadgeClose.Text = closeCount.ToString();
-            if (litBadgeArchived != null) litBadgeArchived.Text = archivedCount.ToString();
+            btnTabAll.Text = GetTabCaption("All Events", totalCount);
+            btnTabOpen.Text = GetTabCaption("Open", openCount);
+            btnTabSoon.Text = GetTabCaption("Soon", soonCount);
+            btnTabClose.Text = GetTabCaption("Close", closeCount);
+            btnTabCancelled.Text = GetTabCaption("Cancelled", cancelledCount);
 
             // 3. Highlight Active Tab
             UpdateTabStyles();
 
-            // 4. Apply Tab Filter (All, Open, Soon, Close, Archived)
+            // 4. Apply the selected status filter.
             IEnumerable<EventModel> filtered = allEvents;
             if (!string.Equals(CurrentStatusFilter, "All", StringComparison.OrdinalIgnoreCase))
             {
@@ -137,7 +136,9 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 CurrentRegistrations = ev.CurrentRegistrations,
                 MaxCapacity = ev.MaxCapacity,
                 MatrixStatus = GetEventMatrixStatus(ev),
-                RawStatus = ev.Status,
+                IsCancelled = ev.IsCancelled,
+                CanCancel = ev.CanCancel,
+                CancellationReason = ev.CancellationReason,
                 TargetDepartment = ev.TargetDepartment,
                 EventPhotoPath = ev.EventPhotoPath
             }).ToList();
@@ -149,15 +150,22 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             rptEventsMatrix.Visible = rowViewModels.Count > 0;
         }
 
+        private string GetTabCaption(string label, int count)
+        {
+            // LinkButton restores Text through ViewState. Mixing literal markup with nested
+            // server controls can clear those children on postback, leaving an empty anchor.
+            return "<span>" + Server.HtmlEncode(label) + "</span><span class=\"tab-badge\">" + count + "</span>";
+        }
+
         private void UpdateTabStyles()
         {
             btnTabAll.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("All", StringComparison.OrdinalIgnoreCase) ? " active" : "");
             btnTabOpen.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Open", StringComparison.OrdinalIgnoreCase) ? " active" : "");
             btnTabSoon.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Soon", StringComparison.OrdinalIgnoreCase) ? " active" : "");
             btnTabClose.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Close", StringComparison.OrdinalIgnoreCase) ? " active" : "");
-            if (btnTabArchived != null)
+            if (btnTabCancelled != null)
             {
-                btnTabArchived.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Archived", StringComparison.OrdinalIgnoreCase) ? " active" : "");
+                btnTabCancelled.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) ? " active" : "");
             }
         }
 
@@ -190,69 +198,35 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void rptEventsMatrix_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            if (string.Equals(e.CommandName, "ToggleArchive", StringComparison.OrdinalIgnoreCase))
+            if (e.CommandName == "RequestCancel" && int.TryParse(e.CommandArgument?.ToString(), out int eventId))
+                OpenCancellationDialog(eventId);
+        }
+
+        private void OpenCancellationDialog(int eventId)
+        {
+            try
             {
-                try
+                EventModel ev = _eventRepository.GetEventById(eventId);
+                if (ev == null || !ev.CanCancel)
                 {
-                    if (!int.TryParse(e.CommandArgument?.ToString(), out int eventId) || eventId <= 0)
-                    {
-                        ShowArchiveFeedback("Unable to identify the selected event. Refresh the page and try again.", false);
-                        return;
-                    }
-
-                    EventModel ev = _eventRepository.GetEventById(eventId);
-                    if (ev == null)
-                    {
-                        ShowArchiveFeedback("This event no longer exists. Refresh the page before trying again.", false);
-                        return;
-                    }
-
-                    bool success = ev.IsArchived
-                        ? _eventRepository.UnarchiveEvent(eventId)
-                        : _eventRepository.ArchiveEvent(eventId);
-
-                    if (!success)
-                    {
-                        ShowArchiveFeedback("The event was not updated. Refresh the page and try again.", false);
-                        return;
-                    }
-
-                    BindEventsMatrix();
-                    ShowArchiveFeedback(ev.IsArchived
-                        ? $"Event restored: {ev.Title}. Its status is now Upcoming; registration still follows its schedule and capacity."
-                        : $"Event archived: {ev.Title}. It is hidden from students; registrations and attendance records are retained.", true);
+                    ShowFeedback("This event is unavailable for cancellation. It may already be cancelled or completed.", false);
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Trace.TraceError("Event archive action failed: {0}", ex);
-                    ShowArchiveFeedback("Unable to update the archive status. Check the database connection and refresh the page before trying again.", false);
-                }
-                return;
+                // Store the confirmed identity in signed ViewState, never trust a posted hidden field.
+                ViewState["CancellationEventId"] = ev.EventId;
+                litModalEventTitle.Text = Server.HtmlEncode(ev.Title);
+                txtCancellationReason.Text = string.Empty;
+                litCancellationError.Text = string.Empty;
+                pnlCancelModal.Visible = true;
             }
-
-            if (string.Equals(e.CommandName, "RequestCancel", StringComparison.OrdinalIgnoreCase))
+            catch (Exception ex)
             {
-                if (int.TryParse(e.CommandArgument?.ToString(), out int eventId))
-                {
-                    hfCancelEventId.Value = eventId.ToString();
-                    txtCancellationReason.Text = string.Empty;
-
-                    try
-                    {
-                        EventModel ev = _eventRepository.GetEventById(eventId);
-                        litModalEventTitle.Text = ev != null ? Server.HtmlEncode(ev.Title) : "Event #" + eventId;
-                    }
-                    catch
-                    {
-                        litModalEventTitle.Text = "Event #" + eventId;
-                    }
-
-                    pnlCancelModal.Visible = true;
-                }
+                System.Diagnostics.Trace.TraceError("Opening cancellation failed: {0}", ex);
+                ShowFeedback("Unable to load the selected event. Check the database connection and try again.", false);
             }
         }
 
-        private void ShowArchiveFeedback(string message, bool success)
+        private void ShowFeedback(string message, bool success)
         {
             pnlFeedback.Visible = true;
             pnlFeedback.CssClass = success ? "feedback-alert alert-success" : "feedback-alert alert-error";
@@ -261,46 +235,44 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void btnConfirmCancellation_Click(object sender, EventArgs e)
         {
-            if (int.TryParse(hfCancelEventId.Value, out int eventId))
+            var cancellation = new EventCancellationModel
             {
-                string reason = txtCancellationReason.Text?.Trim();
-                if (string.IsNullOrWhiteSpace(reason))
+                EventId = (ViewState["CancellationEventId"] as int?) ?? 0,
+                Reason = txtCancellationReason.Text
+            };
+            if (!cancellation.IsValid)
+            {
+                litCancellationError.Text = "Enter a cancellation reason between 1 and 500 characters.";
+                pnlCancelModal.Visible = cancellation.EventId > 0;
+                return;
+            }
+            try
+            {
+                bool success = _cancellationRepository.CancelEvent(cancellation);
+                pnlCancelModal.Visible = false;
+                ViewState.Remove("CancellationEventId");
+                if (success)
                 {
-                    reason = "Administrative scheduling adjustment.";
+                    CurrentStatusFilter = "Cancelled";
+                    txtSearch.Text = string.Empty;
+                    ddlDepartmentFilter.SelectedIndex = 0;
                 }
-
-                try
-                {
-                    bool success = _eventRepository.CancelEvent(eventId, reason);
-                    pnlCancelModal.Visible = false;
-
-                    pnlFeedback.Visible = true;
-                    if (success)
-                    {
-                        pnlFeedback.CssClass = "feedback-alert alert-success";
-                        litFeedbackMessage.Text = "<strong>Event Cancelled:</strong> Event #" + eventId + " has been formally cancelled and notifications dispatched.";
-                    }
-                    else
-                    {
-                        pnlFeedback.CssClass = "feedback-alert alert-error";
-                        litFeedbackMessage.Text = "<strong>Notice:</strong> Cancellation processed in preview mode.";
-                    }
-
-                    BindEventsMatrix();
-                }
-                catch (Exception ex)
-                {
-                    pnlCancelModal.Visible = false;
-                    pnlFeedback.Visible = true;
-                    pnlFeedback.CssClass = "feedback-alert alert-error";
-                    litFeedbackMessage.Text = "<strong>Error:</strong> " + Server.HtmlEncode(ex.Message);
-                }
+                BindEventsMatrix();
+                ShowFeedback(success
+                    ? "Event cancelled. Registration and check-in are closed; existing records are retained. No automatic notifications are sent."
+                    : "The event was not cancelled. It may already be cancelled, completed, or removed. Refresh before trying again.", success);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Event cancellation failed: {0}", ex);
+                litCancellationError.Text = "Unable to save cancellation. Check the database connection and try again. Your reason has been kept.";
+                pnlCancelModal.Visible = true;
             }
         }
-
         protected void btnDismissModal_Click(object sender, EventArgs e)
         {
             pnlCancelModal.Visible = false;
+            ViewState.Remove("CancellationEventId");
         }
 
         protected void btnCloseFeedback_Click(object sender, EventArgs e)
@@ -327,7 +299,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         public static string GetEventMatrixStatus(EventModel ev)
         {
             if (ev == null) return "Close";
-            if (ev.IsArchived) return "Archived";
+            if (ev.IsCancelled) return "Cancelled";
+            if (!string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase)) return "Close";
             DateTime now = DateTime.Now;
 
             // 1. If cancelled or completed, it's Close
@@ -362,97 +335,13 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     return "status-open";
                 case "soon":
                     return "status-soon";
-                case "archived":
-                    return "status-archived";
+                case "cancelled":
+                    return "status-cancelled";
                 case "close":
                 default:
                     return "status-close";
             }
         }
 
-        private List<EventModel> GetDemonstrationEvents()
-        {
-            DateTime now = DateTime.Now;
-
-            return new List<EventModel>
-            {
-                // 1. Closest upcoming event (Starts in 1 day) -> Reg Deadline passed yesterday -> Status: Close
-                new EventModel
-                {
-                    EventId = 1,
-                    Title = "AI & Cloud Architecture Workshop",
-                    Description = "Deep dive into serverless cloud infrastructure and production container scaling.",
-                    VenueLocation = "QCU San Bartolome - Tech Lab 3",
-                    MaxCapacity = 50,
-                    CurrentRegistrations = 42,
-                    EventStart = now.AddDays(1).AddHours(9),
-                    EventEnd = now.AddDays(1).AddHours(16),
-                    RegStart = now.AddDays(-10),
-                    RegEnd = now.AddDays(-1), // Registration closed yesterday
-                    Status = "Upcoming",
-                    TargetBranch = "San Bartolome",
-                    TargetDepartment = "College of Computer Studies",
-                    TargetProgram = "BSIT",
-                    TargetYearLevel = 3
-                },
-                // 2. Next upcoming event (Starts in 6 days) -> Currently in registration window -> Status: Open
-                new EventModel
-                {
-                    EventId = 2,
-                    Title = "Annual University Tech & Innovation Summit",
-                    Description = "Flagship academic conference bringing together university students and tech sponsors.",
-                    VenueLocation = "QCU Main Campus - University Hall",
-                    MaxCapacity = 200,
-                    CurrentRegistrations = 142,
-                    EventStart = now.AddDays(6).AddHours(8).AddMinutes(30),
-                    EventEnd = now.AddDays(6).AddHours(16).AddMinutes(30),
-                    RegStart = now.AddDays(-5),
-                    RegEnd = now.AddDays(4), // Registration closes in 4 days
-                    Status = "Upcoming",
-                    TargetBranch = null,
-                    TargetDepartment = "College of Computer Studies",
-                    TargetProgram = "BSIT, BSCS",
-                    TargetYearLevel = null
-                },
-                // 3. Furthest out event (Starts in 14 days) -> Registration opens in 3 days -> Status: Soon
-                new EventModel
-                {
-                    EventId = 3,
-                    Title = "National Cybersecurity & Ethical Hacking Forum",
-                    Description = "Interactive conference on penetration testing, offensive security, and student defense drills.",
-                    VenueLocation = "Main Campus - University Gymnasium",
-                    MaxCapacity = 100,
-                    CurrentRegistrations = 0,
-                    EventStart = now.AddDays(14).AddHours(8),
-                    EventEnd = now.AddDays(14).AddHours(17),
-                    RegStart = now.AddDays(3), // Opens in 3 days
-                    RegEnd = now.AddDays(12),
-                    Status = "Upcoming",
-                    TargetBranch = "San Bartolome",
-                    TargetDepartment = "College of Computer Studies",
-                    TargetProgram = "BSIT",
-                    TargetYearLevel = null
-                },
-                // 4. Furthest out event (Starts in 21 days) -> Registration opens in 7 days -> Status: Soon
-                new EventModel
-                {
-                    EventId = 4,
-                    Title = "Inter-University Robotics Invitational",
-                    Description = "Autonomous robot maze-solving and combat competition across campus branches.",
-                    VenueLocation = "Central Grounds & Covered Court",
-                    MaxCapacity = 300,
-                    CurrentRegistrations = 0,
-                    EventStart = now.AddDays(21).AddHours(9),
-                    EventEnd = now.AddDays(21).AddHours(18),
-                    RegStart = now.AddDays(7), // Opens in 7 days
-                    RegEnd = now.AddDays(19),
-                    Status = "Upcoming",
-                    TargetBranch = "San Bartolome",
-                    TargetDepartment = "College of Engineering",
-                    TargetProgram = null,
-                    TargetYearLevel = null
-                }
-            };
-        }
     }
 }

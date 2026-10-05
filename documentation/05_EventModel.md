@@ -38,6 +38,8 @@ The `EventModel` is a clean Plain Old CLR Object (POCO) representing an event en
 
 ## 3. Computed Domain Helpers
 
+`IsCancelled` identifies event-wide cancellation. `CanCancel` permits upcoming events and legacy hidden records; completed and cancelled records are protected. `EventCancellationModel` validates the event ID and a trimmed reason of 1–500 characters. See [the cancellation flow](11_AdminDashboard.md).
+
 ### 3.1 `RemainingCapacity`
 * **Purpose:** Calculates remaining ticket availability.
 * **Signature & Contracts:**

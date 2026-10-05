@@ -16,15 +16,6 @@
 </head>
 <body>
     <form id="studentDashboardForm" runat="server">
-        <!-- Preview Notification Banner (Shown when evaluating without authenticated session) -->
-        <asp:Panel ID="pnlPreviewBanner" runat="server" CssClass="preview-banner" Visible="false">
-            <div>
-                <strong>DEMO PREVIEW:</strong> Viewing active student profile for <em>Martin Jalop (BSIT 3rd Year &bull; San Bartolome)</em>.
-            </div>
-            <div>
-                <a href="<%= ResolveUrl("~/Frontend/Login/Login.aspx") %>">LOGIN WITH ACTIVE ACCOUNT &rarr;</a>
-            </div>
-        </asp:Panel>
         <!-- Top Standalone Navigation Bar -->
         <header class="portal-navbar" id="portalNavbar">
             <div class="navbar-inner">
@@ -39,11 +30,11 @@
                 <div class="nav-user-bar">
                     <a href="<%= ResolveUrl("~/Frontend/User/StudentProfile.aspx") %>" class="nav-user-badge" title="Manage Account Settings" style="text-decoration:none; color:inherit; cursor:pointer;">
                         <div class="nav-user-avatar">
-                            <asp:Literal ID="litAvatarInitials" runat="server" Text="MJ" />
+                            <asp:Literal ID="litAvatarInitials" runat="server" Text="ST" />
                         </div>
                         <div class="nav-user-info">
-                            <span class="nav-user-name"><asp:Literal ID="litStudentName" runat="server" Text="Martin Jalop" /></span>
-                            <span class="nav-user-id">[ <asp:Literal ID="litStudentId" runat="server" Text="24-1611" /> ]</span>
+                            <span class="nav-user-name"><asp:Literal ID="litStudentName" runat="server" Text="Student" /></span>
+                            <span class="nav-user-id">[ <asp:Literal ID="litStudentId" runat="server" Text="" /> ]</span>
                         </div>
                     </a>
 
@@ -64,7 +55,7 @@
         <!-- ══════════════════════════════════════════════════════════════
              HERO SECTION: FULL VIEWPORT HERO SHOWCASE (DYNAMICALLY BOUND)
              ══════════════════════════════════════════════════════════════ -->
-        <section class="hero-showcase-container" id="heroGallery">
+        <section class="hero-showcase-container" id="heroGallery" style="<%= HeroSlidesJson == "[]" ? "display:none;" : "" %>">
             <!-- Background Image Layer & Dark Vignette Overlay -->
             <div class="hero-bg-layer" id="heroBgImage"></div>
             <div class="hero-overlay-layer"></div>

@@ -115,8 +115,10 @@ namespace _241611JalopEventsManagement.Frontend.Login
 
         private void ShowError(string message)
         {
-            pnlError.Visible = true;
-            lblErrorMessage.Text = Server.HtmlEncode(message);
+            string encodedMessage = System.Web.HttpUtility.JavaScriptStringEncode(Server.HtmlEncode(message), true);
+            ClientScript.RegisterStartupScript(GetType(), "loginErrorToast",
+                "document.addEventListener('DOMContentLoaded', function () { window.AppToast.error(" +
+                encodedMessage + ", 'Sign-in failed'); });", true);
         }
     }
 }

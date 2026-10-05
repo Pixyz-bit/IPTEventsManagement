@@ -18,6 +18,8 @@ The `EventRepository` is the sole data-access interface for managing institution
 
 ## 2. Granular Function Breakdown
 
+Event-wide cancellation uses `EventCancellationRepository` and `EventCancellationModel`. Archive/restore operations are removed. `UpdateEvent` preserves lifecycle status/reason and rejects inactive events. Reporting uses `GetHistoricalEvents` and `GetDistinctHistoricalAcademicYears`. See [the cancellation flow](11_AdminDashboard.md).
+
 ### 2.1 `CreateEvent`
 * **Purpose:** Inserts a new event into `dbo.EventsTable` and populates the auto-generated `EventId`.
 * **Signature & Contracts:**

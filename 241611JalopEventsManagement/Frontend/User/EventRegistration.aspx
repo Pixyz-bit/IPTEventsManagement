@@ -37,7 +37,7 @@
                         </div>
                         <div class="nav-user-info">
                             <span class="nav-user-name"><asp:Literal ID="litNavStudentName" runat="server" Text="Student Account" /></span>
-                            <span class="nav-user-id">[ <asp:Literal ID="litNavStudentId" runat="server" Text="24-1611" /> ]</span>
+                            <span class="nav-user-id">[ <asp:Literal ID="litNavStudentId" runat="server" Text="" /> ]</span>
                         </div>
                     </a>
 
@@ -190,7 +190,7 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                             </span>
                             <span class="viewonly-value highlight-id">
-                                <asp:Literal ID="litProfileStudentId" runat="server" Text="24-1611" />
+                                <asp:Literal ID="litProfileStudentId" runat="server" Text="" />
                             </span>
                         </div>
 

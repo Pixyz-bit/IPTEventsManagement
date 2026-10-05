@@ -6,7 +6,7 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.User
 {
-    public partial class StudentProfilePage : Page
+    public partial class StudentProfilePage : StudentPage
     {
         private readonly StudentRepository _studentRepo = new StudentRepository();
         private readonly UserRepository _userRepo = new UserRepository();
@@ -23,7 +23,6 @@ namespace _241611JalopEventsManagement.Frontend.User
         {
             if (SessionHelper.IsAuthenticated && SessionHelper.IsStudent)
             {
-                pnlPreviewBanner.Visible = false;
                 int userId = SessionHelper.CurrentUserId;
                 string studentId = SessionHelper.CurrentStudentId;
 
@@ -44,7 +43,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 string firstName = profile?.FirstName ?? Session[SessionHelper.KeyFirstName]?.ToString() ?? "Student";
                 string middleName = profile?.MiddleName ?? "";
                 string lastName = profile?.LastName ?? Session[SessionHelper.KeyLastName]?.ToString() ?? "";
-                string matriculationId = profile?.StudentId ?? studentId ?? "STU-2026";
+                string matriculationId = profile?.StudentId ?? studentId ?? "Not available";
 
                 litNavName.Text = Server.HtmlEncode($"{firstName} {lastName}".Trim());
                 litNavId.Text = Server.HtmlEncode(matriculationId);
@@ -66,29 +65,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 txtRole.Text = "Student (Student)";
                 txtStatus.Text = (profile?.IsActive ?? true) ? "Active (Authorized)" : "Suspended / Inactive";
             }
-            else
-            {
-                // Unauthenticated / Demo Preview Mode
-                pnlPreviewBanner.Visible = true;
-                litDemoName.Text = "Martin Jalop";
-                litNavName.Text = "Martin Jalop";
-                litNavId.Text = "24-1611";
-                litNavAvatar.Text = "MJ";
 
-                txtStudentId.Text = "24-1611";
-                txtCampusBranch.Text = "San Bartolome (Main)";
-                txtFirstName.Text = "Martin";
-                txtMiddleName.Text = "—";
-                txtLastName.Text = "Jalop";
-                txtDepartment.Text = "College of Computer Studies";
-                txtProgram.Text = "BS Information Technology";
-                txtGender.Text = "Male";
-                txtYearLevel.Text = "3rd Year";
-
-                txtEmail.Text = "martinj@qcu.edu.ph";
-                txtRole.Text = "Student (Student)";
-                txtStatus.Text = "Active (Authorized)";
-            }
         }
 
         protected void btnUpdatePassword_Click(object sender, EventArgs e)

@@ -617,6 +617,29 @@ body {
     background-color: var(--brand-subtle);
 }
 
+/* Global Table Action View Trigger (Underlined text link per Student Directory reference) */
+.btn-view-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1.5px;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-view-link:hover {
+    color: var(--brand-primary);
+}
+
 /* ─── 6. Reusable Form Elements ─── */
 .form-group {
     display: flex;

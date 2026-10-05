@@ -17,16 +17,6 @@ namespace _241611JalopEventsManagement.Frontend.Login
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// pnlError control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Panel pnlError;
-
-        /// <summary>
-        /// lblErrorMessage control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.Label lblErrorMessage;
-
-        /// <summary>
         /// txtIdentifier control.
         /// </summary>
         protected global::System.Web.UI.WebControls.TextBox txtIdentifier;

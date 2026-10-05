@@ -1,5 +1,7 @@
 # Student Event Registration Wizard & Digital Attendance Pass
 
+Cancelled events are excluded from registration. Existing passes show **EVENT CANCELLED**, display the recorded reason, generate no QR, and hide the download action. Missing registrations redirect to the dashboard instead of generating a mock admission pass. Scanner commits independently reject cancelled events. See [the cancellation flow](11_AdminDashboard.md).
+
 - **Document ID:** `17_StudentEventRegistrationAndPass.md`
 - **Location:** 
   - `Frontend/User/EventRegistration.aspx`, `.cs`, `.designer.cs`

@@ -216,14 +216,12 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     EventEnd = @EventEnd,
                     RegStart = @RegStart,
                     RegEnd = @RegEnd,
-                    Status = @Status,
-                    CancellationReason = @CancellationReason,
                     TargetBranch = @TargetBranch,
                     TargetDepartment = @TargetDepartment,
                     TargetProgram = @TargetProgram,
                     TargetYearLevel = @TargetYearLevel,
                     EventPhotoPath = @EventPhotoPath
-                WHERE EventId = @EventId;";
+                WHERE EventId = @EventId AND Status = 'Upcoming';";
 
             var parameters = new[]
             {
@@ -235,8 +233,6 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@EventEnd", SqlDbType.DateTime) { Value = ev.EventEnd },
                 new SqlParameter("@RegStart", SqlDbType.DateTime) { Value = ev.RegStart },
                 new SqlParameter("@RegEnd", SqlDbType.DateTime) { Value = ev.RegEnd },
-                new SqlParameter("@Status", SqlDbType.VarChar, 50) { Value = ev.Status },
-                new SqlParameter("@CancellationReason", SqlDbType.NVarChar, 500) { Value = (object)ev.CancellationReason ?? DBNull.Value },
                 new SqlParameter("@TargetBranch", SqlDbType.NVarChar, 100) { Value = (object)ev.TargetBranch ?? DBNull.Value },
                 new SqlParameter("@TargetDepartment", SqlDbType.NVarChar, 100) { Value = (object)ev.TargetDepartment ?? DBNull.Value },
                 new SqlParameter("@TargetProgram", SqlDbType.NVarChar, 100) { Value = (object)ev.TargetProgram ?? DBNull.Value },
@@ -247,70 +243,6 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
             int rows = DatabaseConnection.ExecuteNonQuery(sql, parameters);
             return rows > 0;
-        }
-
-        /// <summary>
-        /// Cancels an event and records the formal cancellation reason.
-        /// </summary>
-        public bool CancelEvent(int eventId, string cancellationReason)
-        {
-            if (eventId <= 0)
-            {
-                return false;
-            }
-
-            const string sql = @"
-                UPDATE dbo.EventsTable 
-                SET Status = 'Cancelled',
-                    CancellationReason = @CancellationReason
-                WHERE EventId = @EventId;";
-
-            var parameters = new[]
-            {
-                new SqlParameter("@CancellationReason", SqlDbType.NVarChar, 500) { Value = (object)cancellationReason ?? DBNull.Value },
-                new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId }
-            };
-
-            int rows = DatabaseConnection.ExecuteNonQuery(sql, parameters);
-            return rows > 0;
-        }
-
-        /// <summary>
-        /// Archives an event by setting Status = 'Archived', hiding it from student dashboards and registrations.
-        /// </summary>
-        public bool ArchiveEvent(int eventId)
-        {
-            if (eventId <= 0)
-            {
-                return false;
-            }
-
-            const string sql = @"
-                UPDATE dbo.EventsTable 
-                SET Status = 'Archived'
-                WHERE EventId = @EventId;";
-
-            var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
-            return DatabaseConnection.ExecuteNonQuery(sql, param) > 0;
-        }
-
-        /// <summary>
-        /// Unarchives an event by setting Status = 'Upcoming', restoring visibility to student dashboards.
-        /// </summary>
-        public bool UnarchiveEvent(int eventId)
-        {
-            if (eventId <= 0)
-            {
-                return false;
-            }
-
-            const string sql = @"
-                UPDATE dbo.EventsTable 
-                SET Status = 'Upcoming'
-                WHERE EventId = @EventId;";
-
-            var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
-            return DatabaseConnection.ExecuteNonQuery(sql, param) > 0;
         }
 
         /// <summary>
@@ -358,10 +290,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
         }
 
         /// <summary>
-        /// Retrieves archived, completed, and cancelled campus events with attendance statistics,
+        /// Retrieves historical and current campus events with attendance statistics,
         /// supporting multi-criteria filtering across Academic Year, Semester, Outcome Status, and Universal Search.
         /// </summary>
-        public List<EventModel> GetArchivedEvents(string semester = null, string academicYear = null, string outcomeStatus = null, string search = null)
+        public List<EventModel> GetHistoricalEvents(string semester = null, string academicYear = null, string outcomeStatus = null, string search = null)
         {
             string sql = @"
                 SELECT e.EventId, e.Title, e.Description, e.VenueLocation, e.MaxCapacity, e.CurrentRegistrations, 
@@ -463,7 +395,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// <summary>
         /// Retrieves distinct academic years found across historical events for filter dropdowns.
         /// </summary>
-        public List<string> GetDistinctArchivedAcademicYears()
+        public List<string> GetDistinctHistoricalAcademicYears()
         {
             var years = new List<string>();
             const string sql = @"

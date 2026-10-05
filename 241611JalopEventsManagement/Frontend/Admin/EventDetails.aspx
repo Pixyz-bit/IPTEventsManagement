@@ -132,7 +132,7 @@
                 <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="btn-action-secondary">
                     <span>&larr; Back to Events Matrix</span>
                 </a>
-                <asp:Button ID="btnToggleArchive" runat="server" Text="Hide from Students" CssClass="btn-action-secondary" OnClick="btnToggleArchive_Click" CausesValidation="false" />
+                <asp:HyperLink ID="lnkCancelEvent" runat="server" Text="Cancel Event" CssClass="btn-action-secondary" />
                 <asp:Button ID="btnToggleEdit" runat="server" Text="Edit Specifications" CssClass="btn-action-primary" OnClick="btnToggleEdit_Click" CausesValidation="false" />
             </asp:PlaceHolder>
             <asp:PlaceHolder ID="phEditActions" runat="server" Visible="false">
@@ -142,15 +142,15 @@
         </div>
     </div>
 
-    <!-- Archived Event Warning Banner -->
-    <asp:Panel ID="pnlArchivedNotice" runat="server" Visible="false" Style="margin-bottom:1.25rem; padding:0.85rem 1.25rem; background-color:#fef2f2; border:1px solid #fecaca; border-radius:8px; display:flex; align-items:center; gap:0.75rem; color:#991b1b;">
+    <!-- Cancelled Event Notice -->
+    <asp:Panel ID="pnlCancelledNotice" runat="server" Visible="false" Style="margin-bottom:1.25rem; padding:0.85rem 1.25rem; background-color:#fef2f2; border:1px solid #fecaca; border-radius:8px; display:flex; align-items:center; gap:0.75rem; color:#991b1b;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
         <span style="font-size:0.875rem; font-weight:600;">
-            This event is currently <strong>ARCHIVED</strong> and hidden from the student portal and registration wizard. Click &ldquo;Restore to Students&rdquo; above to make it visible again.
+            <strong>Event cancelled.</strong> Registration and check-in are closed. Records are retained. Reason: <asp:Literal ID="litCancellationReason" runat="server" />
         </span>
     </asp:Panel>
 

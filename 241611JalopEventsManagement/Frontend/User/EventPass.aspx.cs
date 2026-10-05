@@ -6,11 +6,13 @@ using _241611JalopEventsManagement.Backend.Repository;
 
 namespace _241611JalopEventsManagement.Frontend.User
 {
-    public partial class EventPass : Page
+    public partial class EventPass : StudentPage
     {
         private readonly RegistrationRepository _regRepo = new RegistrationRepository();
         private readonly EventRepository _eventRepo = new EventRepository();
 
+        public bool IsPassValid { get; private set; }
+        public string PassWarning { get; private set; } = string.Empty;
         public string QrPayload { get; set; } = "TCK-0000-00000";
 
         protected void Page_Load(object sender, EventArgs e)
@@ -52,34 +54,24 @@ namespace _241611JalopEventsManagement.Frontend.User
                 }
             }
 
-            // Fallback demo model if testing directly
-            if (reg == null)
+            // Missing records must never generate a fabricated admission pass.
+            if (reg == null || !string.Equals(reg.StudentId, SessionHelper.CurrentStudentId, StringComparison.OrdinalIgnoreCase))
             {
-                reg = new EventRegistrationModel
-                {
-                    EventRegistrationId = 1,
-                    EventId = 3,
-                    StudentId = SessionHelper.CurrentStudentId ?? "24-1611",
-                    CurrentYearLvl = 3,
-                    CurrentSection = "SBIT-3A",
-                    Status = "NoShow",
-                    EventTitle = "Cybersecurity and AI Convention",
-                    VenueLocation = "Main Academic Amphitheater",
-                    EventStart = DateTime.Today.AddDays(7).AddHours(9),
-                    EventEnd = DateTime.Today.AddDays(7).AddHours(17),
-                    StudentFirstName = "Martin",
-                    StudentLastName = "Jalop",
-                    StudentProgram = "BS Information Technology",
-                    StudentDepartment = "College of Computer Studies"
-                };
+                Response.Redirect("~/Frontend/User/Dashboard.aspx", true);
+                return;
             }
+            IsPassValid = reg.IsPassValid;
+            if (reg.IsEventCancelled)
+                PassWarning = "Event cancelled. This pass is invalid. Reason: " + (reg.EventCancellationReason ?? "No reason recorded.");
+            else if (!IsPassValid)
+                PassWarning = reg.IsCheckedIn ? "This pass has already been checked in." : "This pass is inactive and cannot be used for admission.";
 
             // Bind QR Code Payload (Ticket reference format matches AttendanceScanner.aspx)
             QrPayload = reg.TicketReference;
 
             // Show or hide success banner
             bool isNewRegistration = string.Equals(Request.QueryString["success"], "1", StringComparison.OrdinalIgnoreCase);
-            pnlSuccessBanner.Visible = isNewRegistration;
+            pnlSuccessBanner.Visible = isNewRegistration && IsPassValid;
 
             // Populate Boarding Pass UI
             litPassEventTitle.Text = Server.HtmlEncode(reg.EventTitle ?? "Campus Event");
@@ -113,7 +105,11 @@ namespace _241611JalopEventsManagement.Frontend.User
             litPassSecurityToken.Text = Server.HtmlEncode(token);
 
             // Dynamic Pass Status Pill
-            if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
+            if (reg.IsEventCancelled)
+            {
+                litPassStatusPill.Text = "EVENT CANCELLED — PASS INVALID";
+            }
+            else if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
             {
                 litPassStatusPill.Text = "● PRESENT & CHECKED IN";
             }
