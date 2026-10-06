@@ -204,6 +204,15 @@ protected void Page_Load(object sender, EventArgs e) {
     $emptyDashboard = Invoke-WebRequest "$base/Frontend/User/Dashboard.aspx" -WebSession $session
     Assert-Test (!$emptyDashboard.Content.Contains('AI &amp; Cloud Architecture Workshop') -and !$emptyDashboard.Content.Contains('Cybersecurity and AI Convention') -and !$emptyDashboard.Content.Contains('DEMO PREVIEW')) 'Database outage renders without fabricated events'
     Invoke-TestSql "EXEC sp_rename 'dbo.EventsUnavailable','EventsTable';"
+    Invoke-TestSql "UPDATE dbo.EventRegistrationTable SET Status='NoShow', CheckInTimestamp=NULL WHERE EventRegistrationId=3;"
+    $activePass=Invoke-WebRequest "$base/Frontend/User/EventPass.aspx?regId=3" -WebSession $session
+    Assert-Test ($activePass.Content.Contains('id="qrCanvas"') -and $activePass.Content.Contains('id="btnDownloadPass"') -and $activePass.Content.Contains('pass-status-active')) 'Active pass retains QR, download and styled status'
+    Invoke-TestSql "UPDATE dbo.EventRegistrationTable SET Status='Present', CheckInTimestamp=GETDATE() WHERE EventRegistrationId=3;"
+    $checkedPass=Invoke-WebRequest "$base/Frontend/User/EventPass.aspx?regId=3" -WebSession $session
+    Assert-Test ($checkedPass.Content.Contains('id="qrCanvas"') -and $checkedPass.Content.Contains('pass-status-checked-in') -and $checkedPass.Content.Contains('PRESENT &amp; CHECKED IN') -and $checkedPass.Content.Contains('Attendance confirmed.')) 'Checked-in pass displays QR and styled attendance confirmation'
+    Assert-Test (!$checkedPass.Content.Contains('id="btnDownloadPass"') -and $checkedPass.Content.Contains('if (!true) return;')) 'Checked-in QR remains visible without enabling ticket download or reuse'
+    $checkedPost=Invoke-WebRequest "$base/Frontend/User/EventPass.aspx?regId=3" -Method Post -Body (Hidden-Form $checkedPass.Content) -WebSession $session
+    Assert-Test ($checkedPost.Content.Contains('PRESENT &amp; CHECKED IN') -and $checkedPost.Content.Contains('TCK-0005-00003')) 'Pass state and actual QR payload survive postback'
     $denied=Invoke-WebRequest $matrixUrl -WebSession $session
     Assert-Test ($denied.BaseResponse.RequestMessage.RequestUri.AbsolutePath -eq '/Frontend/AccessDenied.aspx') 'Student cannot access cancellation controls'
     Write-Output "WEB TOTAL PASSED: $checks"

@@ -12,15 +12,15 @@ namespace _241611JalopEventsManagement.Frontend.User
         private readonly EventRepository _eventRepo = new EventRepository();
 
         public bool IsPassValid { get; private set; }
+        public bool ShowQrCode { get; private set; }
+        public bool IsCheckedIn { get; private set; }
+        public string PassStatusClass { get; private set; } = "pass-status-active";
         public string PassWarning { get; private set; } = string.Empty;
         public string QrPayload { get; set; } = "TCK-0000-00000";
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                LoadDigitalPass();
-            }
+            LoadDigitalPass();
         }
 
         private void LoadDigitalPass()
@@ -61,10 +61,13 @@ namespace _241611JalopEventsManagement.Frontend.User
                 return;
             }
             IsPassValid = reg.IsPassValid;
+            IsCheckedIn = reg.IsCheckedIn && !reg.IsEventCancelled && !reg.IsCancelled;
+            // Checked-in tickets remain visible as attendance records; scanner validation still blocks reuse.
+            ShowQrCode = IsPassValid || IsCheckedIn;
             if (reg.IsEventCancelled)
                 PassWarning = "Event cancelled. This pass is invalid. Reason: " + (reg.EventCancellationReason ?? "No reason recorded.");
             else if (!IsPassValid)
-                PassWarning = reg.IsCheckedIn ? "This pass has already been checked in." : "This pass is inactive and cannot be used for admission.";
+                PassWarning = IsCheckedIn ? "Attendance confirmed. This pass has already been checked in and cannot be used for another entry." : "This pass is inactive and cannot be used for admission.";
 
             // Bind QR Code Payload (Ticket reference format matches AttendanceScanner.aspx)
             QrPayload = reg.TicketReference;
@@ -107,19 +110,23 @@ namespace _241611JalopEventsManagement.Frontend.User
             // Dynamic Pass Status Pill
             if (reg.IsEventCancelled)
             {
+                PassStatusClass = "pass-status-inactive";
                 litPassStatusPill.Text = "EVENT CANCELLED — PASS INVALID";
             }
             else if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
             {
-                litPassStatusPill.Text = "● PRESENT & CHECKED IN";
+                PassStatusClass = "pass-status-checked-in";
+                litPassStatusPill.Text = "PRESENT &amp; CHECKED IN";
             }
             else if (string.Equals(reg.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
             {
-                litPassStatusPill.Text = "✕ PASS REVOKED";
+                PassStatusClass = "pass-status-inactive";
+                litPassStatusPill.Text = "PASS REVOKED";
             }
             else
             {
-                litPassStatusPill.Text = "CONFIRMED PASS";
+                PassStatusClass = IsPassValid ? "pass-status-active" : "pass-status-inactive";
+                litPassStatusPill.Text = IsPassValid ? "CONFIRMED PASS" : "PASS INACTIVE";
             }
         }
     }

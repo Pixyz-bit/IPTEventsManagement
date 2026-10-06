@@ -105,3 +105,5 @@ The post-registration confirmation destination and persistent digital boarding p
   3. The repository extracts the numeric registration ID from the `TCK-XXXX-XXXXX` prefix.
   4. The attendee's full profile (Student ID, Name, Photo, Department, Program, Section) is staged in the verification panel for physical ID card inspection.
   5. The gate operator clicks `[ Confirm & Check-In ]`, atomically committing `Status = 'Present'` and recording the microsecond timestamp.
+
+Checked-in passes keep their QR visible as an attendance record, with a green status badge and confirmation notice. Admission validity remains separate: checked-in and cancelled passes cannot be reused, and only active admission passes offer download. Cancelled or inactive passes show an explicit QR-unavailable state. The pass reloads its server state on every request, including postbacks.

@@ -6,13 +6,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Digital Event Pass &amp; QR Attendance Credential | QCU</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-pass.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-pass.css?v=20261005-2") %>" />
     <script src="<%= ResolveUrl("~/Frontend/Assets/js/vendor/html-to-image-1.11.13.js") %>"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -78,6 +78,10 @@
                         <!-- Middle: Event Headline -->
                         <div class="ticket-headline-block">
                             <h1 class="ticket-event-title" id="litPassEventTitle"><asp:Literal ID="litPassEventTitle" runat="server" Text="" /></h1>
+                            <div class="pass-status <%= PassStatusClass %>" role="status">
+                                <span class="pass-status-dot" aria-hidden="true"></span>
+                                <asp:Literal ID="litPassStatusPill" runat="server" />
+                            </div>
                         </div>
 
                         <!-- Bottom Row: Event Schedule Specs (Left) + Student Full Name (Right) -->
@@ -130,7 +134,18 @@
                     <!-- Right Navy Section (QR Stub) -->
                     <div class="ticket-right-stub">
                         <div class="ticket-qr-container">
-                            <canvas id="qrCanvas"></canvas>
+                            <% if (ShowQrCode) { %>
+                            <canvas id="qrCanvas" role="img" aria-label="QR code for ticket <%= Server.HtmlEncode(QrPayload) %>"></canvas>
+                            <% } else { %>
+                            <div class="ticket-qr-unavailable">
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                                    <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                                </svg>
+                                <span>Pass inactive</span>
+                                <small>QR code unavailable</small>
+                            </div>
+                            <% } %>
                             <span class="ticket-stub-ref" id="litPassTicketRef"><asp:Literal ID="litPassTicketRef" runat="server" Text="" /></span>
                         </div>
                     </div>
@@ -139,13 +154,19 @@
                     <asp:Literal ID="litPassCourse" runat="server" Visible="false" />
                     <asp:Literal ID="litPassYearSection" runat="server" Visible="false" />
                     <asp:Literal ID="litPassSecurityToken" runat="server" Visible="false" />
-                    <div role="status"><asp:Literal ID="litPassStatusPill" runat="server" /></div>
+
                 </div>
             </div>
 
             <!-- Utility Actions Row -->
             <% if (!IsPassValid) { %>
-            <p role="alert" style="color:#991b1b; padding:1rem; background:#fef2f2;"><%= Server.HtmlEncode(PassWarning) %></p>
+            <div class="pass-notice <%= IsCheckedIn ? "pass-notice-checked-in" : "pass-notice-inactive" %>" role="<%= IsCheckedIn ? "status" : "alert" %>">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <% if (IsCheckedIn) { %><path d="m8 12 3 3 5-6"></path><% } else { %><path d="M12 7v6m0 3h.01"></path><% } %>
+                </svg>
+                <p><%= Server.HtmlEncode(PassWarning) %></p>
+            </div>
             <% } %>
             <div class="pass-actions-row">
                 <% if (IsPassValid) { %>
@@ -176,7 +197,7 @@
     <!-- Standalone High-Contrast Scannable QR Engine -->
     <script>
         function initializePassQrCode() {
-            if (!<%= IsPassValid ? "true" : "false" %>) return;
+            if (!<%= ShowQrCode ? "true" : "false" %>) return;
             const rawPayload = "<%= QrPayload %>" || "TCK-0000-00000";
             const canvas = document.getElementById("qrCanvas");
             if (!canvas) return;

@@ -433,6 +433,55 @@
             max-width: 100%;
         }
 
+        /* Ticket state belongs to the credential body, not a third grid cell. */
+        .pass-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+            max-width: 100%;
+            margin-top: 14px;
+            padding: 7px 12px;
+            border: 1px solid currentColor;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            line-height: 1.4;
+        }
+        .pass-status-dot { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: currentColor; }
+        .pass-status-active, .pass-status-checked-in { color: #166534; background: #f0fdf4; border-color: #bbf7d0; }
+        .pass-status-inactive { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+        .pass-notice {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border: 1px solid;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .pass-notice svg { flex: 0 0 22px; }
+        .pass-notice-checked-in { color: #bbf7d0; background: #10251c; border-color: #24583b; }
+        .pass-notice-inactive { color: #fecaca; background: #2b171b; border-color: #71333b; }
+        .ticket-qr-unavailable {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 190px;
+            aspect-ratio: 1;
+            padding: 20px;
+            border: 1px solid #52659e;
+            border-radius: 12px;
+            color: #e2e8ff;
+            text-align: center;
+            font-weight: 700;
+        }
+        .ticket-qr-unavailable small { font-size: 0.75rem; font-weight: 500; }
         /* Action Buttons */
         .pass-actions-row {
             display: flex;
@@ -522,7 +571,7 @@
         }
 
         @media screen and (max-width: 420px) {
-            .ticket-top-row, .ticket-bottom-row { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+            .ticket-top-row, .ticket-bottom-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
             .ticket-student-number-block, .ticket-student-name-block { text-align: left; align-items: flex-start; }
             .ticket-left-body { padding: 22px; }
             .ticket-event-title { font-size: 1.5rem; }
