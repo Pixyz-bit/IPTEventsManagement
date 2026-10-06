@@ -779,38 +779,25 @@
         /* ─── Executive Telemetry Bento Grid ─── */
         .executive-bento-grid {
             display: grid;
-            grid-template-columns: repeat(12, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 1.25rem;
             margin-bottom: 1.5rem;
             align-items: stretch;
         }
 
         .turnout-bento-card {
-            grid-column: span 4;
+            grid-column: 1;
             grid-row: 1;
         }
 
         .capacity-bento-card {
-            grid-column: span 4;
+            grid-column: 2;
             grid-row: 1;
         }
 
-        .cancelled-bento-card {
-            grid-column: 1 / 9;
-            grid-row: 2;
-            background-color: #ffffff;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 1.1rem 1.35rem;
-            box-shadow: var(--shadow-card);
-            display: flex;
-            align-items: center;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-
         .demographics-bento-card {
-            grid-column: 9 / 13;
-            grid-row: 1 / 3;
+            grid-column: 1;
+            grid-row: 2;
             background-color: #ffffff;
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-lg);
@@ -819,85 +806,47 @@
             flex-direction: column;
             overflow: hidden;
             transition: transform 0.15s ease, box-shadow 0.15s ease;
-            /* Square container styling */
-            aspect-ratio: 1 / 1;
+            min-width: 0;
+            min-height: 360px;
         }
 
         .turnout-bento-card:hover,
         .capacity-bento-card:hover,
-        .cancelled-bento-card:hover,
+        .reservation-bento-card:hover,
         .demographics-bento-card:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-elevated);
             border-color: #cbd5e1;
         }
 
-        /* Cancelled Bento Card Content */
-        .cancelled-bento-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-        }
-
-        .cancelled-bento-left {
-            display: flex;
-            align-items: center;
-            gap: 0.85rem;
-        }
-
-        .telemetry-panel-icon.cancelled-icon {
-            background-color: #ffe4e6;
-            color: #e11d48;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .cancelled-bento-titles {
-            display: flex;
-            flex-direction: column;
-            gap: 0.15rem;
-        }
-
-        .cancelled-bento-desc {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .cancelled-bento-right {
-            display: flex;
-            align-items: baseline;
-            gap: 0.5rem;
-        }
-
-        .cancelled-accent {
-            color: var(--accent-rose);
-            font-size: 1.85rem;
-            font-weight: 800;
-            line-height: 1;
-            font-family: var(--font-mono);
-        }
-
-        .cancelled-unit-label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
+        /* Reservation chart shares the demographics card structure and legend. */
+        .reservation-bento-card { grid-column: 2; grid-row: 2; }
+        .executive-bento-grid > * { min-width: 0; }
+        .reservation-pie { position: relative; width: 128px; height: 128px; border-radius: 50%; background: conic-gradient(var(--accent-emerald) 0deg var(--reserved-angle), var(--accent-rose) var(--reserved-angle) 360deg); }
+        .reservation-pie::after { content: ""; position: absolute; inset: 25.3333px; border-radius: 50%; background: #ffffff; }
+        .reservation-pie.is-empty { background: var(--border-color); }
+        .reservation-center-label { position: absolute; text-align: center; pointer-events: none; }
+        .reservation-center-count { font-size: 1.25rem; font-weight: 800; color: var(--text-heading); font-family: var(--font-mono); line-height: 1.1; }
+        .reservation-center-caption { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+        .reserved-swatch { background: var(--accent-emerald); }
+        .cancelled-swatch { background: var(--accent-rose); }
+        .reservation-chart-summary { margin: 0.35rem 0 0; color: var(--text-muted); font-size: 0.75rem; line-height: 1.5; text-align: center; }
 
         /* Demographics Bento Card Layout */
         .demographics-header-compact {
+            min-height: 4rem;
             padding: 0.85rem 1.15rem;
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
         }
+
+        .demographics-header-compact .panel-title { min-width: 0; flex: 1 1 140px; }
+        .demographics-header-compact .panel-title svg { flex-shrink: 0; }
+        .demographics-header-compact .dim-dropdown-group { flex: 0 0 auto; max-width: 100%; }
 
         .dim-select-compact {
             padding: 0.3rem 0.6rem;
@@ -914,7 +863,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             flex: 1;
             padding: 0.75rem 1rem 0.9rem 1rem;
             overflow: hidden;
@@ -924,9 +873,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             width: 100%;
-            height: 100%;
             gap: 0.5rem;
         }
 
@@ -953,44 +901,23 @@
         .pie-chart-container-bento .pie-legend-row {
             padding: 0.3rem 0.5rem;
             font-size: 0.725rem;
+            gap: 0.75rem;
         }
+        .pie-chart-container-bento .pie-legend-left { min-width: 0; max-width: none; flex: 1; }
+        .pie-chart-container-bento .pie-legend-left > span:last-child { overflow: hidden; text-overflow: ellipsis; }
+        .pie-chart-container-bento .pie-legend-meta { flex-shrink: 0; white-space: nowrap; }
 
         /* Responsive Breakpoints */
-        @media (max-width: 1200px) {
-            .demographics-bento-card {
-                aspect-ratio: auto;
-            }
+        @media (min-width: 901px) and (max-width: 1100px) {
+            .demographics-header-compact { min-height: 5rem; }
         }
-
-        @media (max-width: 1024px) {
-            .turnout-bento-card {
-                grid-column: span 6;
-                grid-row: 1;
-            }
-
-            .capacity-bento-card {
-                grid-column: span 6;
-                grid-row: 1;
-            }
-
-            .cancelled-bento-card {
-                grid-column: span 12;
-                grid-row: 2;
-            }
-
-            .demographics-bento-card {
-                grid-column: span 12;
-                grid-row: 3;
-                aspect-ratio: auto;
-            }
-        }
-
-        @media (max-width: 640px) {
+        @media (max-width: 900px) {
+            .executive-bento-grid { grid-template-columns: minmax(0, 1fr); }
             .turnout-bento-card,
             .capacity-bento-card,
-            .cancelled-bento-card,
+            .reservation-bento-card,
             .demographics-bento-card {
-                grid-column: span 12;
+                grid-column: 1;
                 grid-row: auto;
             }
         }

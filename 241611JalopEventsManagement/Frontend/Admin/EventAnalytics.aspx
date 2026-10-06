@@ -273,27 +273,37 @@
             </div>
         </div>
 
-        <!-- 4. Cancelled Reservations (Horizontal Bento Strip) -->
-        <div class="analytics-card cancelled-bento-card">
-            <div class="cancelled-bento-content">
-                <div class="cancelled-bento-left">
-                    <span class="telemetry-panel-icon cancelled-icon">
+        <!-- 4. Reserved versus cancelled registrations -->
+        <div class="telemetry-panel demographics-bento-card reservation-bento-card">
+            <div class="panel-header-bar demographics-header-compact">
+                <div class="panel-title">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="15" y1="9" x2="9" y2="15"></line>
-                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                            <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
                         </svg>
-                    </span>
-                    <div class="cancelled-bento-titles">
-                        <span class="analytics-card-label">Cancelled Reservations</span>
-                        <span class="cancelled-bento-desc">Revoked or released registrations prior to gate check-in</span>
-                    </div>
+                    <span>Reservation Status</span>
                 </div>
-                <div class="cancelled-bento-right">
-                    <span class="analytics-card-value cancelled-accent">
-                        <asp:Literal ID="litBeforeCancelled" runat="server" Text="0" />
-                    </span>
-                    <span class="cancelled-unit-label">Students</span>
+            </div>
+            <div class="panel-body demographics-bento-body">
+                <div class="pie-chart-container-bento">
+                    <div class="pie-svg-wrapper">
+                    <div class="reservation-pie <%= ReservationChartTotal == 0 ? "is-empty" : "" %>" style="--reserved-angle:<%= ReservationChartAngle %>deg;" role="img" aria-label="<%= ReservationChartTotal == 0 ? "No reserved or cancelled registrations" : string.Format("Reserved: {0:F1} percent. Cancelled: {1:F1} percent.", ReservationChartReservedPercent, ReservationChartCancelledPercent) %>"></div>
+                        <div class="pie-center-label-box reservation-center-label">
+                            <div class="reservation-center-count"><%= ReservationChartTotal.ToString("N0") %></div>
+                            <div class="reservation-center-caption">Students</div>
+                        </div>
+                    </div>
+                    <div class="pie-chart-legend">
+                        <div class="pie-legend-row">
+                            <div class="pie-legend-left"><span class="pie-legend-dot reserved-swatch" aria-hidden="true"></span><span>Reserved</span></div>
+                            <span class="pie-legend-meta"><%= ReservationChartReservedCount.ToString("N0") %> (<%= ReservationChartReservedPercent.ToString("F1") %>%)</span>
+                        </div>
+                        <div class="pie-legend-row">
+                            <div class="pie-legend-left"><span class="pie-legend-dot cancelled-swatch" aria-hidden="true"></span><span>Cancelled</span></div>
+                            <span class="pie-legend-meta"><asp:Literal ID="litBeforeCancelled" runat="server" Text="0" /> (<%= ReservationChartCancelledPercent.ToString("F1") %>%)</span>
+                        </div>
+                    </div>
+                    <p class="reservation-chart-summary"><%= ReservationChartTotal == 0 ? "No reserved or cancelled registrations" : ReservationChartTotal.ToString("N0") + " reserved or cancelled registrations" %><br />Reserved includes present, no-show, and unscanned students.</p>
                 </div>
             </div>
         </div>

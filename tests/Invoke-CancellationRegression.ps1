@@ -114,7 +114,7 @@ protected void Page_Load(object sender, EventArgs e) {
     }
     $matrix = Invoke-WebRequest $matrixUrl -WebSession $session
     Assert-Test ($matrix.Content.Contains('Cancel Event') -and !$matrix.Content.Contains('ToggleArchive')) 'Matrix renders cancellation and removes archive action'
-    Assert-Test ($matrix.Content.Contains('Mistake — &lt;script&gt;alert(1)&lt;/script&gt;')) 'Cancellation reason encoded in matrix'
+    Assert-Test (!$matrix.Content.Contains('cancellation-reason') -and !$matrix.Content.Contains('[EVENT CANCELLED]')) 'Matrix omits inline cancellation reason and duplicate cancellation label'
     foreach ($tabName in @('Cancelled','Open','Soon','Close','All')) {
         $form=Hidden-Form $matrix.Content
         $form['__EVENTTARGET']='ctl00$MainContent$btnTab' + $tabName
@@ -159,7 +159,8 @@ protected void Page_Load(object sender, EventArgs e) {
     $form['ctl00$MainContent$txtCancellationReason']='Created by mistake — UI test'
     $form['ctl00$MainContent$hfCancelEventId']='9'
     $cancelled=Invoke-WebRequest $matrixUrl -Method Post -ContentType 'application/x-www-form-urlencoded' -Body $form -WebSession $session
-    Assert-Test ($cancelled.Content.Contains('Event cancelled. Registration and check-in are closed; existing records are retained.') -and $cancelled.Content.Contains('Created by mistake — UI test')) 'Cancellation succeeds and cancelled row remains visible'
+    $cancelledRow = [regex]::Matches($cancelled.Content, '(?s)<tr class=.event-matrix-row.*?</tr>') | Where-Object { $_.Value.Contains('Fixture event 8') } | Select-Object -First 1
+    Assert-Test ($cancelled.Content.Contains('Event cancelled. Registration and check-in are closed; existing records are retained.') -and $cancelledRow.Value.Contains('status-cancelled')) 'Cancellation succeeds and cancelled row remains visible'
     Invoke-TestSql "IF NOT EXISTS(SELECT 1 FROM dbo.EventsTable WHERE EventId=8 AND Status='Cancelled') OR NOT EXISTS(SELECT 1 FROM dbo.EventsTable WHERE EventId=9 AND Status='Upcoming') THROW 51000,'Hidden event ID tampering changed the wrong event',1;"
     Assert-Test $true 'Signed ViewState prevents hidden event ID tampering'
     $repeat=Invoke-WebRequest $matrixUrl -Method Post -ContentType 'application/x-www-form-urlencoded' -Body $form -WebSession $session
@@ -221,6 +222,29 @@ protected void Page_Load(object sender, EventArgs e) {
     Assert-Test ($checkedPost.Content.Contains('PRESENT &amp; CHECKED IN') -and $checkedPost.Content.Contains('TCK-0005-00003')) 'Pass state and actual QR payload survive postback'
     $denied=Invoke-WebRequest $matrixUrl -WebSession $session
     Assert-Test ($denied.BaseResponse.RequestMessage.RequestUri.AbsolutePath -eq '/Frontend/AccessDenied.aspx') 'Student cannot access cancellation controls'
+    [void](Invoke-WebRequest "$base/VerificationSession.aspx" -WebSession $session)
+    Invoke-TestSql @'
+INSERT INTO dbo.EventRegistrationTable (EventId,StudentId,CurrentYearLvl,CurrentSection,Status,CheckInTimestamp) VALUES
+ (6,'TEST-1',1,'TEST','NoShow',NULL), (6,'TEST-2',1,'TEST','Cancelled',NULL), (6,'TEST-3',1,'TEST','Present',GETDATE());
+'@
+    $chartUrl = "$base/Frontend/Admin/EventAnalytics.aspx?eventId=6"
+    $chart = Invoke-WebRequest $chartUrl -WebSession $session
+    Assert-Test ($chart.Content.Contains('Reserved: 66.7 percent. Cancelled: 33.3 percent.') -and $chart.Content.Contains('3 reserved or cancelled registrations')) 'Reservation pie counts Present and NoShow once each and excludes Cancelled from reserved total'
+    Assert-Test ($chart.Content -match 'Registered:</span>\s*<span class="stat-val">2</span>') 'Analytics uses actual active registrations despite a stale event capacity counter'
+    Invoke-TestSql "UPDATE dbo.EventRegistrationTable SET Status='Present', CheckInTimestamp=GETDATE() WHERE EventId=6 AND Status='NoShow';"
+    $chart = Invoke-WebRequest $chartUrl -WebSession $session
+    Assert-Test ($chart.Content.Contains('Reserved: 66.7 percent. Cancelled: 33.3 percent.')) 'Checking in a reserved student does not change the reservation split'
+    Invoke-TestSql "UPDATE dbo.EventRegistrationTable SET Status='Cancelled', CheckInTimestamp=NULL WHERE EventId=6;"
+    $chart = Invoke-WebRequest $chartUrl -WebSession $session
+    Assert-Test ($chart.Content.Contains('Reserved: 0.0 percent. Cancelled: 100.0 percent.')) 'Reservation pie supports all cancelled'
+    Invoke-TestSql "UPDATE dbo.EventRegistrationTable SET Status='NoShow', CheckInTimestamp=NULL WHERE EventId=6 AND Status='Cancelled';"
+    $chart = Invoke-WebRequest $chartUrl -WebSession $session
+    Assert-Test ($chart.Content.Contains('Reserved: 100.0 percent. Cancelled: 0.0 percent.')) 'Reservation pie supports all reserved'
+    Invoke-TestSql "UPDATE dbo.EventRegistrationTable SET Status='Present', CheckInTimestamp=GETDATE() WHERE EventId=6;"
+    $chart = Invoke-WebRequest $chartUrl -WebSession $session
+    Assert-Test ($chart.Content.Contains('Reserved: 100.0 percent. Cancelled: 0.0 percent.')) 'All Present students remain included in the reserved total'
+    $chart = Invoke-WebRequest "$base/Frontend/Admin/EventAnalytics.aspx?eventId=3" -WebSession $session
+    Assert-Test ($chart.Content.Contains('reservation-pie is-empty') -and $chart.Content.Contains('No reserved or cancelled registrations')) 'Reservation pie handles zero registrations without a misleading slice'
     Write-Output "WEB TOTAL PASSED: $checks"
     Write-Output "Isolated diagnostics: $testRoot"
     if ($Review) { [void](Read-Host 'Isolated app remains available for visual review. Press Enter when finished') }

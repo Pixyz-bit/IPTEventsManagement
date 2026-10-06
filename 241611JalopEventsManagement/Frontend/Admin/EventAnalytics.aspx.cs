@@ -25,6 +25,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         public int TurnoutRateBarWidth { get; set; } = 0;
         public int VenueLoadBarWidth { get; set; } = 0;
+        public int ReservationChartReservedCount { get; private set; }
+        public int ReservationChartTotal { get; private set; }
+        public double ReservationChartReservedPercent { get; private set; }
+        public double ReservationChartCancelledPercent { get; private set; }
+        public string ReservationChartAngle => (ReservationChartReservedPercent * 3.6).ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -127,8 +132,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             int preRegisteredCount = activeCohort.Count;
             if (litBeforePreRegistered != null) litBeforePreRegistered.Text = preRegisteredCount.ToString("N0");
 
-            // Total Reserved: CurrentRegistrations from EventsTable, or active registrations count if event entity is null
-            int totalReservedCount = evt != null ? evt.CurrentRegistrations : preRegisteredCount;
+            // Count the registration records directly: Present plus NoShow (including unscanned reservations).
+            int totalReservedCount = preRegisteredCount;
             if (litBeforeTotalReserved != null) litBeforeTotalReserved.Text = totalReservedCount.ToString("N0");
 
             int checkedInCount = presentCohort.Count;
@@ -141,6 +146,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             // Pre-event Attrition Rate %
             int totalLoggedTransactions = preRegisteredCount + cancelledCount;
+            // Each non-cancelled registration counts once, whether checked in or still stored as NoShow.
+            ReservationChartReservedCount = totalReservedCount;
+            ReservationChartTotal = ReservationChartReservedCount + cancelledCount;
+            ReservationChartReservedPercent = ReservationChartTotal > 0 ? 100.0 * ReservationChartReservedCount / ReservationChartTotal : 0.0;
+            ReservationChartCancelledPercent = ReservationChartTotal > 0 ? 100.0 - ReservationChartReservedPercent : 0.0;
             double attritionRate = totalLoggedTransactions > 0 ? ((double)cancelledCount / totalLoggedTransactions) * 100.0 : 0.0;
             if (litBeforeAttritionRate != null) litBeforeAttritionRate.Text = $"{attritionRate:F1}%";
 

@@ -121,7 +121,7 @@
                         <!-- 4. Capacity Saturation -->
                         <td>
                             <div style="font-family:var(--font-mono); font-weight:600; color:var(--text-heading); font-size:0.85rem;">
-                                <%# Eval("CurrentRegistrations") %> / <%# Eval("MaxCapacity") %>
+                                <%# Eval("AttendedCount") %> / <%# Eval("MaxCapacity") %>
                             </div>
                             <div style="font-size:0.725rem; color:var(--text-muted);">
                                 <%# Eval("AttendedCount") %> Present (<%# Eval("MaxCapacity") != null && Convert.ToInt32(Eval("MaxCapacity")) > 0 ? string.Format("{0:F1}%", (Convert.ToDouble(Eval("AttendedCount")) / Convert.ToDouble(Eval("MaxCapacity"))) * 100.0) : "0.0%" %>)
