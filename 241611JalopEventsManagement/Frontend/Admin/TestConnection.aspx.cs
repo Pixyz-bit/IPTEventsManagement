@@ -41,7 +41,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             {
                 pnlError.Visible = false;
                 phStatusBadge.Controls.Add(new LiteralControl(
-                    "<span class=\"badge online\"><span class=\"badge-dot\"></span>Operational</span>"
+                    "<span class=\"badge online\">Operational</span>"
                 ));
             }
             else
@@ -49,7 +49,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 pnlError.Visible = true;
                 lblErrorMessage.Text = Server.HtmlEncode(errorMessage ?? "Unknown connection error occurred.");
                 phStatusBadge.Controls.Add(new LiteralControl(
-                    "<span class=\"badge offline\"><span class=\"badge-dot\"></span>Unreachable</span>"
+                    "<span class=\"badge offline\">Unreachable</span>"
                 ));
             }
         }

@@ -109,15 +109,15 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 string statusText = evt.Status ?? "Upcoming";
                 if (string.Equals(statusText, "Open", StringComparison.OrdinalIgnoreCase))
                 {
-                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.3); color:#34d399;\">&#9679; REGISTRATION OPEN</span>";
+                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.3); color:#34d399;\">REGISTRATION OPEN</span>";
                 }
                 else if (string.Equals(statusText, "Closed", StringComparison.OrdinalIgnoreCase))
                 {
-                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background:rgba(244,63,94,0.15); border-color:rgba(244,63,94,0.3); color:#f43f5e;\">&#9679; REGISTRATION CLOSED</span>";
+                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background:rgba(244,63,94,0.15); border-color:rgba(244,63,94,0.3); color:#f43f5e;\">REGISTRATION CLOSED</span>";
                 }
                 else
                 {
-                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">&#9679; " + Server.HtmlEncode(statusText.ToUpper()) + "</span>";
+                    litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">" + Server.HtmlEncode(statusText.ToUpper()) + "</span>";
                 }
             }
             else
@@ -126,7 +126,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 litEventDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
                 litEventVenue.Text = "Main Academic Amphitheater";
                 litEventCapacitySummary.Text = "0 / 100";
-                litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">&#9679; UPCOMING</span>";
+                litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">UPCOMING</span>";
             }
 
             // Load Attendees for this event
@@ -174,15 +174,15 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             string status = statusObj?.ToString() ?? "Reserved";
             if (string.Equals(status, "Present", StringComparison.OrdinalIgnoreCase))
             {
-                return "<span class=\"status-pill status-pill-present\"><span class=\"status-dot status-dot-present\"></span>Present</span>";
+                return "<span class=\"status-pill status-pill-present\">Present</span>";
             }
             else if (string.Equals(status, "Cancelled", StringComparison.OrdinalIgnoreCase))
             {
-                return "<span class=\"status-pill status-pill-cancelled\"><span class=\"status-dot status-dot-cancelled\"></span>Cancelled</span>";
+                return "<span class=\"status-pill status-pill-cancelled\">Cancelled</span>";
             }
             else
             {
-                return "<span class=\"status-pill status-pill-reserved\"><span class=\"status-dot status-dot-reserved\"></span>Reserved</span>";
+                return "<span class=\"status-pill status-pill-reserved\">Reserved</span>";
             }
         }
 

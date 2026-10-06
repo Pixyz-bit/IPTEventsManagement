@@ -127,7 +127,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 litCampusBranch.Text = Server.HtmlEncode(profile?.CampusBranch ?? SessionHelper.CurrentCampusBranch ?? "San Bartolome");
                 litDepartment.Text = Server.HtmlEncode(profile?.Department ?? SessionHelper.CurrentDepartment ?? "College of Computer Studies");
                 litProgram.Text = Server.HtmlEncode(profile?.Program ?? SessionHelper.CurrentProgram ?? "BSIT");
-                litYearLevel.Text = "3rd Year";
+                litYearLevel.Text = "Provided during registration";
             }
 
         }
@@ -150,17 +150,10 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             try
             {
-                string branch = litCampusBranch.Text;
-                string dept = litDepartment.Text;
-                string prog = litProgram.Text;
-                int year = 3;
-
-                List<EventModel> events = _eventRepo.GetEventsForStudent(branch, dept, prog, year);
-
-                if (events == null || events.Count == 0)
-                {
-                    events = _eventRepo.GetAllUpcomingEvents();
-                }
+                var profile = _studentRepo.GetStudentByUserId(SessionHelper.CurrentUserId);
+                List<EventModel> events = profile == null ? new List<EventModel>() :
+                    _eventRepo.GetEventsForStudent(profile.CampusBranch, profile.Department, profile.Program,
+                        null);
 
                 if (events != null && events.Count > 0)
                 {
@@ -196,6 +189,7 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             rptEventCards.DataSource = viewModels;
             rptEventCards.DataBind();
+            pnlNoEligibleEvents.Visible = viewModels.Count == 0;
 
             var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
             EventsCatalogJson = serializer.Serialize(viewModels.Select(vm => new
@@ -342,12 +336,12 @@ namespace _241611JalopEventsManagement.Frontend.User
             if (isBeforeReg)
             {
                 // Strict rule: Display "SOON" (never "opens soon")
-                model.RegStatusBadgeHtml = "<div class=\"card-status-pill card-status-soon\"><span class=\"status-dot-amber\"></span> SOON</div>";
+                model.RegStatusBadgeHtml = "<div class=\"card-status-pill card-status-soon\"> SOON</div>";
                 model.RegSpotsHintHtml = $"<div class=\"spots-left-hint soon\"><svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"></circle><polyline points=\"12 6 12 12 16 14\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"></polyline></svg><span>OPENS {model.RegStart:MMM dd}</span></div>";
             }
             else if (isOpen)
             {
-                model.RegStatusBadgeHtml = "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> OPEN</div>";
+                model.RegStatusBadgeHtml = "<div class=\"card-status-pill\"> OPEN</div>";
                 model.RegSpotsHintHtml = $"<div class=\"spots-left-hint\"><svg viewBox=\"0 0 24 24\"><path d=\"M13 2L3 14h9l-1 8 10-12h-9l1-8z\" /></svg><span>{model.RemainingCapacity} SPOTS LEFT</span></div>";
             }
             else if (isFullyBooked)
@@ -410,14 +404,14 @@ namespace _241611JalopEventsManagement.Frontend.User
                                 formattedTime = $"{start.Value:h:mm tt} to {end.Value:h:mm tt}";
                         }
 
-                        string badgeHtml = "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> CONFIRMED PASS</div>";
+                        string badgeHtml = "<div class=\"card-status-pill\"> CONFIRMED PASS</div>";
                         if (reg.IsEventCancelled)
                         {
                             badgeHtml = "<div class=\"card-status-pill card-status-closed\">EVENT CANCELLED</div>";
                         }
                         else if (string.Equals(reg.Status, "Present", StringComparison.OrdinalIgnoreCase))
                         {
-                            badgeHtml = "<div class=\"card-status-pill\"><span class=\"status-dot-green\"></span> ATTENDED</div>";
+                            badgeHtml = "<div class=\"card-status-pill\"> ATTENDED</div>";
                         }
                         else if (string.Equals(reg.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
                         {
@@ -467,7 +461,7 @@ namespace _241611JalopEventsManagement.Frontend.User
         {
             if (string.Equals(status, "Present", StringComparison.OrdinalIgnoreCase))
             {
-                return "<span class=\"status-badge-reg status-badge-present\">● PRESENT</span>";
+                return "<span class=\"status-badge-reg status-badge-present\">PRESENT</span>";
             }
             else if (string.Equals(status, "Cancelled", StringComparison.OrdinalIgnoreCase))
             {
@@ -476,7 +470,7 @@ namespace _241611JalopEventsManagement.Frontend.User
             else
             {
                 // Default: NoShow
-                return "<span class=\"status-badge-reg status-badge-noshow\">● REGISTERED (NOSHOW)</span>";
+                return "<span class=\"status-badge-reg status-badge-noshow\">REGISTERED (NOSHOW)</span>";
             }
         }
 

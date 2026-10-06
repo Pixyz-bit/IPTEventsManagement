@@ -434,7 +434,7 @@
                             <asp:DropDownList ID="ddlDepartment" runat="server" CssClass="form-control">
                                 <asp:ListItem Value="" Text="All Academic Colleges (Open to All)" />
                                 <asp:ListItem Value="College of Computer Studies" Text="College of Computer Studies (CCS)" />
-                                <asp:ListItem Value="College of Business Administration" Text="College of Business Administration (CBA)" />
+                                <asp:ListItem Value="College of Business Administration and Accountancy" Text="College of Business Administration and Accountancy (CBAA)" />
                                 <asp:ListItem Value="College of Engineering" Text="College of Engineering (COE)" />
                                 <asp:ListItem Value="College of Education" Text="College of Education (CED)" />
                             </asp:DropDownList>

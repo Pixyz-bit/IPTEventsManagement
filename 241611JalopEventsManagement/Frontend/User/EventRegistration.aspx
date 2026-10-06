@@ -267,9 +267,10 @@
                                 <span class="form-label-muted">Select Academic Year</span>
                             </label>
                             <asp:DropDownList ID="ddlYearLevel" runat="server" CssClass="form-select">
+                                <asp:ListItem Value="" Text="Select your current year" />
                                 <asp:ListItem Value="1" Text="1st Year"></asp:ListItem>
                                 <asp:ListItem Value="2" Text="2nd Year"></asp:ListItem>
-                                <asp:ListItem Value="3" Text="3rd Year" Selected="True"></asp:ListItem>
+                                <asp:ListItem Value="3" Text="3rd Year"></asp:ListItem>
                                 <asp:ListItem Value="4" Text="4th Year"></asp:ListItem>
                                 <asp:ListItem Value="5" Text="Irregular"></asp:ListItem>
                             </asp:DropDownList>

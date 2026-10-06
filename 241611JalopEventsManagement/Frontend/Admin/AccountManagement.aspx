@@ -117,7 +117,6 @@
                         <!-- 3. Account Status -->
                         <td>
                             <span class='<%# Convert.ToBoolean(Eval("IsActive")) ? "status-badge-active" : "status-badge-locked" %>'>
-                                <span class='<%# Convert.ToBoolean(Eval("IsActive")) ? "status-dot-active" : "status-dot-locked" %>'></span>
                                 <%# Convert.ToBoolean(Eval("IsActive")) ? "Active" : "Locked" %>
                             </span>
                         </td>

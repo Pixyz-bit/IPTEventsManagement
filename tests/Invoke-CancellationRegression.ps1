@@ -83,7 +83,8 @@ INSERT INTO dbo.EventRegistrationTable (EventId,StudentId,CurrentYearLvl,Current
 <%@ Page Language="C#" %>
 <script runat="server">
 protected void Page_Load(object sender, EventArgs e) {
- Session["UserId"] = 1; Session["Role"] = Request.QueryString["role"] ?? "Admin";
+ Session["Role"] = Request.QueryString["role"] ?? "Admin";
+ Session["UserId"] = Session["Role"].ToString() == "Student" ? 2 : 1;
  Session["Email"] = "verification@example.invalid"; Session["StudentId"] = "TEST-1";
  Session["CampusBranch"]="San Bartolome"; Session["Department"]="College of Computer Studies"; Session["Program"]="BSIT";
  _241611JalopEventsManagement.Backend.Repository.DatabaseConnection.RecordConnectionSuccess();
@@ -245,6 +246,27 @@ INSERT INTO dbo.EventRegistrationTable (EventId,StudentId,CurrentYearLvl,Current
     Assert-Test ($chart.Content.Contains('Reserved: 100.0 percent. Cancelled: 0.0 percent.')) 'All Present students remain included in the reserved total'
     $chart = Invoke-WebRequest "$base/Frontend/Admin/EventAnalytics.aspx?eventId=3" -WebSession $session
     Assert-Test ($chart.Content.Contains('reservation-pie is-empty') -and $chart.Content.Contains('No reserved or cancelled registrations')) 'Reservation pie handles zero registrations without a misleading slice'
+    Invoke-TestSql "UPDATE dbo.EventsTable SET TargetYearLevel=2,TargetBranch='San Bartolome',TargetDepartment='College of Computer Studies',TargetProgram='BSIT' WHERE Status='Upcoming';"
+    [void](Invoke-WebRequest "$base/VerificationSession.aspx?role=Student" -WebSession $session)
+    $dashboardUrl = "$base/Frontend/User/Dashboard.aspx"
+    $dashboard = Invoke-WebRequest $dashboardUrl -WebSession $session
+    Assert-Test (!$dashboard.Content.Contains('ddlCurrentYear') -and $dashboard.Content -match 'id=''card-9''') 'Dashboard browses matching programs without asking for year'
+    $wizardUrl = "$base/Frontend/User/EventRegistration.aspx?eventId=9"
+    $wizard = Invoke-WebRequest $wizardUrl -WebSession $session
+    Assert-Test ($wizard.Content -match '<option(?: selected="selected")? value="">Select your current year</option>' -and $wizard.Content -notmatch '<option selected="selected" value="[1-5]">') 'Year is collected explicitly on the registration form'
+    $registrationForm = Hidden-Form $wizard.Content
+    $registrationForm['ddlYearLevel']='1'; $registrationForm['txtSection']='TEST'; $registrationForm['chkTerms']='on'
+    $registrationForm['btnConfirmRegistration']='Confirm Registration'; $registrationForm['hfCurrentStep']='3'
+    $rejected = Invoke-WebRequest $wizardUrl -Method Post -Body $registrationForm -WebSession $session
+    Assert-Test ($rejected.Content.Contains('You do not meet this event') -and $rejected.BaseResponse.RequestMessage.RequestUri.AbsolutePath.EndsWith('EventRegistration.aspx')) 'Direct registration submission rechecks year and displays eligibility error'
+    $registrationForm = Hidden-Form $rejected.Content
+    $registrationForm['ddlYearLevel']=''; $registrationForm['txtSection']='TEST'; $registrationForm['chkTerms']='on'
+    $registrationForm['btnConfirmRegistration']='Confirm Registration'; $registrationForm['hfCurrentStep']='3'
+    $rejected = Invoke-WebRequest $wizardUrl -Method Post -Body $registrationForm -WebSession $session
+    Assert-Test ($rejected.Content.Contains('Please select your current year level.')) 'Registration requires an explicit year instead of silently assigning third year'
+    Invoke-TestSql "UPDATE dbo.EventsTable SET TargetProgram='BSA' WHERE Status='Upcoming';"
+    $dashboard = Invoke-WebRequest $dashboardUrl -WebSession $session
+    Assert-Test ($dashboard.Content.Contains('No eligible events available') -and $dashboard.Content -notmatch 'id=''card-\d+''') 'Different program does not fall back to all upcoming events'
     Write-Output "WEB TOTAL PASSED: $checks"
     Write-Output "Isolated diagnostics: $testRoot"
     if ($Review) { [void](Read-Host 'Isolated app remains available for visual review. Press Enter when finished') }

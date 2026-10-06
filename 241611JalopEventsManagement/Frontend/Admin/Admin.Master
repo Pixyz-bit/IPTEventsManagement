@@ -6,13 +6,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><asp:ContentPlaceHolder ID="TitleContent" runat="server">University Admin Portal</asp:ContentPlaceHolder></title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
     <!-- Enterprise Global Stylesheet & Design Tokens -->
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css?v=20261006-cleanup") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css?v=20261006-no-dots") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
@@ -135,7 +135,7 @@
                             <asp:Literal ID="litAdminEmail" runat="server" Text="admin@university.edu" />
                         </div>
                         <div class="user-role">
-                            <span class="role-dot"></span>
+
                             <span>Administrator</span>
                         </div>
                     </div>

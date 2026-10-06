@@ -225,12 +225,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             string displayName = GetDisplayName(user.Role, user.StudentProfile?.FirstName, user.StudentProfile?.LastName, user.Email);
             litManageDisplayName.Text = Server.HtmlEncode(displayName);
             litManageEmailSub.Text = Server.HtmlEncode(user.Email);
-            litManageRoleBadge.Text = string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase) 
-                ? "<span class='role-badge-admin'>&#9733; Administrator</span>" 
+            litManageRoleBadge.Text = string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase)
+                ? "<span class='role-badge-admin'>&#9733; Administrator</span>"
                 : "<span class='role-badge-student'>Student</span>";
-            litManageStatusBadge.Text = user.IsActive 
-                ? "<span class='status-badge-active'><span class='status-dot-active'></span> Active</span>" 
-                : "<span class='status-badge-locked'><span class='status-dot-locked'></span> Locked</span>";
+            litManageStatusBadge.Text = user.IsActive
+                ? "<span class='status-badge-active'> Active</span>"
+                : "<span class='status-badge-locked'> Locked</span>";
 
             // Photo Preview (Disabled per requirement)
             imgManageAvatar.Visible = false;
@@ -546,8 +546,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     <line x1=""12"" y1=""17"" x2=""12.01"" y2=""17""></line>
                 </svg>";
 
-                litLockCurrentStatusBadge.Text = "<span class='status-badge-active'><span class='status-dot-active'></span> Active</span>";
-                litLockNewStatusBadge.Text = "<span class='status-badge-locked'><span class='status-dot-locked'></span> Locked / Inactive</span>";
+                litLockCurrentStatusBadge.Text = "<span class='status-badge-active'> Active</span>";
+                litLockNewStatusBadge.Text = "<span class='status-badge-locked'> Locked / Inactive</span>";
 
                 litLockNoticeBox.Text = @"<div class=""modal-notice-box warning"" style=""margin-bottom:0;"">
                     <strong style=""display:block; margin-bottom:0.25rem;"">Security &amp; Access Impact:</strong>
@@ -569,8 +569,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     <polyline points=""22 4 12 14.01 9 11.01""></polyline>
                 </svg>";
 
-                litLockCurrentStatusBadge.Text = "<span class='status-badge-locked'><span class='status-dot-locked'></span> Locked / Inactive</span>";
-                litLockNewStatusBadge.Text = "<span class='status-badge-active'><span class='status-dot-active'></span> Active</span>";
+                litLockCurrentStatusBadge.Text = "<span class='status-badge-locked'> Locked / Inactive</span>";
+                litLockNewStatusBadge.Text = "<span class='status-badge-active'> Active</span>";
 
                 litLockNoticeBox.Text = @"<div class=""modal-notice-box"" style=""background:#f0fdf4; border-color:#bbf7d0; border-left-color:#16a34a; color:#14532d; margin-bottom:0;"">
                     <strong style=""display:block; margin-bottom:0.25rem;"">Access Restoration Notice:</strong>

@@ -762,13 +762,6 @@
             border: 1px solid var(--accent-emerald-border);
         }
 
-        .pulse-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: var(--accent-emerald);
-            animation: pulseRing 1.8s infinite;
-        }
 
         @keyframes pulseRing {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }

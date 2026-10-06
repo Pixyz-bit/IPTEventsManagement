@@ -596,25 +596,9 @@
             color: #e11d48 !important; /* Crimson / Rose Red */
         }
 
-        .status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            display: inline-block;
-            flex-shrink: 0;
-        }
 
-        .status-dot-present {
-            background-color: #059669 !important;
-        }
 
-        .status-dot-reserved {
-            background-color: #2563eb !important;
-        }
 
-        .status-dot-cancelled {
-            background-color: #e11d48 !important;
-        }
 
         /* View > Link (Underlined text link per Student Directory reference) */
         .btn-view-link {

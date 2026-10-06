@@ -1126,23 +1126,7 @@
             color: #FDE047;
         }
 
-        .status-dot-green {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: var(--accent-emerald);
-            display: inline-block;
-            box-shadow: 0 0 8px var(--accent-emerald);
-        }
 
-        .status-dot-amber {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: #FACC15;
-            display: inline-block;
-            box-shadow: 0 0 8px #FACC15;
-        }
 
         /* Capacity Indicator: Bottom-Right of Banner with Previous Design Concept */
         .card-capacity-pill {

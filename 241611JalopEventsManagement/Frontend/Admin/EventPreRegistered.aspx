@@ -292,7 +292,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="status-pill status-pill-cancelled"><span class="status-dot status-dot-cancelled"></span>Cancelled</span>
+                                    <span class="status-pill status-pill-cancelled">Cancelled</span>
                                 </td>
                                 <td style="text-align: right;">
                                     <a href="javascript:void(0);" class="btn-view-link" 

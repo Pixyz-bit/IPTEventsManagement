@@ -352,15 +352,6 @@
             gap: 0.5rem;
         }
 
-        .live-indicator-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-emerald);
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px var(--accent-emerald);
-            animation: pulseDot 2s infinite ease-in-out;
-        }
 
         @keyframes pulseDot {
             0%, 100% { transform: scale(1); opacity: 1; }

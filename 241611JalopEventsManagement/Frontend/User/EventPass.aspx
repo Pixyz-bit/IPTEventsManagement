@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-pass.css?v=20261005-2") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-pass.css?v=20261006-no-dots") %>" />
     <script src="<%= ResolveUrl("~/Frontend/Assets/js/vendor/html-to-image-1.11.13.js") %>"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -79,7 +79,7 @@
                         <div class="ticket-headline-block">
                             <h1 class="ticket-event-title" id="litPassEventTitle"><asp:Literal ID="litPassEventTitle" runat="server" Text="" /></h1>
                             <div class="pass-status <%= PassStatusClass %>" role="status">
-                                <span class="pass-status-dot" aria-hidden="true"></span>
+
                                 <asp:Literal ID="litPassStatusPill" runat="server" />
                             </div>
                         </div>

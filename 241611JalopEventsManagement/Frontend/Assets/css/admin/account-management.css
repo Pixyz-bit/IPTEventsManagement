@@ -372,19 +372,7 @@
     color: var(--accent-rose) !important;
 }
 
-.status-dot-active {
-    width: 6px !important;
-    height: 6px !important;
-    border-radius: var(--radius-full) !important;
-    background-color: #16a34a !important;
-}
 
-.status-dot-locked {
-    width: 6px !important;
-    height: 6px !important;
-    border-radius: var(--radius-full) !important;
-    background-color: var(--accent-rose) !important;
-}
 
 /* ─── Row Action Buttons (Specific to Account Management) ─── */
 .action-buttons-group {

@@ -108,7 +108,7 @@
                     <!-- Live Checked-In Attendance Header Bar -->
         <div class="table-header-bar">
             <div class="table-header-title">
-                <span class="live-indicator-dot"></span>
+
                 <span>Live Checked-In Attendance Roster</span>
             </div>
             <div style="font-size:0.8rem; color:var(--text-muted);">

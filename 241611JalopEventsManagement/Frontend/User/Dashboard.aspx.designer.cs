@@ -14,6 +14,7 @@ namespace _241611JalopEventsManagement.Frontend.User
         protected global::System.Web.UI.WebControls.Literal litProgram;
         protected global::System.Web.UI.WebControls.Literal litYearLevel;
         protected global::System.Web.UI.WebControls.Repeater rptEventCards;
+        protected global::System.Web.UI.WebControls.Panel pnlNoEligibleEvents;
         protected global::System.Web.UI.WebControls.Panel pnlNoRegistrations;
         protected global::System.Web.UI.WebControls.Repeater rptMyRegistrations;
         protected global::System.Web.UI.WebControls.Panel pnlModalDetails;

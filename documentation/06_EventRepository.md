@@ -55,27 +55,14 @@ Event-wide cancellation uses `EventCancellationRepository` and `EventCancellatio
 ---
 
 ### 2.3 `GetEventsForStudent`
-* **Purpose:** Retrieves upcoming events filtered to match a student's demographic profile using the 4-tier audience matrix.
-* **Signature & Contracts:**
-  - Input: `string branch`, `string department`, `string program`, `int yearLevel`.
-  - Output: `List<EventModel>`.
-* **Internal Mechanics:**
-  - Executes a multi-tier conditional SQL query:
-    ```sql
-    WHERE Status = 'Upcoming'
-      AND (TargetBranch IS NULL OR TargetBranch = @Branch)
-      AND (TargetDepartment IS NULL OR TargetDepartment = @Department)
-      AND (TargetProgram IS NULL OR TargetProgram = @Program)
-      AND (TargetYearLevel IS NULL OR TargetYearLevel = @YearLevel)
-    ```
-* **Side Effects & Thrown Errors:**
-  - Read-only.
-* **When it is used:** Invoked on the Student Dashboard (`Frontend/User/Dashboard.aspx`) upon page load.
-* **Why:** In Issue D, students must only see events they are eligible to attend, plus events marked `NULL` (open to all). Reads student demographics from the authenticated session:
-  * `[Session["CampusBranch"], Session["Department"], Session["Program"], Session["YearLevel"]]`
+* **Purpose:** Shows Upcoming events matching the authenticated student's campus branch, department, program, and optionally supplied year.
+* **Inputs:** `string branch`, `string department`, `string program`, `int? yearLevel`.
+* **Audience rules:** All configured restrictions must match. Null or blank branch, department, and program restrictions are unrestricted. Programs match whole entries in a comma-separated list, with spaces normalized. Known program codes and full names (for example BSA and BS Accountancy) are equivalent in both directions. A null year restriction allows all years.
+* **Dashboard behavior:** Campus, department, and program come from `StudentRepository`, not HTML labels. The dashboard does not ask for year or section. It passes a null year so students can browse year-restricted events matching their profile. Year eligibility is checked using the value submitted on the registration form. An empty result stays empty; there is no fallback to all Upcoming events.
+* **Registration enforcement:** `RegistrationRepository.RegisterStudent` uses the same SQL audience predicate inside its registration transaction. It reads the student's saved profile and checks the submitted year again before inserting a pass or consuming a seat. Return code `-3` means invalid year or audience mismatch. The registration page displays a clear error.
+* **Year storage:** Year remains per registration (`CurrentYearLvl`), not in the student profile. The wizard starts with a blank year and section and requires the student to enter both for each registration. Years 1–4 and the existing Irregular option (5) are supported; Irregular does not match a restriction to years 1–4. Year is self-declared, not independently verified against academic records. No schema migration is required.
 
 ---
-
 ### 2.4 `GetAllUpcomingEvents`
 * **Purpose:** Retrieves all active upcoming events across the entire institution.
 * **Signature & Contracts:**

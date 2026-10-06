@@ -20,7 +20,6 @@ namespace _241611JalopEventsManagement.Backend.Helpers
         public const string KeyCampusBranch = "CampusBranch";
         public const string KeyDepartment = "Department";
         public const string KeyProgram = "Program";
-
         private static System.Web.SessionState.HttpSessionState Session => HttpContext.Current?.Session;
 
         /// <summary>
@@ -75,6 +74,7 @@ namespace _241611JalopEventsManagement.Backend.Helpers
             Session[KeyUserId] = user.UserId;
             Session[KeyRole] = user.Role;
             Session[KeyEmail] = user.Email;
+
 
             if (profile != null)
             {

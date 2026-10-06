@@ -262,13 +262,6 @@ body {
     gap: 0.35rem;
 }
 
-.role-dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--accent-emerald);
-    border-radius: 50%;
-    display: inline-block;
-}
 
 .btn-logout {
     background: transparent;
@@ -370,12 +363,6 @@ body {
     border: 1px solid var(--accent-emerald-border);
 }
 
-.system-pill-dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--accent-emerald);
-    border-radius: 50%;
-}
 
 /* Page Workspace Wrapper */
 .admin-workspace {
@@ -801,12 +788,6 @@ table.data-table tbody tr:hover td {
     border: 1px solid var(--accent-amber-border);
 }
 
-.status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: currentColor;
-}
 
 .id-badge {
     font-family: var(--font-mono);

@@ -19,7 +19,7 @@
                 <div class="card-header">
                     <div>
                         <div class="brand-badge">
-                            <span class="pulse-dot"></span>
+
                             Backend Diagnostic Tool
                         </div>
                         <h1 class="card-title">Database Connectivity Test</h1>

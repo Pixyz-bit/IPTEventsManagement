@@ -163,6 +163,10 @@
                      TAB 1 VIEW: ALL OPEN EVENTS CATALOG
                      ──────────────────────────────────────────────────────────── -->
                 <div class="events-catalog-content" id="catalogContentArea">
+                    <asp:Panel ID="pnlNoEligibleEvents" runat="server" Visible="false" CssClass="empty-passes-box">
+                        <h3>No eligible events available</h3>
+                        <p>Return later for events open to your campus and academic group.</p>
+                    </asp:Panel>
                     <!-- ────────────────────────────────────────────────────────────
                          EVENT CARDS GRID: ORGANIZATION OF PHOTO 2 WITH CINEMATIC STYLING
                          ──────────────────────────────────────────────────────────── -->
@@ -541,7 +545,8 @@
 
                     var btn = document.getElementById("heroActionBtn");
                     if (btn) {
-                        btn.href = data.regUrl || '#events-section';
+                        var heroEvent = eventsCatalog.find(function (event) { return event.id == data.id; });
+                        setRegistrationLinkAvailability(btn, heroEvent);
                     }
 
                     bodyContent.classList.remove("slide-transitioning");
@@ -591,6 +596,16 @@
         }
 
         // ─── Event Details Modal Logic ───
+        function setRegistrationLinkAvailability(link, event) {
+            var isOpen = event && event.isRegistrationOpen === true;
+            link.style.display = isOpen ? "" : "none";
+            if (isOpen) {
+                link.href = event.regUrl;
+            } else {
+                link.removeAttribute("href");
+            }
+        }
+
         function openEventDetailsModal(eventId) {
             var ev = null;
             if (eventsCatalog && eventsCatalog.length > 0) {
@@ -680,20 +695,11 @@
                 }
             }
 
-            // Register Button Link
+            // Only open events expose navigation to the registration wizard.
             var regBtn = document.getElementById("modalRegisterBtn");
             if (regBtn) {
-                regBtn.href = '<%= ResolveUrl("~/Frontend/User/EventRegistration.aspx?eventId=") %>' + ev.id;
-                if (!ev.isRegistrationOpen && ev.status === "Closed") {
-                    regBtn.classList.add("disabled");
-                    regBtn.innerHTML = '<span>Registration Closed</span>';
-                } else if (ev.remainingSpots <= 0 && ev.capacity > 0) {
-                    regBtn.classList.add("disabled");
-                    regBtn.innerHTML = '<span>Event Fully Booked</span>';
-                } else {
-                    regBtn.classList.remove("disabled");
-                    regBtn.innerHTML = '<span>Register to this event</span> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
-                }
+                setRegistrationLinkAvailability(regBtn, ev);
+                regBtn.closest(".modal-footer-actions").style.display = ev.isRegistrationOpen ? "" : "none";
             }
 
             // Show Modal

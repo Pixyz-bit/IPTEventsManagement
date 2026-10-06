@@ -265,13 +265,6 @@ body {
     gap: 0.35rem;
 }
 
-.role-dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--accent-emerald);
-    border-radius: 50%;
-    display: inline-block;
-}
 
 .btn-logout {
     background: transparent;
@@ -373,12 +366,6 @@ body {
     border: 1px solid var(--accent-emerald-border);
 }
 
-.system-pill-dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--accent-emerald);
-    border-radius: 50%;
-}
 
 /* Page Workspace Wrapper */
 .admin-workspace {
@@ -840,12 +827,6 @@ table.data-table tbody tr:hover td {
     border: 1px solid var(--accent-amber-border);
 }
 
-.status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: currentColor;
-}
 
 /* Matrix availability states share one palette across admin pages. */
 .status-pill.status-open {
@@ -872,16 +853,6 @@ table.data-table tbody tr:hover td {
     border: 1px solid var(--accent-rose-border);
 }
 
-.status-pill.status-open::before,
-.status-pill.status-soon::before,
-.status-pill.status-close::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    background-color: currentColor;
-}
 
 .id-badge {
     font-family: var(--font-mono);
@@ -1164,18 +1135,4 @@ table.data-table tbody tr:hover td {
     background-color: transparent !important;
     border: none !important;
     color: var(--accent-rose) !important;
-}
-
-.status-dot-active {
-    width: 6px !important;
-    height: 6px !important;
-    border-radius: var(--radius-full) !important;
-    background-color: #16a34a !important;
-}
-
-.status-dot-locked {
-    width: 6px !important;
-    height: 6px !important;
-    border-radius: var(--radius-full) !important;
-    background-color: var(--accent-rose) !important;
 }

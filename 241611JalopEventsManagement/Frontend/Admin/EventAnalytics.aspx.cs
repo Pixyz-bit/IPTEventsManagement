@@ -106,7 +106,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             if (litEventVenue != null) litEventVenue.Text = Server.HtmlEncode(evtVenue ?? "Campus Grounds");
 
             string status = evt != null ? evt.Status ?? "Upcoming" : "Upcoming";
-            if (litEventStatusBadge != null) litEventStatusBadge.Text = $"<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">&#9679; {Server.HtmlEncode(status.ToUpper())}</span>";
+            if (litEventStatusBadge != null) litEventStatusBadge.Text = $"<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">{Server.HtmlEncode(status.ToUpper())}</span>";
             if (litEventCapacitySummary != null) litEventCapacitySummary.Text = evt != null ? $"{evt.CurrentRegistrations} / {maxCapacity}" : $"0 / {maxCapacity}";
 
             bool isFromHistory = string.Equals(Request.QueryString["from"], "history", StringComparison.OrdinalIgnoreCase);

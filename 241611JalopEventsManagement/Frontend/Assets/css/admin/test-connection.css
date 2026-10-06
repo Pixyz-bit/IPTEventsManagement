@@ -25,7 +25,7 @@
 
         body {
             background-color: var(--bg-body);
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
                 radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
             background-attachment: fixed;
@@ -84,13 +84,6 @@
             margin-bottom: 0.6rem;
         }
 
-        .pulse-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--primary);
-            box-shadow: 0 0 8px var(--primary);
-        }
 
         .card-title {
             font-size: 1.5rem;
@@ -163,16 +156,7 @@
             box-shadow: 0 0 16px rgba(239, 68, 68, 0.2);
         }
 
-        .badge-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-        }
 
-        .badge.online .badge-dot {
-            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
 
         @keyframes pulse-ring {
             0%, 100% { opacity: 1; transform: scale(1); }

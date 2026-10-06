@@ -39,8 +39,16 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 throw new InvalidOperationException("Student is already registered for this event.");
             }
 
+            if (registration.CurrentYearLvl < 1 || registration.CurrentYearLvl > 5) return -3;
+
             const string sql = @"
                 BEGIN TRANSACTION;
+
+                DECLARE @Branch NVARCHAR(100), @Department NVARCHAR(100), @Program NVARCHAR(100),
+                        @YearLevel INT = @CurrentYearLvl, @StudentExists BIT = 0;
+                SELECT @Branch = LTRIM(RTRIM(CampusBranch)), @Department = LTRIM(RTRIM(Department)),
+                       @Program = LTRIM(RTRIM(Program)), @StudentExists = 1
+                FROM dbo.StudentTable WITH (HOLDLOCK) WHERE StudentId = @StudentId;
 
                 DECLARE @Current INT, @Max INT, @RegStart DATETIME, @RegEnd DATETIME, @EventEnd DATETIME, @EvtStatus VARCHAR(50);
                 SELECT @Current = CurrentRegistrations, 
@@ -62,6 +70,13 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 BEGIN
                     ROLLBACK TRANSACTION;
                     SELECT -1; -- Venue capacity reached
+                END
+                ELSE IF @StudentExists = 0 OR NOT EXISTS (
+                    SELECT 1 FROM dbo.EventsTable WHERE EventId = @EventId
+                    " + EventRepository.AudienceEligibilitySql + @")
+                BEGIN
+                    ROLLBACK TRANSACTION;
+                    SELECT -3; -- Student does not meet the event audience restrictions
                 END
                 ELSE
                 BEGIN

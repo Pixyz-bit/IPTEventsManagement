@@ -8,6 +8,33 @@ namespace _241611JalopEventsManagement.Backend.Repository
 {
     public class EventRepository
     {
+        // Used by both the event catalog and the atomic registration check.
+        internal const string AudienceEligibilitySql = @"
+                  AND (NULLIF(LTRIM(RTRIM(TargetBranch)), '') IS NULL OR LTRIM(RTRIM(TargetBranch)) = @Branch)
+                  AND (NULLIF(LTRIM(RTRIM(TargetDepartment)), '') IS NULL OR LTRIM(RTRIM(TargetDepartment)) = @Department)
+                  AND (NULLIF(LTRIM(RTRIM(TargetProgram)), '') IS NULL OR
+                       (NULLIF(LTRIM(RTRIM(@Program)), '') IS NOT NULL AND
+                        (CHARINDEX(',' + REPLACE(LTRIM(RTRIM(@Program)), ' ', '') + ',', ',' + REPLACE(TargetProgram, ' ', '') + ',') > 0
+                         OR EXISTS (
+                            SELECT 1 FROM (VALUES
+                                ('BSIT', 'BSInformationTechnology'),
+                                ('BSCS', 'BSComputerScience'),
+                                ('BSIS', 'BSInformationSystems'),
+                                ('BSIE', 'BSIndustrialEngineering'),
+                                ('BSCpE', 'BSComputerEngineering'),
+                                ('BSECE', 'BSElectronicsEngineering'),
+                                ('BSA', 'BSAccountancy'),
+                                ('BSBA', 'BSBusinessAdministration'),
+                                ('BSEntrep', 'BSEntrepreneurship'),
+                                ('BECEd', 'BachelorofEarlyChildhoodEducation'),
+                                ('BSEd', 'BSSecondaryEducation'),
+                                ('BSEd', 'BachelorofSecondaryEducation')
+                            ) AS ProgramAliases(Code, FullName)
+                            WHERE REPLACE(LTRIM(RTRIM(@Program)), ' ', '') IN (Code, FullName)
+                              AND (CHARINDEX(',' + Code + ',', ',' + REPLACE(TargetProgram, ' ', '') + ',') > 0
+                                   OR CHARINDEX(',' + FullName + ',', ',' + REPLACE(TargetProgram, ' ', '') + ',') > 0)
+                         ))))
+                  AND (TargetYearLevel IS NULL OR @YearLevel IS NULL OR TargetYearLevel = @YearLevel)";
         // Persist completion on repository access. No background scheduler is required.
         public static void SynchronizeCompletedEvents()
         {
@@ -155,8 +182,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// <summary>
         /// Retrieves events tailored for a specific student cohort using the 4-tier audience filtering matrix.
         /// An event is eligible if each target dimension is either NULL (open to all) or matches the student demographic.
+        /// A null year lists events for browsing; registration always requires and checks the submitted year.
         /// </summary>
-        public List<EventModel> GetEventsForStudent(string branch, string department, string program, int yearLevel)
+        public List<EventModel> GetEventsForStudent(string branch, string department, string program, int? yearLevel)
         {
             SynchronizeCompletedEvents();
             const string sql = @"
@@ -166,18 +194,14 @@ namespace _241611JalopEventsManagement.Backend.Repository
                        EventPhotoPath
                 FROM dbo.EventsTable 
                 WHERE Status = 'Upcoming'
-                  AND (TargetBranch IS NULL OR TargetBranch = @Branch)
-                  AND (TargetDepartment IS NULL OR TargetDepartment = @Department)
-                  AND (TargetProgram IS NULL OR TargetProgram = '' OR @Program IS NULL OR @Program = '' OR ',' + REPLACE(TargetProgram, ' ', '') + ',' LIKE '%,' + @Program + ',%')
-                  AND (TargetYearLevel IS NULL OR TargetYearLevel = @YearLevel)
-                ORDER BY EventStart ASC;";
+                " + AudienceEligibilitySql + " ORDER BY EventStart ASC;";
 
             var parameters = new[]
             {
-                new SqlParameter("@Branch", SqlDbType.NVarChar, 100) { Value = (object)branch ?? DBNull.Value },
-                new SqlParameter("@Department", SqlDbType.NVarChar, 100) { Value = (object)department ?? DBNull.Value },
-                new SqlParameter("@Program", SqlDbType.NVarChar, 100) { Value = (object)program ?? DBNull.Value },
-                new SqlParameter("@YearLevel", SqlDbType.Int) { Value = yearLevel }
+                new SqlParameter("@Branch", SqlDbType.NVarChar, 100) { Value = (object)branch?.Trim() ?? DBNull.Value },
+                new SqlParameter("@Department", SqlDbType.NVarChar, 100) { Value = (object)department?.Trim() ?? DBNull.Value },
+                new SqlParameter("@Program", SqlDbType.NVarChar, 100) { Value = (object)program?.Trim() ?? DBNull.Value },
+                new SqlParameter("@YearLevel", SqlDbType.Int) { Value = (object)yearLevel ?? DBNull.Value }
             };
 
             DataTable dt = DatabaseConnection.ExecuteDataTable(sql, parameters);

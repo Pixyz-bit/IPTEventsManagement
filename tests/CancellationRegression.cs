@@ -118,6 +118,76 @@ public static class CancellationRegression
         Check(registrations.RegisterStudent(new EventRegistrationModel { EventId = endedId, StudentId = "TEST-3", CurrentYearLvl = 1 }) == -2, "Ended event cannot register even with a future deadline");
         Check(events.GetHistoricalEvents(outcomeStatus: "Completed").Any(e => e.EventId == endedId), "History filters persisted completion");
         Scalar("DELETE FROM dbo.EventRegistrationTable WHERE EventId=" + endedId + "; DELETE FROM dbo.EventsTable WHERE EventId=" + endedId + ";");
+        int audienceId = Convert.ToInt32(Scalar(@"INSERT INTO dbo.EventsTable
+            (Title,VenueLocation,MaxCapacity,CurrentRegistrations,CreatedByUserId,EventStart,EventEnd,RegStart,RegEnd,Status,
+             TargetBranch,TargetDepartment,TargetProgram,TargetYearLevel)
+            VALUES ('Audience fixture','Test venue',50,0,1,DATEADD(day,2,GETDATE()),DATEADD(day,3,GETDATE()),
+                DATEADD(day,-1,GETDATE()),DATEADD(day,1,GETDATE()),'Upcoming',
+                'San Bartolome','College of Computer Studies','BSCS, BSIT',2); SELECT SCOPE_IDENTITY();"));
+        var audienceRegistration = new EventRegistrationModel { EventId = audienceId, StudentId = "TEST-3", CurrentYearLvl = 1, CurrentSection = "TEST" };
+        Check(events.GetEventsForStudent("San Bartolome", "College of Computer Studies", "BSIT", null).Any(e => e.EventId == audienceId), "Catalog lists year-restricted events for browsing before filling the registration form");
+        Check(!events.GetEventsForStudent("San Bartolome", "College of Computer Studies", "BSIT", 1).Any(e => e.EventId == audienceId), "Catalog excludes wrong year");
+        Check(events.GetEventsForStudent("San Bartolome", "College of Computer Studies", "BSIT", 2).Any(e => e.EventId == audienceId), "Catalog matches whole program in multi-program audience");
+        Check(!events.GetEventsForStudent("Batasan", "College of Computer Studies", "BSIT", null).Any(e => e.EventId == audienceId), "Campus mismatch hides event even when program matches");
+        Check(!events.GetEventsForStudent("San Bartolome", "College of Engineering", "BSIT", null).Any(e => e.EventId == audienceId), "Department mismatch hides event even when program matches");
+        Check(!events.GetEventsForStudent(null, null, "BSIT", null).Any(e => e.EventId == audienceId), "Missing campus and department cannot bypass restrictions");
+        Check(events.GetEventsForStudent(" San Bartolome ", " College of Computer Studies ", " BS Information Technology ", 2).Any(e => e.EventId == audienceId), "Whitespace and full program name match all configured restrictions");
+        Check(!events.GetEventsForStudent("San Bartolome", "College of Computer Studies", "BS", 2).Any(e => e.EventId == audienceId), "Partial program does not match");
+        Check(!events.GetEventsForStudent("San Bartolome", "College of Computer Studies", null, 2).Any(e => e.EventId == audienceId), "Unknown program cannot bypass program restriction");
+        Check(registrations.RegisterStudent(audienceRegistration) == -3, "Direct registration rejects wrong year");
+        audienceRegistration.CurrentYearLvl = 2;
+        foreach (string restriction in new[] { "TargetBranch='Batasan'", "TargetDepartment='Other college'", "TargetProgram='BSCS'" })
+        {
+            Scalar("UPDATE dbo.EventsTable SET " + restriction + " WHERE EventId=" + audienceId);
+            Check(registrations.RegisterStudent(audienceRegistration) == -3, "Registration rechecks " + restriction);
+            Scalar("UPDATE dbo.EventsTable SET TargetBranch='San Bartolome',TargetDepartment='College of Computer Studies',TargetProgram='BSCS, BSIT' WHERE EventId=" + audienceId);
+        }
+        Check(events.GetEventById(audienceId).CurrentRegistrations == 0 && Convert.ToInt32(Scalar("SELECT COUNT(*) FROM dbo.EventRegistrationTable WHERE EventId=" + audienceId)) == 0, "Rejected registrations do not consume seats or create passes");
+        audienceRegistration.CurrentYearLvl = 0;
+        Check(registrations.RegisterStudent(audienceRegistration) == -3, "Missing year rejected without a default");
+        audienceRegistration.CurrentYearLvl = 2;
+        Check(registrations.RegisterStudent(audienceRegistration) > 0 && events.GetEventById(audienceId).CurrentRegistrations == 1, "Eligible registration saves a pass and consumes one seat");
+        Scalar("DELETE FROM dbo.EventRegistrationTable WHERE EventId=" + audienceId + "; UPDATE dbo.EventsTable SET CurrentRegistrations=0,TargetYearLevel=NULL WHERE EventId=" + audienceId);
+        Check(events.GetEventsForStudent("San Bartolome", "College of Computer Studies", "BSIT", null).Any(e => e.EventId == audienceId), "Unknown year may see unrestricted-year events");
+        audienceRegistration.CurrentYearLvl = 5;
+        Check(registrations.RegisterStudent(audienceRegistration) > 0, "Existing Irregular choice works for unrestricted-year events");
+        Scalar("DELETE FROM dbo.EventRegistrationTable WHERE EventId=" + audienceId + "; UPDATE dbo.EventsTable SET CurrentRegistrations=0,TargetProgram='BSA' WHERE EventId=" + audienceId + "; UPDATE dbo.StudentTable SET Program='BS Accountancy' WHERE StudentId='TEST-3';");
+        Check(events.GetEventsForStudent("San Bartolome", "College of Computer Studies", "BS Accountancy", null).Any(e => e.EventId == audienceId), "BSA event is visible to a BS Accountancy profile without year selection");
+        Check(!events.GetEventsForStudent("San Bartolome", "College of Computer Studies", "BS Business Administration", null).Any(e => e.EventId == audienceId), "BSA does not match the different BSBA program");
+        Check(registrations.RegisterStudent(audienceRegistration) > 0, "Registration recognizes BS Accountancy as BSA");
+        Scalar("DELETE FROM dbo.EventRegistrationTable WHERE EventId=" + audienceId + "; UPDATE dbo.EventsTable SET CurrentRegistrations=0,TargetProgram='BS Accountancy' WHERE EventId=" + audienceId + "; UPDATE dbo.StudentTable SET Program='BSA' WHERE StudentId='TEST-3';");
+        Check(events.GetEventsForStudent("San Bartolome", "College of Computer Studies", "BSA", null).Any(e => e.EventId == audienceId), "Full-name event target matches a program code profile");
+        Check(registrations.RegisterStudent(audienceRegistration) > 0, "Registration supports reverse full-name target matching");
+        Scalar("UPDATE dbo.StudentTable SET Program='BSIT' WHERE StudentId='TEST-3';");
+        Scalar("DELETE FROM dbo.EventRegistrationTable WHERE EventId=" + audienceId + "; UPDATE dbo.EventsTable SET CurrentRegistrations=0,TargetBranch=NULL,TargetDepartment=NULL,TargetProgram=NULL WHERE EventId=" + audienceId);
+        Check(events.GetEventsForStudent("Batasan", "College of Education", "Bachelor of Early Childhood Education", null).Any(e => e.EventId == audienceId), "Unrestricted event is visible across campus department and program");
+        foreach (int eligibleYear in new[] { 1, 2, 3, 4 })
+        {
+            Scalar("UPDATE dbo.EventsTable SET TargetYearLevel=" + eligibleYear + " WHERE EventId=" + audienceId);
+            audienceRegistration.CurrentYearLvl = eligibleYear == 4 ? 1 : eligibleYear + 1;
+            Check(registrations.RegisterStudent(audienceRegistration) == -3, "Year " + eligibleYear + " restriction rejects a different submitted year");
+            audienceRegistration.CurrentYearLvl = 5;
+            Check(registrations.RegisterStudent(audienceRegistration) == -3, "Irregular does not bypass year " + eligibleYear + " restriction");
+            audienceRegistration.CurrentYearLvl = eligibleYear;
+            Check(registrations.RegisterStudent(audienceRegistration) > 0, "Year " + eligibleYear + " restriction accepts the matching form year");
+            Scalar("DELETE FROM dbo.EventRegistrationTable WHERE EventId=" + audienceId + "; UPDATE dbo.EventsTable SET CurrentRegistrations=0 WHERE EventId=" + audienceId);
+        }
+        string[,] programs = {
+            { "BSIT", "BS Information Technology" }, { "BSCS", "BS Computer Science" },
+            { "BSIS", "BS Information Systems" }, { "BSIE", "BS Industrial Engineering" },
+            { "BSCpE", "BS Computer Engineering" }, { "BSECE", "BS Electronics Engineering" },
+            { "BSA", "BS Accountancy" }, { "BSBA", "BS Business Administration" },
+            { "BSEntrep", "BS Entrepreneurship" }, { "BECEd", "Bachelor of Early Childhood Education" },
+            { "BSEd", "BS Secondary Education" }, { "BSEd", "Bachelor of Secondary Education" }
+        };
+        for (int i = 0; i < programs.GetLength(0); i++)
+        {
+            Scalar("UPDATE dbo.EventsTable SET TargetYearLevel=NULL,TargetProgram='" + programs[i,0] + "' WHERE EventId=" + audienceId);
+            Check(events.GetEventsForStudent("Batasan", "College of Education", programs[i,1], null).Any(e => e.EventId == audienceId), "Program code recognizes " + programs[i,1]);
+            Scalar("UPDATE dbo.EventsTable SET TargetProgram='" + programs[i,1] + "' WHERE EventId=" + audienceId);
+            Check(events.GetEventsForStudent("Batasan", "College of Education", programs[i,0], null).Any(e => e.EventId == audienceId), "Program name recognizes " + programs[i,0]);
+        }
+        Scalar("DELETE FROM dbo.EventRegistrationTable WHERE EventId=" + audienceId + "; DELETE FROM dbo.EventsTable WHERE EventId=" + audienceId);
         Console.WriteLine("TOTAL PASSED: " + checks);
         return 0;
     }

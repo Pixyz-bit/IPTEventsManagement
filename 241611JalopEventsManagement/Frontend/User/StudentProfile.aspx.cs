@@ -58,7 +58,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 txtDepartment.Text = profile?.Department ?? SessionHelper.CurrentDepartment ?? "College of Computer Studies";
                 txtProgram.Text = profile?.Program ?? SessionHelper.CurrentProgram ?? "BS Information Technology";
                 txtGender.Text = profile?.Gender ?? Session[SessionHelper.KeyGender]?.ToString() ?? "Not Specified";
-                txtYearLevel.Text = profile?.YearLevel.HasValue == true ? $"{profile.YearLevel.Value}th Year" : "3rd Year";
+                txtYearLevel.Text = "Selected during event registration";
 
                 // Tab 2: Account Credentials
                 txtEmail.Text = profile?.Email ?? SessionHelper.CurrentEmail ?? "student@qcu.edu.ph";

@@ -162,16 +162,7 @@ namespace _241611JalopEventsManagement.Frontend.User
             litProfileProgram.Text = Server.HtmlEncode(student.Program ?? "BS Information Technology");
 
             // Populate Step 3 Defaults
-            if (student.YearLevel >= 1 && student.YearLevel <= 5)
-            {
-                var item = ddlYearLevel.Items.FindByValue(student.YearLevel.ToString());
-                if (item != null)
-                {
-                    ddlYearLevel.ClearSelection();
-                    item.Selected = true;
-                }
-            }
-            txtSection.Text = student.Section ?? "SBIT-3A";
+            txtSection.Text = student.Section ?? "";
         }
 
         protected void btnConfirmRegistration_Click(object sender, EventArgs e)
@@ -193,7 +184,13 @@ namespace _241611JalopEventsManagement.Frontend.User
                 return;
             }
 
-            int yearLvl = int.TryParse(ddlYearLevel.SelectedValue, out int y) ? y : 3;
+            int yearLvl;
+            if (!int.TryParse(ddlYearLevel.SelectedValue, out yearLvl) || yearLvl < 1 || yearLvl > 5)
+            {
+                ShowError("Please select your current year level.");
+                CurrentStep = 3;
+                return;
+            }
 
             string studentId = SessionHelper.CurrentStudentId;
             if (string.IsNullOrWhiteSpace(studentId))
@@ -224,6 +221,7 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             if (newRegId > 0)
             {
+
                 // Generate cryptographically unique GUID token for QR validation
                 string ticketGuid = Guid.NewGuid().ToString("N");
                 string ticketRef = $"TCK-{CurrentEventId:D4}-{newRegId:D5}";
@@ -239,6 +237,11 @@ namespace _241611JalopEventsManagement.Frontend.User
             else if (newRegId == -2)
             {
                 ShowError("Registration Failed: The registration window for this event is closed.");
+                CurrentStep = 3;
+            }
+            else if (newRegId == -3)
+            {
+                ShowError("You do not meet this event's campus, department, program, or year level eligibility. Check your selected year and the event audience requirements.");
                 CurrentStep = 3;
             }
             else
