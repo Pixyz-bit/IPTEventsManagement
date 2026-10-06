@@ -36,7 +36,7 @@ Badges and filter tabs use the same colors. Visible text remains present so colo
 1. Click Cancel Event in the matrix or Event Details.
 2. Review the title and consequences. Enter a reason of 1-500 characters.
 3. Confirm Cancellation saves the change; Keep Event dismisses the dialog.
-4. The event remains in the Cancelled tab and Event History.
+4. The event leaves the Upcoming Events Matrix and appears in Event History. The matrix contains only Upcoming events; history contains only Completed and Cancelled events.
 
 Cancellation atomically updates only unfinished Upcoming events. It retains registrations, sponsors, attendance timestamps, and counts. Repeated or concurrent requests cannot replace the original reason. Ordinary editing cannot change lifecycle state or reopen an inactive event.
 

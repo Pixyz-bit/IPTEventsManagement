@@ -329,7 +329,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         }
 
         /// <summary>
-        /// Retrieves historical and current campus events with attendance statistics,
+        /// Retrieves Completed and Cancelled campus events with attendance statistics,
         /// supporting multi-criteria filtering across Academic Year, Semester, Outcome Status, and Universal Search.
         /// </summary>
         public List<EventModel> GetHistoricalEvents(string semester = null, string academicYear = null, string outcomeStatus = null, string search = null)
@@ -354,7 +354,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     FROM dbo.EventRegistrationTable
                     GROUP BY EventId
                 ) regStats ON e.EventId = regStats.EventId
-                WHERE 1 = 1";
+                WHERE e.Status IN ('Completed', 'Cancelled')";
 
             var parameters = new List<SqlParameter>();
 
@@ -371,8 +371,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
             if (!string.IsNullOrWhiteSpace(outcomeStatus) && !string.Equals(outcomeStatus, "ALL", StringComparison.OrdinalIgnoreCase))
             {
-                if (outcomeStatus != "Upcoming" && outcomeStatus != "Cancelled" && outcomeStatus != "Completed")
-                    throw new ArgumentException("Outcome status must be Upcoming, Cancelled, Completed, or ALL.", nameof(outcomeStatus));
+                if (outcomeStatus != "Cancelled" && outcomeStatus != "Completed")
+                    throw new ArgumentException("History outcome status must be Cancelled, Completed, or ALL.", nameof(outcomeStatus));
                 sql += " AND e.Status = @OutcomeStatus";
                 parameters.Add(new SqlParameter("@OutcomeStatus", SqlDbType.VarChar, 50) { Value = outcomeStatus });
             }
@@ -425,6 +425,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 SELECT DISTINCT YEAR(EventStart) AS EvtYear, MONTH(EventStart) AS EvtMonth
                 FROM dbo.EventsTable
+                WHERE Status IN ('Completed', 'Cancelled')
                 ORDER BY EvtYear DESC;";
 
             DataTable dt = DatabaseConnection.ExecuteDataTable(sql);

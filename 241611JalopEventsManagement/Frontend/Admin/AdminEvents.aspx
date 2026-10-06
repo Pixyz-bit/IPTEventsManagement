@@ -33,11 +33,10 @@
     <!-- Filter & Search Toolbar -->
     <div class="matrix-toolbar">
         <div class="status-tabs-group">
-            <asp:LinkButton ID="btnTabAll" runat="server" CssClass="tab-btn active" OnClick="FilterTab_Click" CommandArgument="All" CausesValidation="false" Text="All Events" />
+            <asp:LinkButton ID="btnTabAll" runat="server" CssClass="tab-btn active" OnClick="FilterTab_Click" CommandArgument="All" CausesValidation="false" Text="All Upcoming" />
             <asp:LinkButton ID="btnTabOpen" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Open" CausesValidation="false" Text="Open" />
             <asp:LinkButton ID="btnTabSoon" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Soon" CausesValidation="false" Text="Soon" />
             <asp:LinkButton ID="btnTabClose" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Close" CausesValidation="false" Text="Close" />
-            <asp:LinkButton ID="btnTabCancelled" runat="server" CssClass="tab-btn" OnClick="FilterTab_Click" CommandArgument="Cancelled" CausesValidation="false" Text="Cancelled" />
         </div>
 
         <div class="filters-right-group">
@@ -79,7 +78,7 @@
                 </HeaderTemplate>
                 <ItemTemplate>
                     <tr class='event-matrix-row <%# (bool)Eval("IsCancelled") ? "is-cancelled-row" : "" %>' data-status='<%# Eval("MatrixStatus") %>' data-dept='<%# Eval("TargetDepartment") %>'>
-                        <!-- 1. Status: Close, Open, Soon, Cancelled -->
+                        <!-- 1. Registration status within Upcoming events: Close, Open, Soon -->
                         <td>
                             <span class='status-pill <%# GetMatrixStatusClass(Eval("MatrixStatus")) %>'>
                                 <%# Eval("MatrixStatus") %>

@@ -1,7 +1,7 @@
 <%@ Page Title="Events History & History | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventHistory.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventHistory" EnableEventValidation="false" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/event-history.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/event-history.css?v=20261006-three-cards") %>" />
 </asp:Content>
 
 <asp:Content ID="MainArea" ContentPlaceHolderID="MainContent" runat="server">
@@ -9,7 +9,7 @@
     <div class="history-header-row">
         <div class="history-title-block">
             <h2>Events History</h2>
-            <p>Official permanent records repository for upcoming, completed, and cancelled campus events.</p>
+            <p>Official permanent records repository for completed and cancelled campus events.</p>
         </div>
     </div>    
 
@@ -42,12 +42,6 @@
             <div class="kpi-card-value" style="color:var(--accent-rose);"><asp:Literal ID="litTotalCancelled" runat="server" Text="0" /></div>
         </div>
 
-        <div class="history-kpi-card">
-            <div class="kpi-card-header">
-                <span class="kpi-card-title">Average Turnout Rate</span>
-            </div>
-            <div class="kpi-card-value" style="color:var(--brand-primary);"><asp:Literal ID="litTurnoutAvg" runat="server" Text="0.0%" /></div>
-        </div>
     </div>
 
     <!-- Master History Table Card (Unified with Filter Toolbar & Zero Gap) -->
@@ -69,7 +63,6 @@
 
                 <asp:DropDownList ID="ddlOutcomeStatus" runat="server" CssClass="history-select" AutoPostBack="true" OnSelectedIndexChanged="FilterChanged">
                     <asp:ListItem Value="ALL" Text="All Outcome Statuses" />
-                    <asp:ListItem Value="Upcoming" Text="Upcoming Only" />
                     <asp:ListItem Value="Completed" Text="Completed Only" />
                     <asp:ListItem Value="Cancelled" Text="Cancelled Only" />
                 </asp:DropDownList>

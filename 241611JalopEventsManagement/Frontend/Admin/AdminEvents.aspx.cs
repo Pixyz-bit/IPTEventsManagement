@@ -24,7 +24,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             if (!IsPostBack)
             {
                 string tabParam = Request.QueryString["status"];
-                if (new[] { "All", "Open", "Soon", "Close", "Cancelled" }.Contains(tabParam, StringComparer.OrdinalIgnoreCase))
+                if (new[] { "All", "Open", "Soon", "Close" }.Contains(tabParam, StringComparer.OrdinalIgnoreCase))
                 {
                     CurrentStatusFilter = tabParam.Trim();
                 }
@@ -62,7 +62,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             try
             {
-                allEvents = _eventRepository.GetAllEvents();
+                allEvents = _eventRepository.GetAllUpcomingEvents();
             }
             catch (Exception ex)
             {
@@ -71,12 +71,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
             allEvents = allEvents ?? new List<EventModel>();
 
-            // 1. Evaluate statuses including explicit cancellation.
+            // 1. Evaluate registration states within Upcoming events only.
             int totalCount = allEvents.Count;
             int openCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Open");
             int soonCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Soon");
             int closeCount = allEvents.Count(ev => GetEventMatrixStatus(ev) == "Close");
-            int cancelledCount = allEvents.Count(ev => ev.IsCancelled);
 
             // Update Summary KPI Cards (if present in markup)
             if (litTotalMatrixCount != null) litTotalMatrixCount.Text = totalCount.ToString();
@@ -85,11 +84,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             if (litCloseCount != null) litCloseCount.Text = closeCount.ToString();
 
             // 2. Update Status Filter Badges
-            btnTabAll.Text = GetTabCaption("All Events", totalCount);
+            btnTabAll.Text = GetTabCaption("All Upcoming", totalCount);
             btnTabOpen.Text = GetTabCaption("Open", openCount);
             btnTabSoon.Text = GetTabCaption("Soon", soonCount);
             btnTabClose.Text = GetTabCaption("Close", closeCount);
-            btnTabCancelled.Text = GetTabCaption("Cancelled", cancelledCount);
 
             // 3. Highlight Active Tab
             UpdateTabStyles();
@@ -163,10 +161,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             btnTabOpen.CssClass = "tab-btn tab-status-open" + (CurrentStatusFilter.Equals("Open", StringComparison.OrdinalIgnoreCase) ? " active" : "");
             btnTabSoon.CssClass = "tab-btn tab-status-soon" + (CurrentStatusFilter.Equals("Soon", StringComparison.OrdinalIgnoreCase) ? " active" : "");
             btnTabClose.CssClass = "tab-btn tab-status-close" + (CurrentStatusFilter.Equals("Close", StringComparison.OrdinalIgnoreCase) ? " active" : "");
-            if (btnTabCancelled != null)
-            {
-                btnTabCancelled.CssClass = "tab-btn tab-status-cancelled" + (CurrentStatusFilter.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) ? " active" : "");
-            }
+
         }
 
         protected void FilterTab_Click(object sender, EventArgs e)
@@ -253,13 +248,13 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 ViewState.Remove("CancellationEventId");
                 if (success)
                 {
-                    CurrentStatusFilter = "Cancelled";
+                    CurrentStatusFilter = "All";
                     txtSearch.Text = string.Empty;
                     ddlDepartmentFilter.SelectedIndex = 0;
                 }
                 BindEventsMatrix();
                 ShowFeedback(success
-                    ? "Event cancelled. Registration and check-in are closed; existing records are retained. No automatic notifications are sent."
+                    ? "Event cancelled. Registration and check-in are closed; existing records are retained in Event History. No automatic notifications are sent."
                     : "The event was not cancelled. It may already be cancelled, completed, or removed. Refresh before trying again.", success);
             }
             catch (Exception ex)

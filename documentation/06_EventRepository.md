@@ -169,3 +169,4 @@ Only Upcoming, Cancelled, and Completed are supported event status values. Creat
 SynchronizeCompletedEvents changes only Upcoming events with EventEnd <= GETDATE() to Completed. Event reads, joined registration reads, and lifecycle actions invoke synchronization. It is access-driven rather than a continuously running background job. SQL guards also prevent an event crossing its end time from being edited, registered for, cancelled, or checked into between synchronization and the action.
 
 History filters accept ALL, Upcoming, Cancelled, and Completed; any other lifecycle filter is rejected.
+The Admin Events Matrix uses GetAllUpcomingEvents. Event History uses GetHistoricalEvents, which always restricts records to Completed and Cancelled before applying search, academic year, semester, or outcome filters. Historical academic-year options use those same two statuses.

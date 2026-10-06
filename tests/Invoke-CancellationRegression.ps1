@@ -116,12 +116,13 @@ protected void Page_Load(object sender, EventArgs e) {
     $matrix = Invoke-WebRequest $matrixUrl -WebSession $session
     Assert-Test ($matrix.Content.Contains('Cancel Event') -and !$matrix.Content.Contains('ToggleArchive')) 'Matrix renders cancellation and removes archive action'
     Assert-Test (!$matrix.Content.Contains('cancellation-reason') -and !$matrix.Content.Contains('[EVENT CANCELLED]')) 'Matrix omits inline cancellation reason and duplicate cancellation label'
-    foreach ($tabName in @('Cancelled','Open','Soon','Close','All')) {
+    Assert-Test (!$matrix.Content.Contains('btnTabCancelled') -and !$matrix.Content.Contains('Fixture event 2') -and !$matrix.Content.Contains('Fixture event 3')) 'Events Matrix excludes completed and cancelled events and removes the cancelled tab'
+    foreach ($tabName in @('Open','Soon','Close','All')) {
         $form=Hidden-Form $matrix.Content
         $form['__EVENTTARGET']='ctl00$MainContent$btnTab' + $tabName
         $matrix=Invoke-WebRequest $matrixUrl -Method Post -ContentType 'application/x-www-form-urlencoded' -Body $form -WebSession $session
         $labelsOk=$true
-        foreach ($expected in @(@('All','All Events',9),@('Open','Open',4),@('Soon','Soon',0),@('Close','Close',1),@('Cancelled','Cancelled',4))) {
+        foreach ($expected in @(@('All','All Upcoming',4),@('Open','Open',4),@('Soon','Soon',0),@('Close','Close',0))) {
             $anchor=[regex]::Match($matrix.Content,'(?s)<a[^>]*id="[^"]*btnTab' + $expected[0] + '"[^>]*>(.*?)</a>')
             $text=[regex]::Replace($anchor.Groups[1].Value,'<[^>]*>',' ') -replace '\s+',' '
             $labelsOk=$labelsOk -and ($text.Trim() -eq ($expected[1] + ' ' + $expected[2]))
@@ -161,7 +162,7 @@ protected void Page_Load(object sender, EventArgs e) {
     $form['ctl00$MainContent$hfCancelEventId']='9'
     $cancelled=Invoke-WebRequest $matrixUrl -Method Post -ContentType 'application/x-www-form-urlencoded' -Body $form -WebSession $session
     $cancelledRow = [regex]::Matches($cancelled.Content, '(?s)<tr class=.event-matrix-row.*?</tr>') | Where-Object { $_.Value.Contains('Fixture event 8') } | Select-Object -First 1
-    Assert-Test ($cancelled.Content.Contains('Event cancelled. Registration and check-in are closed; existing records are retained.') -and $cancelledRow.Value.Contains('status-cancelled')) 'Cancellation succeeds and cancelled row remains visible'
+    Assert-Test ($cancelled.Content.Contains('Event cancelled. Registration and check-in are closed; existing records are retained in Event History.') -and !$cancelledRow.Success -and !$cancelled.Content.Contains('Fixture event 8')) 'Cancellation succeeds and removes the event from Upcoming matrix'
     Invoke-TestSql "IF NOT EXISTS(SELECT 1 FROM dbo.EventsTable WHERE EventId=8 AND Status='Cancelled') OR NOT EXISTS(SELECT 1 FROM dbo.EventsTable WHERE EventId=9 AND Status='Upcoming') THROW 51000,'Hidden event ID tampering changed the wrong event',1;"
     Assert-Test $true 'Signed ViewState prevents hidden event ID tampering'
     $repeat=Invoke-WebRequest $matrixUrl -Method Post -ContentType 'application/x-www-form-urlencoded' -Body $form -WebSession $session
@@ -170,6 +171,7 @@ protected void Page_Load(object sender, EventArgs e) {
     Assert-Test ($details.Content.Contains('Created by mistake — UI test') -and !$details.Content.Contains('Restore to Students')) 'Event details display cancellation reason'
     $history=Invoke-WebRequest "$base/Frontend/Admin/EventHistory.aspx" -WebSession $session
     Assert-Test ($history.Content.Contains('Fixture event 8') -and $history.Content.Contains('Cancelled')) 'History retains cancelled event'
+    Assert-Test ($history.Content.Contains('Fixture event 2') -and !$history.Content.Contains('Fixture event 9') -and !$history.Content.Contains('Updated title') -and !$history.Content.Contains('Upcoming Only')) 'History includes Completed and Cancelled but excludes Upcoming and its filter'
     $lookup=Invoke-WebRequest "$base/Frontend/Admin/AttendanceScanner.aspx/LookupAttendee" -Method Post -ContentType 'application/json' -Body '{"eventId":8,"query":"TCK-0008-00004"}' -WebSession $session
     $result=($lookup.Content | ConvertFrom-Json).d
     Assert-Test ($result.State -eq 'CancelledWarning' -and $result.Message.Contains('Created by mistake')) 'Scanner rejects cancelled event pass at lookup'

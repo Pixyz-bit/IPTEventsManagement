@@ -60,17 +60,9 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             int totalCompleted = masterEvents?.Count(e => string.Equals(e.EffectiveOutcomeStatus, "Completed", StringComparison.OrdinalIgnoreCase)) ?? 0;
             int totalCancelled = masterEvents?.Count(e => string.Equals(e.EffectiveOutcomeStatus, "Cancelled", StringComparison.OrdinalIgnoreCase)) ?? 0;
 
-            double avgTurnout = 0.0;
-            if (masterEvents != null && masterEvents.Any(e => e.PreRegisteredCount > 0))
-            {
-                var validEvents = masterEvents.Where(e => e.PreRegisteredCount > 0).ToList();
-                avgTurnout = validEvents.Average(e => e.TurnoutPercentage);
-            }
-
             litTotalHistorical.Text = totalHistorical.ToString();
             litTotalCompleted.Text = totalCompleted.ToString();
             litTotalCancelled.Text = totalCancelled.ToString();
-            litTurnoutAvg.Text = $"{avgTurnout:F1}%";
         }
 
         private void BindHistoryGrid()

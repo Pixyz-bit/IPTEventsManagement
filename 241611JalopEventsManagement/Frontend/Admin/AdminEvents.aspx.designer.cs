@@ -24,7 +24,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.LinkButton btnTabOpen;
         protected global::System.Web.UI.WebControls.LinkButton btnTabSoon;
         protected global::System.Web.UI.WebControls.LinkButton btnTabClose;
-        protected global::System.Web.UI.WebControls.LinkButton btnTabCancelled;
 
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
         protected global::System.Web.UI.WebControls.DropDownList ddlDepartmentFilter;

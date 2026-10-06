@@ -188,6 +188,12 @@ public static class CancellationRegression
             Check(events.GetEventsForStudent("Batasan", "College of Education", programs[i,0], null).Any(e => e.EventId == audienceId), "Program name recognizes " + programs[i,0]);
         }
         Scalar("DELETE FROM dbo.EventRegistrationTable WHERE EventId=" + audienceId + "; DELETE FROM dbo.EventsTable WHERE EventId=" + audienceId);
+        var upcomingOnly = events.GetAllUpcomingEvents();
+        var historyOnly = events.GetHistoricalEvents();
+        Check(upcomingOnly.All(e => e.Status == "Upcoming") && upcomingOnly.Any(e => e.EventId == 9), "Matrix source includes only Upcoming events");
+        Check(historyOnly.All(e => e.Status == "Completed" || e.Status == "Cancelled") && historyOnly.Any(e => e.EventId == 2) && historyOnly.Any(e => e.EventId == 3), "History source includes only Completed and Cancelled events");
+        Check(!upcomingOnly.Select(e => e.EventId).Intersect(historyOnly.Select(e => e.EventId)).Any(), "Upcoming matrix and event history have disjoint records");
+        Check(events.GetHistoricalEvents(search: "Fixture event 9").Count == 0, "History search cannot bring back Upcoming events");
         Console.WriteLine("TOTAL PASSED: " + checks);
         return 0;
     }
