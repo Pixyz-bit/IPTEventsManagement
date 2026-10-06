@@ -25,7 +25,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
         protected global::System.Web.UI.WebControls.DropDownList ddlDepartmentFilter;
         protected global::System.Web.UI.WebControls.DropDownList ddlProgramFilter;
-        protected global::System.Web.UI.WebControls.LinkButton btnExportCsv;
 
         protected global::System.Web.UI.WebControls.Repeater rptCheckedInAttendees;
         protected global::System.Web.UI.WebControls.Panel pnlEmptyRoster;

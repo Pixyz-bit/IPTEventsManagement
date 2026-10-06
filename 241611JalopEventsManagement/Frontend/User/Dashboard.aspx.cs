@@ -259,7 +259,7 @@ namespace _241611JalopEventsManagement.Frontend.User
         private EventCardViewModel MapEventToCardViewModel(EventModel ev)
         {
             DateTime now = DateTime.Now;
-            bool isOpen = ev.Status == "Upcoming" && now >= ev.RegStart && now <= ev.RegEnd && ev.CurrentRegistrations < ev.MaxCapacity;
+            bool isOpen = ev.IsRegistrationOpen;
 
             string schedule = $"{ev.EventStart:MM/dd/yyyy} | {ev.EventStart:hh:mm tt} - {ev.EventEnd:hh:mm tt}";
 

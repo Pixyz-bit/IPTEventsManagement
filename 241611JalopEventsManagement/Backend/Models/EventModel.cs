@@ -15,7 +15,17 @@ namespace _241611JalopEventsManagement.Backend.Models
         public DateTime EventEnd { get; set; }
         public DateTime RegStart { get; set; }
         public DateTime RegEnd { get; set; }
-        public string Status { get; set; } = "Upcoming";
+        private string _status = "Upcoming";
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                if (value != "Upcoming" && value != "Cancelled" && value != "Completed")
+                    throw new ArgumentException("Event status must be Upcoming, Cancelled, or Completed.", nameof(value));
+                _status = value;
+            }
+        }
         public string CancellationReason { get; set; }
 
         public string TargetBranch { get; set; }
@@ -67,31 +77,32 @@ namespace _241611JalopEventsManagement.Backend.Models
             {
                 if (string.Equals(Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
                     return "Cancelled";
-                if (string.Equals(Status, "Archived", StringComparison.OrdinalIgnoreCase))
-                    return "Archived";
                 if (string.Equals(Status, "Completed", StringComparison.OrdinalIgnoreCase))
                     return "Completed";
-                if (DateTime.Now > EventEnd)
+                if (DateTime.Now >= EventEnd)
                     return "Completed";
-                return Status ?? "Upcoming";
+                return "Upcoming";
             }
         }
 
         public bool IsCancelled => string.Equals(Status, "Cancelled", StringComparison.OrdinalIgnoreCase);
 
-        // Existing hidden records remain inactive until an administrator explicitly cancels them.
-        public bool CanCancel => string.Equals(Status, "Upcoming", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(Status, "Archived", StringComparison.OrdinalIgnoreCase);
+        public bool CanCancel => EffectiveOutcomeStatus == "Upcoming";
+
+        public string GetMatrixStatus(DateTime now)
+        {
+            if (Status == "Cancelled") return "Cancelled";
+            if (Status == "Completed" || now >= EventEnd || now > RegEnd
+                || CurrentRegistrations >= MaxCapacity) return "Close";
+            return now < RegStart ? "Soon" : "Open";
+        }
 
         public bool IsRegistrationOpen
         {
             get
             {
                 DateTime now = DateTime.Now;
-                return Status == "Upcoming" &&
-                       now >= RegStart &&
-                       now <= RegEnd &&
-                       CurrentRegistrations < MaxCapacity;
+                return GetMatrixStatus(now) == "Open";
             }
         }
 

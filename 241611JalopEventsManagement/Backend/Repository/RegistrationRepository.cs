@@ -18,6 +18,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public int RegisterStudent(EventRegistrationModel registration)
         {
+            EventRepository.SynchronizeCompletedEvents();
             if (registration == null)
             {
                 throw new ArgumentNullException(nameof(registration), "Registration model cannot be null.");
@@ -41,17 +42,18 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 BEGIN TRANSACTION;
 
-                DECLARE @Current INT, @Max INT, @RegStart DATETIME, @RegEnd DATETIME, @EvtStatus VARCHAR(50);
+                DECLARE @Current INT, @Max INT, @RegStart DATETIME, @RegEnd DATETIME, @EventEnd DATETIME, @EvtStatus VARCHAR(50);
                 SELECT @Current = CurrentRegistrations, 
                        @Max = MaxCapacity,
                        @RegStart = RegStart,
                        @RegEnd = RegEnd,
+                       @EventEnd = EventEnd,
                        @EvtStatus = Status
                 FROM dbo.EventsTable WITH (UPDLOCK, HOLDLOCK)
                 WHERE EventId = @EventId;
 
                 -- Registration is strictly permitted during the event's registration window
-                IF @EvtStatus != 'Upcoming' OR GETDATE() < @RegStart OR GETDATE() > @RegEnd
+                IF @EvtStatus != 'Upcoming' OR GETDATE() < @RegStart OR GETDATE() > @RegEnd OR GETDATE() >= @EventEnd
                 BEGIN
                     ROLLBACK TRANSACTION;
                     SELECT -2; -- Registration window closed or event inactive
@@ -132,6 +134,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public EventRegistrationModel GetRegistrationById(int eventRegistrationId)
         {
+            EventRepository.SynchronizeCompletedEvents();
             if (eventRegistrationId <= 0)
             {
                 return null;
@@ -167,6 +170,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public List<EventRegistrationModel> GetRegistrationsByStudent(string studentId)
         {
+            EventRepository.SynchronizeCompletedEvents();
             var list = new List<EventRegistrationModel>();
             if (string.IsNullOrWhiteSpace(studentId))
             {
@@ -207,6 +211,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public List<EventRegistrationModel> GetRegistrationsByEvent(int eventId)
         {
+            EventRepository.SynchronizeCompletedEvents();
             var list = new List<EventRegistrationModel>();
             if (eventId <= 0)
             {
@@ -323,6 +328,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public bool CancelRegistration(int eventRegistrationId)
         {
+            EventRepository.SynchronizeCompletedEvents();
             if (eventRegistrationId <= 0)
             {
                 return false;
@@ -331,7 +337,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             const string sql = @"
                 BEGIN TRANSACTION;
 
-                DECLARE @EvtId INT, @CurStatus VARCHAR(50), @RegEnd DATETIME, @EvtStatus VARCHAR(50);
+                DECLARE @EvtId INT, @CurStatus VARCHAR(50), @RegEnd DATETIME, @EventEnd DATETIME, @EvtStatus VARCHAR(50);
 
                 SELECT @EvtId = r.EventId, 
                        @CurStatus = r.Status, 
@@ -343,7 +349,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 -- Strictly enforce: 
                 -- 1. Status must be default 'NoShow' (cannot cancel if already 'Present' or 'Cancelled')
                 -- 2. Current time must be within registration window (GETDATE() <= RegEnd)
-                IF @EvtId IS NOT NULL AND @CurStatus = 'NoShow' AND GETDATE() <= @RegEnd AND @EvtStatus = 'Upcoming'
+                IF @EvtId IS NOT NULL AND @CurStatus = 'NoShow' AND GETDATE() <= @RegEnd AND @EvtStatus = 'Upcoming' AND EXISTS (SELECT 1 FROM dbo.EventsTable WHERE EventId = @EvtId AND EventEnd > GETDATE())
                 BEGIN
                     UPDATE dbo.EventRegistrationTable
                     SET Status = 'Cancelled'
@@ -426,6 +432,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public EventRegistrationModel GetRegistrationForScan(int eventId, string query)
         {
+            EventRepository.SynchronizeCompletedEvents();
             if (string.IsNullOrWhiteSpace(query))
             {
                 return null;
@@ -522,6 +529,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public bool ConfirmCheckIn(int eventRegistrationId, out string errorMessage)
         {
+            EventRepository.SynchronizeCompletedEvents();
             errorMessage = string.Empty;
             if (eventRegistrationId <= 0)
             {
@@ -533,13 +541,13 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 SET XACT_ABORT ON;
                 BEGIN TRANSACTION;
 
-                DECLARE @CurStatus VARCHAR(50), @EventId INT, @EvtStatus VARCHAR(50);
+                DECLARE @CurStatus VARCHAR(50), @EventId INT, @EvtStatus VARCHAR(50), @EventEnd DATETIME;
 
                 SELECT @CurStatus = Status, @EventId = EventId
                 FROM dbo.EventRegistrationTable WITH (UPDLOCK, HOLDLOCK)
                 WHERE EventRegistrationId = @EventRegistrationId;
 
-                SELECT @EvtStatus = Status FROM dbo.EventsTable WITH (UPDLOCK, HOLDLOCK)
+                SELECT @EvtStatus = Status, @EventEnd = EventEnd FROM dbo.EventsTable WITH (UPDLOCK, HOLDLOCK)
                 WHERE EventId = @EventId;
 
                 IF @CurStatus IS NULL
@@ -547,7 +555,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     ROLLBACK TRANSACTION;
                     SELECT -1; -- Not found
                 END
-                ELSE IF @EvtStatus IS NULL OR @EvtStatus <> 'Upcoming'
+                ELSE IF @EvtStatus IS NULL OR @EvtStatus <> 'Upcoming' OR GETDATE() >= @EventEnd
                 BEGIN
                     ROLLBACK TRANSACTION;
                     SELECT -4; -- Cancelled or inactive event
@@ -607,6 +615,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public List<EventRegistrationModel> GetCheckedInAttendees(int eventId)
         {
+            EventRepository.SynchronizeCompletedEvents();
             var list = new List<EventRegistrationModel>();
             if (eventId <= 0)
             {

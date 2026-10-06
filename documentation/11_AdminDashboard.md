@@ -1,32 +1,53 @@
-# Admin Events Matrix and cancellation
+# Admin Events Matrix and lifecycle
 
-The admin landing page is `Frontend/Admin/AdminEvents.aspx`. The obsolete admin Dashboard and its stylesheet were removed. Admin login, sidebar branding, breadcrumbs and Access Denied links lead to Events Matrix.
+The admin landing page is Frontend/Admin/AdminEvents.aspx. Every admin page inherits AdminPage, which checks authentication and the Admin role before page actions. Scanner web methods independently validate their sessions.
 
-Every admin page inherits `Backend/Helpers/AdminPage.cs`, which checks authentication and the Admin role in `OnPreInit`, before data loading and postback actions. Scanner web methods check their own sessions. Admin ViewState is bound to the current session.
+## Stored event statuses
+
+dbo.EventsTable.Status supports exactly these three values:
+
+| Status | Meaning | Allowed actions |
+|---|---|---|
+| Upcoming | Active event that has not ended; includes a running event | Edit or cancel before event end; registration also requires its date window and available capacity |
+| Cancelled | Administrator cancelled the event with a recorded reason | Review records; registration and check-in are blocked |
+| Completed | Event has ended | Review records; editing, cancellation, registration, and check-in are blocked |
+
+The model rejects unsupported values. CK_EventsTable_Status enforces canonical spelling and length in the database. The database defaults to Upcoming.
+
+Repository access persists Completed for Upcoming events whose end time has arrived. This happens on the next relevant request rather than through a background scheduler. Cancelled records are preserved. SQL date guards protect actions at the end-time boundary.
+
+Individual registration status is separate: NoShow, Present, or Cancelled. Those values are not event lifecycle states.
+
+## Matrix labels and colors
+
+| Matrix label | Conditions | Color |
+|---|---|---|
+| Soon | Active event with seats available, before registration opens | Amber |
+| Open | Active event, within registration dates, with seats available | Green |
+| Close | Registration deadline passed, full capacity, or Completed event | Slate |
+| Cancelled | Cancelled lifecycle status; takes priority over other conditions | Red |
+
+These labels are calculated by EventModel.GetMatrixStatus, never saved into EventsTable.Status. Registration start and deadline are inclusive; event end is exclusive. Close can become Open again if capacity becomes available during the registration window. Closed registration does not itself mean the event is Completed.
+
+Badges and filter tabs use the same colors. Visible text remains present so color is not the only indicator. The shared palette is defined in global.css.
 
 ## Cancel an unintended event
 
-1. In Events Matrix, click **Cancel Event**, or use that link in Event Details.
-2. Review the event title and consequences. Enter a reason of 1–500 characters.
-3. Click **Confirm Cancellation**. **Keep Event** dismisses the dialog without saving.
-4. The event appears in the **Cancelled** tab and remains available in Event History.
+1. Click Cancel Event in the matrix or Event Details.
+2. Review the title and consequences. Enter a reason of 1-500 characters.
+3. Confirm Cancellation saves the change; Keep Event dismisses the dialog.
+4. The event remains in the Cancelled tab and Event History.
 
-Cancellation uses `EventCancellationModel` and `EventCancellationRepository`. It atomically changes `EventsTable.Status` to `Cancelled` and stores `CancellationReason`. It does not delete events, registrations, sponsors, attendance timestamps, or registration counts. Completed and already-cancelled events cannot be cancelled. A repeated or concurrent request cannot overwrite the original reason. Ordinary event editing cannot modify lifecycle status or reopen a cancelled event.
+Cancellation atomically updates only unfinished Upcoming events. It retains registrations, sponsors, attendance timestamps, and counts. Repeated or concurrent requests cannot replace the original reason. Ordinary editing cannot change lifecycle state or reopen an inactive event.
 
-Registration queries exclude cancelled events. Existing student registration cards display **EVENT CANCELLED**. Their pass shows the reason, generates no QR, and offers no admission-pass download. Scanner lookup and the authoritative check-in repository both block cancelled/inactive events, including previously downloaded QR codes. No automatic email notifications are implemented.
+Event Details offers View Cancellation Details, which opens a modal containing the reason. The modal supports Close and Escape. Cancelled student passes show the reason, generate no admission QR, and offer no pass download. Scanner lookup and repository commits independently reject inactive events. No automatic email notifications are implemented.
 
-## Storage and legacy records
+## Database setup and migration
 
-The supplied schema stores lifecycle state in `dbo.EventsTable.Status VARCHAR(50)` and reasons in `CancellationReason NVARCHAR(500)`. There is no separate event-status lookup table. Registration/attendance state in `EventRegistrationTable.Status` is separate and remains historical evidence after event-wide cancellation. No schema migration is needed.
+New installations use 01_DatabaseSchema.sql or 05_ConsolidatedDatabaseSchema.sql, which include the three-status constraint and default.
 
-Archive and restore buttons, handlers, and repository methods have been removed. Existing records with legacy `Archived` status remain inactive; they are not automatically restored, converted, or deleted. An administrator can explicitly cancel a legacy hidden event with a reason. Event History and CSV export remain available for records and reporting.
-
-The matrix retains repeater ViewState across postbacks. It uses actual database events rather than fabricated action rows; database failures show an error. Cancellation failures preserve the entered reason and confirmation dialog.
-
-Status tabs render their label and badge through `LinkButton.Text`, avoiding nested controls that Web Forms can clear when restoring Text from ViewState. Regression tests click every status tab and verify that all labels, counts, and the selected state remain present after each postback.
+Existing installations run 06_EnforceEventLifecycleStatuses.sql against the configured application database. The transactional migration preserves records, refuses unsupported existing status values, adds the constraint/default, and completes ended Upcoming records. It can run repeatedly.
 
 ## Verification
 
-Build the project before running `tests/Invoke-CancellationRegression.ps1` from PowerShell 7. The script requires installed SQL Server LocalDB, sqlcmd, .NET Framework and IIS Express. It creates a uniquely named disposable LocalDB database from the supplied consolidated schema and tests the compiled application through a separate clone. The runner refuses to target the real database and removes its temporary database afterward. It does not add verification/session helpers to the application checkout.
-
-The suite checks lifecycle transitions, reason validation, preservation of attendance and registrations, concurrent/repeated requests, stale edits, pass invalidation, scanner protections, admin authorization, real repeater postbacks, and database failure handling. `-Review` keeps the isolated app open until Enter is pressed for a browser inspection. Temporary diagnostic files remain in the printed temp directory.
+Build before running tests/Invoke-CancellationRegression.ps1 in PowerShell 7. The suite uses a uniquely named disposable LocalDB database and a separate IIS Express clone. It checks the migration, status constraints, completion, registration boundaries, cancellation, attendance preservation, stale edits, pass validity, filtering, authorization, and database failures. It never targets the application database. The -Review option keeps the clone running for browser review until Enter.

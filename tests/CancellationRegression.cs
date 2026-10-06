@@ -35,7 +35,7 @@ public static class CancellationRegression
         Check(!cancellations.CancelEvent(new EventCancellationModel { EventId = 1, Reason = new string('x', 501) }), "Oversized reason rejected");
         Check(!cancellations.CancelEvent(new EventCancellationModel { EventId = 0, Reason = "Mistake" }), "Invalid event ID rejected");
         Check(new EventCancellationModel { EventId = 1, Reason = new string('x', 500) }.IsValid, "500 character boundary accepted");
-        Check(new EventModel { Status = "Upcoming" }.CanCancel && !new EventModel { Status = "Completed" }.CanCancel,
+        Check(new EventModel { Status = "Upcoming", EventEnd = DateTime.Now.AddDays(1) }.CanCancel && !new EventModel { Status = "Completed" }.CanCancel,
             "Model eligibility agrees with lifecycle rules");
         Check(cancellations.CancelEvent(new EventCancellationModel { EventId = 1, Reason = "  Mistake — <script>alert(1)</script>  " }), "Upcoming event cancelled");
         var cancelled = events.GetEventById(1);
@@ -63,7 +63,7 @@ public static class CancellationRegression
         Check(!cancellations.CancelEvent(new EventCancellationModel { EventId = 2, Reason = "Mistake" }), "Completed event protected");
         Check(!cancellations.CancelEvent(new EventCancellationModel { EventId = 3, Reason = "Overwrite" })
             && events.GetEventById(3).CancellationReason == "Original reason", "Previously cancelled event protected");
-        Check(cancellations.CancelEvent(new EventCancellationModel { EventId = 4, Reason = "Legacy mistaken event" }), "Legacy hidden event may be explicitly cancelled");
+        Check(cancellations.CancelEvent(new EventCancellationModel { EventId = 4, Reason = "Created by mistake" }), "Another upcoming event may be cancelled");
         Check(!cancellations.CancelEvent(new EventCancellationModel { EventId = 99999, Reason = "Missing" }), "Missing event fails safely");
         var editable = events.GetEventById(5);
         editable.Title = "Updated title";
@@ -78,6 +78,46 @@ public static class CancellationRegression
         Task.WaitAll(tasks);
         Check(tasks.Count(t => t.Result) == 1, "Concurrent cancellation succeeds exactly once");
         Check(events.GetHistoricalEvents(outcomeStatus: "Cancelled").Any(e => e.EventId == 1), "Cancelled event remains in history");
+        foreach (string unsupported in new[] { "Archived", "Concluded", "Open", "Soon", "Close", "upcoming", "Upcoming " })
+        {
+            bool rejected = false;
+            try { new EventModel { Status = unsupported }; }
+            catch (ArgumentException) { rejected = true; }
+            Check(rejected, "Model rejects unsupported event status: " + unsupported);
+            rejected = false;
+            try { Scalar("UPDATE dbo.EventsTable SET Status='" + unsupported + "' WHERE EventId=7;"); }
+            catch (SqlException) { rejected = true; }
+            Check(rejected && events.GetEventById(7).Status == "Upcoming", "Database rejects unsupported event status: " + unsupported);
+        }
+        DateTime now = DateTime.Now;
+        var matrixEvent = new EventModel { EventEnd = now.AddDays(2), RegStart = now, RegEnd = now.AddDays(1), MaxCapacity = 50 };
+        Check(matrixEvent.GetMatrixStatus(now.AddTicks(-1)) == "Soon", "Soon before registration starts");
+        Check(matrixEvent.GetMatrixStatus(now) == "Open", "Open at registration start");
+        Check(matrixEvent.GetMatrixStatus(matrixEvent.RegEnd) == "Open", "Registration deadline is inclusive");
+        Check(matrixEvent.GetMatrixStatus(matrixEvent.RegEnd.AddTicks(1)) == "Close", "Close immediately after deadline");
+        matrixEvent.CurrentRegistrations = 50;
+        Check(matrixEvent.GetMatrixStatus(now) == "Close", "Full event closes registration");
+        matrixEvent.Status = "Cancelled";
+        Check(matrixEvent.GetMatrixStatus(now.AddDays(-1)) == "Cancelled", "Cancellation overrides dates and capacity");
+
+        Scalar(@"INSERT INTO dbo.EventsTable (Title,VenueLocation,MaxCapacity,CurrentRegistrations,CreatedByUserId,EventStart,EventEnd,RegStart,RegEnd,Status)
+            VALUES ('Ended lifecycle fixture','Test venue',50,1,1,DATEADD(hour,-2,GETDATE()),DATEADD(hour,-1,GETDATE()),DATEADD(day,-1,GETDATE()),DATEADD(day,1,GETDATE()),'Upcoming');
+            DECLARE @EndedId INT = SCOPE_IDENTITY();
+            INSERT INTO dbo.EventRegistrationTable (EventId,StudentId,CurrentYearLvl,CurrentSection,Status) VALUES (@EndedId,'TEST-1',1,'TEST','NoShow');
+            SELECT @EndedId;");
+        int endedId = Convert.ToInt32(Scalar("SELECT EventId FROM dbo.EventsTable WHERE Title='Ended lifecycle fixture'"));
+        int endedRegistrationId = Convert.ToInt32(Scalar("SELECT EventRegistrationId FROM dbo.EventRegistrationTable WHERE EventId=" + endedId));
+        var ended = events.GetEventById(endedId);
+        Check(ended.Status == "Completed" && Convert.ToString(Scalar("SELECT Status FROM dbo.EventsTable WHERE EventId=" + endedId)) == "Completed", "Completion persists on repository access");
+        Check(!ended.CanCancel && !ended.IsRegistrationOpen && ended.GetMatrixStatus(now) == "Close", "Ended event has consistent domain state");
+        Check(!cancellations.CancelEvent(new EventCancellationModel { EventId = endedId, Reason = "Too late" }), "Ended event cannot be cancelled");
+        ended.EventEnd = DateTime.Now.AddDays(1);
+        Check(!events.UpdateEvent(ended), "Ended event cannot be edited back into activity");
+        Check(!registrations.ConfirmCheckIn(endedRegistrationId, out error), "Ended event cannot check in");
+        Check(!registrations.GetRegistrationById(endedRegistrationId).IsPassValid, "Ended event pass is invalid");
+        Check(registrations.RegisterStudent(new EventRegistrationModel { EventId = endedId, StudentId = "TEST-3", CurrentYearLvl = 1 }) == -2, "Ended event cannot register even with a future deadline");
+        Check(events.GetHistoricalEvents(outcomeStatus: "Completed").Any(e => e.EventId == endedId), "History filters persisted completion");
+        Scalar("DELETE FROM dbo.EventRegistrationTable WHERE EventId=" + endedId + "; DELETE FROM dbo.EventsTable WHERE EventId=" + endedId + ";");
         Console.WriteLine("TOTAL PASSED: " + checks);
         return 0;
     }

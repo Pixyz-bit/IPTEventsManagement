@@ -1,7 +1,7 @@
 <%@ Page Title="Campus Events Matrix | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AdminEvents.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AdminEvents" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/admin-events.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/admin-events.css?v=20261006-cleanup") %>" />
 </asp:Content>
 
 <asp:Content ID="MainArea" ContentPlaceHolderID="MainContent" runat="server">
@@ -92,8 +92,6 @@
                                 <img src='<%# ResolveUrl(Eval("BannerThumbnailUrl").ToString()) %>' alt="Banner" style="width:48px; height:32px; object-fit:cover; border-radius:5px; border:1px solid var(--border-color); flex-shrink:0;" />
                                 <div>
                                     <div class="cell-event-title"><%#: Eval("Title") %></div>
-                                    <div class="cancellation-reason"><%#: Eval("CancellationReason") %></div>
-                                    <%# (bool)Eval("IsCancelled") ? "<span style='font-size:0.7rem; color:#dc2626; font-weight:700;'>[EVENT CANCELLED]</span>" : "" %>
                                 </div>
                             </div>
                         </td>

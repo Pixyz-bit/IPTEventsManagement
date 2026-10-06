@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using _241611JalopEventsManagement.Backend.Helpers;
@@ -132,49 +131,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
         }
 
-        protected void btnExportHistoryCsv_Click(object sender, EventArgs e)
-        {
-            string search = txtSearch.Text?.Trim();
-            string ay = ddlAcademicYear.SelectedValue;
-            string outcome = ddlOutcomeStatus.SelectedValue;
-
-            List<EventModel> events = null;
-            try
-            {
-                events = _eventRepo.GetHistoricalEvents(null, ay, outcome, search);
-            }
-            catch
-            {
-                events = new List<EventModel>();
-            }
-
-            if (events == null)
-            {
-                events = new List<EventModel>();
-            }
-
-            var sb = new StringBuilder();
-            sb.AppendLine("EventId,EventCode,Title,TargetCollege,TargetProgram,VenueLocation,ConcludedDate,AcademicYear,Semester,OutcomeStatus,MaxCapacity,PreRegisteredCount,ActualAttendedCount,TurnoutPercentage,CancellationReason");
-
-            foreach (var ev in events)
-            {
-                string code = $"#EVT-{ev.EventId:D4}";
-                string dept = ev.TargetDepartment ?? "All Colleges";
-                string prog = ev.TargetProgram ?? "All Programs";
-                string date = ev.EventEnd.ToString("MM/dd/yyyy HH:mm");
-                string cancelReason = ev.CancellationReason ?? string.Empty;
-
-                sb.AppendLine($"\"{ev.EventId}\",\"{code}\",\"{EscapeCsv(ev.Title)}\",\"{EscapeCsv(dept)}\",\"{EscapeCsv(prog)}\",\"{EscapeCsv(ev.VenueLocation)}\",\"{date}\",\"{ev.AcademicYear}\",\"{ev.Semester}\",\"{ev.EffectiveOutcomeStatus}\",\"{ev.MaxCapacity}\",\"{ev.PreRegisteredCount}\",\"{ev.AttendedCount}\",\"{ev.TurnoutPercentage:F1}%\",\"{EscapeCsv(cancelReason)}\"");
-            }
-
-            Response.Clear();
-            Response.ContentType = "text/csv";
-            Response.AddHeader("Content-Disposition", $"attachment;filename=QCU_Events_History_Ledger_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
-            Response.Output.Write(sb.ToString());
-            Response.Flush();
-            Response.End();
-        }
-
         public string GetOutcomeStatusBadgeClass(string status)
         {
             if (string.Equals(status, "Completed", StringComparison.OrdinalIgnoreCase))
@@ -183,13 +139,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 return "status-pill-cancelled";
             if (string.Equals(status, "Upcoming", StringComparison.OrdinalIgnoreCase))
                 return "status-pill-upcoming";
-            return "status-pill-concluded";
-        }
-
-        private static string EscapeCsv(string val)
-        {
-            if (string.IsNullOrEmpty(val)) return string.Empty;
-            return val.Replace("\"", "\"\"");
+            return "status-pill-upcoming";
         }
 
         private void ShowNotification(string msg, bool isSuccess)

@@ -28,8 +28,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litEventStatusBadge;
         protected global::System.Web.UI.WebControls.DropDownList ddlEvents;
 
-        protected global::System.Web.UI.WebControls.LinkButton btnExportSummaryPdf;
-        protected global::System.Web.UI.WebControls.LinkButton btnExportComprehensiveCsv;
 
         // Tab 1: Before - Pre-Event Analytics
         protected global::System.Web.UI.WebControls.Literal litBeforePreRegistered;

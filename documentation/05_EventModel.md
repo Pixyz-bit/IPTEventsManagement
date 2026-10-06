@@ -38,7 +38,7 @@ The `EventModel` is a clean Plain Old CLR Object (POCO) representing an event en
 
 ## 3. Computed Domain Helpers
 
-`IsCancelled` identifies event-wide cancellation. `CanCancel` permits upcoming events and legacy hidden records; completed and cancelled records are protected. `EventCancellationModel` validates the event ID and a trimmed reason of 1–500 characters. See [the cancellation flow](11_AdminDashboard.md).
+`IsCancelled` identifies event-wide cancellation. `CanCancel` permits only unfinished Upcoming events; Completed and Cancelled records are protected. `EventCancellationModel` validates the event ID and a trimmed reason of 1–500 characters. See [the cancellation flow](11_AdminDashboard.md).
 
 ### 3.1 `RemainingCapacity`
 * **Purpose:** Calculates remaining ticket availability.
@@ -52,7 +52,7 @@ The `EventModel` is a clean Plain Old CLR Object (POCO) representing an event en
 ### 3.2 `IsRegistrationOpen`
 * **Purpose:** Evaluates whether registration is currently permitted based on time window, status, and remaining capacity.
 * **Signature & Contracts:**
-  - Output: `bool` (`Status == "Upcoming" && now >= RegStart && now <= RegEnd && CurrentRegistrations < MaxCapacity`)
+  - Output: bool (GetMatrixStatus(now) == "Open").
 * **When it is used:** Evaluated when rendering the "Register" button on event detail pages and validated in the registration service.
 * **Why:** Enforces that students cannot register before `RegStart`, after `RegEnd`, or once `MaxCapacity` is reached:
   * `[EventsTable.RegStart, EventsTable.RegEnd, EventsTable.Status, EventsTable.CurrentRegistrations]`
@@ -66,3 +66,18 @@ The `EventModel` is a clean Plain Old CLR Object (POCO) representing an event en
 * **When it is used:** Evaluated by the event catalog filter when presenting events to unauthenticated guests or non-restricted feeds.
 * **Why:** In Issue D, a `NULL` audience value denotes an open event. This helper avoids null checks in UI and repository layers:
   * `[EventsTable.TargetBranch, EventsTable.TargetDepartment, EventsTable.TargetProgram, EventsTable.TargetYearLevel]`
+
+## Event lifecycle contract
+
+Status accepts exactly Upcoming, Cancelled, or Completed. Any other string, null, different casing, or extra whitespace raises ArgumentException. The database enforces the same contract.
+
+Upcoming means an active, unfinished event, including the period during which it runs. Cancelled is an administrator cancellation with a reason. Completed is an ended event. Repository access persists completion for Upcoming events whose EventEnd <= GETDATE(). This runs on access without a background timer; idle databases synchronize on the next relevant request. Cancelled records remain Cancelled.
+
+EffectiveOutcomeStatus also treats an Upcoming event as Completed at its end boundary, protecting callers whose model was loaded just before that boundary. Completed events cannot be edited, cancelled, registered for, or checked into.
+
+GetMatrixStatus(DateTime now) returns a display label rather than a stored lifecycle state:
+
+- **Cancelled:** lifecycle is Cancelled; this takes priority.
+- **Close:** lifecycle is Completed, event end has arrived, registration deadline has passed, or capacity is full.
+- **Soon:** otherwise, registration has not reached its opening date.
+- **Open:** otherwise, registration is available. Registration start and deadline are inclusive; event end is exclusive.

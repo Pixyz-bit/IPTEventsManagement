@@ -11,7 +11,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 {
     public partial class EventHistory
     {
-        protected global::System.Web.UI.WebControls.LinkButton btnExportHistoryCsv;
         protected global::System.Web.UI.WebControls.Panel pnlNotification;
         protected global::System.Web.UI.WebControls.Literal litNotificationMsg;
         protected global::System.Web.UI.WebControls.LinkButton btnCloseNotification;

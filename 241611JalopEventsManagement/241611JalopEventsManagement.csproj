@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
+    <Content Include="Backend\Database\Migration\06_EnforceEventLifecycleStatuses.sql" />
     <Content Include="Frontend\Assets\js\vendor\html-to-image-1.11.13.js" />
     <Content Include="Frontend\Assets\js\vendor\html-to-image-LICENSE.txt" />
     <Content Include="Default.aspx" />

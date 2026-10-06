@@ -129,25 +129,6 @@
                 <span>Capacity: <strong style="color:var(--text-heading);"><asp:Literal ID="litSubEventCapacity" runat="server" /></strong></span>
             </asp:Panel>
         </div>
-        <div class="export-actions-group">
-            <asp:LinkButton ID="btnExportSummaryPdf" runat="server" CssClass="btn-export-pdf" OnClientClick="window.print(); return false;" ToolTip="Print / Export Official University Summary PDF">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                    <rect x="6" y="14" width="12" height="8"></rect>
-                </svg>
-                <span>Export University Summary (PDF)</span>
-            </asp:LinkButton>
-
-            <asp:LinkButton ID="btnExportComprehensiveCsv" runat="server" CssClass="btn-export-excel" OnClick="btnExportComprehensiveCsv_Click" ToolTip="Download Detailed Multi-Cohort Telemetry CSV">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                <span>Export Detailed Excel / CSV</span>
-            </asp:LinkButton>
-        </div>
     </div>
 
         <!-- ROW 1: EXECUTIVE TELEMETRY BENTO GRID -->
@@ -380,7 +361,7 @@
                                     <td><strong style="color:var(--text-heading);"><%# Eval("StudentFullName") %></strong></td>
                                     <td><%# Eval("StudentProgram") %></td>
                                     <td>Yr <%# Eval("CurrentYearLvl") %> - <%# Eval("CurrentSection") %></td>
-                                    <td><span class="rate-badge rate-badge-high" style="font-size:0.75rem;"><%# FormatTimestamp(Eval("CheckInTimestamp")) %></span></td>
+                                    <td><span style="font-size:0.75rem;"><%# FormatTimestamp(Eval("CheckInTimestamp")) %></span></td>
                                 </tr>
                             </ItemTemplate>
                         </asp:Repeater>

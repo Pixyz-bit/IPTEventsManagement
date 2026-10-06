@@ -177,30 +177,6 @@
             letter-spacing: 0.05em;
         }
 
-        .status-pill.status-open {
-            background-color: #ecfdf5;
-            color: #047857;
-            border: 1px solid #a7f3d0;
-        }
-
-        .status-pill.status-soon {
-            background-color: #fefce8;
-            color: #a16207;
-            border: 1px solid #fef08a;
-        }
-
-        .status-pill.status-close {
-            background-color: #f1f5f9;
-            color: #475569;
-            border: 1px solid #cbd5e1;
-        }
-
-        .status-pill.status-cancelled {
-            background-color: #fef2f2;
-            color: #b91c1c;
-            border: 1px solid #fecaca;
-        }
-
         /* Sub-Module Pipeline Progression Tabs */
         .pipeline-tabs-wrapper,
         .hub-pipeline-tabs {
@@ -344,6 +320,99 @@
         .btn-action-danger:hover {
             background-color: #fef2f2;
             border-color: #f87171;
+        }
+
+        /* Keep links, buttons, and submit inputs at the same action scale. */
+        .btn-action-primary,
+        .btn-action-secondary,
+        .btn-action-danger {
+            height: 2.5rem;
+            box-sizing: border-box;
+            justify-content: center;
+            font-family: var(--font-sans);
+            line-height: 1.25;
+            white-space: nowrap;
+        }
+
+        .cancellation-notice-dialog {
+            width: min(480px, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            margin: auto;
+            padding: 0;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            background: var(--bg-card);
+            color: var(--text-body);
+            box-shadow: var(--shadow-modal);
+            overflow: auto;
+        }
+
+        .cancellation-notice-dialog::backdrop {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .cancellation-notice-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .cancellation-notice-header h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-heading);
+        }
+
+        .cancellation-notice-close {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .cancellation-notice-close:hover {
+            background: var(--bg-hover);
+            color: var(--text-heading);
+        }
+
+        .cancellation-notice-body {
+            padding: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .cancellation-notice-body h4 {
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-heading);
+        }
+
+        .cancellation-notice-reason {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .cancellation-notice-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            background: var(--bg-subtle);
+        }
+
+        .cancellation-notice-dialog button:focus-visible {
+            outline: 2px solid var(--border-focus);
+            outline-offset: 2px;
         }
 
         /* ─── Bento Box Grid Layout System ─── */
@@ -639,7 +708,7 @@
 
         .cockpit-meta-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 0.5rem;
             margin-bottom: 0.85rem;
         }

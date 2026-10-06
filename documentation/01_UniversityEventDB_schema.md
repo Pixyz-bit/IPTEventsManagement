@@ -2,8 +2,9 @@
 
 - **Database Name:** `UniversityEventDB`
 - **Engine:** Microsoft SQL Server (MSSQL / T-SQL)
-- **Base Schema File:** [`01_UniversityEventSchema.sql`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Backend/Database/Migration/01_UniversityEventSchema.sql)
-- **Migration 02:** [`02_AddAudienceMatrixAndStudentIndex.sql`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Backend/Database/Migration/02_AddAudienceMatrixAndStudentIndex.sql)
+- **Base Schema File:** 241611JalopEventsManagement/Backend/Database/Migration/01_DatabaseSchema.sql
+- **Consolidated schema:** 241611JalopEventsManagement/Backend/Database/Migration/05_ConsolidatedDatabaseSchema.sql
+- **Existing database upgrade:** 241611JalopEventsManagement/Backend/Database/Migration/06_EnforceEventLifecycleStatuses.sql
 
 ---
 
@@ -66,7 +67,7 @@ Event scheduling, venue location, capacity, audience restriction flag, and lifec
 | `EventEnd` | `DATETIME2(7)` | No | `Timeline Check` | Event end time |
 | `RegStart` | `DATETIME2(7)` | No | `Timeline Check` | Registration window open |
 | `RegEnd` | `DATETIME2(7)` | No | `Timeline Check` | Registration window close |
-| `Status` | `VARCHAR(20)` | No | `DEFAULT ('Upcoming')`, `CHECK IN ('Upcoming', 'Cancelled', 'Completed')` | Lifecycle status |
+| Status | VARCHAR(50) | No | DEFAULT Upcoming; CK_EventsTable_Status accepts exactly Upcoming, Cancelled, Completed | Event lifecycle; matrix availability is calculated separately |
 | `CancellationReason` | `NVARCHAR(500)` | Yes | | Justification if cancelled |
 | `HasAudienceRestrictions` | `BIT` | No | `DEFAULT (0)` | Flag indicating 4-tier filtering rules exist |
 | `CreatedByUserId` | `INT` | No | `FK -> UserTable(UserId)` | Event owner / creator |

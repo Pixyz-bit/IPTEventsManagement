@@ -49,7 +49,11 @@ CREATE TABLE EventsTable (
     EventEnd DATETIME NOT NULL,
     RegStart DATETIME NOT NULL,
     RegEnd DATETIME NOT NULL,
-    Status VARCHAR(50) NOT NULL, -- 'Upcoming', 'Cancelled', 'Completed'
+    Status VARCHAR(50) NOT NULL CONSTRAINT DF_EventsTable_Status DEFAULT 'Upcoming'
+        CONSTRAINT CK_EventsTable_Status CHECK (
+            (Status COLLATE Latin1_General_100_BIN2 = 'Upcoming' AND DATALENGTH(Status) = 8) OR
+            (Status COLLATE Latin1_General_100_BIN2 = 'Cancelled' AND DATALENGTH(Status) = 9) OR
+            (Status COLLATE Latin1_General_100_BIN2 = 'Completed' AND DATALENGTH(Status) = 9)),
     CancellationReason NVARCHAR(500) NULL,
     
     -- Issue D: Target Audience Matrix (NULL = Open to All)

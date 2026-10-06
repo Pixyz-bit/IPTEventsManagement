@@ -8,6 +8,14 @@ namespace _241611JalopEventsManagement.Backend.Repository
 {
     public class EventRepository
     {
+        // Persist completion on repository access. No background scheduler is required.
+        public static void SynchronizeCompletedEvents()
+        {
+            DatabaseConnection.ExecuteNonQuery(@"
+                UPDATE dbo.EventsTable SET Status = 'Completed'
+                WHERE Status = 'Upcoming' AND EventEnd <= GETDATE();");
+        }
+
         public int CreateEvent(EventModel ev)
         {
             if (ev == null)
@@ -61,7 +69,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@EventEnd", SqlDbType.DateTime) { Value = ev.EventEnd },
                 new SqlParameter("@RegStart", SqlDbType.DateTime) { Value = ev.RegStart },
                 new SqlParameter("@RegEnd", SqlDbType.DateTime) { Value = ev.RegEnd },
-                new SqlParameter("@Status", SqlDbType.VarChar, 50) { Value = string.IsNullOrWhiteSpace(ev.Status) ? "Upcoming" : ev.Status },
+                new SqlParameter("@Status", SqlDbType.VarChar, 50) { Value = ev.EffectiveOutcomeStatus },
                 new SqlParameter("@CancellationReason", SqlDbType.NVarChar, 500) { Value = (object)ev.CancellationReason ?? DBNull.Value },
                 new SqlParameter("@TargetBranch", SqlDbType.NVarChar, 100) { Value = (object)ev.TargetBranch ?? DBNull.Value },
                 new SqlParameter("@TargetDepartment", SqlDbType.NVarChar, 100) { Value = (object)ev.TargetDepartment ?? DBNull.Value },
@@ -82,6 +90,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
         public EventModel GetEventById(int eventId)
         {
+            SynchronizeCompletedEvents();
             if (eventId <= 0)
             {
                 return null;
@@ -111,6 +120,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public List<EventModel> GetAllUpcomingEvents()
         {
+            SynchronizeCompletedEvents();
             const string sql = @"
                 SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
                        CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
@@ -129,6 +139,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public List<EventModel> GetAllEvents()
         {
+            SynchronizeCompletedEvents();
             const string sql = @"
                 SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
                        CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
@@ -147,6 +158,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public List<EventModel> GetEventsForStudent(string branch, string department, string program, int yearLevel)
         {
+            SynchronizeCompletedEvents();
             const string sql = @"
                 SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
                        CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
@@ -177,6 +189,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public List<EventModel> GetEventsCreatedByUser(int userId)
         {
+            SynchronizeCompletedEvents();
             if (userId <= 0)
             {
                 return new List<EventModel>();
@@ -201,6 +214,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public bool UpdateEvent(EventModel ev)
         {
+            SynchronizeCompletedEvents();
             if (ev == null || ev.EventId <= 0)
             {
                 return false;
@@ -221,7 +235,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     TargetProgram = @TargetProgram,
                     TargetYearLevel = @TargetYearLevel,
                     EventPhotoPath = @EventPhotoPath
-                WHERE EventId = @EventId AND Status = 'Upcoming';";
+                WHERE EventId = @EventId AND Status = 'Upcoming' AND EventEnd > GETDATE();";
 
             var parameters = new[]
             {
@@ -251,6 +265,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public bool IncrementRegistrationCount(int eventId)
         {
+            SynchronizeCompletedEvents();
             if (eventId <= 0)
             {
                 return false;
@@ -261,7 +276,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 SET CurrentRegistrations = CurrentRegistrations + 1 
                 WHERE EventId = @EventId 
                   AND CurrentRegistrations < MaxCapacity 
-                  AND Status = 'Upcoming';";
+                  AND Status = 'Upcoming' AND EventEnd > GETDATE();";
 
             var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
             int rowsAffected = DatabaseConnection.ExecuteNonQuery(sql, param);
@@ -295,6 +310,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public List<EventModel> GetHistoricalEvents(string semester = null, string academicYear = null, string outcomeStatus = null, string search = null)
         {
+            SynchronizeCompletedEvents();
             string sql = @"
                 SELECT e.EventId, e.Title, e.Description, e.VenueLocation, e.MaxCapacity, e.CurrentRegistrations, 
                        e.CreatedByUserId, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status, 
@@ -331,27 +347,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
             if (!string.IsNullOrWhiteSpace(outcomeStatus) && !string.Equals(outcomeStatus, "ALL", StringComparison.OrdinalIgnoreCase))
             {
-                if (string.Equals(outcomeStatus, "Completed", StringComparison.OrdinalIgnoreCase))
-                {
-                    sql += " AND (e.Status = 'Completed' OR (e.Status != 'Cancelled' AND e.EventEnd < GETDATE()))";
-                }
-                else if (string.Equals(outcomeStatus, "Cancelled", StringComparison.OrdinalIgnoreCase))
-                {
-                    sql += " AND e.Status = 'Cancelled'";
-                }
-                else if (string.Equals(outcomeStatus, "Concluded", StringComparison.OrdinalIgnoreCase))
-                {
-                    sql += " AND e.EventEnd < GETDATE() AND e.Status != 'Cancelled'";
-                }
-                else if (string.Equals(outcomeStatus, "Upcoming", StringComparison.OrdinalIgnoreCase))
-                {
-                    sql += " AND e.Status = 'Upcoming' AND (e.EventEnd IS NULL OR e.EventEnd >= GETDATE())";
-                }
-                else
-                {
-                    sql += " AND e.Status = @OutcomeStatus";
-                    parameters.Add(new SqlParameter("@OutcomeStatus", SqlDbType.VarChar, 50) { Value = outcomeStatus });
-                }
+                if (outcomeStatus != "Upcoming" && outcomeStatus != "Cancelled" && outcomeStatus != "Completed")
+                    throw new ArgumentException("Outcome status must be Upcoming, Cancelled, Completed, or ALL.", nameof(outcomeStatus));
+                sql += " AND e.Status = @OutcomeStatus";
+                parameters.Add(new SqlParameter("@OutcomeStatus", SqlDbType.VarChar, 50) { Value = outcomeStatus });
             }
 
             if (!string.IsNullOrWhiteSpace(semester) && !string.Equals(semester, "ALL", StringComparison.OrdinalIgnoreCase))
@@ -397,6 +396,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public List<string> GetDistinctHistoricalAcademicYears()
         {
+            SynchronizeCompletedEvents();
             var years = new List<string>();
             const string sql = @"
                 SELECT DISTINCT YEAR(EventStart) AS EvtYear, MONTH(EventStart) AS EvtMonth

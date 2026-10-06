@@ -29,7 +29,7 @@
 | **P-15** | Admin | **System Audit Logs** | `Frontend/Admin/AuditLogs.aspx` | `/Frontend/Admin/AuditLogs.aspx` | `[ ] NOT YET STARTED` | `AuditRepository`, `dbo.AuditLogsTable` |
 | **P-16** | Admin | **Event Analytics** | [`Frontend/Admin/EventAnalytics.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventAnalytics.aspx) | `/Frontend/Admin/EventAnalytics.aspx?eventId={id}` | `[x] COMPLETED` | 3-Phase Lifecycle Telemetry Engine (Before, During, After), Official PDF & CSV Export |
 | **P-17** | Admin | **Event Attendance Ledger** | [`Frontend/Admin/EventAttendance.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventAttendance.aspx) | `/Frontend/Admin/EventAttendance.aspx?eventId={id}` | `[x] COMPLETED` | Dedicated Live Checked-In Roster Table, Instant Filter, Spreadsheet Streaming |
-| **P-18** | Admin | **Events History & Archive** | [`Frontend/Admin/EventHistory.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventHistory.aspx) | `/Frontend/Admin/EventHistory.aspx` | `[x] COMPLETED` | `EventRepository`, `RegistrationRepository`, Turnout Audit Modal, Multi-term Filters, CSV Export |
+| **P-18** | Admin | **Events History** | [`Frontend/Admin/EventHistory.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/EventHistory.aspx) | `/Frontend/Admin/EventHistory.aspx` | `[x] COMPLETED` | `EventRepository`, `RegistrationRepository`, Turnout Audit Modal, Multi-term Filters, CSV Export |
 | **P-19** | Admin | **Account Management & RBAC** | [`Frontend/Admin/AccountManagement.aspx`](file:///c:/Martin%20Archive/Programming/ASP%20NET/241611JalopEventsManagement/241611JalopEventsManagement/Frontend/Admin/AccountManagement.aspx) | `/Frontend/Admin/AccountManagement.aspx` | `[x] COMPLETED` | `UserRepository`, `PasswordHelper`, RBAC Role Guards, Password Reset Dispatch, Lockout Governance |
 
 ---
@@ -70,7 +70,7 @@
 2. **Former admin Dashboard.aspx (removed):** Administrator sign-in opens AdminEvents.aspx. The dashboard and its dedicated stylesheet are no longer part of the application.
 
 3. **`AdminEvents.aspx` (`[x] COMPLETED`):**
-   - **Primary Objective:** Central operational cockpit exclusively for `Closed`, `Open`, and `Upcoming` events. Concluded or cancelled events are explicitly excluded and deferred to Events History.
+   - **Primary Objective:** Event matrix with calculated Soon, Open, Close, and Cancelled tabs. Stored lifecycle states are Upcoming, Cancelled, and Completed. All recorded events remain available for review.
    - **Parent Hub Role:** Single entry gateway to the four event-level sub-modules. Selecting an event (`View >`) routes into the pipeline: $\text{Event Details (EventDetails.aspx)} \rightarrow \text{Event PreRegistered} \rightarrow \text{Event Scanner \& Attendance} \rightarrow \text{Event Analytics}$.
    - **Operational Monitoring:** Real-time tracking of live registration windows and seat occupancy before gate opening.
    - Campus events matrix with 3-status tabs (`Open`, `Soon`, `Close`), department dropdown filtering, instant keyword search, and occupancy KPI summaries.

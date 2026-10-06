@@ -27,13 +27,6 @@
     color: var(--text-muted);
 }
 
-.history-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-}
-
 /* ─── Archival Read-Only Security Notice Banner ─── */
 .history-lock-banner {
     display: flex;
@@ -383,7 +376,7 @@
     color: var(--accent-rose-text);
 }
 
-.status-pill-concluded {
+.status-pill-upcoming {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
@@ -566,7 +559,6 @@
 
     .admin-sidebar,
     .admin-topbar,
-    .history-actions,
     .history-toolbar,
     .btn-history-view,
     .modal-footer {

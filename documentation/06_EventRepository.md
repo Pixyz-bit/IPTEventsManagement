@@ -18,7 +18,7 @@ The `EventRepository` is the sole data-access interface for managing institution
 
 ## 2. Granular Function Breakdown
 
-Event-wide cancellation uses `EventCancellationRepository` and `EventCancellationModel`. Archive/restore operations are removed. `UpdateEvent` preserves lifecycle status/reason and rejects inactive events. Reporting uses `GetHistoricalEvents` and `GetDistinctHistoricalAcademicYears`. See [the cancellation flow](11_AdminDashboard.md).
+Event-wide cancellation uses `EventCancellationRepository` and `EventCancellationModel`. `UpdateEvent` preserves lifecycle status/reason and rejects inactive events. Reporting uses `GetHistoricalEvents` and `GetDistinctHistoricalAcademicYears`. See [the cancellation flow](11_AdminDashboard.md).
 
 ### 2.1 `CreateEvent`
 * **Purpose:** Inserts a new event into `dbo.EventsTable` and populates the auto-generated `EventId`.
@@ -150,23 +150,23 @@ Event-wide cancellation uses `EventCancellationRepository` and `EventCancellatio
 
 ---
 
-### 2.10 `GetArchivedEvents`
-* **Purpose:** Retrieves closed, concluded, or cancelled historical campus events with aggregate attendee telemetry, supporting multi-criteria filtering across Academic Year, Semester, Outcome Status, and Universal Search.
+### 2.10 `GetHistoricalEvents`
+* **Purpose:** Retrieves Upcoming, Completed, and Cancelled campus events with aggregate attendee telemetry, supporting multi-criteria filtering across Academic Year, Semester, Outcome Status, and Universal Search.
 * **Signature & Contracts:**
   - Input: `string semester = null`, `string academicYear = null`, `string outcomeStatus = null`, `string search = null`.
   - Output: `List<EventModel>` (Models populated with `PreRegisteredCount`, `AttendedCount`, `NoShowCount`, and `CancelledCount`).
 * **Internal Mechanics:**
   - Queries `dbo.EventsTable` left joined with a pre-aggregated subquery against `dbo.EventRegistrationTable`.
-  - Evaluates `(Status IN ('Completed', 'Cancelled') OR (Status = 'Upcoming' AND EventEnd < GETDATE()))`.
+  - Persists completion of ended Upcoming events, then filters by the stored lifecycle status.
   - Applies parameterized filters for semester months, academic year ranges, and text searches.
 * **When it is used:** Invoked on `Page_Load` and filter triggers in the Events History module (`Frontend/Admin/EventHistory.aspx`).
-* **Why:** Keeps daily operational dashboards uncluttered by isolating historical events into a dedicated, read-only accreditation archive:
+* **Why:** Keeps daily operational dashboards uncluttered by isolating historical events into a dedicated, read-only history:
   * `[EventsTable.Status, EventRegistrationTable.Status, EventHistory.aspx]`
 
 ---
 
-### 2.11 `GetDistinctArchivedAcademicYears`
-* **Purpose:** Extracts distinct academic years present across historical events to populate archive dropdown filters dynamically.
+### 2.11 `GetDistinctHistoricalAcademicYears`
+* **Purpose:** Extracts distinct academic years present across historical events to populate history dropdown filters dynamically.
 * **Signature & Contracts:**
   - Input: None.
   - Output: `List<string>` (e.g. `["A.Y. 2026-2027", "A.Y. 2025-2026"]`).
@@ -174,3 +174,11 @@ Event-wide cancellation uses `EventCancellationRepository` and `EventCancellatio
 * **Why:** Eliminates hardcoded calendar years and guarantees filter choices accurately reflect recorded database history:
   * `[EventsTable.EventStart, ddlAcademicYear]`
 
+
+## Three-state persistence
+
+Only Upcoming, Cancelled, and Completed are supported event status values. CreateEvent uses the validated model status and records an already-ended active event as Completed. Ordinary updates preserve status and cancellation reason.
+
+SynchronizeCompletedEvents changes only Upcoming events with EventEnd <= GETDATE() to Completed. Event reads, joined registration reads, and lifecycle actions invoke synchronization. It is access-driven rather than a continuously running background job. SQL guards also prevent an event crossing its end time from being edited, registered for, cancelled, or checked into between synchronization and the action.
+
+History filters accept ALL, Upcoming, Cancelled, and Completed; any other lifecycle filter is rejected.

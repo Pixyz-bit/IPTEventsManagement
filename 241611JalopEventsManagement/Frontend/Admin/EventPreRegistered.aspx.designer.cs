@@ -31,7 +31,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.DropDownList ddlFilterCourse;
         protected global::System.Web.UI.WebControls.DropDownList ddlFilterYearLevel;
 
-        protected global::System.Web.UI.WebControls.LinkButton btnExportCsv;
 
         protected global::System.Web.UI.WebControls.Literal litTabCountPreReg;
         protected global::System.Web.UI.WebControls.Literal litTabCountCancelled;

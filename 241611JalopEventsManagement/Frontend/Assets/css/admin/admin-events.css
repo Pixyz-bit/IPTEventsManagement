@@ -187,6 +187,30 @@
             color: #1d4ed8;
         }
 
+        .tab-status-open { --status-ink: var(--accent-emerald-text); --status-bg: var(--accent-emerald-subtle); --status-border: var(--accent-emerald-border); }
+        .tab-status-soon { --status-ink: var(--accent-amber-text); --status-bg: var(--accent-amber-subtle); --status-border: var(--accent-amber-border); }
+        .tab-status-close { --status-ink: #475569; --status-bg: #f1f5f9; --status-border: #cbd5e1; }
+        .tab-status-cancelled { --status-ink: var(--accent-rose-text); --status-bg: var(--accent-rose-subtle); --status-border: var(--accent-rose-border); }
+
+        .tab-btn[class*="tab-status-"] { color: var(--status-ink); }
+        .tab-btn[class*="tab-status-"]:hover,
+        .tab-btn[class*="tab-status-"].active {
+            color: var(--status-ink);
+            background-color: var(--status-bg);
+            border-color: var(--status-border);
+        }
+
+        .tab-btn[class*="tab-status-"] .tab-badge {
+            color: var(--status-ink);
+            background-color: var(--status-bg);
+            border: 1px solid var(--status-border);
+        }
+
+        .tab-btn:focus-visible {
+            outline: 2px solid var(--border-focus);
+            outline-offset: 2px;
+        }
+
         .filters-right-group {
             display: flex;
             align-items: center;
@@ -391,30 +415,6 @@
             white-space: nowrap;
         }
 
-        .status-open {
-            background-color: #ecfdf5;
-            color: #047857;
-            border: 1px solid #a7f3d0;
-        }
-
-        .status-soon {
-            background-color: #fefce8;
-            color: #a16207;
-            border: 1px solid #fef08a;
-        }
-
-        .status-close {
-            background-color: #f1f5f9;
-            color: #475569;
-            border: 1px solid #cbd5e1;
-        }
-
-        .status-cancelled {
-            background-color: #fef2f2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
         .is-cancelled-row {
             background-color: #fbfbfb;
             opacity: 0.88;
@@ -423,27 +423,25 @@
         .btn-matrix-cancel {
             display: inline-flex;
             align-items: center;
-            gap: 0.3rem;
-            padding: 0.28rem 0.65rem;
-            font-size: 0.775rem;
+            gap: 0.45rem;
+            background-color: #ffffff;
+            color: #334155;
+            padding: 0.55rem 1.15rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
             font-weight: 600;
-            font-family: var(--font-sans);
-            border-radius: var(--radius-md);
-            text-decoration: none;
+            border: 1px solid var(--border-subtle);
             cursor: pointer;
             transition: all 0.15s ease;
             margin-right: 0.75rem;
-            background-color: var(--accent-rose-subtle);
-            color: var(--accent-rose);
-            border: 1px solid var(--accent-rose-border);
+            text-decoration: none;
             vertical-align: middle;
             white-space: nowrap;
         }
 
         .btn-matrix-cancel:hover {
-            background-color: var(--accent-rose);
-            color: #ffffff;
-            border-color: var(--accent-rose);
+            background-color: #f1f5f9;
+            color: #0f172a;
         }
 
 
@@ -500,28 +498,37 @@
             color: var(--text-heading);
         }
 
-        /* View > Link (Underlined text link per Student Directory reference) */
-        .btn-view-link,
+        /* Matrix view action uses the Event Details primary button style. */
         .link-matrix-view {
-            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background-color: var(--brand-primary);
+            color: #ffffff;
+            padding: 0.55rem 1.15rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
             font-weight: 600;
-            color: var(--text-heading);
-            text-decoration: underline;
-            text-underline-offset: 3px;
-            text-decoration-thickness: 1.5px;
+            border: 1px solid var(--brand-primary);
             cursor: pointer;
-            transition: color 0.15s ease;
-            background: none;
-            border: none;
-            padding: 0;
-            font-family: inherit;
-            white-space: nowrap;
+            transition: all 0.15s ease;
+            text-decoration: none;
             vertical-align: middle;
+            white-space: nowrap;
         }
 
-        .btn-view-link:hover,
         .link-matrix-view:hover {
-            color: var(--brand-primary);
+            background-color: var(--brand-primary-hover);
+        }
+
+        .link-matrix-view,
+        .btn-matrix-cancel {
+            height: 2.5rem;
+            box-sizing: border-box;
+            justify-content: center;
+            font-family: var(--font-sans);
+            line-height: 1.25;
+            white-space: nowrap;
         }
 
         /* Row Actions */
@@ -707,5 +714,3 @@
                 width: 100%;
             }
         }
-
-.cancellation-reason { color: #991b1b; font-size: 0.875rem; overflow-wrap: anywhere; max-width: 30ch; }

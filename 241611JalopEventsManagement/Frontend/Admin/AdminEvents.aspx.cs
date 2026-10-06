@@ -160,12 +160,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         private void UpdateTabStyles()
         {
             btnTabAll.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("All", StringComparison.OrdinalIgnoreCase) ? " active" : "");
-            btnTabOpen.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Open", StringComparison.OrdinalIgnoreCase) ? " active" : "");
-            btnTabSoon.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Soon", StringComparison.OrdinalIgnoreCase) ? " active" : "");
-            btnTabClose.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Close", StringComparison.OrdinalIgnoreCase) ? " active" : "");
+            btnTabOpen.CssClass = "tab-btn tab-status-open" + (CurrentStatusFilter.Equals("Open", StringComparison.OrdinalIgnoreCase) ? " active" : "");
+            btnTabSoon.CssClass = "tab-btn tab-status-soon" + (CurrentStatusFilter.Equals("Soon", StringComparison.OrdinalIgnoreCase) ? " active" : "");
+            btnTabClose.CssClass = "tab-btn tab-status-close" + (CurrentStatusFilter.Equals("Close", StringComparison.OrdinalIgnoreCase) ? " active" : "");
             if (btnTabCancelled != null)
             {
-                btnTabCancelled.CssClass = "tab-btn" + (CurrentStatusFilter.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) ? " active" : "");
+                btnTabCancelled.CssClass = "tab-btn tab-status-cancelled" + (CurrentStatusFilter.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) ? " active" : "");
             }
         }
 
@@ -298,32 +298,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         public static string GetEventMatrixStatus(EventModel ev)
         {
-            if (ev == null) return "Close";
-            if (ev.IsCancelled) return "Cancelled";
-            if (!string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase)) return "Close";
-            DateTime now = DateTime.Now;
-
-            // 1. If cancelled or completed, it's Close
-            if (string.Equals(ev.Status, "Cancelled", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(ev.Status, "Completed", StringComparison.OrdinalIgnoreCase))
-            {
-                return "Close";
-            }
-
-            // 2. If registration deadline passed, or event already started/ended, or fully booked
-            if (now > ev.RegEnd || ev.CurrentRegistrations >= ev.MaxCapacity || now >= ev.EventEnd)
-            {
-                return "Close";
-            }
-
-            // 3. If registration has not yet opened
-            if (now < ev.RegStart)
-            {
-                return "Soon";
-            }
-
-            // 4. Otherwise, registration is actively open
-            return "Open";
+            return ev == null ? "Close" : ev.GetMatrixStatus(DateTime.Now);
         }
 
         public static string GetMatrixStatusClass(object statusObj)

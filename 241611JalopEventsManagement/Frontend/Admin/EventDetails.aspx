@@ -135,24 +135,31 @@
                 <asp:HyperLink ID="lnkCancelEvent" runat="server" Text="Cancel Event" CssClass="btn-action-secondary" />
                 <asp:Button ID="btnToggleEdit" runat="server" Text="Edit Specifications" CssClass="btn-action-primary" OnClick="btnToggleEdit_Click" CausesValidation="false" />
             </asp:PlaceHolder>
+            <asp:Panel ID="pnlCancelledNotice" runat="server" Visible="false">
+                <button type="button" id="btnViewCancellation" class="btn-action-secondary" aria-haspopup="dialog" aria-controls="cancellationNoticeDialog">View Cancellation Details</button>
+                <dialog id="cancellationNoticeDialog" class="cancellation-notice-dialog" aria-labelledby="cancellationNoticeTitle" aria-describedby="cancellationNoticeDescription">
+                    <div class="cancellation-notice-header">
+                        <h3 id="cancellationNoticeTitle">Event Cancellation Details</h3>
+                        <button type="button" class="cancellation-notice-close" data-close-cancellation aria-label="Close cancellation details">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                        </button>
+                    </div>
+                    <div class="cancellation-notice-body">
+                        <p id="cancellationNoticeDescription"><strong>Event cancelled.</strong> Registration and check-in are closed. Records are retained.</p>
+                        <h4>Cancellation reason</h4>
+                        <p class="cancellation-notice-reason"><asp:Literal ID="litCancellationReason" runat="server" /></p>
+                    </div>
+                    <div class="cancellation-notice-footer">
+                        <button type="button" class="btn-action-secondary" data-close-cancellation>Close</button>
+                    </div>
+                </dialog>
+            </asp:Panel>
             <asp:PlaceHolder ID="phEditActions" runat="server" Visible="false">
                 <asp:Button ID="btnCancelEdit" runat="server" Text="Cancel Editing" CssClass="btn-action-secondary" OnClick="btnCancelEdit_Click" CausesValidation="false" />
                 <asp:Button ID="btnSaveChanges" runat="server" Text="Save Modifications" CssClass="btn-action-primary" OnClick="btnSaveChanges_Click" />
             </asp:PlaceHolder>
         </div>
     </div>
-
-    <!-- Cancelled Event Notice -->
-    <asp:Panel ID="pnlCancelledNotice" runat="server" Visible="false" Style="margin-bottom:1.25rem; padding:0.85rem 1.25rem; background-color:#fef2f2; border:1px solid #fecaca; border-radius:8px; display:flex; align-items:center; gap:0.75rem; color:#991b1b;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-        <span style="font-size:0.875rem; font-weight:600;">
-            <strong>Event cancelled.</strong> Registration and check-in are closed. Records are retained. Reason: <asp:Literal ID="litCancellationReason" runat="server" />
-        </span>
-    </asp:Panel>
 
     <!-- Main Content Bento Box Grid -->
     <div class="bento-box-layout">
@@ -311,10 +318,6 @@
                     <div class="cockpit-meta-tile">
                         <span class="cockpit-meta-label">Remaining Spots</span>
                         <span class="cockpit-meta-value"><asp:Literal ID="litRemainingSpots" runat="server" Text="0 spots open" /></span>
-                    </div>
-                    <div class="cockpit-meta-tile">
-                        <span class="cockpit-meta-label">Record Key</span>
-                        <span class="cockpit-meta-value mono">#<%= CurrentEventId %></span>
                     </div>
                 </div>
             </div>
@@ -496,7 +499,6 @@
 
                 <div style="margin-top:1.25rem; padding-top:0.75rem; border-top:1px solid #f1f5f9; font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
                     <span>Official institutional partners and organizations sponsoring this university event.</span>
-                    <span class="mono" style="font-size:0.72rem; color:#64748b;">Event ID: #<%= CurrentEventId %></span>
                 </div>
             </div>
         </div>
@@ -555,6 +557,16 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+            var cancellationDialog = document.getElementById('cancellationNoticeDialog');
+            var cancellationButton = document.getElementById('btnViewCancellation');
+            if (cancellationDialog && cancellationButton) {
+                cancellationButton.addEventListener('click', function () {
+                    cancellationDialog.showModal();
+                });
+                cancellationDialog.querySelectorAll('[data-close-cancellation]').forEach(function (button) {
+                    button.addEventListener('click', function () { cancellationDialog.close(); });
+                });
+            }
             var hfData = document.getElementById('<%= hfEditPhotoBase64.ClientID %>');
             var hfName = document.getElementById('<%= hfEditPhotoFileName.ClientID %>');
             if (hfData && hfData.value) {

@@ -9,16 +9,17 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// <summary>
         /// Atomically cancels an eligible event. A repeated request cannot overwrite its reason.
         /// Existing registrations, attendance and capacity counts are retained as historical evidence.
-        /// Legacy hidden events may be explicitly cancelled, but can never be restored here.
+        /// Only active, unfinished Upcoming events may be cancelled.
         /// </summary>
         public bool CancelEvent(EventCancellationModel cancellation)
         {
             if (cancellation == null || !cancellation.IsValid) return false;
+            EventRepository.SynchronizeCompletedEvents();
 
             const string sql = @"
                 UPDATE dbo.EventsTable
                 SET Status = 'Cancelled', CancellationReason = @Reason
-                WHERE EventId = @EventId AND Status IN ('Upcoming', 'Archived');";
+                WHERE EventId = @EventId AND Status = 'Upcoming' AND EventEnd > GETDATE();";
 
             return DatabaseConnection.ExecuteNonQuery(sql,
                 new SqlParameter("@EventId", SqlDbType.Int) { Value = cancellation.EventId },

@@ -37,6 +37,12 @@ try {
     [IO.File]::WriteAllText($schemaPath, $schema, [Text.UTF8Encoding]::new($true))
     & $sqlcmd -S $server -d master -E -l 10 -t 15 -b -i $schemaPath
     if ($LASTEXITCODE -ne 0) { throw 'Isolated schema creation failed' }
+    # Simulate an existing installation without the lifecycle default or constraint.
+    Invoke-TestSql 'ALTER TABLE dbo.EventsTable DROP CONSTRAINT CK_EventsTable_Status; ALTER TABLE dbo.EventsTable DROP CONSTRAINT DF_EventsTable_Status;'
+    foreach ($migrationPass in 1..2) {
+        & $sqlcmd -S $server -d $databaseName -E -l 10 -t 15 -b -i (Join-Path $appRoot 'Backend/Database/Migration/06_EnforceEventLifecycleStatuses.sql')
+        if ($LASTEXITCODE -ne 0) { throw 'Lifecycle migration failed' }
+    }
     Invoke-TestSql @'
 INSERT INTO dbo.UserTable (Email,PasswordHash,PasswordSalt,Role) VALUES
  ('admin@example.invalid','test','test','Admin'), ('student@example.invalid','test','test','Student');
@@ -50,7 +56,7 @@ BEGIN
  INSERT INTO dbo.EventsTable (Title,VenueLocation,MaxCapacity,CurrentRegistrations,CreatedByUserId,EventStart,EventEnd,RegStart,RegEnd,Status,CancellationReason)
  VALUES ('Fixture event '+CAST(@i AS varchar(10)),'Test venue',50,CASE WHEN @i=1 THEN 2 WHEN @i IN (5,8) THEN 1 ELSE 0 END,1,
  DATEADD(day,2,GETDATE()),DATEADD(day,3,GETDATE()),DATEADD(day,-1,GETDATE()),DATEADD(day,1,GETDATE()),
- CASE @i WHEN 2 THEN 'Completed' WHEN 3 THEN 'Cancelled' WHEN 4 THEN 'Archived' ELSE 'Upcoming' END,
+ CASE @i WHEN 2 THEN 'Completed' WHEN 3 THEN 'Cancelled' ELSE 'Upcoming' END,
  CASE WHEN @i=3 THEN 'Original reason' ELSE NULL END);
  SET @i=@i+1;
 END
@@ -120,7 +126,7 @@ protected void Page_Load(object sender, EventArgs e) {
             $labelsOk=$labelsOk -and ($text.Trim() -eq ($expected[1] + ' ' + $expected[2]))
         }
         Assert-Test $labelsOk "All tab labels and counts survive $tabName filter postback"
-        $active=[regex]::Match($matrix.Content,'<a[^>]*id="[^"]*btnTab' + $tabName + '"[^>]*class="tab-btn active"')
+        $active=[regex]::Match($matrix.Content,'<a[^>]*id="[^"]*btnTab' + $tabName + '"[^>]*class="tab-btn(?: tab-status-[a-z]+)? active"')
         Assert-Test $active.Success "$tabName filter remains selected"
     }
     $row=[regex]::Matches($matrix.Content,'(?s)<tr class=.event-matrix-row.*?</tr>') | Where-Object { $_.Value.Contains('Fixture event 9') } | Select-Object -First 1

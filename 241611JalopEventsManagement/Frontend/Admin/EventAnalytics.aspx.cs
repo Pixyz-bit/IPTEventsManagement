@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -471,43 +470,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 rptDemographicAudit.DataSource = deptAuditList;
                 rptDemographicAudit.DataBind();
             }
-        }
-
-        protected void btnExportComprehensiveCsv_Click(object sender, EventArgs e)
-        {
-            var registrations = _registrationRepo.GetRegistrationsByEvent(CurrentEventId);
-            var evt = _eventRepo.GetEventById(CurrentEventId);
-
-            var sb = new StringBuilder();
-            sb.AppendLine("=== QCU EVENT TELEMETRY & AUDIT INTELLIGENCE REPORT ===");
-            sb.AppendLine($"Event Title:,\"{EscapeCsv(evt != null ? evt.Title : "Event")}\"");
-            sb.AppendLine($"Date of Event:,{DateTime.Now:MM/dd/yyyy}");
-            sb.AppendLine($"Exported By:,{CurrentAdminEmail}");
-            sb.AppendLine();
-            sb.AppendLine("Ticket Reference,Student ID,Attendee Full Name,Institutional Email,Campus Branch,Department,Program,Year Level,Section,Registration Timestamp,Gate Check-In Timestamp,Audit Status");
-
-            foreach (var r in registrations)
-            {
-                string regTime = r.RegistrationTimestamp.HasValue ? r.RegistrationTimestamp.Value.ToString("MM/dd/yyyy hh:mm:ss tt") : "";
-                string checkInTime = r.CheckInTimestamp.HasValue ? r.CheckInTimestamp.Value.ToString("MM/dd/yyyy hh:mm:ss tt") : "N/A";
-                string line = $"\"{EscapeCsv(r.TicketReference)}\",\"{EscapeCsv(r.StudentId)}\",\"{EscapeCsv(r.StudentFullName)}\",\"{EscapeCsv(r.StudentEmail)}\",\"{EscapeCsv(r.StudentCampusBranch)}\",\"{EscapeCsv(r.StudentDepartment)}\",\"{EscapeCsv(r.StudentProgram)}\",\"{r.CurrentYearLvl}\",\"{EscapeCsv(r.CurrentSection)}\",\"{regTime}\",\"{checkInTime}\",\"{EscapeCsv(r.Status)}\"";
-                sb.AppendLine(line);
-            }
-
-            string filename = $"Event_{CurrentEventId}_ComprehensiveAudit_{DateTime.Now:MMddyyyy_HHmmss}.csv";
-            Response.Clear();
-            Response.Buffer = true;
-            Response.AddHeader("content-disposition", $"attachment;filename={filename}");
-            Response.ContentType = "text/csv";
-            Response.Output.Write(sb.ToString());
-            Response.Flush();
-            Response.End();
-        }
-
-        private static string EscapeCsv(string value)
-        {
-            if (string.IsNullOrEmpty(value)) return string.Empty;
-            return value.Replace("\"", "\"\"");
         }
 
         protected string FormatTimestamp(object timestampObj)

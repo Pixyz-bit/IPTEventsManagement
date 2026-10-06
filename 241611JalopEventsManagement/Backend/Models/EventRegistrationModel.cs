@@ -74,7 +74,7 @@ namespace _241611JalopEventsManagement.Backend.Models
         public bool IsCancelled => string.Equals(Status, "Cancelled", StringComparison.OrdinalIgnoreCase);
         public bool IsEventCancelled => string.Equals(EventStatus, "Cancelled", StringComparison.OrdinalIgnoreCase);
         public bool IsPassValid => string.Equals(EventStatus, "Upcoming", StringComparison.OrdinalIgnoreCase)
-            && !IsCancelled && !IsCheckedIn;
+            && EventEnd.HasValue && DateTime.Now < EventEnd.Value && !IsCancelled && !IsCheckedIn;
 
         /// <summary>
         /// Students can only cancel during the active registration period (before RegEnd).
