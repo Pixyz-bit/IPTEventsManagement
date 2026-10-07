@@ -58,7 +58,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             {
                 eventId = parsedId;
             }
-            else if (ddlEvents.Items.Count > 0)
+            else if (Request.QueryString["eventId"] == null && ddlEvents.Items.Count > 0)
             {
                 eventId = int.Parse(ddlEvents.Items[0].Value);
             }
@@ -84,7 +84,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private void LoadAttendanceData()
         {
-            var evt = _eventRepo.GetEventById(CurrentEventId);
+            var evt = RequireEvent(_eventRepo, CurrentEventId);
 
             if (evt != null)
             {
@@ -93,13 +93,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 litEventVenue.Text = Server.HtmlEncode(evt.VenueLocation ?? "Campus Grounds");
                 litCapacitySummary.Text = $"{evt.CurrentRegistrations} / {evt.MaxCapacity}";
             }
-            else
-            {
-                litEventTitle.Text = "Demonstration Event Preview";
-                litEventDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
-                litEventVenue.Text = "Main Academic Amphitheater";
-                litCapacitySummary.Text = "0 / 100";
-            }
+
 
             // Fetch live checked-in attendees
             var checkedInList = _registrationRepo.GetCheckedInAttendees(CurrentEventId);

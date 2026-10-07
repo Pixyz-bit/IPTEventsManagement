@@ -19,8 +19,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litErrorMsg;
         protected global::System.Web.UI.WebControls.LinkButton btnCloseError;
 
-        protected global::System.Web.UI.WebControls.Panel pnlDemoNotice;
-        protected global::System.Web.UI.WebControls.Literal litDemoNotice;
+        protected global::System.Web.UI.WebControls.Panel pnlUnavailable;
+        protected global::System.Web.UI.WebControls.Literal litUnavailableTitle;
+        protected global::System.Web.UI.WebControls.Literal litUnavailableMessage;
+        protected global::System.Web.UI.WebControls.PlaceHolder phEventContent;
 
         protected global::System.Web.UI.WebControls.Literal litHeaderEventId;
         protected global::System.Web.UI.WebControls.Literal litHeaderTitle;

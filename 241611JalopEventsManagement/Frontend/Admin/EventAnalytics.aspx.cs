@@ -67,7 +67,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             {
                 eventId = parsedId;
             }
-            else if (ddlEvents.Items.Count > 0)
+            else if (Request.QueryString["eventId"] == null && ddlEvents.Items.Count > 0)
             {
                 eventId = int.Parse(ddlEvents.Items[0].Value);
             }
@@ -93,13 +93,13 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private void LoadAnalyticsTelemetry()
         {
-            var evt = _eventRepo.GetEventById(CurrentEventId);
+            var evt = RequireEvent(_eventRepo, CurrentEventId);
             var registrations = _registrationRepo.GetRegistrationsByEvent(CurrentEventId);
 
-            int maxCapacity = evt != null ? evt.MaxCapacity : 100;
-            string evtTitle = evt != null ? evt.Title : "Demonstration Event Preview";
-            DateTime evtStart = evt != null && evt.EventStart != DateTime.MinValue ? evt.EventStart : DateTime.Now;
-            string evtVenue = evt != null ? evt.VenueLocation : "Main Campus Amphitheater";
+            int maxCapacity = evt.MaxCapacity;
+            string evtTitle = evt.Title;
+            DateTime evtStart = evt.EventStart;
+            string evtVenue = evt.VenueLocation;
 
             if (litEventTitle != null) litEventTitle.Text = Server.HtmlEncode(evtTitle);
             if (litEventDate != null) litEventDate.Text = evtStart.ToString("MM/dd/yyyy");
@@ -258,34 +258,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 .ToList();
             rptYearDistribution.DataSource = yearGroups;
             rptYearDistribution.DataBind();
-
-            // Registration Velocity Over Time
-            var velocityList = new List<VelocityItem>();
-            int cumulative = 0;
-            var regDates = activeCohort
-                .GroupBy(r => r.RegistrationTimestamp.HasValue ? r.RegistrationTimestamp.Value.Date : (evt != null ? evt.RegStart.Date : DateTime.Today))
-                .OrderBy(g => g.Key)
-                .ToList();
-
-            foreach (var g in regDates)
-            {
-                cumulative += g.Count();
-                velocityList.Add(new VelocityItem
-                {
-                    DateLabel = g.Key.ToString("MM/dd/yyyy"),
-                    RegistrationsCount = g.Count(),
-                    CumulativeCount = cumulative
-                });
-            }
-            if (velocityList.Count == 0)
-            {
-                velocityList.Add(new VelocityItem { DateLabel = DateTime.Today.ToString("MM/dd/yyyy"), RegistrationsCount = preRegisteredCount, CumulativeCount = preRegisteredCount });
-            }
-            if (rptRegistrationVelocity != null)
-            {
-                rptRegistrationVelocity.DataSource = velocityList;
-                rptRegistrationVelocity.DataBind();
-            }
 
             // =========================================================================
             // PHASE 2: LIVE GATE TELEMETRY (DURING)
@@ -499,13 +471,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         public string Label { get; set; }
         public int Count { get; set; }
         public double Percentage { get; set; }
-    }
-
-    public class VelocityItem
-    {
-        public string DateLabel { get; set; }
-        public int RegistrationsCount { get; set; }
-        public int CumulativeCount { get; set; }
     }
 
     public class IntervalTelemetryItem

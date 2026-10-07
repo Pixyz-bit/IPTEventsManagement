@@ -16,6 +16,96 @@ namespace _241611JalopEventsManagement.Backend.Repository
         private const string RoleAdmin = "Admin";
         private const string RoleStudent = "Student";
 
+        /// <summary>
+        /// Saves account-management fields atomically. Existing student birthdates and IDs are preserved.
+        /// </summary>
+        public void SaveManagedAccount(UserModel user, StudentProfile profile, string newPassword, int currentAdminUserId)
+        {
+            if (user == null || user.UserId <= 0 || currentAdminUserId <= 0)
+                throw new ArgumentException("A valid account and administrator are required.");
+            if (string.IsNullOrWhiteSpace(user.Email) || user.Email.Trim().Length > 150)
+                throw new ArgumentException("Email is required and must not exceed 150 characters.");
+            if (user.Role != RoleAdmin && user.Role != RoleStudent)
+                throw new ArgumentException("Role must be Admin or Student.");
+            if (!string.IsNullOrEmpty(newPassword) && (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 6))
+                throw new ArgumentException("Password must be at least 6 characters in length.");
+            if (user.Role == RoleStudent)
+            {
+                if (profile == null || string.IsNullOrWhiteSpace(profile.StudentId) ||
+                    string.IsNullOrWhiteSpace(profile.FirstName) || string.IsNullOrWhiteSpace(profile.LastName) ||
+                    string.IsNullOrWhiteSpace(profile.Department) || string.IsNullOrWhiteSpace(profile.Program))
+                    throw new ArgumentException("Student ID, name, department and program are required.");
+                if (profile.StudentId.Trim().Length > 50 || profile.FirstName.Length > 100 ||
+                    (profile.MiddleName?.Length ?? 0) > 100 || profile.LastName.Length > 100 ||
+                    (profile.Gender?.Length ?? 0) > 20 || (profile.CampusBranch?.Length ?? 0) > 100 ||
+                    profile.Department.Length > 100 || profile.Program.Length > 100)
+                    throw new ArgumentException("A student field exceeds its maximum length.");
+            }
+
+            string salt = string.IsNullOrEmpty(newPassword) ? null : PasswordHelper.GenerateSalt();
+            string hash = salt == null ? null : PasswordHelper.HashPassword(newPassword, salt);
+            using (var connection = DatabaseConnection.GetOpenConnection())
+            using (var transaction = connection.BeginTransaction(IsolationLevel.Serializable))
+            {
+                try
+                {
+                    // Serialize account-management changes before checking administrator and email invariants.
+                    using (var command = new SqlCommand(@"
+                        SELECT UserId, Role, IsActive FROM dbo.UserTable WITH (UPDLOCK, HOLDLOCK)
+                        ORDER BY UserId;", connection, transaction))
+                    using (var reader = command.ExecuteReader())
+                    {
+                        bool found = false, authorized = false;
+                        int otherAdmins = 0;
+                        while (reader.Read())
+                        {
+                            int id = reader.GetInt32(0);
+                            bool activeAdmin = reader.GetString(1) == RoleAdmin && reader.GetBoolean(2);
+                            if (id == user.UserId) found = true;
+                            if (id == currentAdminUserId) authorized = activeAdmin;
+                            if (id != user.UserId && activeAdmin) otherAdmins++;
+                        }
+                        if (!authorized) throw new InvalidOperationException("An active administrator account is required.");
+                        if (!found) throw new InvalidOperationException("The account no longer exists.");
+                        if (user.UserId == currentAdminUserId && (user.Role != RoleAdmin || !user.IsActive))
+                            throw new InvalidOperationException("You cannot demote or deactivate your own administrator account.");
+                        if ((user.Role != RoleAdmin || !user.IsActive) && otherAdmins == 0)
+                            throw new InvalidOperationException("At least one active administrator must remain.");
+                    }
+                    using (var command = new SqlCommand(@"
+                        SELECT COUNT(1) FROM dbo.UserTable WHERE Email = @Email AND UserId <> @UserId;", connection, transaction))
+                    {
+                        command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = user.Email.Trim() });
+                        command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int) { Value = user.UserId });
+                        if (Convert.ToInt32(command.ExecuteScalar()) != 0)
+                            throw new InvalidOperationException("That email address is already registered to another account.");
+                    }
+                    if (user.Role == RoleStudent)
+                        new StudentRepository().SaveManagedProfile(connection, transaction, user.UserId, profile);
+                    using (var command = new SqlCommand(@"
+                        UPDATE dbo.UserTable SET Email = @Email, Role = @Role, IsActive = @IsActive,
+                            PasswordHash = CASE WHEN @Hash IS NULL THEN PasswordHash ELSE @Hash END,
+                            PasswordSalt = CASE WHEN @Salt IS NULL THEN PasswordSalt ELSE @Salt END
+                        WHERE UserId = @UserId;", connection, transaction))
+                    {
+                        command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = user.Email.Trim() });
+                        command.Parameters.Add(new SqlParameter("@Role", SqlDbType.VarChar, 50) { Value = user.Role });
+                        command.Parameters.Add(new SqlParameter("@IsActive", SqlDbType.Bit) { Value = user.IsActive });
+                        command.Parameters.Add(new SqlParameter("@Hash", SqlDbType.VarChar, 256) { Value = (object)hash ?? DBNull.Value });
+                        command.Parameters.Add(new SqlParameter("@Salt", SqlDbType.VarChar, 128) { Value = (object)salt ?? DBNull.Value });
+                        command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int) { Value = user.UserId });
+                        if (command.ExecuteNonQuery() != 1) throw new InvalidOperationException("The account could not be updated.");
+                    }
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+
         /// Retrieves a user record by their unique institutional email address.
         public UserModel GetUserByEmail(string email)
         {

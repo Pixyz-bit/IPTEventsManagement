@@ -56,14 +56,6 @@
                         </div>
                     </div>
 
-                    <!-- Remember Me Checkbox -->
-                    <div class="form-options">
-                        <label class="checkbox-label">
-                            <asp:CheckBox ID="chkRememberMe" runat="server" />
-                            <span>Remember Me</span>
-                        </label>
-                    </div>
-
                     <!-- Sign In to Portal Button Matching Photo -->
                     <asp:Button ID="btnLogin" runat="server" Text="Sign In to Portal" CssClass="btn-submit"
                         OnClick="btnLogin_Click" />

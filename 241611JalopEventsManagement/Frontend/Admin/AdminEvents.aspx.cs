@@ -19,6 +19,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             set => ViewState["CurrentStatusFilter"] = value;
         }
 
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            _241611JalopEventsManagement.Backend.Helpers.EventCollegeOptions.Bind(ddlDepartmentFilter);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)

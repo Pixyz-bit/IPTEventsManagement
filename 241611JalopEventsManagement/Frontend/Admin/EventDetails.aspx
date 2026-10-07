@@ -40,6 +40,17 @@
         </ol>
     </nav>
 
+    <asp:Panel ID="pnlUnavailable" runat="server" Visible="false" CssClass="event-context-card" role="status">
+        <div class="event-title-group">
+            <h1><asp:Literal ID="litUnavailableTitle" runat="server" /></h1>
+        </div>
+        <p><asp:Literal ID="litUnavailableMessage" runat="server" /></p>
+        <div>
+            <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="btn-action-primary">Back to Events Matrix</a>
+        </div>
+    </asp:Panel>
+
+    <asp:PlaceHolder ID="phEventContent" runat="server" Visible="false">
     <!-- Feedback Alerts -->
     <asp:Panel ID="pnlSuccess" runat="server" Visible="false" CssClass="feedback-alert alert-success">
         <div>
@@ -53,12 +64,6 @@
             <asp:Literal ID="litErrorMsg" runat="server" />
         </div>
         <asp:LinkButton ID="btnCloseError" runat="server" Text="&times;" OnClick="btnCloseAlert_Click" Style="color:inherit; font-size:1.25rem; font-weight:bold; background:none; border:none; cursor:pointer;" CausesValidation="false" />
-    </asp:Panel>
-
-    <asp:Panel ID="pnlDemoNotice" runat="server" Visible="false" CssClass="feedback-alert alert-info">
-        <div>
-            <strong>Notice:</strong> <asp:Literal ID="litDemoNotice" runat="server" Text="Displaying demonstration event specifications. Select an active event from the Events Matrix to manage live records." />
-        </div>
     </asp:Panel>
 
     <!-- Context Header Banner -->
@@ -345,11 +350,11 @@
                             <span class="telemetry-val mono"><asp:Literal ID="litEventHoursView" runat="server" /></span>
                         </div>
                         <div class="telemetry-tile">
-                            <span class="telemetry-label">Registration Opens</span>
+                            <span class="telemetry-label">Registration Opens (<%= RegistrationTimeZoneLabel %>)</span>
                             <span class="telemetry-val mono"><asp:Literal ID="litRegStartView" runat="server" /></span>
                         </div>
                         <div class="telemetry-tile">
-                            <span class="telemetry-label">Registration Deadline</span>
+                            <span class="telemetry-label">Registration Deadline (<%= RegistrationTimeZoneLabel %>)</span>
                             <span class="telemetry-val mono rose"><asp:Literal ID="litRegEndView" runat="server" /></span>
                         </div>
                     </div>
@@ -357,6 +362,7 @@
 
                 <!-- Editable Controls -->
                 <asp:PlaceHolder ID="phScheduleEdit" runat="server" Visible="false">
+                    <p>All registration times use <%= RegistrationTimeZoneLabel %>.</p>
                     <div class="form-group">
                         <label class="form-label" for="<%= txtEventDate.ClientID %>">Event Date <span style="color:#ef4444;">*</span></label>
                         <asp:TextBox ID="txtEventDate" runat="server" CssClass="form-control" TextMode="Date" />
@@ -373,11 +379,11 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="<%= txtRegStart.ClientID %>">Registration Start <span style="color:#ef4444;">*</span></label>
-                        <asp:TextBox ID="txtRegStart" runat="server" CssClass="form-control" TextMode="Date" />
+                        <asp:TextBox ID="txtRegStart" runat="server" CssClass="form-control" TextMode="DateTimeLocal" step="1" />
                     </div>
                     <div class="form-group" style="margin-bottom:0;">
                         <label class="form-label" for="<%= txtRegEnd.ClientID %>">Registration Deadline <span style="color:#ef4444;">*</span></label>
-                        <asp:TextBox ID="txtRegEnd" runat="server" CssClass="form-control" TextMode="Date" />
+                        <asp:TextBox ID="txtRegEnd" runat="server" CssClass="form-control" TextMode="DateTimeLocal" step="1" />
                     </div>
                 </asp:PlaceHolder>
             </div>
@@ -433,10 +439,6 @@
                             <label class="form-label" for="<%= ddlDepartment.ClientID %>">Target Academic College</label>
                             <asp:DropDownList ID="ddlDepartment" runat="server" CssClass="form-control">
                                 <asp:ListItem Value="" Text="All Academic Colleges (Open to All)" />
-                                <asp:ListItem Value="College of Computer Studies" Text="College of Computer Studies (CCS)" />
-                                <asp:ListItem Value="College of Business Administration and Accountancy" Text="College of Business Administration and Accountancy (CBAA)" />
-                                <asp:ListItem Value="College of Engineering" Text="College of Engineering (COE)" />
-                                <asp:ListItem Value="College of Education" Text="College of Education (CED)" />
                             </asp:DropDownList>
                         </div>
                     </div>
@@ -512,6 +514,8 @@
             <asp:FileUpload ID="fuSquareBanner" runat="server" />
             <asp:Image ID="imgSquareBanner" runat="server" />
         </asp:PlaceHolder>
+    </asp:PlaceHolder>
+
     </asp:PlaceHolder>
 
     <script type="text/javascript">

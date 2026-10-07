@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using _241611JalopEventsManagement.Backend.Helpers;
 using _241611JalopEventsManagement.Backend.Models;
 
 namespace _241611JalopEventsManagement.Backend.Repository
@@ -69,6 +70,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
             {
                 throw new ArgumentException("CreatedByUserId must reference a valid administrator account.", nameof(ev.CreatedByUserId));
             }
+
+            RegistrationDateTime.ValidateWindow(ev.RegStart, ev.RegEnd, ev.EventStart, ev.EventEnd);
 
             const string sql = @"
                 INSERT INTO dbo.EventsTable (
@@ -209,6 +212,40 @@ namespace _241611JalopEventsManagement.Backend.Repository
         }
 
         /// <summary>
+        /// Uses the database clock and the same audience predicate as atomic registration.
+        /// A null year checks profile eligibility before the student selects their current year.
+        /// </summary>
+        public string GetRegistrationUnavailableReason(int eventId, string studentId, int? yearLevel = null)
+        {
+            const string sql = @"
+                DECLARE @Branch NVARCHAR(100), @Department NVARCHAR(100), @Program NVARCHAR(100), @StudentExists BIT = 0;
+                SELECT @Branch = LTRIM(RTRIM(CampusBranch)), @Department = LTRIM(RTRIM(Department)),
+                       @Program = LTRIM(RTRIM(Program)), @StudentExists = 1
+                FROM dbo.StudentTable WHERE StudentId = @StudentId;
+
+                SELECT CASE
+                    WHEN Status = 'Cancelled' THEN 'This event has been cancelled. Registration is unavailable.'
+                    WHEN Status != 'Upcoming' OR GETDATE() >= EventEnd THEN 'This event has ended. Registration is closed.'
+                    WHEN GETDATE() < RegStart THEN 'Registration has not opened yet. Please return when registration opens.'
+                    WHEN GETDATE() > RegEnd THEN 'The registration deadline has passed. Registration is closed.'
+                    WHEN CurrentRegistrations >= MaxCapacity THEN 'This event is fully booked. No registration seats remain.'
+                    WHEN @StudentExists = 0 OR NOT EXISTS (
+                        SELECT 1 FROM dbo.EventsTable WHERE EventId = @EventId
+                        " + AudienceEligibilitySql + @")
+                        THEN 'Your campus, college, program, or selected year does not meet this event''s audience requirements.'
+                    ELSE '' END
+                FROM dbo.EventsTable WHERE EventId = @EventId;";
+
+            object result = DatabaseConnection.ExecuteScalar(sql,
+                new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId },
+                new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = (object)studentId ?? DBNull.Value },
+                new SqlParameter("@YearLevel", SqlDbType.Int) { Value = (object)yearLevel ?? DBNull.Value });
+            return result == null || result == DBNull.Value
+                ? "This event could not be found. Choose an event from the dashboard."
+                : Convert.ToString(result);
+        }
+
+        /// <summary>
         /// Retrieves all events created by a specific administrator.
         /// </summary>
         public List<EventModel> GetEventsCreatedByUser(int userId)
@@ -238,11 +275,13 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public bool UpdateEvent(EventModel ev)
         {
-            SynchronizeCompletedEvents();
             if (ev == null || ev.EventId <= 0)
             {
                 return false;
             }
+
+            RegistrationDateTime.ValidateWindow(ev.RegStart, ev.RegEnd, ev.EventStart, ev.EventEnd);
+            SynchronizeCompletedEvents();
 
             const string sql = @"
                 UPDATE dbo.EventsTable 

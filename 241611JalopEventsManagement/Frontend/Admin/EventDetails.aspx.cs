@@ -15,26 +15,20 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         private readonly EventRepository _eventRepository = new EventRepository();
         private readonly SponsorRepository _sponsorRepository = new SponsorRepository();
         private readonly RegistrationRepository _registrationRepository = new RegistrationRepository();
+        private bool _eventAvailable;
 
         public int CurrentEventId
         {
             get
             {
-                if (ViewState["CurrentEventId"] != null)
-                {
-                    return (int)ViewState["CurrentEventId"];
-                }
-
                 string idParam = Request.QueryString["eventId"] ?? Request.QueryString["id"];
                 if (int.TryParse(idParam, out int id) && id > 0)
                 {
-                    ViewState["CurrentEventId"] = id;
                     return id;
                 }
 
-                return 1; // Default demonstration event ID
+                return 0;
             }
-            set => ViewState["CurrentEventId"] = value;
         }
 
         public bool IsEditMode
@@ -82,12 +76,23 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             set => ViewState["SponsorsList"] = value;
         }
 
+        public string RegistrationTimeZoneLabel => RegistrationDateTime.TimeZoneLabel;
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            EventCollegeOptions.Bind(ddlDepartment);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Validate on every request, including postbacks from a stale details/edit page.
+            EventModel ev;
+            if (!TryLoadEvent(out ev)) return;
             if (!IsPostBack)
             {
                 PopulateEventDropdown();
-                LoadEventData();
+                BindEventData(ev);
                 UpdateModeUI();
             }
         }
@@ -116,6 +121,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void ddlEvents_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (!_eventAvailable) return;
             if (int.TryParse(ddlEvents.SelectedValue, out int selectedId))
             {
                 Response.Redirect($"~/Frontend/Admin/EventDetails.aspx?eventId={selectedId}");
@@ -124,9 +130,13 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private void LoadEventData()
         {
-            EventModel ev = null;
-            bool isDemo = false;
+            EventModel ev;
+            if (TryLoadEvent(out ev)) BindEventData(ev);
+        }
 
+        private bool TryLoadEvent(out EventModel ev)
+        {
+            ev = null;
             try
             {
                 if (CurrentEventId > 0)
@@ -134,21 +144,40 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     ev = _eventRepository.GetEventById(CurrentEventId);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Fallback for demo preview
+                System.Diagnostics.Trace.TraceError("Loading event details failed: {0}", ex);
+                ShowUnavailable("Unable to load event", "Event records are temporarily unavailable. Please refresh this page or return to the Events Matrix.", 503);
+                return false;
             }
 
             if (ev == null)
             {
-                ev = GetFallbackDemonstrationEvent();
-                isDemo = true;
-                pnlDemoNotice.Visible = true;
+                ShowUnavailable("Event not found", "The requested event does not exist or is no longer available. Return to the Events Matrix to choose an event.", 404);
+                return false;
             }
-            else
-            {
-                pnlDemoNotice.Visible = false;
-            }
+
+            _eventAvailable = true;
+            phEventContent.Visible = true;
+            pnlUnavailable.Visible = false;
+            return true;
+        }
+
+        private void ShowUnavailable(string title, string message, int statusCode)
+        {
+            _eventAvailable = false;
+            IsEditMode = false;
+            phEventContent.Visible = false;
+            pnlUnavailable.Visible = true;
+            litUnavailableTitle.Text = Server.HtmlEncode(title);
+            litUnavailableMessage.Text = Server.HtmlEncode(message);
+            Page.Title = title + " | QCU Admin";
+            Response.StatusCode = statusCode;
+            Response.TrySkipIisCustomErrors = true;
+        }
+
+        private void BindEventData(EventModel ev)
+        {
 
             // Header Elements & Chips
             litHeaderEventId.Text = $"EVENT #{ev.EventId}";
@@ -161,9 +190,9 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             litSidebarStatus.Text = matrixStatus;
             litMetaEventId.Text = ev.EventId.ToString();
 
-            lnkCancelEvent.Visible = !isDemo && ev.CanCancel;
+            lnkCancelEvent.Visible = ev.CanCancel;
             lnkCancelEvent.NavigateUrl = "~/Frontend/Admin/AdminEvents.aspx?cancelEventId=" + ev.EventId;
-            btnToggleEdit.Enabled = !isDemo && string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase);
+            btnToggleEdit.Enabled = string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase);
             pnlCancelledNotice.Visible = ev.IsCancelled;
             litCancellationReason.Text = Server.HtmlEncode(ev.CancellationReason ?? "No reason recorded.");
             // Section 1: General Info (View)
@@ -183,14 +212,14 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             // Section 2: Schedule & Lifecycle (Strict MM/dd/yyyy format)
             litEventDateView.Text = ev.EventStart.ToString("MM/dd/yyyy");
             litEventHoursView.Text = $"{ev.EventStart:hh:mm tt} — {ev.EventEnd:hh:mm tt}";
-            litRegStartView.Text = $"{ev.RegStart:MM/dd/yyyy hh:mm tt}";
-            litRegEndView.Text = $"{ev.RegEnd:MM/dd/yyyy hh:mm tt}";
+            litRegStartView.Text = RegistrationDateTime.ToDisplay(ev.RegStart);
+            litRegEndView.Text = RegistrationDateTime.ToDisplay(ev.RegEnd);
 
             txtEventDate.Text = ev.EventStart.ToString("yyyy-MM-dd");
             txtStartTime.Text = ev.EventStart.ToString("HH:mm");
             txtEndTime.Text = ev.EventEnd.ToString("HH:mm");
-            txtRegStart.Text = ev.RegStart.ToString("yyyy-MM-dd");
-            txtRegEnd.Text = ev.RegEnd.ToString("yyyy-MM-dd");
+            txtRegStart.Text = RegistrationDateTime.ToInput(ev.RegStart);
+            txtRegEnd.Text = RegistrationDateTime.ToInput(ev.RegEnd);
 
             // Section 3: Dual-Ratio Banners
             if (!string.IsNullOrWhiteSpace(ev.EventPhotoPath))
@@ -233,11 +262,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 ddlYearLevel.SelectedIndex = 0;
 
             // Section 5: Sponsors
-            LoadSponsors(ev.EventId, isDemo);
+            LoadSponsors(ev.EventId);
 
             // Fetch live attendance data via RegistrationRepository
             RegistrationRepository.EventAttendanceSummary attendanceSummary = null;
-            if (!isDemo && ev.EventId > 0)
+            if (ev.EventId > 0)
             {
                 try
                 {
@@ -253,10 +282,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 ? attendanceSummary.TotalRegistered
                 : Math.Max(0, ev.CurrentRegistrations);
 
-            int checkedIn = (attendanceSummary != null)
-                ? attendanceSummary.TotalCheckedIn
-                : (isDemo ? (int)Math.Round(totalReg * 0.846) : 0);
-
             int maxCap = Math.Max(1, ev.MaxCapacity);
 
             // Gate Occupancy & Quota cockpit calculations
@@ -268,11 +293,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             litRemainingSpots.Text = remSpots == 0 ? "Capacity Saturated" : $"{remSpots} spots open";
         }
 
-        private void LoadSponsors(int eventId, bool isDemo)
+        private void LoadSponsors(int eventId)
         {
             List<string> sponsorNames = new List<string>();
 
-            if (!isDemo && eventId > 0)
+            if (eventId > 0)
             {
                 try
                 {
@@ -282,15 +307,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                         sponsorNames = spList.Select(s => s.SponsorName).ToList();
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Fallback
+                    System.Diagnostics.Trace.TraceError("Loading event sponsors failed: {0}", ex);
+                    ShowUnavailable("Unable to load sponsors", "Sponsor records are temporarily unavailable. Please refresh before editing this event.", 503);
+                    throw new System.Web.HttpException(503, "Sponsor records are temporarily unavailable.");
                 }
-            }
-
-            if (sponsorNames.Count == 0 && (isDemo || eventId <= 1))
-            {
-                sponsorNames = new List<string> { "AWS Educate", "QCU Alumni Association", "Google Developer Groups" };
             }
 
             Sponsors = sponsorNames;
@@ -308,6 +330,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private void UpdateModeUI()
         {
+            if (!_eventAvailable) return;
             bool editing = IsEditMode;
 
             // Visibility Toggles
@@ -337,6 +360,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void btnToggleEdit_Click(object sender, EventArgs e)
         {
+            if (!_eventAvailable) return;
             EventModel current = _eventRepository.GetEventById(CurrentEventId);
             if (current == null || current.Status != "Upcoming")
             {
@@ -351,6 +375,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void btnCancelEdit_Click(object sender, EventArgs e)
         {
+            if (!_eventAvailable) return;
             pnlError.Visible = false;
             pnlSuccess.Visible = false;
             IsEditMode = false;
@@ -360,6 +385,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void btnSaveChanges_Click(object sender, EventArgs e)
         {
+            if (!_eventAvailable) return;
             pnlError.Visible = false;
             pnlSuccess.Visible = false;
 
@@ -419,14 +445,14 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             DateTime eventStart = eventDate.Date.Add(startTime);
             DateTime eventEnd = eventDate.Date.Add(endTime);
 
-            if (!DateTime.TryParse(txtRegStart.Text, out DateTime regStart))
+            if (!RegistrationDateTime.TryParse(txtRegStart.Text, out DateTime regStart))
             {
                 ShowError("Please provide a valid Registration Opening Date & Time.");
                 txtRegStart.Focus();
                 return;
             }
 
-            if (!DateTime.TryParse(txtRegEnd.Text, out DateTime regEnd))
+            if (!RegistrationDateTime.TryParse(txtRegEnd.Text, out DateTime regEnd))
             {
                 ShowError("Please provide a valid Registration Final Deadline.");
                 txtRegEnd.Focus();
@@ -441,10 +467,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 return;
             }
 
-            // Domain Rule: Registration End Date must precede or conclude at Event End Date
-            if (regEnd > eventEnd)
+            // Registration dates must both strictly precede the event date, as in creation.
+            if (regStart.Date >= eventDate.Date || regEnd.Date >= eventDate.Date)
             {
-                ShowError("Logical Timestamp Violation: Registration Final Deadline must conclude before or at Event Execution End Date.");
+                ShowError("Registration opening and deadline must both be strictly before the event date.");
                 txtRegEnd.Focus();
                 return;
             }
@@ -612,6 +638,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void btnAddSponsor_Click(object sender, EventArgs e)
         {
+            if (!_eventAvailable) return;
             string newSponsor = txtNewSponsor.Text.Trim();
             if (!string.IsNullOrWhiteSpace(newSponsor))
             {
@@ -628,6 +655,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         protected void rptSponsors_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
+            if (!_eventAvailable) return;
             if (e.CommandName == "Remove" && e.CommandArgument != null)
             {
                 string target = e.CommandArgument.ToString();
@@ -654,30 +682,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         private static string EvaluateMatrixStatus(EventModel ev)
         {
             return AdminEvents.GetEventMatrixStatus(ev);
-        }
-        private static EventModel GetFallbackDemonstrationEvent()
-        {
-            DateTime now = DateTime.Now;
-            DateTime eventDate = now.AddDays(14).Date;
-            return new EventModel
-            {
-                EventId = 1,
-                Title = "Annual University Tech Summit 2026: AI & Cyber Resilience",
-                Description = "A flagship university-wide technology summit bringing together academic leaders, industry professionals, and students to explore advancements in artificial intelligence, cybersecurity frameworks, and cloud architectures.",
-                VenueLocation = "University Grand Auditorium, San Bartolome Campus",
-                MaxCapacity = 350,
-                CurrentRegistrations = 142,
-                CreatedByUserId = 1,
-                EventStart = eventDate.AddHours(9),
-                EventEnd = eventDate.AddHours(17),
-                RegStart = now.AddDays(-2),
-                RegEnd = eventDate.AddDays(-1).AddHours(23).AddMinutes(59),
-                Status = "Upcoming",
-                TargetBranch = "San Bartolome",
-                TargetDepartment = "College of Computer Studies",
-                TargetProgram = "BSIT, BSCS",
-                TargetYearLevel = 3
-            };
         }
     }
 }

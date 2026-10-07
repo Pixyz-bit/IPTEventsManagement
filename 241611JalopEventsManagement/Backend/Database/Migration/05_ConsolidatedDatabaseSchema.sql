@@ -1,5 +1,6 @@
 -- ============================================================================
 -- 05_ConsolidatedDatabaseSchema.sql
+-- Historical consolidated setup. Use 07_FinalDatabaseSchema.sql for new installations.
 -- Consolidated SQL Server schema for UniversityEventDB.
 -- Run this standalone script in SSMS or sqlcmd against a SQL Server instance
 -- where UniversityEventDB does not already exist. Do not run migrations 01-04

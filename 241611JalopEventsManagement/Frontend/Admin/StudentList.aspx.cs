@@ -52,15 +52,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             {
                 allStudents = _studentRepo.GetAllStudents(search, dept, prog, null, status);
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Trace.TraceError("Loading student directory failed: {0}", ex);
+                ShowNotification("Student records are temporarily unavailable. Please try again.", false);
                 allStudents = new List<StudentProfile>();
-            }
-
-            // Zero blank-screen fallback for demonstration/preview environments
-            if ((allStudents == null || allStudents.Count == 0) && string.IsNullOrWhiteSpace(search) && dept == "ALL" && prog == "ALL")
-            {
-                allStudents = GetDemonstrationStudents();
             }
 
             if (litShowingCount != null) litShowingCount.Text = (allStudents?.Count ?? 0).ToString("N0");
@@ -77,83 +73,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 rptStudents.DataSource = allStudents;
                 rptStudents.DataBind();
             }
-        }
-
-        private List<StudentProfile> GetDemonstrationStudents()
-        {
-            return new List<StudentProfile>
-            {
-                new StudentProfile
-                {
-                    StudentId = "24-1611",
-                    FirstName = "Martin",
-                    MiddleName = "V.",
-                    LastName = "Jalop",
-                    Department = "College of Computer Studies",
-                    Program = "BS Information Technology",
-                    CampusBranch = "San Bartolome",
-                    Gender = "Male",
-                    Email = "martin.jalop@qcu.edu.ph",
-                    IsActive = true,
-                    BirthDate = new DateTime(2004, 3, 15)
-                },
-                new StudentProfile
-                {
-                    StudentId = "24-0892",
-                    FirstName = "Sophia",
-                    MiddleName = "Rose",
-                    LastName = "Castillo",
-                    Department = "College of Engineering",
-                    Program = "BS Industrial Engineering",
-                    CampusBranch = "San Bartolome",
-                    Gender = "Female",
-                    Email = "sophia.castillo@qcu.edu.ph",
-                    IsActive = true,
-                    BirthDate = new DateTime(2005, 7, 22)
-                },
-                new StudentProfile
-                {
-                    StudentId = "24-2104",
-                    FirstName = "Joshua",
-                    MiddleName = "Lee",
-                    LastName = "Santos",
-                    Department = "College of Computer Studies",
-                    Program = "BS Computer Science",
-                    CampusBranch = "Batasan",
-                    Gender = "Male",
-                    Email = "joshua.santos@qcu.edu.ph",
-                    IsActive = true,
-                    BirthDate = new DateTime(2004, 11, 8)
-                },
-                new StudentProfile
-                {
-                    StudentId = "24-0451",
-                    FirstName = "Alyssa",
-                    MiddleName = "Marie",
-                    LastName = "Reyes",
-                    Department = "College of Business Administration and Accountancy",
-                    Program = "BS Entrepreneurship",
-                    CampusBranch = "San Francisco",
-                    Gender = "Female",
-                    Email = "alyssa.reyes@qcu.edu.ph",
-                    IsActive = true,
-                    BirthDate = new DateTime(2005, 1, 30)
-                },
-                new StudentProfile
-                {
-                    StudentId = "24-3312",
-                    FirstName = "Daniel",
-                    MiddleName = "K.",
-                    LastName = "Aquino",
-                    Department = "College of Education",
-                    Program = "BS Education",
-                    CampusBranch = "San Bartolome",
-                    Gender = "Male",
-                    Email = "daniel.aquino@qcu.edu.ph",
-                    IsActive = true,
-                    BirthDate = new DateTime(2003, 9, 14)
-                }
-            };
         }
 
         private void PopulateFilterDropdowns()

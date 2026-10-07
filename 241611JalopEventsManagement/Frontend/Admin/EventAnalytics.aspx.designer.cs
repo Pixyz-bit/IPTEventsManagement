@@ -46,7 +46,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Repeater rptDepartmentDistribution;
         protected global::System.Web.UI.WebControls.Repeater rptCourseDistribution;
         protected global::System.Web.UI.WebControls.Repeater rptYearDistribution;
-        protected global::System.Web.UI.WebControls.Repeater rptRegistrationVelocity;
 
         // Tab 2: During - Live Gate Telemetry
         protected global::System.Web.UI.WebControls.Literal litDuringCheckedIn;

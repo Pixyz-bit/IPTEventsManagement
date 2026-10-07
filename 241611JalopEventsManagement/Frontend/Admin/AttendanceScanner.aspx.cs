@@ -79,7 +79,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             {
                 eventId = parsedId;
             }
-            else if (ddlEvents.Items.Count > 0)
+            else if (Request.QueryString["eventId"] == null && ddlEvents.Items.Count > 0)
             {
                 eventId = int.Parse(ddlEvents.Items[0].Value);
             }
@@ -105,7 +105,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private void LoadTerminalData()
         {
-            var evt = _eventRepo.GetEventById(CurrentEventId);
+            var evt = RequireEvent(_eventRepo, CurrentEventId);
 
             if (evt != null)
             {
@@ -114,13 +114,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 litEventVenue.Text = Server.HtmlEncode(evt.VenueLocation ?? "Campus Grounds");
                 litEventCapacitySummary.Text = $"{evt.CurrentRegistrations} / {evt.MaxCapacity}";
             }
-            else
-            {
-                litEventTitle.Text = "Demonstration Event Gate Terminal";
-                litEventDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
-                litEventVenue.Text = "Main Academic Amphitheater";
-                litEventCapacitySummary.Text = "0 / 0";
-            }
+
 
             litCurrentAdminEmail.Text = Server.HtmlEncode(CurrentAdminEmail);
 

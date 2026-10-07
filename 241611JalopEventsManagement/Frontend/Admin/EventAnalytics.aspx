@@ -467,7 +467,6 @@
         <asp:Literal ID="litBeforeAttritionRate" runat="server" Text="0.0%"></asp:Literal>
         <asp:Literal ID="litBeforeAvailableQuota" runat="server" Text="0"></asp:Literal>
         <asp:Literal ID="litDuringPeakWindow" runat="server" Text="Awaiting Traffic"></asp:Literal>
-        <asp:Repeater ID="rptRegistrationVelocity" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
         <asp:Repeater ID="rptCheckInIntervals" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
     </asp:PlaceHolder>
 

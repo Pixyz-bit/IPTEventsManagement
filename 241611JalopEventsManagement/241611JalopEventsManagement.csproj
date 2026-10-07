@@ -69,6 +69,8 @@
   <ItemGroup>
     <Content Include="Web.config" />
     <Content Include="Backend\Database\Migration\06_EnforceEventLifecycleStatuses.sql" />
+    <Content Include="Backend\Database\Migration\07_FinalDatabaseSchema.sql" />
+    <Content Include="Backend\Database\Migration\05_ConsolidatedDatabaseSchema.sql" />
     <Content Include="Frontend\Assets\js\vendor\html-to-image-1.11.13.js" />
     <Content Include="Frontend\Assets\js\vendor\html-to-image-LICENSE.txt" />
     <Content Include="Default.aspx" />
@@ -133,6 +135,8 @@
     <Compile Include="Backend\Repository\SponsorRepository.cs" />
     <Compile Include="Backend\Repository\StudentRepository.cs" />
     <Compile Include="Backend\Repository\UserRepository.cs" />
+    <Compile Include="Backend\Helpers\RegistrationDateTime.cs" />
+    <Compile Include="Backend\Helpers\EventCollegeOptions.cs" />
     <Compile Include="Backend\Helpers\PasswordHelper.cs" />
     <Compile Include="Backend\Helpers\SessionHelper.cs" />
     <Compile Include="Backend\Helpers\AdminPage.cs" />

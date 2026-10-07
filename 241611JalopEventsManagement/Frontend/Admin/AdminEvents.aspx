@@ -50,10 +50,6 @@
 
             <asp:DropDownList ID="ddlDepartmentFilter" runat="server" CssClass="select-filter" AutoPostBack="true" OnSelectedIndexChanged="ddlDepartmentFilter_SelectedIndexChanged">
                 <asp:ListItem Value="" Text="All Academic Colleges" />
-                <asp:ListItem Value="College of Computer Studies" Text="College of Computer Studies (CCS)" />
-                <asp:ListItem Value="College of Engineering" Text="College of Engineering (COE)" />
-                <asp:ListItem Value="College of Business & Acctg" Text="College of Business & Accountancy (CBA)" />
-                <asp:ListItem Value="College of Arts & Sciences" Text="College of Arts & Sciences (CAS)" />
             </asp:DropDownList>
         </div>
     </div>
@@ -104,9 +100,9 @@
                         <td>
                             <div class="cell-reg-deadline">
                                 <span class="reg-label">From:</span>
-                                <span class="reg-date"><%# Eval("RegStart", "{0:MM/dd/yyyy}") %></span>
+                                <span class="reg-date"><%# _241611JalopEventsManagement.Backend.Helpers.RegistrationDateTime.ToDisplay((DateTime)Eval("RegStart")) %></span>
                                 <span class="reg-label" style="margin-top: 0.25rem;">To:</span>
-                                <span class="reg-date"><%# Eval("RegEnd", "{0:MM/dd/yyyy}") %></span>
+                                <span class="reg-date"><%# _241611JalopEventsManagement.Backend.Helpers.RegistrationDateTime.ToDisplay((DateTime)Eval("RegEnd")) %></span>
                             </div>
                         </td>
 

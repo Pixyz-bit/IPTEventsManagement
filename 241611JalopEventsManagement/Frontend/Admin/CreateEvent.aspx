@@ -283,16 +283,17 @@
                             <!-- Right: Registration Window -->
                             <div class="bento-col-box">
                                 <div class="bento-box-label">Registration Window</div>
+                                <p class="form-hint">All registration times use <%= RegistrationTimeZoneLabel %>.</p>
 
                                 <div class="form-group">
                                     <label class="form-label" for="<%= txtRegStart.ClientID %>">Registration Open Date & Time <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtRegStart" runat="server" TextMode="Date" CssClass="form-input" />
+                                    <asp:TextBox ID="txtRegStart" runat="server" TextMode="DateTimeLocal" step="1" CssClass="form-input" />
                                     <span class="form-hint">Initial access timestamp (Format: MM/DD/YYYY HH:MM)</span>
                                 </div>
 
                                 <div class="form-group" style="margin-bottom:0;">
                                     <label class="form-label" for="<%= txtRegEnd.ClientID %>">Registration Deadline <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtRegEnd" runat="server" TextMode="Date" CssClass="form-input" />
+                                    <asp:TextBox ID="txtRegEnd" runat="server" TextMode="DateTimeLocal" step="1" CssClass="form-input" />
                                     <span class="form-hint">Strict enrollment cutoff (Format: MM/DD/YYYY HH:MM)</span>
                                 </div>
                             </div>
@@ -352,10 +353,6 @@
                                     <label class="form-label" for="<%= ddlDepartment.ClientID %>">2. Academic College / Dept</label>
                                     <asp:DropDownList ID="ddlDepartment" runat="server" CssClass="form-select" onchange="filterProgramsByDepartment(this.value);">
                                         <asp:ListItem Value="" Text="All Colleges / Open" />
-                                        <asp:ListItem Value="College of Computer Studies" Text="College of Computer Studies (CCS)" />
-                                        <asp:ListItem Value="College of Engineering" Text="College of Engineering (COE)" />
-                                        <asp:ListItem Value="College of Business Administration and Accountancy" Text="College of Business Administration and Accountancy (CBAA)" />
-                                        <asp:ListItem Value="College of Education" Text="College of Education (CED)" />
                                     </asp:DropDownList>
                                 </div>
 
@@ -824,7 +821,7 @@
                 switchStep(2);
                 return false;
             }
-            if (new Date(regStart.value) >= new Date(regEnd.value)) {
+            if (normalizeRegistrationDateTime(regStart.value) >= normalizeRegistrationDateTime(regEnd.value)) {
                 showDateValidationToast('Invalid Registration Window', 'Registration Opening Date &amp; Time must be <strong>earlier</strong> than the Registration Deadline.', '<%= txtRegStart.ClientID %>');
                 switchStep(2);
                 return false;
@@ -939,7 +936,7 @@
                 if (regStart && !regStart.value) {
                     showDateValidationToast(
                         'Registration Open Date Required',
-                        'Please specify the <strong>Registration Opening Date &amp; Time (Format: MM/DD/YYYY)</strong>.',
+                        'Please specify the <strong>Registration Opening Date &amp; Time</strong>.',
                         '<%= txtRegStart.ClientID %>'
                     );
                     switchStep(2);
@@ -948,7 +945,7 @@
                 if (regEnd && !regEnd.value) {
                     showDateValidationToast(
                         'Registration Deadline Required',
-                        'Please specify the <strong>Registration Deadline (Format: MM/DD/YYYY)</strong>.',
+                        'Please specify the <strong>Registration Deadline Date &amp; Time</strong>.',
                         '<%= txtRegEnd.ClientID %>'
                     );
                     switchStep(2);
@@ -956,8 +953,8 @@
                 }
 
                 // Check 1: Registration Open must be strictly earlier than Registration Deadline
-                var dtRegStart = new Date(regStart.value);
-                var dtRegEnd = new Date(regEnd.value);
+                var dtRegStart = normalizeRegistrationDateTime(regStart.value);
+                var dtRegEnd = normalizeRegistrationDateTime(regEnd.value);
                 if (dtRegStart >= dtRegEnd) {
                     showDateValidationToast(
                         'Invalid Registration Window',
@@ -1059,19 +1056,20 @@
         }
 
         // ─── Step 5 Live Summary Generation ───
+        function normalizeRegistrationDateTime(value) {
+            return value.length === 16 ? value + ':00' : value;
+        }
+
         function formatDateTimePretty(isoStr) {
             if (!isoStr) return '-';
-            var d = new Date(isoStr);
-            if (isNaN(d.getTime())) return isoStr;
-            var mm = ('0' + (d.getMonth() + 1)).slice(-2);
-            var dd = ('0' + d.getDate()).slice(-2);
-            var yyyy = d.getFullYear();
-            var time = d.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
-            return mm + '/' + dd + '/' + yyyy + ' ' + time;
+            // Format the selected wall-clock components; date-only ISO strings parse as UTC in Date().
+            var parts = isoStr.split('T');
+            var time = parts.length > 1 ? parts[1] : '00:00';
+            var clock = time.split(':');
+            var seconds = clock.length > 2 && parseInt(clock[2], 10) > 0 ? ':' + clock[2] : '';
+            var formatted = formatTime12h(time);
+            if (seconds) formatted = formatted.replace(/ (AM|PM)$/, seconds + ' $1');
+            return formatDateOnlyPretty(parts[0]) + ' ' + formatted;
         }
 
         function formatDateOnlyPretty(dateStr) {

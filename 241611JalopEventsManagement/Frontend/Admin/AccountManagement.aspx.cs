@@ -40,18 +40,14 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             {
                 users = _userRepo.GetAllUsers(search, roleFilter, statusFilter);
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Trace.TraceError("Loading accounts failed: {0}", ex);
+                ShowNotification("Account records are temporarily unavailable. Please try again.", false);
                 users = new List<UserModel>();
             }
 
-            // Zero blank-screen fallback for demonstration/preview environments
-            if ((users == null || users.Count == 0) && string.IsNullOrWhiteSpace(search) && roleFilter == "ALL" && statusFilter == "ALL")
-            {
-                users = GetDemonstrationUsers();
-            }
-
-            // Filter in-memory if demonstration records were loaded
+            // Apply the requested filters to real account records only.
             if (users != null && users.Count > 0)
             {
                 if (!string.IsNullOrWhiteSpace(search))
@@ -95,9 +91,10 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     lockedAccounts = stats.LockedAccounts;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Fallback to in-memory count
+                System.Diagnostics.Trace.TraceError("Loading account statistics failed: {0}", ex);
+                ShowNotification("Account totals are temporarily unavailable. Please try again.", false);
             }
 
             if (totalAccounts == 0 && users != null)
@@ -159,7 +156,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             try
             {
                 targetUser = _userRepo.GetUserById(targetUserId);
-                if (targetUser != null && targetUser.Role == "Student")
+                if (targetUser != null)
                 {
                     var student = _studentRepo.GetStudentByUserId(targetUserId);
                     if (student != null)
@@ -168,14 +165,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                targetUser = null;
-            }
-
-            if (targetUser == null)
-            {
-                targetUser = GetDemonstrationUsers().FirstOrDefault(u => u.UserId == targetUserId);
+                System.Diagnostics.Trace.TraceError("Loading account failed: {0}", ex);
+                ShowNotification("Unable to load this account. Please try again.", false);
+                return;
             }
 
             if (targetUser == null)
@@ -242,6 +236,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             if (user.StudentProfile != null)
             {
+                txtManageStudentId.ReadOnly = true;
                 txtManageStudentId.Text = user.StudentProfile.StudentId ?? string.Empty;
                 txtManageFirstName.Text = user.StudentProfile.FirstName ?? string.Empty;
                 txtManageMiddleName.Text = user.StudentProfile.MiddleName ?? string.Empty;
@@ -271,6 +266,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
             else
             {
+                txtManageStudentId.ReadOnly = false;
                 txtManageStudentId.Text = string.Empty;
                 txtManageFirstName.Text = string.Empty;
                 txtManageMiddleName.Text = string.Empty;
@@ -345,96 +341,45 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             try
             {
-                // 1. Update Email if changed
-                var existingUser = _userRepo.GetUserById(userId);
-                if (existingUser != null && !string.Equals(existingUser.Email, newEmail, StringComparison.OrdinalIgnoreCase))
+                // Validate the complete request before the repository starts its transaction.
+                if (!string.IsNullOrEmpty(newPassword) && newPassword.Length < 6)
+                    throw new ArgumentException("Password must be at least 6 characters in length.");
+                var emailAddress = new System.Net.Mail.MailAddress(newEmail);
+                if (!string.Equals(emailAddress.Address, newEmail, StringComparison.OrdinalIgnoreCase))
+                    throw new ArgumentException("Please enter a valid email address.");
+
+                StudentProfile studentProfile = null;
+                if (newRole == "Student")
                 {
-                    if (_userRepo.EmailExists(newEmail))
+                    studentProfile = new StudentProfile
                     {
-                        ShowNotification($"The email address '{newEmail}' is already registered to another account.", false);
-                        pnlManageModal.Visible = true;
-                        return;
-                    }
-
-                    _userRepo.UpdateUserEmail(userId, newEmail);
-                }
-
-                // 2. Update Role if changed
-                if (existingUser != null && !string.Equals(existingUser.Role, newRole, StringComparison.OrdinalIgnoreCase))
-                {
-                    _userRepo.UpdateUserRole(userId, newRole, CurrentAdminUserId);
-                }
-
-                // 3. Update Status if changed
-                if (existingUser != null && existingUser.IsActive != shouldBeActive)
-                {
-                    if (!shouldBeActive && existingUser.Role == "Admin" && userId == CurrentAdminUserId)
-                    {
-                        ShowNotification("Security Guard: You cannot deactivate your own active Administrator session.", false);
-                        pnlManageModal.Visible = true;
-                        return;
-                    }
-
-                    _userRepo.UpdateUserStatus(userId, shouldBeActive);
-                }
-
-                // 4. Update Password if provided
-                if (!string.IsNullOrWhiteSpace(newPassword))
-                {
-                    if (newPassword.Length < 6)
-                    {
-                        ShowNotification("Password must be at least 6 characters in length.", false);
-                        pnlManageModal.Visible = true;
-                        return;
-                    }
-
-                    _userRepo.AdminResetPassword(userId, newPassword);
-                }
-
-                // 5. If Student, update demographics in dbo.StudentTable
-                if (newRole == "Student" && pnlManageStudentFields.Visible)
-                {
-                    string studentId = txtManageStudentId.Text?.Trim();
-                    string firstName = txtManageFirstName.Text?.Trim();
-                    string middleName = txtManageMiddleName.Text?.Trim();
-                    string lastName = txtManageLastName.Text?.Trim();
-                    string campus = ddlManageCampus.SelectedValue;
-                    string dept = ddlManageDepartment.SelectedValue;
-                    string prog = ddlManageProgram.SelectedValue;
-                    string gender = ddlManageGender.SelectedValue;
-
-                    if (string.IsNullOrWhiteSpace(studentId) || string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
-                    {
-                        ShowNotification("Student ID, First Name, and Last Name are required for student accounts.", false);
-                        pnlManageModal.Visible = true;
-                        return;
-                    }
-
-                    var studentProfile = new StudentProfile
-                    {
-                        StudentId = studentId,
-                        FirstName = firstName,
-                        MiddleName = middleName,
-                        LastName = lastName,
-                        Gender = gender,
-                        CampusBranch = campus,
-                        Department = dept,
-                        Program = prog,
-                        UserId = userId,
-                        Email = newEmail,
-                        IsActive = shouldBeActive
+                        StudentId = txtManageStudentId.Text?.Trim(),
+                        FirstName = txtManageFirstName.Text?.Trim(),
+                        MiddleName = txtManageMiddleName.Text?.Trim(),
+                        LastName = txtManageLastName.Text?.Trim(),
+                        Gender = ddlManageGender.SelectedValue,
+                        CampusBranch = ddlManageCampus.SelectedValue,
+                        Department = ddlManageDepartment.SelectedValue,
+                        Program = ddlManageProgram.SelectedValue,
+                        UserId = userId
                     };
-
-                    _studentRepo.UpdateStudentFull(studentProfile);
+                    if (string.IsNullOrWhiteSpace(studentProfile.StudentId) ||
+                        string.IsNullOrWhiteSpace(studentProfile.FirstName) || string.IsNullOrWhiteSpace(studentProfile.LastName))
+                        throw new ArgumentException("Student ID, First Name, and Last Name are required for student accounts.");
                 }
-
+                _userRepo.SaveManagedAccount(new UserModel
+                {
+                    UserId = userId, Email = newEmail, Role = newRole, IsActive = shouldBeActive
+                }, studentProfile, newPassword, CurrentAdminUserId);
                 pnlManageModal.Visible = false;
                 ShowNotification($"Account #{userId} ({newEmail}) updated successfully.", true);
                 BindUserGrid();
             }
             catch (Exception ex)
             {
-                ShowNotification($"Management Update Error: {ex.Message}", false);
+                System.Diagnostics.Trace.TraceError("Saving managed account failed: {0}", ex);
+                ShowNotification(ex is ArgumentException || ex is InvalidOperationException
+                    ? ex.Message : "The account could not be saved. No account changes were committed. Please try again.", false);
                 pnlManageModal.Visible = true;
             }
         }
@@ -602,14 +547,18 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 {
                     targetUser = _userRepo.GetUserById(targetUserId);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    targetUser = null;
+                    System.Diagnostics.Trace.TraceError("Loading account status failed: {0}", ex);
+                    ShowNotification("Unable to load account status. Please try again.", false);
+                    return;
                 }
 
                 if (targetUser == null)
                 {
-                    targetUser = GetDemonstrationUsers().FirstOrDefault(u => u.UserId == targetUserId);
+                    ShowNotification("The account no longer exists.", false);
+                    pnlLockModal.Visible = false;
+                    return;
                 }
 
                 bool wasActive = targetUser?.IsActive ?? true;
@@ -650,14 +599,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             {
                 users = _userRepo.GetAllUsers(search, roleFilter, statusFilter);
             }
-            catch
+            catch (Exception ex)
             {
-                users = new List<UserModel>();
-            }
-
-            if (users == null || users.Count == 0)
-            {
-                users = GetDemonstrationUsers();
+                System.Diagnostics.Trace.TraceError("Exporting accounts failed: {0}", ex);
+                ShowNotification("Unable to export account records. Please try again.", false);
+                return;
             }
 
             var sb = new StringBuilder();
@@ -754,78 +700,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected void btnCloseNotification_Click(object sender, EventArgs e)
         {
             pnlNotification.Visible = false;
-        }
-
-        private List<UserModel> GetDemonstrationUsers()
-        {
-            return new List<UserModel>
-            {
-                new UserModel
-                {
-                    UserId = 1,
-                    Email = "admin@qcu.edu.ph",
-                    Role = "Admin",
-                    IsActive = true
-                },
-                new UserModel
-                {
-                    UserId = 2,
-                    Email = "coordinator.cics@qcu.edu.ph",
-                    Role = "Admin",
-                    IsActive = true
-                },
-                new UserModel
-                {
-                    UserId = 3,
-                    Email = "rocel.jalop@qcu.edu.ph",
-                    Role = "Student",
-                    IsActive = true,
-                    StudentProfile = new StudentProfile
-                    {
-                        StudentId = "24-1611",
-                        FirstName = "Rocel Asuncion",
-                        LastName = "Jalop",
-                        CampusBranch = "San Bartolome",
-                        Department = "College of Computer Studies",
-                        Program = "BS Information Technology",
-                        Gender = "Female"
-                    }
-                },
-                new UserModel
-                {
-                    UserId = 4,
-                    Email = "diana.prince@qcu.edu.ph",
-                    Role = "Student",
-                    IsActive = true,
-                    StudentProfile = new StudentProfile
-                    {
-                        StudentId = "24-0892",
-                        FirstName = "Diana",
-                        LastName = "Prince",
-                        CampusBranch = "San Francisco",
-                        Department = "College of Engineering",
-                        Program = "BS Industrial Engineering",
-                        Gender = "Female"
-                    }
-                },
-                new UserModel
-                {
-                    UserId = 5,
-                    Email = "arthur.curry@qcu.edu.ph",
-                    Role = "Student",
-                    IsActive = false,
-                    StudentProfile = new StudentProfile
-                    {
-                        StudentId = "23-5512",
-                        FirstName = "Arthur",
-                        LastName = "Curry",
-                        CampusBranch = "Batasan",
-                        Department = "College of Business Administration and Accountancy",
-                        Program = "BS Entrepreneurship",
-                        Gender = "Male"
-                    }
-                }
-            };
         }
 
         #endregion

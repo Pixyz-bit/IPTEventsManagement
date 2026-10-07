@@ -27,6 +27,14 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             set => ViewState["SponsorList"] = value;
         }
 
+        public string RegistrationTimeZoneLabel => RegistrationDateTime.TimeZoneLabel;
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            EventCollegeOptions.Bind(ddlDepartment);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -51,17 +59,13 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             DateTime defaultRegStart = now;
             DateTime defaultRegEnd = defaultEventDate.AddDays(-1).AddHours(23).AddMinutes(59);
 
-            txtRegStart.Text = defaultRegStart.ToString("yyyy-MM-dd");
-            txtRegEnd.Text = defaultRegEnd.ToString("yyyy-MM-dd");
+            txtRegStart.Text = RegistrationDateTime.ToInput(defaultRegStart.AddTicks(-(defaultRegStart.Ticks % TimeSpan.TicksPerMinute)));
+            txtRegEnd.Text = RegistrationDateTime.ToInput(defaultRegEnd);
 
             hfSelectedPrograms.Value = string.Empty;
 
-            // Seed sample partner associations for rapid staging
-            Sponsors = new List<string>
-            {
-                "QCU Alumni Association",
-                "AWS Educate"
-            };
+            // Only associations entered by the administrator are persisted.
+            Sponsors = new List<string>();
         }
 
         private void BindSponsors()
@@ -197,9 +201,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             DateTime eventStart = eventDate.Date.Add(startTime);
             DateTime eventEnd = eventDate.Date.Add(endTime);
 
-            string[] dtFormats = new[] { "yyyy-MM-dd", "MM/dd/yyyy", "M/d/yyyy", "MM/dd/yyyy HH:mm", "MM/dd/yyyy hh:mm tt", "yyyy-MM-ddTHH:mm", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-dd HH:mm" };
-            if (!DateTime.TryParseExact(txtRegStart.Text.Trim(), dtFormats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime regStart)
-                && !DateTime.TryParse(txtRegStart.Text.Trim(), out regStart))
+            if (!RegistrationDateTime.TryParse(txtRegStart.Text, out DateTime regStart))
             {
                 hfActiveStep.Value = "2";
                 ShowError("Please provide a valid Registration Opening Date & Time (Format: MM/DD/YYYY HH:MM).");
@@ -207,8 +209,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 return;
             }
 
-            if (!DateTime.TryParseExact(txtRegEnd.Text.Trim(), dtFormats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime regEnd)
-                && !DateTime.TryParse(txtRegEnd.Text.Trim(), out regEnd))
+            if (!RegistrationDateTime.TryParse(txtRegEnd.Text, out DateTime regEnd))
             {
                 hfActiveStep.Value = "2";
                 ShowError("Please provide a valid Registration Deadline (Format: MM/DD/YYYY HH:MM).");

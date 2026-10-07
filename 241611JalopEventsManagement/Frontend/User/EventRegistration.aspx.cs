@@ -41,6 +41,9 @@ namespace _241611JalopEventsManagement.Frontend.User
             }
             else
             {
+                EventModel ev;
+                StudentProfile student;
+                if (!LoadRegistrationContext(out ev, out student)) return;
                 // Sync current step from client hidden field if posted back
                 if (int.TryParse(hfCurrentStep.Value, out int step) && step >= 1 && step <= 3)
                 {
@@ -51,24 +54,11 @@ namespace _241611JalopEventsManagement.Frontend.User
 
         private void InitializeRegistrationWizard()
         {
-            if (!int.TryParse(Request.QueryString["eventId"], out int eventId) || eventId <= 0)
-            {
-                Response.Redirect("~/Frontend/User/Dashboard.aspx", true);
-                return;
-            }
-
-            CurrentEventId = eventId;
+            EventModel ev;
+            StudentProfile student;
+            if (!LoadRegistrationContext(out ev, out student)) return;
             CurrentStep = 1;
             hfCurrentStep.Value = "1";
-
-            // 1. Fetch Event Context
-            var ev = _eventRepo.GetEventById(eventId);
-            if (ev == null || !string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase))
-            {
-                ShowError("This event is unavailable or cancelled. Registration is closed.");
-                if (btnConfirmRegistration != null) btnConfirmRegistration.Visible = false;
-                return;
-            }
 
             if (litContextEventTitle != null) litContextEventTitle.Text = Server.HtmlEncode(ev.Title);
             if (litContextEventDate != null) litContextEventDate.Text = ev.EventStart != DateTime.MinValue ? ev.EventStart.ToString("MM/dd/yyyy") : "TBD";
@@ -120,39 +110,6 @@ namespace _241611JalopEventsManagement.Frontend.User
                 pnlEventPhoto.Visible = false;
             }
 
-            // 2. Fetch Student Profile
-            string studentId = SessionHelper.CurrentStudentId;
-            var student = _studentRepo.GetStudentByUserId(SessionHelper.CurrentUserId) ?? _studentRepo.GetStudentById(studentId);
-
-            if (student == null)
-            {
-                Response.Redirect("~/Frontend/User/StudentProfile.aspx", true);
-                return;
-            }
-
-            // Check if student already holds a reservation
-            if (_regRepo.IsStudentRegistered(eventId, student.StudentId))
-            {
-                var existing = _regRepo.GetRegistrationsByStudent(student.StudentId)
-                    .Find(r => r.EventId == eventId && !string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase));
-
-                if (existing != null)
-                {
-                    Response.Redirect($"~/Frontend/User/EventPass.aspx?regId={existing.EventRegistrationId}", true);
-                    return;
-                }
-            }
-
-            // Populate Navigation Header
-            litNavStudentName.Text = Server.HtmlEncode(student.FullName);
-            litNavStudentId.Text = Server.HtmlEncode(student.StudentId);
-            string initials = "ST";
-            if (!string.IsNullOrEmpty(student.FirstName) && !string.IsNullOrEmpty(student.LastName))
-            {
-                initials = $"{student.FirstName[0]}{student.LastName[0]}".ToUpper();
-            }
-            litNavAvatarInitials.Text = initials;
-
             // Populate Step 2: Student Profile (View-Only)
             litProfileStudentId.Text = Server.HtmlEncode(student.StudentId);
             litProfileFullName.Text = Server.HtmlEncode(student.FullName);
@@ -163,10 +120,76 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             // Populate Step 3 Defaults
             txtSection.Text = student.Section ?? "";
+            if (ev.TargetYearLevel.HasValue)
+            {
+                for (int i = ddlYearLevel.Items.Count - 1; i >= 0; i--)
+                {
+                    if (ddlYearLevel.Items[i].Value != "" && ddlYearLevel.Items[i].Value != ev.TargetYearLevel.Value.ToString())
+                        ddlYearLevel.Items.RemoveAt(i);
+                }
+                pnlYearRequirement.Visible = true;
+                litYearRequirement.Text = Server.HtmlEncode($"This event is restricted to Year {ev.TargetYearLevel.Value}. Select this year only if it is your current standing.");
+            }
+        }
+
+        private bool LoadRegistrationContext(out EventModel ev, out StudentProfile student, int? yearLevel = null)
+        {
+            ev = null;
+            student = _studentRepo.GetStudentByUserId(SessionHelper.CurrentUserId)
+                ?? _studentRepo.GetStudentById(SessionHelper.CurrentStudentId);
+            if (student == null)
+            {
+                ShowUnavailable("Your student profile is unavailable. Update your profile before registering.");
+                return false;
+            }
+
+            litNavStudentName.Text = Server.HtmlEncode(student.FullName);
+            litNavStudentId.Text = Server.HtmlEncode(student.StudentId);
+            litNavAvatarInitials.Text = !string.IsNullOrEmpty(student.FirstName) && !string.IsNullOrEmpty(student.LastName)
+                ? Server.HtmlEncode($"{student.FirstName[0]}{student.LastName[0]}".ToUpperInvariant()) : "ST";
+
+            if (!int.TryParse(Request.QueryString["eventId"], out int eventId) || eventId <= 0)
+            {
+                ShowUnavailable("This event could not be found. Choose an event from the dashboard.");
+                return false;
+            }
+            CurrentEventId = eventId;
+            ev = _eventRepo.GetEventById(eventId);
+
+            // Existing pass holders must still reach their pass when booking is closed or full.
+            var existing = _regRepo.GetRegistrationsByStudent(student.StudentId)
+                .Find(r => r.EventId == eventId && !string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase));
+            if (existing != null)
+            {
+                Response.Redirect($"~/Frontend/User/EventPass.aspx?regId={existing.EventRegistrationId}", true);
+                return false;
+            }
+
+            string reason = _eventRepo.GetRegistrationUnavailableReason(eventId, student.StudentId, yearLevel);
+            if (!string.IsNullOrEmpty(reason))
+            {
+                ShowUnavailable(reason, ev);
+                return false;
+            }
+            pnlUnavailable.Visible = false;
+            pnlRegistration.Visible = true;
+            return true;
+        }
+
+        private void ShowUnavailable(string reason, EventModel ev = null)
+        {
+            pnlRegistration.Visible = false;
+            pnlUnavailable.Visible = true;
+            pnlError.Visible = false;
+            litCapacityBadge.Text = "";
+            phUnavailableEvent.Visible = ev != null;
+            litUnavailableEvent.Text = Server.HtmlEncode(ev?.Title ?? "");
+            litUnavailableReason.Text = Server.HtmlEncode(reason);
         }
 
         protected void btnConfirmRegistration_Click(object sender, EventArgs e)
         {
+            if (!pnlRegistration.Visible) return;
             pnlError.Visible = false;
 
             if (!chkTerms.Checked)
@@ -191,6 +214,10 @@ namespace _241611JalopEventsManagement.Frontend.User
                 CurrentStep = 3;
                 return;
             }
+
+            EventModel ev;
+            StudentProfile student;
+            if (!LoadRegistrationContext(out ev, out student, yearLvl)) return;
 
             string studentId = SessionHelper.CurrentStudentId;
             if (string.IsNullOrWhiteSpace(studentId))
@@ -231,18 +258,15 @@ namespace _241611JalopEventsManagement.Frontend.User
             }
             else if (newRegId == -1)
             {
-                ShowError("Registration Failed: This event has reached maximum attendee capacity (Fully Booked).");
-                CurrentStep = 3;
+                ShowUnavailable("This event is fully booked. No registration seats remain.", ev);
             }
             else if (newRegId == -2)
             {
-                ShowError("Registration Failed: The registration window for this event is closed.");
-                CurrentStep = 3;
+                ShowUnavailable("Registration is now closed or the event is no longer available.", ev);
             }
             else if (newRegId == -3)
             {
-                ShowError("You do not meet this event's campus, department, program, or year level eligibility. Check your selected year and the event audience requirements.");
-                CurrentStep = 3;
+                ShowUnavailable("Your campus, college, program, or selected year does not meet this event's audience requirements.", ev);
             }
             else
             {

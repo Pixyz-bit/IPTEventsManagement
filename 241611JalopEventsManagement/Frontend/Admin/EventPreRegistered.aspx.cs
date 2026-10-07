@@ -70,7 +70,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             {
                 eventId = parsedId;
             }
-            else if (ddlEvents.Items.Count > 0)
+            else if (Request.QueryString["eventId"] == null && ddlEvents.Items.Count > 0)
             {
                 eventId = int.Parse(ddlEvents.Items[0].Value);
             }
@@ -96,7 +96,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private void LoadEventData()
         {
-            var evt = _eventRepo.GetEventById(CurrentEventId);
+            var evt = RequireEvent(_eventRepo, CurrentEventId);
 
             if (evt != null)
             {
@@ -120,14 +120,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">" + Server.HtmlEncode(statusText.ToUpper()) + "</span>";
                 }
             }
-            else
-            {
-                litEventTitle.Text = "Demonstration Event Preview";
-                litEventDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
-                litEventVenue.Text = "Main Academic Amphitheater";
-                litEventCapacitySummary.Text = "0 / 100";
-                litEventStatusBadge.Text = "<span class=\"meta-chip\" style=\"background-color:var(--brand-subtle); border-color:var(--brand-border); color:var(--brand-primary);\">UPCOMING</span>";
-            }
+
 
             // Load Attendees for this event
             var registrations = _registrationRepo.GetRegistrationsByEvent(CurrentEventId);
@@ -265,19 +258,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     ShowAlert("Unable to void registration. The pass may already be cancelled or invalid.", false);
                 }
             }
-        }
-
-        public string FormatRegistrationDate(object regTimestampObj, object regStartObj)
-        {
-            if (regTimestampObj != null && DateTime.TryParse(regTimestampObj.ToString(), out DateTime dtReg))
-            {
-                return dtReg.ToString("MM/dd/yyyy hh:mm tt");
-            }
-            if (regStartObj != null && DateTime.TryParse(regStartObj.ToString(), out DateTime dtStart))
-            {
-                return dtStart.ToString("MM/dd/yyyy");
-            }
-            return DateTime.Now.ToString("MM/dd/yyyy");
         }
 
         private void ShowAlert(string message, bool isSuccess)

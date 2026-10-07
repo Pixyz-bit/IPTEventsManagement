@@ -27,11 +27,6 @@ namespace _241611JalopEventsManagement.Frontend.Login
         protected global::System.Web.UI.WebControls.TextBox txtPassword;
 
         /// <summary>
-        /// chkRememberMe control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.CheckBox chkRememberMe;
-
-        /// <summary>
         /// btnLogin control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Button btnLogin;

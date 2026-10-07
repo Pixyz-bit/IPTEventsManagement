@@ -99,6 +99,14 @@
                 <asp:Literal ID="litErrorMsg" runat="server" />
             </asp:Panel>
 
+            <asp:Panel ID="pnlUnavailable" runat="server" Visible="false" CssClass="event-summary-card" role="status">
+                <h3 class="event-summary-title">Registration unavailable</h3>
+                <asp:PlaceHolder ID="phUnavailableEvent" runat="server"><p><asp:Literal ID="litUnavailableEvent" runat="server" /></p></asp:PlaceHolder>
+                <p><asp:Literal ID="litUnavailableReason" runat="server" /></p>
+                <a href="<%= ResolveUrl("~/Frontend/User/Dashboard.aspx#events-section") %>" class="btn-secondary">Back to Campus Events</a>
+            </asp:Panel>
+
+            <asp:Panel ID="pnlRegistration" runat="server">
             <!-- Event Context Summary Card -->
             <div class="event-summary-card">
                 <div class="event-summary-header">
@@ -274,6 +282,9 @@
                                 <asp:ListItem Value="4" Text="4th Year"></asp:ListItem>
                                 <asp:ListItem Value="5" Text="Irregular"></asp:ListItem>
                             </asp:DropDownList>
+                            <asp:Panel ID="pnlYearRequirement" runat="server" Visible="false">
+                                <p><asp:Literal ID="litYearRequirement" runat="server" /></p>
+                            </asp:Panel>
                         </div>
 
                         <!-- Class Section Input -->
@@ -314,6 +325,7 @@
                     </div>
                 </div>
             </div>
+            </asp:Panel>
         </main>
 
         <!-- Enterprise Floating Lower-Right Toast Container -->

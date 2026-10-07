@@ -21,7 +21,6 @@ The `UserModel` represents the user entity across authentication, session persis
 | `Password` | `string` | No | `[Required]`, `[DataType(DataType.Password)]` | Plain-text credential during auth/registration |
 | `Role` | `string` | No | `[StringLength(50)]` | `dbo.UserTable.Role (VARCHAR(50), NOT NULL)` |
 | `IsActive` | `bool` | No | Default `true` | `dbo.UserTable.IsActive (BIT, NOT NULL, DEFAULT 1)` |
-| `RememberMe` | `bool` | No | Standard boolean | Client persistent cookie ticket indicator |
 
 ---
 

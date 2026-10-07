@@ -222,7 +222,7 @@
                                 </td>
                                 <td style="text-align: right;">
                                     <a href="javascript:void(0);" class="btn-view-link" 
-                                        onclick='openStudentModal("<%# Eval("StudentId") %>", "<%# Eval("StudentFullName") %>", "<%# Eval("StudentEmail") %>", "<%# Eval("StudentCampusBranch") %>", "<%# Eval("StudentDepartment") %>", "<%# Eval("StudentProgram") %>", "<%# Eval("CurrentYearLvl") %>", "<%# Eval("CurrentSection") %>", "<%# Eval("TicketReference") %>", "<%# FormatRegistrationDate(Eval("RegistrationTimestamp"), Eval("RegStart")) %>", "<%# Eval("Status") %>", "<%# Eval("EventRegistrationId") %>")'>
+                                        onclick='openStudentModal("<%# Eval("StudentId") %>", "<%# Eval("StudentFullName") %>", "<%# Eval("StudentEmail") %>", "<%# Eval("StudentCampusBranch") %>", "<%# Eval("StudentDepartment") %>", "<%# Eval("StudentProgram") %>", "<%# Eval("CurrentYearLvl") %>", "<%# Eval("CurrentSection") %>", "<%# Eval("TicketReference") %>", "<%# Eval("Status") %>", "<%# Eval("EventRegistrationId") %>")'>
                                         View &gt;
                                     </a>
                                 </td>
@@ -296,7 +296,7 @@
                                 </td>
                                 <td style="text-align: right;">
                                     <a href="javascript:void(0);" class="btn-view-link" 
-                                        onclick='openStudentModal("<%# Eval("StudentId") %>", "<%# Eval("StudentFullName") %>", "<%# Eval("StudentEmail") %>", "<%# Eval("StudentCampusBranch") %>", "<%# Eval("StudentDepartment") %>", "<%# Eval("StudentProgram") %>", "<%# Eval("CurrentYearLvl") %>", "<%# Eval("CurrentSection") %>", "<%# Eval("TicketReference") %>", "<%# FormatRegistrationDate(Eval("RegistrationTimestamp"), Eval("RegStart")) %>", "<%# Eval("Status") %>", "<%# Eval("EventRegistrationId") %>")'>
+                                        onclick='openStudentModal("<%# Eval("StudentId") %>", "<%# Eval("StudentFullName") %>", "<%# Eval("StudentEmail") %>", "<%# Eval("StudentCampusBranch") %>", "<%# Eval("StudentDepartment") %>", "<%# Eval("StudentProgram") %>", "<%# Eval("CurrentYearLvl") %>", "<%# Eval("CurrentSection") %>", "<%# Eval("TicketReference") %>", "<%# Eval("Status") %>", "<%# Eval("EventRegistrationId") %>")'>
                                         View &gt;
                                     </a>
                                 </td>
@@ -370,10 +370,6 @@
                 <div class="profile-field-block">
                     <span class="profile-field-label">Current Status</span>
                     <span class="profile-field-value" id="modalStatusText">--</span>
-                </div>
-                <div class="profile-field-block" style="grid-column: span 2;">
-                    <span class="profile-field-label">Registration Date</span>
-                    <span class="profile-field-value" id="modalRegDate">--/--/----</span>
                 </div>
             </div>
         </div>
@@ -459,7 +455,7 @@
     }
 
     // Pop-Up Modal Controls
-    function openStudentModal(studentId, fullName, email, branch, dept, course, year, section, ticketRef, regDate, status, eventRegId) {
+    function openStudentModal(studentId, fullName, email, branch, dept, course, year, section, ticketRef, status, eventRegId) {
         document.getElementById('modalStudentId').innerText = studentId || '--';
         document.getElementById('modalFullName').innerText = fullName || 'Student Attendee';
         document.getElementById('modalEmail').innerText = email || 'No email provided';
@@ -468,7 +464,6 @@
         document.getElementById('modalCourse').innerText = course || '--';
         document.getElementById('modalYearSection').innerText = 'Year ' + year + ' - ' + section;
         document.getElementById('modalTicketRef').innerText = ticketRef || '--';
-        document.getElementById('modalRegDate').innerText = regDate || '--/--/----';
         document.getElementById('modalStatusText').innerText = status || 'Reserved';
 
         const hf = document.getElementById('hfModalEventRegId');

@@ -8,6 +8,23 @@ namespace _241611JalopEventsManagement.Backend.Helpers
     /// </summary>
     public class AdminPage : Page
     {
+        protected Models.EventModel RequireEvent(Repository.EventRepository repository, int eventId)
+        {
+            Models.EventModel ev;
+            try
+            {
+                ev = eventId > 0 ? repository.GetEventById(eventId) : null;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Loading event context failed: {0}", ex);
+                throw new System.Web.HttpException(503, "Event records are temporarily unavailable. Please try again.");
+            }
+            if (ev == null)
+                throw new System.Web.HttpException(404, "The requested event was not found. Choose an existing event from the Events Matrix.");
+            return ev;
+        }
+
         protected override void OnPreInit(EventArgs e)
         {
             if (!SessionHelper.IsAuthenticated)

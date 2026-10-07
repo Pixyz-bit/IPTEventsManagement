@@ -29,6 +29,14 @@ namespace _241611JalopEventsManagement.Frontend.User
         protected global::System.Web.UI.WebControls.Panel pnlError;
         protected global::System.Web.UI.WebControls.Literal litErrorMsg;
 
+        protected global::System.Web.UI.WebControls.Panel pnlUnavailable;
+        protected global::System.Web.UI.WebControls.PlaceHolder phUnavailableEvent;
+        protected global::System.Web.UI.WebControls.Literal litUnavailableEvent;
+        protected global::System.Web.UI.WebControls.Literal litUnavailableReason;
+        protected global::System.Web.UI.WebControls.Panel pnlRegistration;
+        protected global::System.Web.UI.WebControls.Panel pnlYearRequirement;
+        protected global::System.Web.UI.WebControls.Literal litYearRequirement;
+
         // Step 1: Event Information Controls
         protected global::System.Web.UI.WebControls.Literal litStep1Title;
         protected global::System.Web.UI.WebControls.Literal litStep1Description;

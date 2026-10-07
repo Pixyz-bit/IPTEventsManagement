@@ -61,7 +61,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 WHERE EventId = @EventId;
 
                 -- Registration is strictly permitted during the event's registration window
-                IF @EvtStatus != 'Upcoming' OR GETDATE() < @RegStart OR GETDATE() > @RegEnd OR GETDATE() >= @EventEnd
+                IF @EvtStatus IS NULL OR @EvtStatus != 'Upcoming' OR GETDATE() < @RegStart OR GETDATE() > @RegEnd OR GETDATE() >= @EventEnd
                 BEGIN
                     ROLLBACK TRANSACTION;
                     SELECT -2; -- Registration window closed or event inactive

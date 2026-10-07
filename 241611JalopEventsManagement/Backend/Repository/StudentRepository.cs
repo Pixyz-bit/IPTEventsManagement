@@ -14,6 +14,41 @@ namespace _241611JalopEventsManagement.Backend.Repository
     /// </summary>
     public class StudentRepository
     {
+        // Participates in the account transaction; this screen does not own BirthDate or StudentId changes.
+        internal void SaveManagedProfile(SqlConnection connection, SqlTransaction transaction, int userId, StudentProfile profile)
+        {
+            string existingId = null;
+            using (var command = new SqlCommand("SELECT StudentId FROM dbo.StudentTable WITH (UPDLOCK, HOLDLOCK) WHERE UserId = @UserId;", connection, transaction))
+            {
+                command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int) { Value = userId });
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read()) existingId = reader.GetString(0);
+                    if (reader.Read()) throw new InvalidOperationException("This account has multiple student profiles. Resolve them before editing.");
+                }
+            }
+            if (existingId != null && !string.Equals(existingId, profile.StudentId.Trim(), StringComparison.Ordinal))
+                throw new InvalidOperationException("Student ID cannot be changed through account management.");
+            const string update = @"UPDATE dbo.StudentTable SET FirstName=@FirstName, MiddleName=@MiddleName,
+                LastName=@LastName, Gender=@Gender, CampusBranch=@CampusBranch, Department=@Department, Program=@Program
+                WHERE UserId=@UserId AND StudentId=@StudentId;";
+            const string insert = @"INSERT INTO dbo.StudentTable
+                (StudentId, FirstName, MiddleName, LastName, Gender, CampusBranch, Department, Program, UserId)
+                VALUES (@StudentId, @FirstName, @MiddleName, @LastName, @Gender, @CampusBranch, @Department, @Program, @UserId);";
+            using (var command = new SqlCommand(existingId == null ? insert : update, connection, transaction))
+            {
+                command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int) { Value = userId });
+                command.Parameters.Add(new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = profile.StudentId.Trim() });
+                command.Parameters.Add(new SqlParameter("@FirstName", SqlDbType.NVarChar, 100) { Value = profile.FirstName.Trim() });
+                command.Parameters.Add(new SqlParameter("@MiddleName", SqlDbType.NVarChar, 100) { Value = (object)profile.MiddleName?.Trim() ?? DBNull.Value });
+                command.Parameters.Add(new SqlParameter("@LastName", SqlDbType.NVarChar, 100) { Value = profile.LastName.Trim() });
+                command.Parameters.Add(new SqlParameter("@Gender", SqlDbType.VarChar, 20) { Value = profile.Gender ?? "Not Specified" });
+                command.Parameters.Add(new SqlParameter("@CampusBranch", SqlDbType.NVarChar, 100) { Value = profile.CampusBranch ?? "San Bartolome" });
+                command.Parameters.Add(new SqlParameter("@Department", SqlDbType.NVarChar, 100) { Value = profile.Department.Trim() });
+                command.Parameters.Add(new SqlParameter("@Program", SqlDbType.NVarChar, 100) { Value = profile.Program.Trim() });
+                if (command.ExecuteNonQuery() != 1) throw new InvalidOperationException("The student profile could not be saved.");
+            }
+        }
         private const string RoleStudent = "Student";
 
         /// <summary>
