@@ -16,9 +16,7 @@ namespace _241611JalopEventsManagement.Backend.Models
         [Required(ErrorMessage = "Password is required.")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-
         public string PasswordHash { get; set; }
-
         public string PasswordSalt { get; set; }
 
         [StringLength(50, ErrorMessage = "Role cannot exceed 50 characters.")]

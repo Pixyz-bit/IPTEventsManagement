@@ -47,18 +47,7 @@
     <div class="page-header-row">
         <div class="header-title-block">
             <h2>Publish New Campus Event</h2>
-            <!--<p>Complete the guided 4-step procedure to register specifications, schedules, audience criteria, and partner sponsors.</p>-->
         </div>
-        <!--<div class="header-actions">
-            <a href="<%= ResolveUrl("~/Frontend/Admin/AdminEvents.aspx") %>" class="btn-action-secondary">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-                <span>Back to Events Matrix</span>
-            </a>
-            <asp:Button ID="btnPublishTop" runat="server" Text="Publish Event" CssClass="btn-action-primary" OnClick="btnPublishEvent_Click" />
-        </div>-->
     </div>
 
     <!-- Step-by-Step Procedure Breadcrumb Tabs -->
@@ -268,9 +257,9 @@
 
                                 <div class="form-grid-2">
                                     <div class="form-group" style="margin-bottom:0;">
-                                        <label class="form-label" for="<%= txtEventStartTime.ClientID %>">Kickoff Time <span class="required-mark">*</span></label>
+                                        <label class="form-label" for="<%= txtEventStartTime.ClientID %>">Start Time <span class="required-mark">*</span></label>
                                         <asp:TextBox ID="txtEventStartTime" runat="server" TextMode="Time" CssClass="form-input" />
-                                        <span class="form-hint">Kickoff (e.g. 09:00 AM)</span>
+                                        <span class="form-hint">Start (e.g. 09:00 AM)</span>
                                     </div>
                                     <div class="form-group" style="margin-bottom:0;">
                                         <label class="form-label" for="<%= txtEventEndTime.ClientID %>">End Time <span class="required-mark">*</span></label>

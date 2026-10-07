@@ -30,7 +30,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litEventDate;
         protected global::System.Web.UI.WebControls.Literal litEventVenue;
         protected global::System.Web.UI.WebControls.Literal litEventCapacitySummary;
-        protected global::System.Web.UI.WebControls.DropDownList ddlEvents;
         protected global::System.Web.UI.WebControls.PlaceHolder phHeaderHidden;
 
         protected global::System.Web.UI.WebControls.Literal litModeDescription;
@@ -44,6 +43,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litCancellationReason;
 
         protected global::System.Web.UI.WebControls.PlaceHolder phGeneralView;
+        protected global::System.Web.UI.WebControls.PlaceHolder phBannerView;
         protected global::System.Web.UI.WebControls.Literal litTitleView;
         protected global::System.Web.UI.WebControls.Literal litVenueView;
         protected global::System.Web.UI.WebControls.Literal litCapacityView;
@@ -96,10 +96,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.TextBox txtNewSponsor;
         protected global::System.Web.UI.WebControls.Button btnAddSponsor;
 
-        protected global::System.Web.UI.WebControls.Literal litSidebarStatus;
-        protected global::System.Web.UI.WebControls.Literal litOccupancyPct;
-        protected global::System.Web.UI.WebControls.Literal litOccupancyCount;
-        protected global::System.Web.UI.WebControls.Literal litRemainingSpots;
 
         protected global::System.Web.UI.WebControls.Literal litMetaEventId;
         protected global::System.Web.UI.WebControls.Literal litMetaSponsorCount;

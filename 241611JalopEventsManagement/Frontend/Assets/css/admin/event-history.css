@@ -150,6 +150,7 @@
 }
 
 .history-search-input {
+    font-family: var(--font-sans);
     width: 100%;
     height: 38px;
     padding: 0 0.85rem 0 2.25rem;
@@ -175,6 +176,7 @@
 }
 
 .history-select {
+    font-family: var(--font-sans);
     height: 38px;
     padding: 0 1.75rem 0 0.85rem;
     border: 1px solid var(--border-medium);
@@ -193,6 +195,7 @@
 
 /* ─── History Table Card ─── */
 .history-table-card {
+    font-family: var(--font-sans);
     background: #ffffff;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
@@ -294,7 +297,8 @@
 }
 
 .cell-date-text {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
     font-size: 0.8rem;
     color: var(--text-heading);
     margin-top: 0.15rem;
@@ -309,44 +313,6 @@
     padding: 0.15rem 0.4rem;
     border-radius: var(--radius-sm);
     margin-top: 0.25rem;
-}
-
-/* ─── Turnout Statistics Bar ─── */
-.turnout-stat-block {
-    min-width: 140px;
-}
-
-.turnout-label-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    margin-bottom: 0.35rem;
-}
-
-.turnout-numbers {
-    font-family: var(--font-mono);
-    font-weight: 600;
-    color: var(--text-heading);
-}
-
-.turnout-pct {
-    font-family: var(--font-mono);
-    font-weight: 700;
-    color: var(--accent-emerald);
-}
-
-.turnout-progress-track {
-    width: 100%;
-    height: 6px;
-    background-color: #e2e8f0;
-    border-radius: var(--radius-full);
-    overflow: hidden;
-}
-
-.turnout-progress-fill {
-    height: 100%;
-    background-color: var(--accent-emerald);
-    border-radius: var(--radius-full);
 }
 
 /* ─── Status Badges ─── */
@@ -403,7 +369,6 @@
 }
 
 /* ─── Row Action Links & Triggers (Underlined text link per Student Directory reference) ─── */
-.btn-view-link,
 .btn-history-view {
     font-size: 0.875rem;
     font-weight: 600;
@@ -422,7 +387,6 @@
     align-items: center;
 }
 
-.btn-view-link:hover,
 .btn-history-view:hover {
     color: var(--brand-primary);
 }

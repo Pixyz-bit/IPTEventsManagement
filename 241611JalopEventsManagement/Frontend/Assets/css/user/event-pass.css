@@ -13,6 +13,8 @@
             --accent-emerald: #10B981;
             --accent-emerald-subtle: rgba(16, 185, 129, 0.15);
             --accent-amber: #F59E0B;
+            --accent-gold: #FFDE59;
+            --accent-gold-gradient: linear-gradient(135deg, #FFDE59 0%, #F59E0B 100%);
             --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
         }
@@ -521,25 +523,41 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.65rem;
-            background: var(--brand-primary);
-            color: #FFFFFF;
+            gap: 0.5rem;
+            min-height: 44px;
+            min-width: 0;
+            background: var(--accent-gold-gradient);
+            color: #090D16;
             font-family: var(--font-sans);
-            font-weight: 700;
-            font-size: 0.9rem;
-            padding: 0.85rem 1.5rem;
-            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.84rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            padding: 0.72rem 1.65rem;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
-            transition: all 0.15s ease;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             text-decoration: none;
         }
 
         .btn-return-dashboard:hover {
-            background: var(--brand-primary-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(245, 158, 11, 0.5);
+            color: #000000;
+        }
+
+        .btn-return-dashboard:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 3px;
+        }
+
+        .btn-return-dashboard svg { flex-shrink: 0; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-return-dashboard { transition: none; }
+            .btn-return-dashboard:hover { transform: none; }
         }
 
         @media screen and (max-width: 700px) {

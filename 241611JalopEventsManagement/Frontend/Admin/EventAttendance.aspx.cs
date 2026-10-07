@@ -41,45 +41,19 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private void InitializeEventContext()
         {
-            var allEvents = _eventRepo.GetAllEvents();
-            ddlEvents.Items.Clear();
-
-            if (allEvents != null && allEvents.Count > 0)
-            {
-                foreach (var evt in allEvents)
-                {
-                    string dateText = evt.EventStart != DateTime.MinValue ? evt.EventStart.ToString("MM/dd/yyyy") : "TBD";
-                    ddlEvents.Items.Add(new ListItem($"{evt.Title} ({dateText})", evt.EventId.ToString()));
-                }
-            }
-
+            // Keep event navigation tied to the URL; preserve the existing no-ID fallback.
             int eventId = 0;
-            if (Request.QueryString["eventId"] != null && int.TryParse(Request.QueryString["eventId"], out int parsedId))
+            if (Request.QueryString["eventId"] != null)
             {
-                eventId = parsedId;
+                int.TryParse(Request.QueryString["eventId"], out eventId);
             }
-            else if (Request.QueryString["eventId"] == null && ddlEvents.Items.Count > 0)
+            else
             {
-                eventId = int.Parse(ddlEvents.Items[0].Value);
+                eventId = _eventRepo.GetAllEvents()?.FirstOrDefault()?.EventId ?? 0;
             }
 
             CurrentEventId = eventId;
-
-            if (ddlEvents.Items.FindByValue(eventId.ToString()) != null)
-            {
-                ddlEvents.SelectedValue = eventId.ToString();
-            }
-
             LoadAttendanceData();
-        }
-
-        protected void ddlEvents_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (int.TryParse(ddlEvents.SelectedValue, out int selectedId))
-            {
-                CurrentEventId = selectedId;
-                Response.Redirect($"~/Frontend/Admin/EventAttendance.aspx?eventId={selectedId}", true);
-            }
         }
 
         private void LoadAttendanceData()

@@ -94,6 +94,14 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* Native form controls use the same interface face as their surrounding text. */
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
 /* ─── 3. Master Layout Architecture ─── */
 .admin-layout {
     display: flex;
@@ -625,6 +633,40 @@ body {
 
 .btn-view-link:hover {
     color: var(--brand-primary);
+}
+
+/* Shared matrix View action used by event and student tables. */
+.btn-view-link.link-matrix-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    height: 2.5rem;
+    box-sizing: border-box;
+    padding: 0.55rem 1.15rem;
+    border: 1px solid var(--brand-primary);
+    border-radius: var(--radius-md);
+    background-color: var(--brand-primary);
+    color: #ffffff;
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-view-link.link-matrix-view:hover {
+    background-color: var(--brand-primary-hover);
+    color: #ffffff;
+}
+
+.btn-view-link.link-matrix-view:focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 3px;
 }
 
 /* ─── 6. Reusable Form Elements ─── */

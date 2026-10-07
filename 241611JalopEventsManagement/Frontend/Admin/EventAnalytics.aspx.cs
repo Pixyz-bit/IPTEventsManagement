@@ -29,7 +29,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         public int ReservationChartTotal { get; private set; }
         public double ReservationChartReservedPercent { get; private set; }
         public double ReservationChartCancelledPercent { get; private set; }
-        public string ReservationChartAngle => (ReservationChartReservedPercent * 3.6).ToString("0.######", System.Globalization.CultureInfo.InvariantCulture);
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -50,45 +49,19 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
         private void InitializeEventContext()
         {
-            var allEvents = _eventRepo.GetAllEvents();
-            ddlEvents.Items.Clear();
-
-            if (allEvents != null && allEvents.Count > 0)
-            {
-                foreach (var evt in allEvents)
-                {
-                    string dateText = evt.EventStart != DateTime.MinValue ? evt.EventStart.ToString("MM/dd/yyyy") : "TBD";
-                    ddlEvents.Items.Add(new ListItem($"{evt.Title} ({dateText})", evt.EventId.ToString()));
-                }
-            }
-
+            // Keep event navigation tied to the URL; preserve the existing no-ID fallback.
             int eventId = 0;
-            if (Request.QueryString["eventId"] != null && int.TryParse(Request.QueryString["eventId"], out int parsedId))
+            if (Request.QueryString["eventId"] != null)
             {
-                eventId = parsedId;
+                int.TryParse(Request.QueryString["eventId"], out eventId);
             }
-            else if (Request.QueryString["eventId"] == null && ddlEvents.Items.Count > 0)
+            else
             {
-                eventId = int.Parse(ddlEvents.Items[0].Value);
+                eventId = _eventRepo.GetAllEvents()?.FirstOrDefault()?.EventId ?? 0;
             }
 
             CurrentEventId = eventId;
-
-            if (ddlEvents.Items.FindByValue(eventId.ToString()) != null)
-            {
-                ddlEvents.SelectedValue = eventId.ToString();
-            }
-
             LoadAnalyticsTelemetry();
-        }
-
-        protected void ddlEvents_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (int.TryParse(ddlEvents.SelectedValue, out int selectedId))
-            {
-                CurrentEventId = selectedId;
-                Response.Redirect($"~/Frontend/Admin/EventAnalytics.aspx?eventId={selectedId}", true);
-            }
         }
 
         private void LoadAnalyticsTelemetry()
@@ -396,6 +369,15 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             var telemetryPayload = new
             {
                 turnoutRate = Math.Round(turnoutRate, 1),
+                registrations = registrations.Select(r => new
+                {
+                    studentId = r.StudentId ?? string.Empty,
+                    fullName = r.StudentFullName ?? string.Empty,
+                    department = r.StudentDepartment ?? string.Empty,
+                    course = r.StudentProgram ?? string.Empty,
+                    year = r.CurrentYearLvl,
+                    cancelled = string.Equals(r.Status, "Cancelled", StringComparison.OrdinalIgnoreCase)
+                }),
                 department = deptGroups.Select(d => new { label = d.Label, count = d.Count, percentage = Math.Round(d.Percentage, 1) }),
                 course = courseGroups.Select(c => new { label = c.Label, count = c.Count, percentage = Math.Round(c.Percentage, 1) }),
                 branch = branchGroups.Select(b => new { label = b.Label, count = b.Count, percentage = Math.Round(b.Percentage, 1) }),
@@ -404,7 +386,9 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             };
             if (litDemographicsJson != null)
             {
-                litDemographicsJson.Text = serializer.Serialize(telemetryPayload);
+                // Keep database text inside the JSON script, including names containing HTML.
+                litDemographicsJson.Text = serializer.Serialize(telemetryPayload)
+                    .Replace("<", "\\u003c").Replace(">", "\\u003e").Replace("&", "\\u0026");
             }
 
             // =========================================================================

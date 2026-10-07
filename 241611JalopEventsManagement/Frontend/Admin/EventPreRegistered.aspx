@@ -74,12 +74,6 @@
                 </div>
             </div>
 
-            <!-- Event Selector Switcher -->
-            <div class="event-switcher">
-                <label for="<%= ddlEvents.ClientID %>">Active Event:</label>
-                <asp:DropDownList ID="ddlEvents" runat="server" CssClass="event-dropdown-select" AutoPostBack="true" OnSelectedIndexChanged="ddlEvents_SelectedIndexChanged">
-                </asp:DropDownList>
-            </div>
         </div>
 
         <!-- Sub-Module Pipeline Progression Tabs -->

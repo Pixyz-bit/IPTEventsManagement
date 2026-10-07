@@ -107,47 +107,6 @@
             font-weight: 700;
         }
 
-        .event-switcher {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-        }
-
-        .event-switcher label {
-            font-size: 0.825rem;
-            color: var(--text-muted);
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .event-dropdown-select {
-            background-color: #ffffff;
-            border: 1px solid var(--border-medium);
-            color: var(--text-heading);
-            padding: 0.5rem 2.25rem 0.5rem 0.85rem;
-            border-radius: var(--radius-md);
-            font-size: 0.85rem;
-            font-family: inherit;
-            outline: none;
-            cursor: pointer;
-            min-width: 250px;
-            box-shadow: var(--shadow-subtle);
-            transition: all 0.15s ease;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 14px 14px;
-        }
-
-        .event-dropdown-select:focus,
-        .event-dropdown-select:hover {
-            border-color: var(--brand-primary);
-            box-shadow: 0 0 0 3px var(--brand-focus-ring);
-        }
-
         .event-id-tag {
             font-family: var(--font-sans);
             font-size: 0.72rem;
@@ -488,7 +447,7 @@
         /* ─── Hero Bento Card (Card 1: Overview & Visual Media) ─── */
         .bento-hero-grid {
             display: grid;
-            grid-template-columns: 1.45fr 1fr;
+            grid-template-columns: minmax(0, 1fr);
             gap: 1.35rem;
             align-items: stretch;
             height: 100%;
@@ -517,15 +476,16 @@
         }
 
         .hero-pills-row {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 0.75rem;
             margin-top: auto;
             padding-top: 0.85rem;
             border-top: 1px solid #f1f5f9;
-            flex-wrap: wrap;
         }
 
         .hero-pill-item {
+            min-width: 0;
             display: flex;
             align-items: center;
             gap: 0.6rem;
@@ -569,22 +529,6 @@
         .hero-pill-val.mono {
             font-family: var(--font-mono);
             color: var(--brand-primary);
-        }
-
-        .bento-hero-media {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border-radius: 8px;
-        }
-
-        .media-preview-container {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            height: 100%;
-            overflow: hidden;
-            border-radius: 8px;
         }
 
         .banner-preview-box {
@@ -655,7 +599,7 @@
         /* Edit Mode Hero */
         .bento-hero-edit-grid {
             display: grid;
-            grid-template-columns: 1.35fr 1fr;
+            grid-template-columns: minmax(0, 1fr);
             gap: 1.25rem;
             align-items: start;
         }
@@ -673,70 +617,6 @@
             justify-content: space-between;
             margin-bottom: 0.4rem;
         }
-
-        /* ─── Cockpit Card (Card 2: Gate Telemetry & Quota) ─── */
-        .cockpit-hero-metric {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            margin-bottom: 0.35rem;
-        }
-
-        .cockpit-pct {
-            font-family: var(--font-mono);
-            font-size: 2.25rem;
-            font-weight: 900;
-            color: var(--brand-primary);
-            line-height: 1;
-            letter-spacing: -0.03em;
-        }
-
-        .cockpit-ratio-badge {
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-heading);
-            background: #f1f5f9;
-            padding: 0.3rem 0.65rem;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .cockpit-track-container {
-            margin: 0.75rem 0 1rem 0;
-        }
-
-        .cockpit-meta-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-            margin-bottom: 0.85rem;
-        }
-
-        .cockpit-meta-tile {
-            background-color: #f8fafc;
-            border: 1px solid #f1f5f9;
-            border-radius: 6px;
-            padding: 0.5rem 0.65rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.15rem;
-        }
-
-        .cockpit-meta-label {
-            font-size: 0.68rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        .cockpit-meta-value {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: var(--text-heading);
-        }
-
 
         /* ─── Telemetry Tiles (Schedule & Demographics Matrix) ─── */
         .telemetry-tile-grid {
@@ -1214,6 +1094,25 @@
             aspect-ratio: 16 / 9;
         }
 
+        .event-banner-card { min-width: 0; }
+        .event-banner-card .banner-preview-box {
+            height: auto;
+            min-height: 0;
+            aspect-ratio: 16 / 9;
+            border: none;
+            border-radius: inherit;
+        }
+        .event-banner-card .banner-img { position: absolute; inset: 0; }
+        .banner-upload-fields { min-width: 0; }
+        .banner-upload-dropzone { aspect-ratio: 16 / 9; min-height: 160px; padding: 1rem; cursor: pointer; text-align: center; }
+        .banner-upload-dropzone:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 3px; }
+        .banner-edit-preview-image { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+        .hero-pill-text { min-width: 0; }
+        .hero-pill-val { overflow-wrap: anywhere; }
+        @media (max-width: 480px) {
+            .hero-pills-row { grid-template-columns: minmax(0, 1fr); }
+        }
+
         .banner-preview-box.ratio-square {
             aspect-ratio: 1 / 1;
         }
@@ -1322,19 +1221,6 @@
             color: var(--brand-primary);
         }
 
-        .capacity-bar-track {
-            height: 8px;
-            background-color: #e2e8f0;
-            border-radius: 9999px;
-            overflow: hidden;
-        }
-
-        .capacity-bar-fill {
-            height: 100%;
-            background-color: var(--brand-primary);
-            border-radius: 9999px;
-            transition: width 0.3s ease;
-        }
 
         /* Alerts */
         .feedback-alert {

@@ -250,23 +250,7 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        .select-filter {
-            padding: 0.45rem 0.85rem;
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            font-size: 0.82rem;
-            font-family: var(--font-sans);
-            color: var(--text-heading);
-            background-color: #f8fafc;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
 
-        .select-filter:focus {
-            outline: none;
-            border-color: var(--border-focus);
-            background-color: #ffffff;
-        }
 
         /* ─── Matrix Table Surface ─── */
         .matrix-panel {
@@ -420,29 +404,7 @@
             opacity: 0.88;
         }
 
-        .btn-matrix-cancel {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            background-color: #ffffff;
-            color: #334155;
-            padding: 0.55rem 1.15rem;
-            border-radius: 6px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            border: 1px solid var(--border-subtle);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            margin-right: 0.75rem;
-            text-decoration: none;
-            vertical-align: middle;
-            white-space: nowrap;
-        }
 
-        .btn-matrix-cancel:hover {
-            background-color: #f1f5f9;
-            color: #0f172a;
-        }
 
 
 
@@ -496,39 +458,6 @@
             font-weight: 800;
             font-family: var(--font-mono);
             color: var(--text-heading);
-        }
-
-        /* Matrix view action uses the Event Details primary button style. */
-        .link-matrix-view {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            background-color: var(--brand-primary);
-            color: #ffffff;
-            padding: 0.55rem 1.15rem;
-            border-radius: 6px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            border: 1px solid var(--brand-primary);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            text-decoration: none;
-            vertical-align: middle;
-            white-space: nowrap;
-        }
-
-        .link-matrix-view:hover {
-            background-color: var(--brand-primary-hover);
-        }
-
-        .link-matrix-view,
-        .btn-matrix-cancel {
-            height: 2.5rem;
-            box-sizing: border-box;
-            justify-content: center;
-            font-family: var(--font-sans);
-            line-height: 1.25;
-            white-space: nowrap;
         }
 
         /* Row Actions */

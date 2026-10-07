@@ -7,14 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Digital Event Pass &amp; QR Attendance Credential | QCU</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/fonts.css?v=20261007") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-pass.css?v=20261006-no-dots") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/event-pass.css?v=20261007-gold-actions") %>" />
     <script src="<%= ResolveUrl("~/Frontend/Assets/js/vendor/html-to-image-1.11.13.js") %>"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="<%= ResolveUrl("~/Frontend/Assets/js/vendor/qrcode-1.0.0.min.js") %>"></script>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -248,24 +246,12 @@
                 }
             }
 
-            // Attempt 2: High-contrast Dark on White cloud QR engine
+            // Keep the ticket reference available for manual lookup if local QR rendering fails.
             drawPlateBacking();
-            const qrImg = new Image();
-            qrImg.crossOrigin = "anonymous";
-            qrImg.onload = function() {
-                drawPlateBacking();
-                ctx.drawImage(qrImg, 8, 8, size - 16, size - 16);
-            };
-            qrImg.onerror = function() {
-                // Offline fallback without library: Draw readable ref plate
-                drawPlateBacking();
-                ctx.fillStyle = "#0B1229";
-                ctx.font = "bold 11px 'JetBrains Mono', monospace";
-                ctx.textAlign = "center";
-                ctx.fillText(rawPayload, size / 2, size / 2);
-            };
-            // Note: Dark Navy on Pure White (#0b1229 on #ffffff) with quiet zone margin for camera detection
-            qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=380x380&color=0b1229&bgcolor=ffffff&margin=2&data=" + encodeURIComponent(rawPayload);
+            ctx.fillStyle = "#0B1229";
+            ctx.font = "bold 11px 'JetBrains Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(rawPayload, size / 2, size / 2);
         }
 
         // Initialize immediately and after DOM/scripts are ready

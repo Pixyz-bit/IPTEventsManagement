@@ -1,7 +1,7 @@
 <%@ Page Title="Campus Events Matrix | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="AdminEvents.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.AdminEvents" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/admin-events.css?v=20261006-cleanup") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/admin-events.css?v=20261007-local-fonts") %>" />
 </asp:Content>
 
 <asp:Content ID="MainArea" ContentPlaceHolderID="MainContent" runat="server">
@@ -48,16 +48,13 @@
                 <asp:TextBox ID="txtSearch" runat="server" CssClass="input-search" placeholder="Search event or venue..." AutoPostBack="true" OnTextChanged="txtSearch_TextChanged" />
             </div>
 
-            <asp:DropDownList ID="ddlDepartmentFilter" runat="server" CssClass="select-filter" AutoPostBack="true" OnSelectedIndexChanged="ddlDepartmentFilter_SelectedIndexChanged">
-                <asp:ListItem Value="" Text="All Academic Colleges" />
-            </asp:DropDownList>
         </div>
     </div>
 
     <!-- Main Events Matrix Table Panel -->
     <div class="matrix-panel">
         <div class="table-responsive">
-            <asp:Repeater ID="rptEventsMatrix" runat="server" OnItemCommand="rptEventsMatrix_ItemCommand">
+            <asp:Repeater ID="rptEventsMatrix" runat="server">
                 <HeaderTemplate>
                     <table class="matrix-table">
                         <thead>
@@ -113,16 +110,9 @@
                             </div>
                         </td>
 
-                        <!-- 6. View & Cancellation Actions -->
+                        <!-- 6. View Action -->
                         <td style="text-align: right; white-space: nowrap;">
-                            <asp:LinkButton ID="btnCancelEventRow" runat="server"
-                                CommandName="RequestCancel"
-                                CommandArgument='<%# Eval("EventId") %>'
-                                CssClass="btn-matrix-cancel"
-                                Visible='<%# Eval("CanCancel") %>'
-                                ToolTip="Cancel this event and close registration and check-in"
-                                CausesValidation="false">Cancel Event</asp:LinkButton>
-                            <a href='<%# ResolveUrl("~/Frontend/Admin/EventDetails.aspx?eventId=" + Eval("EventId")) %>' class="btn-view-link link-matrix-view">View &gt;</a>
+                            <a href='<%# ResolveUrl("~/Frontend/Admin/EventDetails.aspx?eventId=" + Eval("EventId")) %>' class="btn-view-link link-matrix-view">View</a>
                         </td>
                     </tr>
                 </ItemTemplate>

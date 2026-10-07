@@ -76,12 +76,6 @@
                 </div>
             </div>
 
-            <!-- Event Selector Switcher -->
-            <div class="event-switcher">
-                <label for="<%= ddlEvents.ClientID %>">Active Event:</label>
-                <asp:DropDownList ID="ddlEvents" runat="server" CssClass="event-dropdown-select" AutoPostBack="true" OnSelectedIndexChanged="ddlEvents_SelectedIndexChanged">
-                </asp:DropDownList>
-            </div>
         </div>
 
         <!-- Sub-Module Pipeline Progression Tabs -->
@@ -108,25 +102,32 @@
     <div class="dashboard-action-bar">
         <div class="dashboard-action-title">
             <asp:PlaceHolder ID="phHistoryBack" runat="server" Visible="false">
-                <div style="margin-bottom:0.5rem;">
-                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventHistory.aspx") %>" class="btn-action-secondary" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.35rem 0.75rem; text-decoration:none; font-size:0.8rem; font-weight:600; border-radius:var(--radius-md); border:1px solid var(--border-medium); background:#ffffff; color:var(--text-heading);">
+                    <a href="<%= ResolveUrl("~/Frontend/Admin/EventHistory.aspx") %>" class="btn-action-secondary analytics-history-back">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="19" y1="12" x2="5" y2="12"></line>
                             <polyline points="12 19 5 12 12 5"></polyline>
                         </svg>
                         <span>Back to Events History</span>
                     </a>
-                </div>
             </asp:PlaceHolder>
             <h2>Unified Event Analytics &amp; Performance Audit</h2>
-            <asp:Panel ID="pnlHistorySubtitle" runat="server" Visible="false" Style="margin-top:0.35rem; display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap; font-size:0.825rem; color:var(--text-muted);">
-                <span>Event: <strong style="color:var(--text-heading);"><asp:Literal ID="litSubEventTitle" runat="server" /></strong></span>
-                <span>&bull;</span>
-                <span>Date: <strong style="color:var(--text-heading);"><asp:Literal ID="litSubEventDate" runat="server" /></strong></span>
-                <span>&bull;</span>
-                <span>Venue: <strong style="color:var(--text-heading);"><asp:Literal ID="litSubEventVenue" runat="server" /></strong></span>
-                <span>&bull;</span>
-                <span>Capacity: <strong style="color:var(--text-heading);"><asp:Literal ID="litSubEventCapacity" runat="server" /></strong></span>
+            <asp:Panel ID="pnlHistorySubtitle" runat="server" Visible="false" CssClass="analytics-event-summary">
+                <div class="analytics-event-fact analytics-event-name">
+                    <span class="analytics-fact-label">Event</span>
+                    <strong class="analytics-fact-value"><asp:Literal ID="litSubEventTitle" runat="server" /></strong>
+                </div>
+                <div class="analytics-event-fact">
+                    <span class="analytics-fact-label">Date</span>
+                    <strong class="analytics-fact-value analytics-fact-mono"><asp:Literal ID="litSubEventDate" runat="server" /></strong>
+                </div>
+                <div class="analytics-event-fact">
+                    <span class="analytics-fact-label">Venue</span>
+                    <strong class="analytics-fact-value"><asp:Literal ID="litSubEventVenue" runat="server" /></strong>
+                </div>
+                <div class="analytics-event-fact">
+                    <span class="analytics-fact-label">Capacity</span>
+                    <strong class="analytics-fact-value analytics-fact-mono"><asp:Literal ID="litSubEventCapacity" runat="server" /></strong>
+                </div>
             </asp:Panel>
         </div>
     </div>
@@ -287,13 +288,13 @@
             <div class="panel-body demographics-bento-body">
                 <div class="pie-chart-container-bento">
                     <div class="pie-svg-wrapper">
-                    <div class="reservation-pie <%= ReservationChartTotal == 0 ? "is-empty" : "" %>" style="--reserved-angle:<%= ReservationChartAngle %>deg;" role="img" aria-label="<%= ReservationChartTotal == 0 ? "No reserved or cancelled registrations" : string.Format("Reserved: {0:F1} percent. Cancelled: {1:F1} percent.", ReservationChartReservedPercent, ReservationChartCancelledPercent) %>"></div>
+                        <svg id="reservationPieSvg" class="pie-chart-svg reservation-pie <%= ReservationChartTotal == 0 ? "is-empty" : "" %>" viewBox="0 0 240 240" role="img" aria-label="<%= ReservationChartTotal == 0 ? "No reserved or cancelled registrations" : string.Format("Reserved: {0:F1} percent. Cancelled: {1:F1} percent.", ReservationChartReservedPercent, ReservationChartCancelledPercent) %>"></svg>
                         <div class="pie-center-label-box reservation-center-label">
-                            <div class="reservation-center-count"><%= ReservationChartTotal.ToString("N0") %></div>
-                            <div class="reservation-center-caption">Students</div>
+                            <div id="reservationCenterCount" class="reservation-center-count"><%= ReservationChartTotal.ToString("N0") %></div>
+                            <div id="reservationCenterLabel" class="reservation-center-caption">Students</div>
                         </div>
                     </div>
-                    <div class="pie-chart-legend">
+                    <div id="reservationLegend" class="pie-chart-legend">
                         <div class="pie-legend-row">
                             <div class="pie-legend-left"><span class="pie-legend-dot reserved-swatch" aria-hidden="true"></span><span>Reserved</span></div>
                             <span class="pie-legend-meta"><%= ReservationChartReservedCount.ToString("N0") %> (<%= ReservationChartReservedPercent.ToString("F1") %>%)</span>
@@ -303,7 +304,7 @@
                             <span class="pie-legend-meta"><asp:Literal ID="litBeforeCancelled" runat="server" Text="0" /> (<%= ReservationChartCancelledPercent.ToString("F1") %>%)</span>
                         </div>
                     </div>
-                    <p class="reservation-chart-summary"><%= ReservationChartTotal == 0 ? "No reserved or cancelled registrations" : ReservationChartTotal.ToString("N0") + " reserved or cancelled registrations" %><br />Reserved includes present, no-show, and unscanned students.</p>
+                    <p class="reservation-chart-summary"><span id="reservationChartSummary" role="status" aria-live="polite"><%= ReservationChartTotal == 0 ? "No reserved or cancelled registrations" : ReservationChartTotal.ToString("N0") + " reserved or cancelled registrations" %></span><br />Reserved includes present, no-show, and unscanned students.</p>
                 </div>
             </div>
         </div>
@@ -334,19 +335,36 @@
             </button>
         </div>
 
-        <!-- Search Bar -->
+        <!-- Search and academic filters apply to the active attendee sheet. -->
         <div class="roster-toolbar">
-            <div class="search-box-wrapper">
-                <svg class="search-box-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" id="txtCohortSearch" class="search-input" placeholder="Search by Student ID, Name, or Ticket Reference..." onkeyup="filterCohortTable()" />
+            <div class="controls-row roster-controls" role="group" aria-label="Attendee roster filters">
+                <div class="search-box-wrapper">
+                    <svg class="search-box-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="txtCohortSearch" class="search-input" aria-label="Search attendees by Student ID or Full Name" placeholder="Search by Student ID, Name, or Ticket Reference..." oninput="filterCohortTable()" />
+                </div>
+                <div class="filter-dropdowns-group">
+                    <select id="ddlCohortDepartment" class="filter-select" aria-label="Filter attendees by department" onchange="filterCohortTable()">
+                        <option value="">All Departments</option>
+                    </select>
+                    <select id="ddlCohortCourse" class="filter-select" aria-label="Filter attendees by course" onchange="filterCohortTable()">
+                        <option value="">All Courses</option>
+                    </select>
+                    <select id="ddlCohortYear" class="filter-select" aria-label="Filter attendees by year level" onchange="filterCohortTable()">
+                        <option value="">All Year Levels</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                    <button type="button" class="btn-clear-filters" onclick="resetCohortFilters()">Reset Filters</button>
+                </div>
             </div>
-            <div style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">
-                Showing real-time student check-in status
-            </div>
+            <span id="rosterFilterSummary" class="roster-filter-summary" role="status" aria-live="polite"></span>
         </div>
+        <p id="rosterFilterEmpty" class="roster-filter-empty" hidden></p>
 
         <!-- 1. Present Table -->
         <div id="sheetPresent" class="cohort-sheet-view" style="display:block;">
@@ -365,7 +383,8 @@
                     <tbody>
                         <asp:Repeater ID="rptPresentAttendees" runat="server">
                             <ItemTemplate>
-                                <tr class="roster-row" data-search='<%# string.Format("{0} {1} {2}", Eval("StudentId"), Eval("StudentFullName"), Eval("TicketReference")).ToLower() %>'>
+                                <tr class="roster-row" data-search='<%#: string.Format("{0} {1} {2}", Eval("StudentId"), Eval("StudentFullName"), Eval("TicketReference")) %>'
+                                    data-dept='<%#: Eval("StudentDepartment") %>' data-course='<%#: Eval("StudentProgram") %>' data-year='<%#: Eval("CurrentYearLvl") %>'>
                                     <td><span class="ticket-code"><%# Eval("TicketReference") %></span></td>
                                     <td><span class="student-id-text"><%# Eval("StudentId") %></span></td>
                                     <td><strong style="color:var(--text-heading);"><%# Eval("StudentFullName") %></strong></td>
@@ -397,7 +416,8 @@
                     <tbody>
                         <asp:Repeater ID="rptNoShowAttendees" runat="server">
                             <ItemTemplate>
-                                <tr class="roster-row" data-search='<%# string.Format("{0} {1} {2}", Eval("StudentId"), Eval("StudentFullName"), Eval("TicketReference")).ToLower() %>'>
+                                <tr class="roster-row" data-search='<%#: string.Format("{0} {1} {2}", Eval("StudentId"), Eval("StudentFullName"), Eval("TicketReference")) %>'
+                                    data-dept='<%#: Eval("StudentDepartment") %>' data-course='<%#: Eval("StudentProgram") %>' data-year='<%#: Eval("CurrentYearLvl") %>'>
                                     <td><span class="ticket-code"><%# Eval("TicketReference") %></span></td>
                                     <td><span class="student-id-text"><%# Eval("StudentId") %></span></td>
                                     <td><strong style="color:var(--text-heading);"><%# Eval("StudentFullName") %></strong></td>
@@ -429,7 +449,8 @@
                     <tbody>
                         <asp:Repeater ID="rptCancelledAttendees" runat="server">
                             <ItemTemplate>
-                                <tr class="roster-row" data-search='<%# string.Format("{0} {1} {2}", Eval("StudentId"), Eval("StudentFullName"), Eval("TicketReference")).ToLower() %>'>
+                                <tr class="roster-row" data-search='<%#: string.Format("{0} {1} {2}", Eval("StudentId"), Eval("StudentFullName"), Eval("TicketReference")) %>'
+                                    data-dept='<%#: Eval("StudentDepartment") %>' data-course='<%#: Eval("StudentProgram") %>' data-year='<%#: Eval("CurrentYearLvl") %>'>
                                     <td><span class="ticket-code ticket-code-cancelled"><%# Eval("TicketReference") %></span></td>
                                     <td><span class="student-id-text"><%# Eval("StudentId") %></span></td>
                                     <td><strong style="color:var(--text-heading);"><%# Eval("StudentFullName") %></strong></td>
@@ -506,6 +527,9 @@
         else if (initialDim === 'year') initialLabel = 'Year Level';
 
         renderDemographicDimension(initialDim, initialLabel);
+        initializeCohortFilters();
+        renderReservationChart();
+        filterCohortTable();
     }
 
         // =========================================================================
@@ -548,15 +572,31 @@
     function filterCohortTable() {
         const searchEl = document.getElementById('txtCohortSearch');
         const query = (searchEl ? searchEl.value : '').trim().toLowerCase();
+        const department = document.getElementById('ddlCohortDepartment').value;
+        const course = document.getElementById('ddlCohortCourse').value;
+        const year = document.getElementById('ddlCohortYear').value;
         let tableId = 'tblPresent';
         if (currentCohortSheet === 'noshow') tableId = 'tblNoShow';
         else if (currentCohortSheet === 'cancelled') tableId = 'tblCancelled';
 
         const rows = document.querySelectorAll('#' + tableId + ' tbody tr.roster-row');
+        let visibleCount = 0;
         rows.forEach(function (row) {
             const dataSearch = (row.getAttribute('data-search') || row.innerText || '').toLowerCase();
-            row.style.display = (!query || dataSearch.includes(query)) ? '' : 'none';
+            const matches = (!query || dataSearch.includes(query)) &&
+                (!department || row.getAttribute('data-dept') === department) &&
+                (!course || row.getAttribute('data-course') === course) &&
+                (!year || row.getAttribute('data-year') === year);
+            row.style.display = matches ? '' : 'none';
+            if (matches) visibleCount++;
         });
+        const label = { present: 'present', noshow: 'no-show', cancelled: 'cancelled' }[currentCohortSheet];
+        document.getElementById('rosterFilterSummary').textContent = 'Showing ' + visibleCount.toLocaleString() +
+            ' of ' + rows.length.toLocaleString() + ' ' + label + ' attendees';
+        const empty = document.getElementById('rosterFilterEmpty');
+        empty.hidden = visibleCount > 0;
+        empty.textContent = rows.length ? 'No attendees match these filters. Reset Filters to show all records in this tab.' :
+            'No ' + label + ' attendees for this event.';
     }
 
     // =========================================================================
@@ -578,10 +618,51 @@
 
     function renderDemographicDimension(dimensionKey, displayLabel) {
         const list = (telemetryData && telemetryData[dimensionKey]) ? telemetryData[dimensionKey] : [];
-        const svg = document.getElementById('demographicsPieSvg');
-        const legend = document.getElementById('demographicsLegend');
-        const centerCount = document.getElementById('pieCenterCount');
-        const centerLabel = document.getElementById('pieCenterLabel');
+        renderDonutChart(list, 'demographicsPieSvg', 'demographicsLegend', 'pieCenterCount', 'pieCenterLabel', displayLabel, 'No demographic cohorts registered yet.');
+    }
+
+    function initializeCohortFilters() {
+        const registrations = telemetryData.registrations || [];
+        [['ddlCohortDepartment', 'department'], ['ddlCohortCourse', 'course']].forEach(function (filter) {
+            const select = document.getElementById(filter[0]);
+            if (!select) return;
+            const values = Array.from(new Set(registrations.map(function (r) { return r[filter[1]]; }).filter(Boolean))).sort();
+            values.forEach(function (value) {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                select.appendChild(option);
+            });
+        });
+    }
+
+    function renderReservationChart() {
+        const all = telemetryData.registrations || [];
+        const total = all.length;
+        const cancelled = all.filter(function (r) { return r.cancelled; }).length;
+        const counts = [total - cancelled, cancelled];
+        const list = ['Reserved', 'Cancelled'].map(function (label, index) {
+            return { label: label, count: counts[index], percentage: total ? 100 * counts[index] / total : 0,
+                color: index === 0 ? 'var(--accent-emerald)' : 'var(--accent-rose)' };
+        });
+        renderDonutChart(list, 'reservationPieSvg', 'reservationLegend', 'reservationCenterCount', 'reservationCenterLabel', 'Students',
+            'No reserved or cancelled registrations');
+        document.getElementById('reservationChartSummary').textContent = total ? total.toLocaleString() + ' reserved or cancelled registrations' : 'No reserved or cancelled registrations';
+    }
+
+    function resetCohortFilters() {
+        ['txtCohortSearch', 'ddlCohortDepartment', 'ddlCohortCourse', 'ddlCohortYear'].forEach(function (id) {
+            document.getElementById(id).value = '';
+        });
+        filterCohortTable();
+    }
+
+    // Both charts share geometry, legend highlighting, tooltips, and keyboard inspection.
+    function renderDonutChart(list, svgId, legendId, countId, labelId, displayLabel, emptyMessage) {
+        const svg = document.getElementById(svgId);
+        const legend = document.getElementById(legendId);
+        const centerCount = document.getElementById(countId);
+        const centerLabel = document.getElementById(labelId);
         const tooltip = document.getElementById('pieInteractiveTooltip');
         const tooltipTitle = document.getElementById('pieTooltipTitle');
         const tooltipCount = document.getElementById('pieTooltipCount');
@@ -591,15 +672,23 @@
 
         svg.innerHTML = '';
         legend.innerHTML = '';
+        if (tooltip) tooltip.style.display = 'none';
 
         const totalStudents = list.reduce(function (sum, item) { return sum + item.count; }, 0);
         if (centerCount) centerCount.textContent = totalStudents.toLocaleString();
         if (centerLabel) centerLabel.textContent = displayLabel;
+        svg.setAttribute('role', 'img');
+        svg.setAttribute('aria-label', totalStudents ? list.map(function (item) {
+            return item.label + ': ' + item.count.toLocaleString() + ' (' + item.percentage.toFixed(1) + '%)';
+        }).join('. ') : emptyMessage);
+        svg.classList.toggle('is-empty', totalStudents === 0);
 
         if (totalStudents === 0 || list.length === 0) {
-            svg.innerHTML = '<circle cx="120" cy="120" r="80" fill="none" stroke="#e2e8f0" stroke-width="26" />' +
-                            '<text x="120" y="125" text-anchor="middle" font-size="12" fill="#94a3b8" font-family="sans-serif">No Records</text>';
-            legend.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:0.5rem;">No demographic cohorts registered yet.</div>';
+            svg.innerHTML = '<circle cx="120" cy="120" r="77" fill="none" stroke="var(--border-subtle)" stroke-width="38" />';
+            const message = document.createElement('div');
+            message.className = 'pie-empty-message';
+            message.textContent = emptyMessage;
+            legend.appendChild(message);
             return;
         }
 
@@ -623,7 +712,7 @@
         let currentAngle = -Math.PI / 2; // start at 12 o'clock
 
         list.forEach(function (item, index) {
-            const color = palette[index % palette.length];
+            const color = item.color || palette[index % palette.length];
             const fraction = item.count / totalStudents;
             const sliceAngle = fraction * 2 * Math.PI;
             const startAngle = currentAngle;
@@ -631,7 +720,7 @@
             currentAngle = endAngle;
 
             let pathD = '';
-            if (fraction >= 0.999) {
+            if (fraction === 1) {
                 pathD = 'M ' + cx + ' ' + (cy - outerR) +
                         ' A ' + outerR + ' ' + outerR + ' 0 1 1 ' + cx + ' ' + (cy + outerR) +
                         ' A ' + outerR + ' ' + outerR + ' 0 1 1 ' + cx + ' ' + (cy - outerR) +
@@ -662,26 +751,36 @@
             path.setAttribute('fill', color);
             path.setAttribute('class', 'pie-slice');
             path.setAttribute('data-index', index);
-            svg.appendChild(path);
+            path.setAttribute('fill-rule', 'evenodd');
+            if (item.count > 0) svg.appendChild(path);
 
             // Legend item row
             const row = document.createElement('div');
             row.className = 'pie-legend-row';
             row.setAttribute('data-index', index);
-            row.innerHTML =
-                '<div class="pie-legend-left">' +
-                    '<span class="pie-legend-dot" style="background-color:' + color + ';"></span>' +
-                    '<span title="' + escapeHtml(item.label) + '">' + escapeHtml(item.label) + '</span>' +
-                '</div>' +
-                '<span class="pie-legend-meta">' + item.count.toLocaleString() + ' (' + item.percentage.toFixed(1) + '%)</span>';
+            row.tabIndex = 0;
+            const left = document.createElement('div');
+            left.className = 'pie-legend-left';
+            const dot = document.createElement('span');
+            dot.className = 'pie-legend-dot';
+            dot.style.backgroundColor = color;
+            dot.setAttribute('aria-hidden', 'true');
+            const label = document.createElement('span');
+            label.title = item.label;
+            label.textContent = item.label;
+            left.appendChild(dot);
+            left.appendChild(label);
+            const meta = document.createElement('span');
+            meta.className = 'pie-legend-meta';
+            meta.textContent = item.count.toLocaleString() + ' (' + item.percentage.toFixed(1) + '%)';
+            row.appendChild(left);
+            row.appendChild(meta);
             legend.appendChild(row);
 
             // Hover interactions
             function onHover(e) {
-                path.style.filter = 'drop-shadow(0 6px 12px rgba(0,0,0,0.22))';
-                path.style.transform = 'scale(1.045)';
-                row.style.backgroundColor = 'var(--brand-subtle)';
-                row.style.borderColor = 'var(--brand-border)';
+                path.classList.add('is-highlighted');
+                row.classList.add('is-highlighted');
 
                 tooltipTitle.textContent = item.label;
                 tooltipCount.textContent = item.count.toLocaleString() + ' Students';
@@ -695,10 +794,8 @@
             }
 
             function onLeave() {
-                path.style.filter = '';
-                path.style.transform = '';
-                row.style.backgroundColor = '';
-                row.style.borderColor = '';
+                path.classList.remove('is-highlighted');
+                row.classList.remove('is-highlighted');
                 tooltip.style.display = 'none';
             }
 
@@ -709,6 +806,9 @@
             row.addEventListener('mouseenter', onHover);
             row.addEventListener('mousemove', onMove);
             row.addEventListener('mouseleave', onLeave);
+            row.addEventListener('focus', onHover);
+            row.addEventListener('blur', onLeave);
+            row.addEventListener('keydown', function (e) { if (e.key === 'Escape') onLeave(); });
         });
     }
 
@@ -716,15 +816,11 @@
         const tooltip = document.getElementById('pieInteractiveTooltip');
         if (!tooltip) return;
         const offset = 14;
-        tooltip.style.left = (e.pageX + offset) + 'px';
-        tooltip.style.top = (e.pageY + offset) + 'px';
-    }
-
-    function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = Number.isFinite(e.clientX) ? e.clientX : rect.left;
+        const y = Number.isFinite(e.clientY) ? e.clientY : rect.bottom;
+        tooltip.style.left = Math.max(8, Math.min(x + offset, window.innerWidth - tooltip.offsetWidth - 8)) + 'px';
+        tooltip.style.top = Math.max(8, Math.min(y + offset, window.innerHeight - tooltip.offsetHeight - 8)) + 'px';
     }
 
     document.addEventListener('DOMContentLoaded', function () {

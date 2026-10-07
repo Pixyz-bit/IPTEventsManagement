@@ -67,12 +67,6 @@
                 </div>
             </div>
 
-            <!-- Event Selector Switcher -->
-            <div class="event-switcher">
-                <label for="<%= ddlEvents.ClientID %>">Active Event:</label>
-                <asp:DropDownList ID="ddlEvents" runat="server" CssClass="event-dropdown-select" AutoPostBack="true" OnSelectedIndexChanged="ddlEvents_SelectedIndexChanged">
-                </asp:DropDownList>
-            </div>
         </div>
 
         <!-- Sub-Module Pipeline Progression Tabs -->
@@ -108,11 +102,7 @@
                     <!-- Live Checked-In Attendance Header Bar -->
         <div class="table-header-bar">
             <div class="table-header-title">
-
                 <span>Live Checked-In Attendance Roster</span>
-            </div>
-            <div style="font-size:0.8rem; color:var(--text-muted);">
-                Chronological gate log &bull; Authenticated database commits
             </div>
         </div>
         <!-- Controls Bar -->

@@ -9,39 +9,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
 {
     public class EventRepository
     {
-        // Used by both the event catalog and the atomic registration check.
-        internal const string AudienceEligibilitySql = @"
-                  AND (NULLIF(LTRIM(RTRIM(TargetBranch)), '') IS NULL OR LTRIM(RTRIM(TargetBranch)) = @Branch)
-                  AND (NULLIF(LTRIM(RTRIM(TargetDepartment)), '') IS NULL OR LTRIM(RTRIM(TargetDepartment)) = @Department)
-                  AND (NULLIF(LTRIM(RTRIM(TargetProgram)), '') IS NULL OR
-                       (NULLIF(LTRIM(RTRIM(@Program)), '') IS NOT NULL AND
-                        (CHARINDEX(',' + REPLACE(LTRIM(RTRIM(@Program)), ' ', '') + ',', ',' + REPLACE(TargetProgram, ' ', '') + ',') > 0
-                         OR EXISTS (
-                            SELECT 1 FROM (VALUES
-                                ('BSIT', 'BSInformationTechnology'),
-                                ('BSCS', 'BSComputerScience'),
-                                ('BSIS', 'BSInformationSystems'),
-                                ('BSIE', 'BSIndustrialEngineering'),
-                                ('BSCpE', 'BSComputerEngineering'),
-                                ('BSECE', 'BSElectronicsEngineering'),
-                                ('BSA', 'BSAccountancy'),
-                                ('BSBA', 'BSBusinessAdministration'),
-                                ('BSEntrep', 'BSEntrepreneurship'),
-                                ('BECEd', 'BachelorofEarlyChildhoodEducation'),
-                                ('BSEd', 'BSSecondaryEducation'),
-                                ('BSEd', 'BachelorofSecondaryEducation')
-                            ) AS ProgramAliases(Code, FullName)
-                            WHERE REPLACE(LTRIM(RTRIM(@Program)), ' ', '') IN (Code, FullName)
-                              AND (CHARINDEX(',' + Code + ',', ',' + REPLACE(TargetProgram, ' ', '') + ',') > 0
-                                   OR CHARINDEX(',' + FullName + ',', ',' + REPLACE(TargetProgram, ' ', '') + ',') > 0)
-                         ))))
-                  AND (TargetYearLevel IS NULL OR @YearLevel IS NULL OR TargetYearLevel = @YearLevel)";
         // Persist completion on repository access. No background scheduler is required.
         public static void SynchronizeCompletedEvents()
         {
-            DatabaseConnection.ExecuteNonQuery(@"
-                UPDATE dbo.EventsTable SET Status = 'Completed'
-                WHERE Status = 'Upcoming' AND EventEnd <= GETDATE();");
+            DatabaseConnection.ExecuteProcedureNonQuery("dbo.usp_Event_SynchronizeCompletedEvents_Command1");
         }
 
         public int CreateEvent(EventModel ev)
@@ -73,20 +44,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
             RegistrationDateTime.ValidateWindow(ev.RegStart, ev.RegEnd, ev.EventStart, ev.EventEnd);
 
-            const string sql = @"
-                INSERT INTO dbo.EventsTable (
-                    Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
-                    CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                    CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
-                    EventPhotoPath
-                )
-                VALUES (
-                    @Title, @Description, @VenueLocation, @MaxCapacity, 0, 
-                    @CreatedByUserId, @EventStart, @EventEnd, @RegStart, @RegEnd, @Status, 
-                    @CancellationReason, @TargetBranch, @TargetDepartment, @TargetProgram, @TargetYearLevel,
-                    @EventPhotoPath
-                );
-                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+            const string sql = "dbo.usp_Event_CreateEvent";
 
             var parameters = new[]
             {
@@ -108,7 +66,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@EventPhotoPath", SqlDbType.NVarChar, 500) { Value = (object)ev.EventPhotoPath ?? DBNull.Value }
             };
 
-            object result = DatabaseConnection.ExecuteScalar(sql, parameters);
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql, parameters);
             if (result != null && int.TryParse(result.ToString(), out int newEventId))
             {
                 ev.EventId = newEventId;
@@ -126,16 +84,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return null;
             }
 
-            const string sql = @"
-                SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
-                       CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
-                       EventPhotoPath
-                FROM dbo.EventsTable 
-                WHERE EventId = @EventId;";
+            const string sql = "dbo.usp_Event_GetEventById";
 
             var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -151,16 +103,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
         public List<EventModel> GetAllUpcomingEvents()
         {
             SynchronizeCompletedEvents();
-            const string sql = @"
-                SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
-                       CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
-                       EventPhotoPath
-                FROM dbo.EventsTable 
-                WHERE Status = 'Upcoming'
-                ORDER BY EventStart ASC;";
+            const string sql = "dbo.usp_Event_GetAllUpcomingEvents";
 
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql);
             return MapDataTableToEventList(dt);
         }
 
@@ -170,15 +115,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
         public List<EventModel> GetAllEvents()
         {
             SynchronizeCompletedEvents();
-            const string sql = @"
-                SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
-                       CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
-                       EventPhotoPath
-                FROM dbo.EventsTable 
-                ORDER BY EventStart DESC;";
+            const string sql = "dbo.usp_Event_GetAllEvents";
 
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql);
             return MapDataTableToEventList(dt);
         }
 
@@ -190,14 +129,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         public List<EventModel> GetEventsForStudent(string branch, string department, string program, int? yearLevel)
         {
             SynchronizeCompletedEvents();
-            const string sql = @"
-                SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
-                       CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
-                       EventPhotoPath
-                FROM dbo.EventsTable 
-                WHERE Status = 'Upcoming'
-                " + AudienceEligibilitySql + " ORDER BY EventStart ASC;";
+            const string sql = "dbo.usp_Event_GetEventsForStudent";
 
             var parameters = new[]
             {
@@ -207,7 +139,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@YearLevel", SqlDbType.Int) { Value = (object)yearLevel ?? DBNull.Value }
             };
 
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, parameters);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, parameters);
             return MapDataTableToEventList(dt);
         }
 
@@ -217,26 +149,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public string GetRegistrationUnavailableReason(int eventId, string studentId, int? yearLevel = null)
         {
-            const string sql = @"
-                DECLARE @Branch NVARCHAR(100), @Department NVARCHAR(100), @Program NVARCHAR(100), @StudentExists BIT = 0;
-                SELECT @Branch = LTRIM(RTRIM(CampusBranch)), @Department = LTRIM(RTRIM(Department)),
-                       @Program = LTRIM(RTRIM(Program)), @StudentExists = 1
-                FROM dbo.StudentTable WHERE StudentId = @StudentId;
+            const string sql = "dbo.usp_Event_GetRegistrationUnavailableReason";
 
-                SELECT CASE
-                    WHEN Status = 'Cancelled' THEN 'This event has been cancelled. Registration is unavailable.'
-                    WHEN Status != 'Upcoming' OR GETDATE() >= EventEnd THEN 'This event has ended. Registration is closed.'
-                    WHEN GETDATE() < RegStart THEN 'Registration has not opened yet. Please return when registration opens.'
-                    WHEN GETDATE() > RegEnd THEN 'The registration deadline has passed. Registration is closed.'
-                    WHEN CurrentRegistrations >= MaxCapacity THEN 'This event is fully booked. No registration seats remain.'
-                    WHEN @StudentExists = 0 OR NOT EXISTS (
-                        SELECT 1 FROM dbo.EventsTable WHERE EventId = @EventId
-                        " + AudienceEligibilitySql + @")
-                        THEN 'Your campus, college, program, or selected year does not meet this event''s audience requirements.'
-                    ELSE '' END
-                FROM dbo.EventsTable WHERE EventId = @EventId;";
-
-            object result = DatabaseConnection.ExecuteScalar(sql,
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql,
                 new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId },
                 new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = (object)studentId ?? DBNull.Value },
                 new SqlParameter("@YearLevel", SqlDbType.Int) { Value = (object)yearLevel ?? DBNull.Value });
@@ -256,17 +171,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return new List<EventModel>();
             }
 
-            const string sql = @"
-                SELECT EventId, Title, Description, VenueLocation, MaxCapacity, CurrentRegistrations, 
-                       CreatedByUserId, EventStart, EventEnd, RegStart, RegEnd, Status, 
-                       CancellationReason, TargetBranch, TargetDepartment, TargetProgram, TargetYearLevel,
-                       EventPhotoPath
-                FROM dbo.EventsTable 
-                WHERE CreatedByUserId = @CreatedByUserId
-                ORDER BY EventStart DESC;";
+            const string sql = "dbo.usp_Event_GetEventsCreatedByUser";
 
             var param = new SqlParameter("@CreatedByUserId", SqlDbType.Int) { Value = userId };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
             return MapDataTableToEventList(dt);
         }
 
@@ -283,22 +191,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             RegistrationDateTime.ValidateWindow(ev.RegStart, ev.RegEnd, ev.EventStart, ev.EventEnd);
             SynchronizeCompletedEvents();
 
-            const string sql = @"
-                UPDATE dbo.EventsTable 
-                SET Title = @Title,
-                    Description = @Description,
-                    VenueLocation = @VenueLocation,
-                    MaxCapacity = @MaxCapacity,
-                    EventStart = @EventStart,
-                    EventEnd = @EventEnd,
-                    RegStart = @RegStart,
-                    RegEnd = @RegEnd,
-                    TargetBranch = @TargetBranch,
-                    TargetDepartment = @TargetDepartment,
-                    TargetProgram = @TargetProgram,
-                    TargetYearLevel = @TargetYearLevel,
-                    EventPhotoPath = @EventPhotoPath
-                WHERE EventId = @EventId AND Status = 'Upcoming' AND EventEnd > GETDATE();";
+            const string sql = "dbo.usp_Event_UpdateEvent";
 
             var parameters = new[]
             {
@@ -318,7 +211,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@EventId", SqlDbType.Int) { Value = ev.EventId }
             };
 
-            int rows = DatabaseConnection.ExecuteNonQuery(sql, parameters);
+            int rows = DatabaseConnection.ExecuteProcedureNonQuery(sql, parameters);
             return rows > 0;
         }
 
@@ -334,15 +227,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = @"
-                UPDATE dbo.EventsTable 
-                SET CurrentRegistrations = CurrentRegistrations + 1 
-                WHERE EventId = @EventId 
-                  AND CurrentRegistrations < MaxCapacity 
-                  AND Status = 'Upcoming' AND EventEnd > GETDATE();";
+            const string sql = "dbo.usp_Event_IncrementRegistrationCount";
 
             var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
-            int rowsAffected = DatabaseConnection.ExecuteNonQuery(sql, param);
+            int rowsAffected = DatabaseConnection.ExecuteProcedureNonQuery(sql, param);
             return rowsAffected > 0;
         }
 
@@ -356,14 +244,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = @"
-                UPDATE dbo.EventsTable 
-                SET CurrentRegistrations = CurrentRegistrations - 1 
-                WHERE EventId = @EventId 
-                  AND CurrentRegistrations > 0;";
+            const string sql = "dbo.usp_Event_DecrementRegistrationCount";
 
             var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
-            int rowsAffected = DatabaseConnection.ExecuteNonQuery(sql, param);
+            int rowsAffected = DatabaseConnection.ExecuteProcedureNonQuery(sql, param);
             return rowsAffected > 0;
         }
 
@@ -374,37 +258,12 @@ namespace _241611JalopEventsManagement.Backend.Repository
         public List<EventModel> GetHistoricalEvents(string semester = null, string academicYear = null, string outcomeStatus = null, string search = null)
         {
             SynchronizeCompletedEvents();
-            string sql = @"
-                SELECT e.EventId, e.Title, e.Description, e.VenueLocation, e.MaxCapacity, e.CurrentRegistrations, 
-                       e.CreatedByUserId, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status, 
-                       e.CancellationReason, e.TargetBranch, e.TargetDepartment, e.TargetProgram, e.TargetYearLevel,
-                       e.EventPhotoPath,
-                       ISNULL(regStats.PreRegisteredCount, 0) AS PreRegisteredCount,
-                       ISNULL(regStats.AttendedCount, 0) AS AttendedCount,
-                       ISNULL(regStats.NoShowCount, 0) AS NoShowCount,
-                       ISNULL(regStats.CancelledCount, 0) AS CancelledCount
-                FROM dbo.EventsTable e
-                LEFT JOIN (
-                    SELECT EventId,
-                           COUNT(CASE WHEN Status != 'Cancelled' THEN 1 END) AS PreRegisteredCount,
-                           COUNT(CASE WHEN Status = 'Present' THEN 1 END) AS AttendedCount,
-                           COUNT(CASE WHEN Status = 'NoShow' THEN 1 END) AS NoShowCount,
-                           COUNT(CASE WHEN Status = 'Cancelled' THEN 1 END) AS CancelledCount
-                    FROM dbo.EventRegistrationTable
-                    GROUP BY EventId
-                ) regStats ON e.EventId = regStats.EventId
-                WHERE e.Status IN ('Completed', 'Cancelled')";
+            string sql = "dbo.usp_Event_GetHistoricalEvents";
 
             var parameters = new List<SqlParameter>();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                sql += @" AND (
-                    e.Title LIKE @Search OR 
-                    e.VenueLocation LIKE @Search OR 
-                    e.TargetDepartment LIKE @Search OR
-                    e.TargetProgram LIKE @Search
-                )";
                 parameters.Add(new SqlParameter("@Search", SqlDbType.NVarChar, 200) { Value = $"%{search.Trim()}%" });
             }
 
@@ -412,7 +271,6 @@ namespace _241611JalopEventsManagement.Backend.Repository
             {
                 if (outcomeStatus != "Cancelled" && outcomeStatus != "Completed")
                     throw new ArgumentException("History outcome status must be Cancelled, Completed, or ALL.", nameof(outcomeStatus));
-                sql += " AND e.Status = @OutcomeStatus";
                 parameters.Add(new SqlParameter("@OutcomeStatus", SqlDbType.VarChar, 50) { Value = outcomeStatus });
             }
 
@@ -420,15 +278,15 @@ namespace _241611JalopEventsManagement.Backend.Repository
             {
                 if (semester.IndexOf("1st", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    sql += " AND MONTH(e.EventStart) BETWEEN 8 AND 12";
+                    parameters.Add(new SqlParameter("@Semester", SqlDbType.NVarChar, 20) { Value = "1st" });
                 }
                 else if (semester.IndexOf("2nd", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    sql += " AND MONTH(e.EventStart) BETWEEN 1 AND 5";
+                    parameters.Add(new SqlParameter("@Semester", SqlDbType.NVarChar, 20) { Value = "2nd" });
                 }
                 else if (semester.IndexOf("Summer", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    sql += " AND MONTH(e.EventStart) BETWEEN 6 AND 7";
+                    parameters.Add(new SqlParameter("@Semester", SqlDbType.NVarChar, 20) { Value = "Summer" });
                 }
             }
 
@@ -439,18 +297,12 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 string[] parts = cleanAy.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length == 2 && int.TryParse(parts[0].Trim(), out int startYear) && int.TryParse(parts[1].Trim(), out int endYear))
                 {
-                    sql += @" AND (
-                        (MONTH(e.EventStart) >= 8 AND YEAR(e.EventStart) = @StartYear) OR 
-                        (MONTH(e.EventStart) < 8 AND YEAR(e.EventStart) = @EndYear)
-                    )";
                     parameters.Add(new SqlParameter("@StartYear", SqlDbType.Int) { Value = startYear });
                     parameters.Add(new SqlParameter("@EndYear", SqlDbType.Int) { Value = endYear });
                 }
             }
 
-            sql += " ORDER BY e.EventStart DESC;";
-
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, parameters.ToArray());
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, parameters.ToArray());
             return MapDataTableToEventList(dt);
         }
 
@@ -461,13 +313,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
         {
             SynchronizeCompletedEvents();
             var years = new List<string>();
-            const string sql = @"
-                SELECT DISTINCT YEAR(EventStart) AS EvtYear, MONTH(EventStart) AS EvtMonth
-                FROM dbo.EventsTable
-                WHERE Status IN ('Completed', 'Cancelled')
-                ORDER BY EvtYear DESC;";
+            const string sql = "dbo.usp_Event_GetDistinctHistoricalAcademicYears";
 
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql);
             if (dt != null)
             {
                 var aySet = new HashSet<string>();

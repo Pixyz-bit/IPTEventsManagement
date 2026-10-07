@@ -1,0 +1,4 @@
+-- DatabaseConnection.cs opens connections and runs commands.
+-- It remains C# infrastructure: a stored procedure cannot open its own
+-- initial client connection. TestConnection keeps its SELECT 1 probe.
+-- No business stored procedures belong to this helper file.

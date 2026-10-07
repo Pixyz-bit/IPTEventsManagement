@@ -26,7 +26,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litEventVenue;
         protected global::System.Web.UI.WebControls.Literal litEventCapacitySummary;
         protected global::System.Web.UI.WebControls.Literal litEventStatusBadge;
-        protected global::System.Web.UI.WebControls.DropDownList ddlEvents;
 
 
         // Tab 1: Before - Pre-Event Analytics

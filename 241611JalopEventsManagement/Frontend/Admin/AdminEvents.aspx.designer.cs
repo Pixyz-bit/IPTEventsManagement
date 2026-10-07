@@ -26,7 +26,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.LinkButton btnTabClose;
 
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
-        protected global::System.Web.UI.WebControls.DropDownList ddlDepartmentFilter;
 
         protected global::System.Web.UI.WebControls.Repeater rptEventsMatrix;
         protected global::System.Web.UI.WebControls.Panel pnlNoEvents;

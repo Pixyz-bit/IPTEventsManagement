@@ -1,7 +1,7 @@
 <%@ Page Title="Events History & History | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="EventHistory.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.EventHistory" EnableEventValidation="false" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/event-history.css?v=20261006-three-cards") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/event-history.css?v=20261007-local-fonts") %>" />
 </asp:Content>
 
 <asp:Content ID="MainArea" ContentPlaceHolderID="MainContent" runat="server">
@@ -81,8 +81,6 @@
                                 <th style="width: 110px;">Status</th>
                                 <th style="min-width: 250px;">Event Title &amp; Scope</th>
                                 <th style="min-width: 170px;">Venue &amp; Schedule</th>
-                                <th style="width: 150px;">Capacity Saturation</th>
-                                <th style="width: 160px;">Attendance Turnout</th>
                                 <th style="width: 100px; text-align: right;">Actions</th>
                             </tr>
                         </thead>
@@ -111,32 +109,9 @@
                             <div class="cell-date-text"><%# Convert.ToDateTime(Eval("EventStart")).ToString("MMM dd, yyyy") %></div>
                         </td>
 
-                        <!-- 4. Capacity Saturation -->
-                        <td>
-                            <div style="font-family:var(--font-mono); font-weight:600; color:var(--text-heading); font-size:0.85rem;">
-                                <%# Eval("AttendedCount") %> / <%# Eval("MaxCapacity") %>
-                            </div>
-                            <div style="font-size:0.725rem; color:var(--text-muted);">
-                                <%# Eval("AttendedCount") %> Present (<%# Eval("MaxCapacity") != null && Convert.ToInt32(Eval("MaxCapacity")) > 0 ? string.Format("{0:F1}%", (Convert.ToDouble(Eval("AttendedCount")) / Convert.ToDouble(Eval("MaxCapacity"))) * 100.0) : "0.0%" %>)
-                            </div>
-                        </td>
-
-                        <!-- 5. Turnout Statistics Bar -->
-                        <td>
-                            <div class="turnout-stat-block">
-                                <div class="turnout-label-row">
-                                    <span class="turnout-numbers"><%# Eval("AttendedCount") %> / <%# Eval("PreRegisteredCount") %></span>
-                                    <span class="turnout-pct"><%# Eval("TurnoutPercentage", "{0:F1}%") %></span>
-                                </div>
-                                <div class="turnout-progress-track">
-                                    <div class="turnout-progress-fill" style='width: <%# Math.Min(100.0, Convert.ToDouble(Eval("TurnoutPercentage"))) %>%;'></div>
-                                </div>
-                            </div>
-                        </td>
-
-                        <!-- 6. Actions: Direct Navigation to EventAnalytics.aspx -->
+                        <!-- 4. Actions: Direct Navigation to EventAnalytics.aspx -->
                         <td style="text-align: right;">
-                            <a href='<%# ResolveUrl(string.Format("~/Frontend/Admin/EventAnalytics.aspx?eventId={0}&from=history", Eval("EventId"))) %>' class="btn-view-link" title="View Detailed Event Analytics &amp; Performance Telemetry">View &gt;</a>
+                            <a href='<%# ResolveUrl(string.Format("~/Frontend/Admin/EventAnalytics.aspx?eventId={0}&from=history", Eval("EventId"))) %>' class="btn-view-link link-matrix-view" title="View Detailed Event Analytics &amp; Performance Telemetry">View</a>
                         </td>
                     </tr>
                 </ItemTemplate>

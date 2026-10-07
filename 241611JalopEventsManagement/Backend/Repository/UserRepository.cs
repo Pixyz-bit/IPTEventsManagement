@@ -50,9 +50,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 try
                 {
                     // Serialize account-management changes before checking administrator and email invariants.
-                    using (var command = new SqlCommand(@"
-                        SELECT UserId, Role, IsActive FROM dbo.UserTable WITH (UPDLOCK, HOLDLOCK)
-                        ORDER BY UserId;", connection, transaction))
+                    using (var command = new SqlCommand("dbo.usp_User_SaveManagedAccount_Command1", connection, transaction) { CommandType = CommandType.StoredProcedure })
                     using (var reader = command.ExecuteReader())
                     {
                         bool found = false, authorized = false;
@@ -72,8 +70,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                         if ((user.Role != RoleAdmin || !user.IsActive) && otherAdmins == 0)
                             throw new InvalidOperationException("At least one active administrator must remain.");
                     }
-                    using (var command = new SqlCommand(@"
-                        SELECT COUNT(1) FROM dbo.UserTable WHERE Email = @Email AND UserId <> @UserId;", connection, transaction))
+                    using (var command = new SqlCommand("dbo.usp_User_SaveManagedAccount_Command2", connection, transaction) { CommandType = CommandType.StoredProcedure })
                     {
                         command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = user.Email.Trim() });
                         command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int) { Value = user.UserId });
@@ -82,11 +79,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     }
                     if (user.Role == RoleStudent)
                         new StudentRepository().SaveManagedProfile(connection, transaction, user.UserId, profile);
-                    using (var command = new SqlCommand(@"
-                        UPDATE dbo.UserTable SET Email = @Email, Role = @Role, IsActive = @IsActive,
-                            PasswordHash = CASE WHEN @Hash IS NULL THEN PasswordHash ELSE @Hash END,
-                            PasswordSalt = CASE WHEN @Salt IS NULL THEN PasswordSalt ELSE @Salt END
-                        WHERE UserId = @UserId;", connection, transaction))
+                    using (var command = new SqlCommand("dbo.usp_User_SaveManagedAccount_Command3", connection, transaction) { CommandType = CommandType.StoredProcedure })
                     {
                         command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = user.Email.Trim() });
                         command.Parameters.Add(new SqlParameter("@Role", SqlDbType.VarChar, 50) { Value = user.Role });
@@ -114,13 +107,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return null;
             }
 
-            const string sql = @"
-                SELECT UserId, Email, PasswordHash, PasswordSalt, Role, IsActive 
-                FROM dbo.UserTable 
-                WHERE Email = @Email;";
+            const string sql = "dbo.usp_User_GetUserByEmail";
 
             var param = new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = email.Trim() };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -140,15 +130,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return null;
             }
 
-            const string sql = @"
-                SELECT u.UserId, u.Email, u.PasswordHash, u.PasswordSalt, u.Role, u.IsActive,
-                       s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, s.CampusBranch, s.Department, s.Program
-                FROM dbo.UserTable u
-                LEFT JOIN dbo.StudentTable s ON u.UserId = s.UserId
-                WHERE u.Email = @Identifier OR s.StudentId = @Identifier;";
+            const string sql = "dbo.usp_User_GetUserByIdentifier";
 
             var param = new SqlParameter("@Identifier", SqlDbType.NVarChar, 150) { Value = identifier.Trim() };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -166,13 +151,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return null;
             }
 
-            const string sql = @"
-                SELECT UserId, Email, PasswordHash, PasswordSalt, Role, IsActive 
-                FROM dbo.UserTable 
-                WHERE UserId = @UserId;";
+            const string sql = "dbo.usp_User_GetUserById";
 
             var param = new SqlParameter("@UserId", SqlDbType.Int) { Value = userId };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -208,10 +190,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 throw new ArgumentException($"Invalid role '{role}'. Allowed roles are strictly '{RoleAdmin}' or '{RoleStudent}'.", nameof(user.Role));
             }
 
-            const string sql = @"
-                INSERT INTO dbo.UserTable (Email, PasswordHash, PasswordSalt, Role, IsActive)
-                VALUES (@Email, @PasswordHash, @PasswordSalt, @Role, @IsActive);
-                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+            const string sql = "dbo.usp_User_CreateUser";
 
             var parameters = new[]
             {
@@ -222,7 +201,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@IsActive", SqlDbType.Bit) { Value = user.IsActive }
             };
 
-            object result = DatabaseConnection.ExecuteScalar(sql, parameters);
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql, parameters);
             if (result != null && int.TryParse(result.ToString(), out int newUserId))
             {
                 user.UserId = newUserId;
@@ -241,10 +220,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = "SELECT COUNT(1) FROM dbo.UserTable WHERE Email = @Email;";
+            const string sql = "dbo.usp_User_EmailExists";
             var param = new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = email.Trim() };
 
-            object result = DatabaseConnection.ExecuteScalar(sql, param);
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql, param);
             return Convert.ToInt32(result) > 0;
         }
 
@@ -256,14 +235,14 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = "UPDATE dbo.UserTable SET Email = @Email WHERE UserId = @UserId;";
+            const string sql = "dbo.usp_User_UpdateUserEmail";
             var parameters = new[]
             {
                 new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = email.Trim() },
                 new SqlParameter("@UserId", SqlDbType.Int) { Value = userId }
             };
 
-            int rowsAffected = DatabaseConnection.ExecuteNonQuery(sql, parameters);
+            int rowsAffected = DatabaseConnection.ExecuteProcedureNonQuery(sql, parameters);
             return rowsAffected > 0;
         }
 
@@ -275,14 +254,14 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = "UPDATE dbo.UserTable SET IsActive = @IsActive WHERE UserId = @UserId;";
+            const string sql = "dbo.usp_User_UpdateUserStatus";
             var parameters = new[]
             {
                 new SqlParameter("@IsActive", SqlDbType.Bit) { Value = isActive },
                 new SqlParameter("@UserId", SqlDbType.Int) { Value = userId }
             };
 
-            int rowsAffected = DatabaseConnection.ExecuteNonQuery(sql, parameters);
+            int rowsAffected = DatabaseConnection.ExecuteProcedureNonQuery(sql, parameters);
             return rowsAffected > 0;
         }
 
@@ -299,10 +278,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 throw new ArgumentException("Password hash and salt cannot be empty.");
             }
 
-            const string sql = @"
-                UPDATE dbo.UserTable 
-                SET PasswordHash = @PasswordHash, PasswordSalt = @PasswordSalt 
-                WHERE UserId = @UserId;";
+            const string sql = "dbo.usp_User_UpdatePassword";
 
             var parameters = new[]
             {
@@ -311,7 +287,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@UserId", SqlDbType.Int) { Value = userId }
             };
 
-            int rowsAffected = DatabaseConnection.ExecuteNonQuery(sql, parameters);
+            int rowsAffected = DatabaseConnection.ExecuteProcedureNonQuery(sql, parameters);
             return rowsAffected > 0;
         }
 
@@ -323,31 +299,17 @@ namespace _241611JalopEventsManagement.Backend.Repository
         {
             var list = new List<UserModel>();
 
-            string sql = @"
-                SELECT u.UserId, u.Email, u.PasswordHash, u.PasswordSalt, u.Role, u.IsActive,
-                       s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, 
-                       s.CampusBranch, s.Department, s.Program
-                FROM dbo.UserTable u
-                LEFT JOIN dbo.StudentTable s ON u.UserId = s.UserId
-                WHERE 1=1";
+            string sql = "dbo.usp_User_GetAllUsers";
 
             var parameters = new List<SqlParameter>();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                sql += @" AND (
-                    u.Email LIKE @Search OR 
-                    s.StudentId LIKE @Search OR 
-                    s.FirstName LIKE @Search OR 
-                    s.LastName LIKE @Search OR 
-                    (s.FirstName + ' ' + s.LastName) LIKE @Search
-                )";
                 parameters.Add(new SqlParameter("@Search", SqlDbType.NVarChar, 150) { Value = $"%{search.Trim()}%" });
             }
 
             if (!string.IsNullOrWhiteSpace(roleFilter) && !string.Equals(roleFilter, "ALL", StringComparison.OrdinalIgnoreCase))
             {
-                sql += " AND u.Role = @Role";
                 parameters.Add(new SqlParameter("@Role", SqlDbType.VarChar, 50) { Value = roleFilter.Trim() });
             }
 
@@ -355,17 +317,15 @@ namespace _241611JalopEventsManagement.Backend.Repository
             {
                 if (statusFilter.Equals("Active", StringComparison.OrdinalIgnoreCase))
                 {
-                    sql += " AND u.IsActive = 1";
+                    parameters.Add(new SqlParameter("@Status", SqlDbType.VarChar, 50) { Value = "Active" });
                 }
                 else if (statusFilter.Equals("Locked", StringComparison.OrdinalIgnoreCase) || statusFilter.Equals("Inactive", StringComparison.OrdinalIgnoreCase))
                 {
-                    sql += " AND u.IsActive = 0";
+                    parameters.Add(new SqlParameter("@Status", SqlDbType.VarChar, 50) { Value = "Inactive" });
                 }
             }
 
-            sql += " ORDER BY u.UserId DESC;";
-
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, parameters.ToArray());
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, parameters.ToArray());
             if (dt != null)
             {
                 foreach (DataRow row in dt.Rows)
@@ -403,9 +363,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
             // Guard 2: If demoting an admin, ensure at least one other active admin remains
             if (cleanRole == RoleStudent)
             {
-                const string countAdminsSql = "SELECT COUNT(1) FROM dbo.UserTable WHERE Role = 'Admin' AND IsActive = 1 AND UserId != @TargetUserId;";
+                const string countAdminsSql = "dbo.usp_User_UpdateUserRole_countAdminsSql";
                 var countParam = new SqlParameter("@TargetUserId", SqlDbType.Int) { Value = targetUserId };
-                int remainingAdmins = Convert.ToInt32(DatabaseConnection.ExecuteScalar(countAdminsSql, countParam));
+                int remainingAdmins = Convert.ToInt32(DatabaseConnection.ExecuteProcedureScalar(countAdminsSql, countParam));
 
                 if (remainingAdmins <= 0)
                 {
@@ -413,14 +373,14 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 }
             }
 
-            const string updateSql = "UPDATE dbo.UserTable SET Role = @Role WHERE UserId = @UserId;";
+            const string updateSql = "dbo.usp_User_UpdateUserRole_updateSql";
             var parameters = new[]
             {
                 new SqlParameter("@Role", SqlDbType.VarChar, 50) { Value = cleanRole },
                 new SqlParameter("@UserId", SqlDbType.Int) { Value = targetUserId }
             };
 
-            int rows = DatabaseConnection.ExecuteNonQuery(updateSql, parameters);
+            int rows = DatabaseConnection.ExecuteProcedureNonQuery(updateSql, parameters);
             return rows > 0;
         }
 
@@ -443,18 +403,18 @@ namespace _241611JalopEventsManagement.Backend.Repository
             var targetUser = GetUserById(targetUserId);
             if (targetUser != null && targetUser.Role == RoleAdmin && targetUser.IsActive)
             {
-                const string countSql = "SELECT COUNT(1) FROM dbo.UserTable WHERE Role = 'Admin' AND IsActive = 1 AND UserId != @TargetUserId;";
+                const string countSql = "dbo.usp_User_ToggleUserActiveStatus_countSql";
                 var p = new SqlParameter("@TargetUserId", SqlDbType.Int) { Value = targetUserId };
-                int otherAdmins = Convert.ToInt32(DatabaseConnection.ExecuteScalar(countSql, p));
+                int otherAdmins = Convert.ToInt32(DatabaseConnection.ExecuteProcedureScalar(countSql, p));
                 if (otherAdmins <= 0)
                 {
                     throw new InvalidOperationException("Action Blocked: Cannot deactivate the last remaining active Administrator account.");
                 }
             }
 
-            const string toggleSql = "UPDATE dbo.UserTable SET IsActive = CASE WHEN IsActive = 1 THEN 0 ELSE 1 END WHERE UserId = @UserId;";
+            const string toggleSql = "dbo.usp_User_ToggleUserActiveStatus_toggleSql";
             var param = new SqlParameter("@UserId", SqlDbType.Int) { Value = targetUserId };
-            int rows = DatabaseConnection.ExecuteNonQuery(toggleSql, param);
+            int rows = DatabaseConnection.ExecuteProcedureNonQuery(toggleSql, param);
             return rows > 0;
         }
 
@@ -519,15 +479,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
         /// </summary>
         public (int TotalAccounts, int ActiveAdmins, int TotalStudents, int LockedAccounts) GetAccountStatistics()
         {
-            const string sql = @"
-                SELECT 
-                    COUNT(1) AS TotalAccounts,
-                    COUNT(CASE WHEN Role = 'Admin' AND IsActive = 1 THEN 1 END) AS ActiveAdmins,
-                    COUNT(CASE WHEN Role = 'Student' THEN 1 END) AS TotalStudents,
-                    COUNT(CASE WHEN IsActive = 0 THEN 1 END) AS LockedAccounts
-                FROM dbo.UserTable;";
+            const string sql = "dbo.usp_User_GetAccountStatistics";
 
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql);
             if (dt != null && dt.Rows.Count > 0)
             {
                 var r = dt.Rows[0];

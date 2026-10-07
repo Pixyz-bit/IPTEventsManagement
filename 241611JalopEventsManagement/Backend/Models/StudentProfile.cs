@@ -10,32 +10,20 @@ namespace _241611JalopEventsManagement.Backend.Models
     public class StudentProfile
     {
         public string StudentId { get; set; }
-
         public string FirstName { get; set; }
-
         public string MiddleName { get; set; }
-
         public string LastName { get; set; }
-
         public string Gender { get; set; }
-
         public string CampusBranch { get; set; }
-
         public string Department { get; set; }
-
         public string Program { get; set; }
-
         public int UserId { get; set; }
-
         public int? YearLevel { get; set; }
-
         public string Section { get; set; }
-
         public DateTime? BirthDate { get; set; }
 
         // Joined properties from dbo.UserTable
         public string Email { get; set; }
-
         public bool IsActive { get; set; } = true;
 
         /// <summary>

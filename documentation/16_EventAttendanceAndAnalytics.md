@@ -103,3 +103,80 @@ The event management lifecycle is unified across all sub-modules via a standardi
 3. **3. Attendance Scanner** (`AttendanceScanner.aspx`)
 4. **4. Event Attendance** (`EventAttendance.aspx`)
 5. **5. Event Analytics** (`EventAnalytics.aspx`)
+
+## 5. Event context, banner layout, and interactive attendee roster
+
+The Active Event dropdown has been removed from Details, Pre-Registered, Scanner,
+Attendance, and Analytics, including its designer fields, handlers, and styles.
+Pipeline links continue carrying `eventId`. Details also accepts its existing `id`
+alias. The other four pages preserve their existing first-event fallback when no
+`eventId` is supplied; an explicitly invalid ID still follows event validation.
+
+Details now shows Event Overview beside a separate banner card with the same
+header/body treatment; the image retains a 16:9 frame. Title and description fill
+the overview width, while venue and capacity share the bottom row. Edit mode keeps
+those form fields on the left and moves the existing banner upload/preview controls
+into the right card. `phBannerView` follows the view/edit visibility switch; control
+IDs, image binding, fallback image, and upload/save flow remain intact. These cards
+stack at the existing responsive breakpoints. Gate Occupancy & Quota and its unused
+attendance query and controls are removed. Registration Opens
+and Registration Deadline omit the timezone suffix; the edit-mode timezone hint
+and date parsing/storage behavior remain intact.
+
+The Events Matrix omits its row Cancel Event action and academic-college select.
+Only those controls' event wiring, reset references, filter step, and styles were
+removed. Status tabs, search, event queries, registration rules, and the cancellation
+confirmation flow reached from Event Details remain available. No model,
+repository, database schema, or stored registration/cancellation data changes are
+part of this UI refinement.
+
+### `initializeCohortFilters()`
+
+- **Purpose:** Populate department and course options from this event's registrations.
+- **Signature & Contracts:** No arguments or return value; reads `telemetryData.registrations`.
+- **Internal Mechanics:** Deduplicate and sort nonempty department/course values, then append native options using text content.
+- **Side Effects & Thrown Errors:** Updates two selects; no requests or database writes.
+- **When it is used:** Dashboard initialization after the server JSON is parsed.
+- **Why:** Includes both reserved and cancelled cohorts without maintaining a second data query.
+
+### `filterCohortTable()` / `resetCohortFilters()`
+
+- **Purpose:** Filter the active attendee roster sheet and restore its visible rows on reset.
+- **Signature & Contracts:** No arguments or return value; combines search, department, course, and year controls with AND semantics.
+- **Internal Mechanics:** Search Student ID/full name/ticket reference without case sensitivity and match encoded row department/course/year attributes. Show or hide rows, update the visible-count summary, and distinguish an empty sheet from filters with no matches. Reset clears all four controls while retaining the active tab.
+- **Side Effects & Thrown Errors:** Changes only roster visibility and its accessible summary/empty message. Chart totals, tab counts, server cohorts, and registration state remain unchanged; no postback or database writes.
+- **When it is used:** Initial load, search input (including clearing), select changes, status-tab changes, and Reset Filters.
+- **Why:** Places the controls within `attendee-roster-panel`, keeps filters across Present/No Show/Cancelled, and preserves event-wide analytics.
+
+### `renderReservationChart()`
+
+- **Purpose:** Render event-wide reserved/cancelled counts with the shared interactive donut.
+- **Signature & Contracts:** No arguments or return value; reads this event's registration payload.
+- **Internal Mechanics:** Count all non-cancelled records as reserved and all cancelled records as cancelled; derive percentages from the full total and invoke `renderDonutChart`.
+- **Side Effects & Thrown Errors:** Updates chart DOM, accessible description, and summary; no data mutation.
+- **When it is used:** Dashboard initialization.
+- **Why:** Roster filters affect rows only; event-wide chart totals remain stable.
+
+### `renderDonutChart(...)` / `updateTooltipPosition(event)`
+
+- **Purpose:** Render consistent SVG donuts with linked legend highlighting and tooltips for both charts.
+- **Signature & Contracts:** Renderer accepts `{label, count, percentage, color?}[]`, SVG/legend/center element IDs, center label, and empty message; returns no value. Tooltip positioning accepts a mouse or focus event with `currentTarget`.
+- **Internal Mechanics:** Use 96/58-radius annular paths; render full circles with even-odd filling, omit zero-count slices, and create labels with text content. Share pointer/focus handlers between slice and legend. Clamp fixed tooltip coordinates to the viewport and anchor keyboard tooltips to the focused legend row.
+- **Side Effects & Thrown Errors:** Replaces chart DOM and clears old tooltip state. Keyboard blur/Escape dismiss tooltips. Reduced-motion preferences remove slice scaling.
+- **When it is used:** Dashboard initialization, demographic dimension changes, pointer movement, or keyboard focus.
+- **Why:** Reuses the demographics behavior rather than maintaining a static CSS reservation ring. Server JSON escapes HTML delimiters to keep database text inside its script container.
+
+Verification: `node tests/EventAnalyticsCharts.Tests.js` covers combined roster
+filters, ID/name/ticket searches, tab persistence, reset, empty sheets, stable chart
+totals, empty/full rings, hover and keyboard tooltips, viewport clamping, and safe
+legend text.
+
+### History presentation
+
+The history entry to Analytics uses a standard card with the back link above the
+heading and labeled Event, Date, Venue, and Capacity facts below it. The facts
+stack on mobile; the existing `from=history` visibility and event binding remain
+unchanged. Event History displays Status, Event Title & Scope, Venue & Schedule,
+and Actions; Capacity Saturation and Attendance Turnout cells and their unused
+styles are removed. The repository projections, counts, calculations, and filters
+remain unchanged.

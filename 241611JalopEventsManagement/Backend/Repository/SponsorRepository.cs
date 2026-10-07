@@ -24,15 +24,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return list;
             }
 
-            const string sql = @"
-                SELECT s.SponsorEntryId, s.SponsorName, s.CreatedAt, s.EventId, e.Title AS EventTitle
-                FROM dbo.SponsorListTable s
-                INNER JOIN dbo.EventsTable e ON s.EventId = e.EventId
-                WHERE s.EventId = @EventId
-                ORDER BY s.SponsorEntryId ASC;";
+            const string sql = "dbo.usp_Sponsor_GetSponsorsByEventId";
 
             var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null)
             {
@@ -63,13 +58,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
             }
 
             string idList = string.Join(",", validIds);
-            string sql = $@"
-                SELECT EventId, SponsorName 
-                FROM dbo.SponsorListTable 
-                WHERE EventId IN ({idList})
-                ORDER BY SponsorEntryId ASC;";
+            const string sql = "dbo.usp_Sponsor_GetSponsorsForEvents";
 
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, new SqlParameter("@EventIds", SqlDbType.NVarChar, -1) { Value = idList });
             if (dt != null)
             {
                 foreach (DataRow row in dt.Rows)
@@ -111,10 +102,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 throw new ArgumentException("EventId must reference a valid event.", nameof(sponsor.EventId));
             }
 
-            const string sql = @"
-                INSERT INTO dbo.SponsorListTable (SponsorName, CreatedAt, EventId)
-                VALUES (@SponsorName, @CreatedAt, @EventId);
-                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+            const string sql = "dbo.usp_Sponsor_AddSponsor";
 
             var parameters = new[]
             {
@@ -123,7 +111,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@EventId", SqlDbType.Int) { Value = sponsor.EventId }
             };
 
-            object result = DatabaseConnection.ExecuteScalar(sql, parameters);
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql, parameters);
             if (result != null && int.TryParse(result.ToString(), out int newId))
             {
                 sponsor.SponsorEntryId = newId;
@@ -177,10 +165,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = "DELETE FROM dbo.SponsorListTable WHERE SponsorEntryId = @SponsorEntryId;";
+            const string sql = "dbo.usp_Sponsor_DeleteSponsor";
             var param = new SqlParameter("@SponsorEntryId", SqlDbType.Int) { Value = sponsorEntryId };
 
-            int rows = DatabaseConnection.ExecuteNonQuery(sql, param);
+            int rows = DatabaseConnection.ExecuteProcedureNonQuery(sql, param);
             return rows > 0;
         }
 
@@ -194,10 +182,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = "DELETE FROM dbo.SponsorListTable WHERE EventId = @EventId;";
+            const string sql = "dbo.usp_Sponsor_DeleteSponsorsByEventId";
             var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
 
-            int rows = DatabaseConnection.ExecuteNonQuery(sql, param);
+            int rows = DatabaseConnection.ExecuteProcedureNonQuery(sql, param);
             return rows > 0;
         }
 

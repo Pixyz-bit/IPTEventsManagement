@@ -15,7 +15,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         protected global::System.Web.UI.WebControls.Literal litEventDate;
         protected global::System.Web.UI.WebControls.Literal litEventVenue;
         protected global::System.Web.UI.WebControls.Literal litEventCapacitySummary;
-        protected global::System.Web.UI.WebControls.DropDownList ddlEvents;
 
         protected global::System.Web.UI.WebControls.Literal litCheckedInCount;
         protected global::System.Web.UI.WebControls.Literal litExpectedCount;

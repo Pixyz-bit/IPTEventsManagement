@@ -14,7 +14,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
     {
         private readonly EventRepository _eventRepository = new EventRepository();
         private readonly SponsorRepository _sponsorRepository = new SponsorRepository();
-        private readonly RegistrationRepository _registrationRepository = new RegistrationRepository();
         private bool _eventAvailable;
 
         public int CurrentEventId
@@ -50,19 +49,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
         }
 
-        public int OccupancyBarWidth
-        {
-            get
-            {
-                if (ViewState["OccupancyBarWidth"] != null)
-                {
-                    return (int)ViewState["OccupancyBarWidth"];
-                }
-                return 0;
-            }
-            set => ViewState["OccupancyBarWidth"] = Math.Max(0, Math.Min(100, value));
-        }
-
         private List<string> Sponsors
         {
             get
@@ -91,40 +77,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             if (!TryLoadEvent(out ev)) return;
             if (!IsPostBack)
             {
-                PopulateEventDropdown();
                 BindEventData(ev);
                 UpdateModeUI();
-            }
-        }
-
-        private void PopulateEventDropdown()
-        {
-            var events = _eventRepository.GetAllEvents().OrderByDescending(ev => ev.EventStart).ToList();
-            ddlEvents.Items.Clear();
-
-            foreach (var evt in events)
-            {
-                string dateText = evt.EventStart.ToString("MM/dd/yyyy");
-                string itemText = $"{evt.Title} ({dateText})";
-                ddlEvents.Items.Add(new ListItem(itemText, evt.EventId.ToString()));
-            }
-
-            if (ddlEvents.Items.FindByValue(CurrentEventId.ToString()) != null)
-            {
-                ddlEvents.SelectedValue = CurrentEventId.ToString();
-            }
-            else if (ddlEvents.Items.Count > 0)
-            {
-                ddlEvents.SelectedIndex = 0;
-            }
-        }
-
-        protected void ddlEvents_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!_eventAvailable) return;
-            if (int.TryParse(ddlEvents.SelectedValue, out int selectedId))
-            {
-                Response.Redirect($"~/Frontend/Admin/EventDetails.aspx?eventId={selectedId}");
             }
         }
 
@@ -187,7 +141,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             litEventCapacitySummary.Text = $"{ev.CurrentRegistrations} / {ev.MaxCapacity}";
             string matrixStatus = EvaluateMatrixStatus(ev);
             litHeaderStatus.Text = matrixStatus;
-            litSidebarStatus.Text = matrixStatus;
             litMetaEventId.Text = ev.EventId.ToString();
 
             lnkCancelEvent.Visible = ev.CanCancel;
@@ -264,33 +217,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             // Section 5: Sponsors
             LoadSponsors(ev.EventId);
 
-            // Fetch live attendance data via RegistrationRepository
-            RegistrationRepository.EventAttendanceSummary attendanceSummary = null;
-            if (ev.EventId > 0)
-            {
-                try
-                {
-                    attendanceSummary = _registrationRepository.GetEventAttendanceSummary(ev.EventId);
-                }
-                catch
-                {
-                    // Fallback to model values
-                }
-            }
-
-            int totalReg = (attendanceSummary != null && attendanceSummary.TotalRegistered > 0)
-                ? attendanceSummary.TotalRegistered
-                : Math.Max(0, ev.CurrentRegistrations);
-
-            int maxCap = Math.Max(1, ev.MaxCapacity);
-
-            // Gate Occupancy & Quota cockpit calculations
-            double occupancy = maxCap > 0 ? ((double)totalReg / maxCap) * 100.0 : 0.0;
-            OccupancyBarWidth = (int)Math.Max(0, Math.Min(100, Math.Round(occupancy)));
-            litOccupancyCount.Text = $"{totalReg} / {maxCap}";
-            litOccupancyPct.Text = $"{occupancy:F1}%";
-            int remSpots = Math.Max(0, maxCap - totalReg);
-            litRemainingSpots.Text = remSpots == 0 ? "Capacity Saturated" : $"{remSpots} spots open";
         }
 
         private void LoadSponsors(int eventId)
@@ -339,6 +265,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
             phGeneralView.Visible = !editing;
             phGeneralEdit.Visible = editing;
+            phBannerView.Visible = !editing;
 
             phScheduleView.Visible = !editing;
             phScheduleEdit.Visible = editing;

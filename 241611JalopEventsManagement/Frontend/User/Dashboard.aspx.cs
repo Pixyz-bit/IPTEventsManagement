@@ -226,7 +226,7 @@ namespace _241611JalopEventsManagement.Frontend.User
 
             if (viewModels != null)
             {
-                foreach (var vm in viewModels.Take(4))
+                foreach (var vm in viewModels)
                 {
                     string desc = !string.IsNullOrWhiteSpace(vm.Description)
                         ? (vm.Description.Length > 180 ? vm.Description.Substring(0, 177) + "..." : vm.Description)

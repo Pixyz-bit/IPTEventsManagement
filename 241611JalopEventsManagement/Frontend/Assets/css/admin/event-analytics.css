@@ -68,47 +68,6 @@
             font-weight: 700;
         }
 
-        .event-switcher {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-        }
-
-        .event-switcher label {
-            font-size: 0.825rem;
-            color: var(--text-muted);
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .event-dropdown-select {
-            background-color: #ffffff;
-            border: 1px solid var(--border-medium);
-            color: var(--text-heading);
-            padding: 0.5rem 2.25rem 0.5rem 0.85rem;
-            border-radius: var(--radius-md);
-            font-size: 0.85rem;
-            font-family: inherit;
-            outline: none;
-            cursor: pointer;
-            min-width: 250px;
-            box-shadow: var(--shadow-subtle);
-            transition: all 0.15s ease;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 14px 14px;
-        }
-
-        .event-dropdown-select:hover,
-        .event-dropdown-select:focus {
-            border-color: var(--brand-primary);
-            box-shadow: 0 0 0 3px var(--brand-focus-ring);
-        }
-
         /* Sub-module Pipeline Tabs */
         .pipeline-tabs-wrapper {
             display: flex;
@@ -575,7 +534,8 @@
             transform-origin: 120px 120px;
         }
 
-        .pie-slice:hover {
+        .pie-slice:hover,
+        .pie-slice.is-highlighted {
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
             transform: scale(1.04);
         }
@@ -604,7 +564,8 @@
             transition: all 0.15s ease;
         }
 
-        .pie-legend-row:hover {
+        .pie-legend-row:hover,
+        .pie-legend-row.is-highlighted {
             background-color: var(--brand-subtle);
             border-color: var(--brand-border);
         }
@@ -637,7 +598,7 @@
 
         /* Tooltip */
         .pie-interactive-tooltip {
-            position: absolute;
+            position: fixed;
             background-color: rgba(15, 23, 42, 0.94);
             color: #ffffff;
             padding: 0.5rem 0.85rem;
@@ -645,7 +606,9 @@
             font-size: 0.75rem;
             pointer-events: none;
             z-index: 1000;
-            white-space: nowrap;
+            max-width: min(280px, calc(100vw - 16px));
+            box-sizing: border-box;
+            overflow-wrap: anywhere;
             box-shadow: 0 4px 12px rgba(0,0,0,0.25);
             display: none;
             backdrop-filter: blur(4px);
@@ -709,7 +672,7 @@
 
         /* Print media styling for Official University PDF */
         @media print {
-            .admin-sidebar, .admin-topbar, .pipeline-tabs-wrapper, .lifecycle-tabs-bar, .event-switcher, .dashboard-action-bar {
+            .admin-sidebar, .admin-topbar, .pipeline-tabs-wrapper, .lifecycle-tabs-bar, .dashboard-action-bar {
                 display: none !important;
             }
             .admin-main-wrapper {
@@ -732,21 +695,49 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 1rem;
-            padding: 0.25rem 0;
+            padding: 1.25rem;
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
         }
 
         .dashboard-action-title {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
+            display: grid;
+            width: 100%;
+            min-width: 0;
+            gap: 1rem;
         }
 
         .dashboard-action-title h2 {
             font-size: 1.15rem;
-            font-weight: 800;
+            font-weight: 700;
             color: var(--text-heading);
             margin: 0;
             letter-spacing: -0.01em;
+            line-height: 1.4;
+        }
+
+        .analytics-history-back {
+            display: inline-flex; justify-self: start; align-items: center; gap: 0.5rem;
+            min-height: 40px; padding: 0.5rem 0.75rem; text-decoration: none;
+            font-size: 0.8rem; font-weight: 600; border-radius: var(--radius-md);
+            border: 1px solid var(--border-medium); background: #ffffff; color: var(--text-heading);
+        }
+        .analytics-history-back svg { flex-shrink: 0; }
+        .analytics-history-back:hover { background: var(--brand-subtle); border-color: var(--brand-border); color: var(--brand-primary); }
+        .analytics-history-back:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 3px; }
+        .analytics-event-summary {
+            display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+            gap: 1rem 1.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;
+        }
+        .analytics-event-name { grid-column: 1 / -1; }
+        .analytics-event-fact { display: grid; align-content: start; gap: 0.35rem; min-width: 0; }
+        .analytics-fact-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
+        .analytics-fact-value { font-size: 0.875rem; font-weight: 600; color: var(--text-heading); overflow-wrap: anywhere; }
+        .analytics-event-name .analytics-fact-value { font-size: 1.05rem; }
+        .analytics-fact-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+        @media (max-width: 640px) {
+            .analytics-event-summary { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
         }
 
         .dashboard-badge-live {
@@ -815,15 +806,44 @@
         /* Reservation chart shares the demographics card structure and legend. */
         .reservation-bento-card { grid-column: 2; grid-row: 2; }
         .executive-bento-grid > * { min-width: 0; }
-        .reservation-pie { position: relative; width: 128px; height: 128px; border-radius: 50%; background: conic-gradient(var(--accent-emerald) 0deg var(--reserved-angle), var(--accent-rose) var(--reserved-angle) 360deg); }
-        .reservation-pie::after { content: ""; position: absolute; inset: 25.3333px; border-radius: 50%; background: #ffffff; }
-        .reservation-pie.is-empty { background: var(--border-color); }
         .reservation-center-label { position: absolute; text-align: center; pointer-events: none; }
         .reservation-center-count { font-size: 1.25rem; font-weight: 800; color: var(--text-heading); font-family: var(--font-mono); line-height: 1.1; }
         .reservation-center-caption { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
         .reserved-swatch { background: var(--accent-emerald); }
         .cancelled-swatch { background: var(--accent-rose); }
         .reservation-chart-summary { margin: 0.35rem 0 0; color: var(--text-muted); font-size: 0.75rem; line-height: 1.5; text-align: center; }
+        .roster-controls { width: 100%; display: flex; align-items: center; flex-wrap: wrap; gap: 0.65rem; }
+        .roster-controls .search-box-wrapper { flex: 1 1 280px; max-width: none; min-width: 0; }
+        .roster-controls .search-input { box-sizing: border-box; font-size: 0.8rem; min-height: 40px; }
+        .roster-controls .filter-dropdowns-group { display: flex; flex: 1 1 580px; flex-wrap: wrap; gap: 0.5rem; }
+        .roster-controls .filter-select,
+        .roster-controls .btn-clear-filters {
+            min-width: 0;
+            flex: 1 1 150px;
+            min-height: 40px;
+            padding: 0.5rem;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            background: #ffffff;
+            color: var(--text-heading);
+            font-family: inherit;
+            font-size: 0.78rem;
+            cursor: pointer;
+        }
+        .roster-controls .filter-select:hover,
+        .roster-controls .btn-clear-filters:hover { border-color: var(--brand-primary); background-color: var(--brand-subtle); }
+        .roster-controls .filter-select:focus-visible,
+        .roster-controls .btn-clear-filters:focus-visible,
+        .pie-legend-row:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+        .pie-empty-message { color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem; text-align: center; }
+        @media (max-width: 480px) {
+            .roster-controls .filter-dropdowns-group { display: grid; grid-template-columns: minmax(0, 1fr); }
+            .roster-controls .filter-select, .roster-controls .btn-clear-filters { width: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .pie-slice { transition: none; }
+            .pie-slice:hover, .pie-slice.is-highlighted { transform: none; }
+        }
 
         /* Demographics Bento Card Layout */
         .demographics-header-compact {
@@ -1420,6 +1440,7 @@
 
         .roster-toolbar {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: space-between;
             padding: 0.85rem 1.25rem;
@@ -1427,6 +1448,9 @@
             border-bottom: 1px solid var(--border-subtle);
             gap: 1rem;
         }
+
+        .roster-filter-summary { width: 100%; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; }
+        .roster-filter-empty { padding: 1.25rem; margin: 0; color: var(--text-muted); text-align: center; font-size: 0.85rem; }
 
         .search-box-wrapper {
             position: relative;

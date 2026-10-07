@@ -18,7 +18,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
         internal void SaveManagedProfile(SqlConnection connection, SqlTransaction transaction, int userId, StudentProfile profile)
         {
             string existingId = null;
-            using (var command = new SqlCommand("SELECT StudentId FROM dbo.StudentTable WITH (UPDLOCK, HOLDLOCK) WHERE UserId = @UserId;", connection, transaction))
+            using (var command = new SqlCommand("dbo.usp_Student_SaveManagedProfile_Command1", connection, transaction) { CommandType = CommandType.StoredProcedure })
             {
                 command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int) { Value = userId });
                 using (var reader = command.ExecuteReader())
@@ -29,13 +29,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
             }
             if (existingId != null && !string.Equals(existingId, profile.StudentId.Trim(), StringComparison.Ordinal))
                 throw new InvalidOperationException("Student ID cannot be changed through account management.");
-            const string update = @"UPDATE dbo.StudentTable SET FirstName=@FirstName, MiddleName=@MiddleName,
-                LastName=@LastName, Gender=@Gender, CampusBranch=@CampusBranch, Department=@Department, Program=@Program
-                WHERE UserId=@UserId AND StudentId=@StudentId;";
-            const string insert = @"INSERT INTO dbo.StudentTable
-                (StudentId, FirstName, MiddleName, LastName, Gender, CampusBranch, Department, Program, UserId)
-                VALUES (@StudentId, @FirstName, @MiddleName, @LastName, @Gender, @CampusBranch, @Department, @Program, @UserId);";
-            using (var command = new SqlCommand(existingId == null ? insert : update, connection, transaction))
+            const string update = "dbo.usp_Student_SaveManagedProfile_update";
+            const string insert = "dbo.usp_Student_SaveManagedProfile_insert";
+            using (var command = new SqlCommand(existingId == null ? insert : update, connection, transaction) { CommandType = CommandType.StoredProcedure })
             {
                 command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int) { Value = userId });
                 command.Parameters.Add(new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = profile.StudentId.Trim() });
@@ -58,37 +54,22 @@ namespace _241611JalopEventsManagement.Backend.Repository
         {
             var list = new List<StudentProfile>();
 
-            string sql = @"
-                SELECT s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, 
-                       s.CampusBranch, s.Department, s.Program, s.UserId, s.BirthDate,
-                       u.Email, u.IsActive
-                FROM dbo.StudentTable s
-                INNER JOIN dbo.UserTable u ON s.UserId = u.UserId
-                WHERE 1=1";
+            string sql = "dbo.usp_Student_GetAllStudents";
 
             var parameters = new List<SqlParameter>();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                sql += @" AND (
-                    s.StudentId LIKE @Search OR 
-                    s.FirstName LIKE @Search OR 
-                    s.LastName LIKE @Search OR 
-                    (s.FirstName + ' ' + s.LastName) LIKE @Search OR
-                    u.Email LIKE @Search
-                )";
                 parameters.Add(new SqlParameter("@Search", SqlDbType.NVarChar, 150) { Value = $"%{search.Trim()}%" });
             }
 
             if (!string.IsNullOrWhiteSpace(department) && department != "ALL")
             {
-                sql += " AND s.Department = @Department";
                 parameters.Add(new SqlParameter("@Department", SqlDbType.NVarChar, 100) { Value = department.Trim() });
             }
 
             if (!string.IsNullOrWhiteSpace(program) && program != "ALL")
             {
-                sql += " AND s.Program = @Program";
                 parameters.Add(new SqlParameter("@Program", SqlDbType.NVarChar, 100) { Value = program.Trim() });
             }
 
@@ -96,17 +77,15 @@ namespace _241611JalopEventsManagement.Backend.Repository
             {
                 if (status.Equals("Active", StringComparison.OrdinalIgnoreCase))
                 {
-                    sql += " AND u.IsActive = 1";
+                    parameters.Add(new SqlParameter("@Status", SqlDbType.VarChar, 50) { Value = "Active" });
                 }
                 else if (status.Equals("Suspended", StringComparison.OrdinalIgnoreCase) || status.Equals("Inactive", StringComparison.OrdinalIgnoreCase))
                 {
-                    sql += " AND u.IsActive = 0";
+                    parameters.Add(new SqlParameter("@Status", SqlDbType.VarChar, 50) { Value = "Inactive" });
                 }
             }
 
-            sql += " ORDER BY s.StudentId ASC;";
-
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, parameters.ToArray());
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, parameters.ToArray());
             if (dt != null && dt.Rows.Count > 0)
             {
                 foreach (DataRow row in dt.Rows)
@@ -128,16 +107,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return null;
             }
 
-            const string sql = @"
-                SELECT s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, 
-                       s.CampusBranch, s.Department, s.Program, s.UserId, s.BirthDate,
-                       u.Email, u.IsActive
-                FROM dbo.StudentTable s
-                INNER JOIN dbo.UserTable u ON s.UserId = u.UserId
-                WHERE s.StudentId = @StudentId;";
+            const string sql = "dbo.usp_Student_GetStudentById";
 
             var param = new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = studentId.Trim() };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -157,16 +130,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return null;
             }
 
-            const string sql = @"
-                SELECT s.StudentId, s.FirstName, s.MiddleName, s.LastName, s.Gender, 
-                       s.CampusBranch, s.Department, s.Program, s.UserId, s.BirthDate,
-                       u.Email, u.IsActive
-                FROM dbo.StudentTable s
-                INNER JOIN dbo.UserTable u ON s.UserId = u.UserId
-                WHERE s.UserId = @UserId;";
+            const string sql = "dbo.usp_Student_GetStudentByUserId";
 
             var param = new SqlParameter("@UserId", SqlDbType.Int) { Value = userId };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -210,15 +177,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 try
                 {
                     // 1. Check if Email or StudentId already exists
-                    const string checkSql = @"
-                        IF EXISTS (SELECT 1 FROM dbo.UserTable WHERE Email = @Email)
-                            SELECT 1;
-                        ELSE IF EXISTS (SELECT 1 FROM dbo.StudentTable WHERE StudentId = @StudentId)
-                            SELECT 2;
-                        ELSE
-                            SELECT 0;";
+                    const string checkSql = "dbo.usp_Student_CreateStudentWithAccount_checkSql";
 
-                    using (var checkCmd = new SqlCommand(checkSql, conn, trans))
+                    using (var checkCmd = new SqlCommand(checkSql, conn, trans) { CommandType = CommandType.StoredProcedure })
                     {
                         checkCmd.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = student.Email.Trim() });
                         checkCmd.Parameters.Add(new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = student.StudentId.Trim() });
@@ -236,12 +197,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
                     // 2. Insert into dbo.UserTable
                     int newUserId;
-                    const string insertUserSql = @"
-                        INSERT INTO dbo.UserTable (Email, PasswordHash, PasswordSalt, Role, IsActive)
-                        VALUES (@Email, @PasswordHash, @PasswordSalt, @Role, @IsActive);
-                        SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                    const string insertUserSql = "dbo.usp_Student_CreateStudentWithAccount_insertUserSql";
 
-                    using (var userCmd = new SqlCommand(insertUserSql, conn, trans))
+                    using (var userCmd = new SqlCommand(insertUserSql, conn, trans) { CommandType = CommandType.StoredProcedure })
                     {
                         userCmd.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = student.Email.Trim() });
                         userCmd.Parameters.Add(new SqlParameter("@PasswordHash", SqlDbType.VarChar, 256) { Value = hash });
@@ -252,17 +210,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     }
 
                     // 3. Insert into dbo.StudentTable
-                    const string insertStudentSql = @"
-                        INSERT INTO dbo.StudentTable (
-                            StudentId, FirstName, MiddleName, LastName, Gender, CampusBranch, 
-                            Department, Program, UserId, BirthDate
-                        )
-                        VALUES (
-                            @StudentId, @FirstName, @MiddleName, @LastName, @Gender, @CampusBranch, 
-                            @Department, @Program, @UserId, @BirthDate
-                        );";
+                    const string insertStudentSql = "dbo.usp_Student_CreateStudentWithAccount_insertStudentSql";
 
-                    using (var studentCmd = new SqlCommand(insertStudentSql, conn, trans))
+                    using (var studentCmd = new SqlCommand(insertStudentSql, conn, trans) { CommandType = CommandType.StoredProcedure })
                     {
                         studentCmd.Parameters.Add(new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = student.StudentId.Trim() });
                         studentCmd.Parameters.Add(new SqlParameter("@FirstName", SqlDbType.NVarChar, 100) { Value = student.FirstName.Trim() });
@@ -306,19 +256,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 try
                 {
                     // 1. Update StudentTable
-                    const string studentSql = @"
-                        UPDATE dbo.StudentTable 
-                        SET FirstName = @FirstName,
-                            MiddleName = @MiddleName,
-                            LastName = @LastName,
-                            Gender = @Gender,
-                            CampusBranch = @CampusBranch,
-                            Department = @Department,
-                            Program = @Program,
-                            BirthDate = @BirthDate
-                        WHERE StudentId = @StudentId;";
+                    const string studentSql = "dbo.usp_Student_UpdateStudentFull_studentSql";
 
-                    using (var cmd = new SqlCommand(studentSql, conn, trans))
+                    using (var cmd = new SqlCommand(studentSql, conn, trans) { CommandType = CommandType.StoredProcedure })
                     {
                         cmd.Parameters.Add(new SqlParameter("@FirstName", SqlDbType.NVarChar, 100) { Value = student.FirstName.Trim() });
                         cmd.Parameters.Add(new SqlParameter("@MiddleName", SqlDbType.NVarChar, 100) { Value = (object)student.MiddleName?.Trim() ?? DBNull.Value });
@@ -336,12 +276,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
                     // 2. Update UserTable email if provided
                     if (!string.IsNullOrWhiteSpace(student.Email))
                     {
-                        const string userSql = @"
-                            UPDATE dbo.UserTable
-                            SET Email = @Email
-                            WHERE UserId = (SELECT UserId FROM dbo.StudentTable WHERE StudentId = @StudentId);";
+                        const string userSql = "dbo.usp_Student_UpdateStudentFull_userSql";
 
-                        using (var userCmd = new SqlCommand(userSql, conn, trans))
+                        using (var userCmd = new SqlCommand(userSql, conn, trans) { CommandType = CommandType.StoredProcedure })
                         {
                             userCmd.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = student.Email.Trim() });
                             userCmd.Parameters.Add(new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = student.StudentId.Trim() });
@@ -370,10 +307,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = @"
-                UPDATE dbo.UserTable 
-                SET IsActive = @IsActive 
-                WHERE UserId = (SELECT UserId FROM dbo.StudentTable WHERE StudentId = @StudentId);";
+            const string sql = "dbo.usp_Student_ToggleStudentStatus";
 
             var parameters = new[]
             {
@@ -381,7 +315,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = studentId.Trim() }
             };
 
-            int rows = DatabaseConnection.ExecuteNonQuery(sql, parameters);
+            int rows = DatabaseConnection.ExecuteProcedureNonQuery(sql, parameters);
             return rows > 0;
         }
 
@@ -398,11 +332,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             string salt = PasswordHelper.GenerateSalt();
             string hash = PasswordHelper.HashPassword(newPlainPassword, salt);
 
-            const string sql = @"
-                UPDATE dbo.UserTable 
-                SET PasswordHash = @PasswordHash,
-                    PasswordSalt = @PasswordSalt
-                WHERE UserId = (SELECT UserId FROM dbo.StudentTable WHERE StudentId = @StudentId);";
+            const string sql = "dbo.usp_Student_ResetStudentPassword";
 
             var parameters = new[]
             {
@@ -411,7 +341,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = studentId.Trim() }
             };
 
-            int rows = DatabaseConnection.ExecuteNonQuery(sql, parameters);
+            int rows = DatabaseConnection.ExecuteProcedureNonQuery(sql, parameters);
             return rows > 0;
         }
 
@@ -425,10 +355,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = "SELECT COUNT(1) FROM dbo.StudentTable WHERE StudentId = @StudentId;";
+            const string sql = "dbo.usp_Student_StudentIdExists";
             var param = new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = studentId.Trim() };
 
-            object result = DatabaseConnection.ExecuteScalar(sql, param);
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql, param);
             return Convert.ToInt32(result) > 0;
         }
 
@@ -442,10 +372,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = "SELECT COUNT(1) FROM dbo.UserTable WHERE Email = @Email;";
+            const string sql = "dbo.usp_Student_EmailExists";
             var param = new SqlParameter("@Email", SqlDbType.NVarChar, 150) { Value = email.Trim() };
 
-            object result = DatabaseConnection.ExecuteScalar(sql, param);
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql, param);
             return Convert.ToInt32(result) > 0;
         }
 
@@ -463,8 +393,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
             var list = new List<string>();
             try
             {
-                const string sql = "SELECT DISTINCT Department FROM dbo.StudentTable WHERE Department IS NOT NULL AND Department <> '' ORDER BY Department ASC;";
-                DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+                const string sql = "dbo.usp_Student_GetDistinctDepartments";
+                DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql);
                 if (dt != null)
                 {
                     foreach (DataRow row in dt.Rows)
@@ -507,8 +437,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
             var list = new List<string>();
             try
             {
-                const string sql = "SELECT DISTINCT Program FROM dbo.StudentTable WHERE Program IS NOT NULL AND Program <> '' ORDER BY Program ASC;";
-                DataTable dt = DatabaseConnection.ExecuteDataTable(sql);
+                const string sql = "dbo.usp_Student_GetDistinctPrograms";
+                DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql);
                 if (dt != null)
                 {
                     foreach (DataRow row in dt.Rows)

@@ -16,12 +16,9 @@ namespace _241611JalopEventsManagement.Backend.Repository
             if (cancellation == null || !cancellation.IsValid) return false;
             EventRepository.SynchronizeCompletedEvents();
 
-            const string sql = @"
-                UPDATE dbo.EventsTable
-                SET Status = 'Cancelled', CancellationReason = @Reason
-                WHERE EventId = @EventId AND Status = 'Upcoming' AND EventEnd > GETDATE();";
+            const string sql = "dbo.usp_EventCancellation_CancelEvent";
 
-            return DatabaseConnection.ExecuteNonQuery(sql,
+            return DatabaseConnection.ExecuteProcedureNonQuery(sql,
                 new SqlParameter("@EventId", SqlDbType.Int) { Value = cancellation.EventId },
                 new SqlParameter("@Reason", SqlDbType.NVarChar, EventCancellationModel.MaximumReasonLength)
                     { Value = cancellation.NormalizedReason }) == 1;

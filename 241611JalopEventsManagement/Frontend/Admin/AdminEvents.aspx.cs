@@ -19,12 +19,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             set => ViewState["CurrentStatusFilter"] = value;
         }
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-            _241611JalopEventsManagement.Backend.Helpers.EventCollegeOptions.Bind(ddlDepartmentFilter);
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -105,13 +99,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 filtered = filtered.Where(ev => string.Equals(GetEventMatrixStatus(ev), CurrentStatusFilter, StringComparison.OrdinalIgnoreCase));
             }
 
-            // 5. Apply Department Filter
-            string dept = ddlDepartmentFilter.SelectedValue;
-            if (!string.IsNullOrWhiteSpace(dept))
-            {
-                filtered = filtered.Where(ev => string.Equals(ev.TargetDepartment, dept, StringComparison.OrdinalIgnoreCase));
-            }
-
             // 6. Apply Search Keyword Filter
             string keyword = txtSearch.Text?.Trim();
             if (!string.IsNullOrWhiteSpace(keyword))
@@ -184,23 +171,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             BindEventsMatrix();
         }
 
-        protected void ddlDepartmentFilter_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            BindEventsMatrix();
-        }
-
         protected void btnResetFilter_Click(object sender, EventArgs e)
         {
             CurrentStatusFilter = "All";
             txtSearch.Text = string.Empty;
-            ddlDepartmentFilter.SelectedIndex = 0;
             BindEventsMatrix();
-        }
-
-        protected void rptEventsMatrix_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "RequestCancel" && int.TryParse(e.CommandArgument?.ToString(), out int eventId))
-                OpenCancellationDialog(eventId);
         }
 
         private void OpenCancellationDialog(int eventId)
@@ -256,7 +231,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 {
                     CurrentStatusFilter = "All";
                     txtSearch.Text = string.Empty;
-                    ddlDepartmentFilter.SelectedIndex = 0;
                 }
                 BindEventsMatrix();
                 ShowFeedback(success

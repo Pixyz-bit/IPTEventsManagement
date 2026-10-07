@@ -2,6 +2,8 @@
 
 Cancelled events are excluded from registration. Existing passes show **EVENT CANCELLED**, display the recorded reason, generate no QR, and hide the download action. Missing registrations redirect to the dashboard instead of generating a mock admission pass. Scanner commits independently reject cancelled events. See [the cancellation flow](11_AdminDashboard.md).
 
+The dashboard hero carousel includes every event returned by the student's eligible upcoming-event catalog, in event-start order. It has no four-event cap; the existing audience eligibility rules still apply.
+
 - **Document ID:** `17_StudentEventRegistrationAndPass.md`
 - **Location:** 
   - `Frontend/User/EventRegistration.aspx`, `.cs`, `.designer.cs`

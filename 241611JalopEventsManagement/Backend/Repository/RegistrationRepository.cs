@@ -41,62 +41,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
             if (registration.CurrentYearLvl < 1 || registration.CurrentYearLvl > 5) return -3;
 
-            const string sql = @"
-                BEGIN TRANSACTION;
-
-                DECLARE @Branch NVARCHAR(100), @Department NVARCHAR(100), @Program NVARCHAR(100),
-                        @YearLevel INT = @CurrentYearLvl, @StudentExists BIT = 0;
-                SELECT @Branch = LTRIM(RTRIM(CampusBranch)), @Department = LTRIM(RTRIM(Department)),
-                       @Program = LTRIM(RTRIM(Program)), @StudentExists = 1
-                FROM dbo.StudentTable WITH (HOLDLOCK) WHERE StudentId = @StudentId;
-
-                DECLARE @Current INT, @Max INT, @RegStart DATETIME, @RegEnd DATETIME, @EventEnd DATETIME, @EvtStatus VARCHAR(50);
-                SELECT @Current = CurrentRegistrations, 
-                       @Max = MaxCapacity,
-                       @RegStart = RegStart,
-                       @RegEnd = RegEnd,
-                       @EventEnd = EventEnd,
-                       @EvtStatus = Status
-                FROM dbo.EventsTable WITH (UPDLOCK, HOLDLOCK)
-                WHERE EventId = @EventId;
-
-                -- Registration is strictly permitted during the event's registration window
-                IF @EvtStatus IS NULL OR @EvtStatus != 'Upcoming' OR GETDATE() < @RegStart OR GETDATE() > @RegEnd OR GETDATE() >= @EventEnd
-                BEGIN
-                    ROLLBACK TRANSACTION;
-                    SELECT -2; -- Registration window closed or event inactive
-                END
-                ELSE IF @Current >= @Max
-                BEGIN
-                    ROLLBACK TRANSACTION;
-                    SELECT -1; -- Venue capacity reached
-                END
-                ELSE IF @StudentExists = 0 OR NOT EXISTS (
-                    SELECT 1 FROM dbo.EventsTable WHERE EventId = @EventId
-                    " + EventRepository.AudienceEligibilitySql + @")
-                BEGIN
-                    ROLLBACK TRANSACTION;
-                    SELECT -3; -- Student does not meet the event audience restrictions
-                END
-                ELSE
-                BEGIN
-                    -- Default status right after registration is 'NoShow'
-                    INSERT INTO dbo.EventRegistrationTable (
-                        EventId, StudentId, CurrentYearLvl, CurrentSection, Status, CheckInTimestamp
-                    )
-                    VALUES (
-                        @EventId, @StudentId, @CurrentYearLvl, @CurrentSection, 'NoShow', NULL
-                    );
-
-                    DECLARE @NewId INT = CAST(SCOPE_IDENTITY() AS INT);
-
-                    UPDATE dbo.EventsTable
-                    SET CurrentRegistrations = CurrentRegistrations + 1
-                    WHERE EventId = @EventId;
-
-                    COMMIT TRANSACTION;
-                    SELECT @NewId;
-                END";
+            const string sql = "dbo.usp_Registration_RegisterStudent";
 
             var parameters = new[]
             {
@@ -106,7 +51,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@CurrentSection", SqlDbType.VarChar, 50) { Value = registration.CurrentSection?.Trim() ?? string.Empty }
             };
 
-            object result = DatabaseConnection.ExecuteScalar(sql, parameters);
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql, parameters);
             int newId = result != null && int.TryParse(result.ToString(), out int parsed) ? parsed : -1;
 
             if (newId > 0)
@@ -127,12 +72,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = @"
-                SELECT COUNT(1) 
-                FROM dbo.EventRegistrationTable 
-                WHERE EventId = @EventId 
-                  AND StudentId = @StudentId 
-                  AND Status != 'Cancelled';";
+            const string sql = "dbo.usp_Registration_IsStudentRegistered";
 
             var parameters = new[]
             {
@@ -140,7 +80,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = studentId.Trim() }
             };
 
-            object result = DatabaseConnection.ExecuteScalar(sql, parameters);
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql, parameters);
             return Convert.ToInt32(result) > 0;
         }
 
@@ -155,22 +95,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return null;
             }
 
-            const string sql = @"
-                SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
-                       r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
-                       e.EventPhotoPath,
-                       s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
-                       s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
-                       u.Email AS StudentEmail
-                FROM dbo.EventRegistrationTable r
-                INNER JOIN dbo.EventsTable e ON r.EventId = e.EventId
-                INNER JOIN dbo.StudentTable s ON r.StudentId = s.StudentId
-                LEFT JOIN dbo.UserTable u ON s.UserId = u.UserId
-                WHERE r.EventRegistrationId = @EventRegistrationId;";
+            const string sql = "dbo.usp_Registration_GetRegistrationById";
 
             var param = new SqlParameter("@EventRegistrationId", SqlDbType.Int) { Value = eventRegistrationId };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -192,23 +120,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return list;
             }
 
-            const string sql = @"
-                SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
-                       r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
-                       e.EventPhotoPath,
-                       s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
-                       s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
-                       u.Email AS StudentEmail
-                FROM dbo.EventRegistrationTable r
-                INNER JOIN dbo.EventsTable e ON r.EventId = e.EventId
-                INNER JOIN dbo.StudentTable s ON r.StudentId = s.StudentId
-                LEFT JOIN dbo.UserTable u ON s.UserId = u.UserId
-                WHERE r.StudentId = @StudentId
-                ORDER BY e.EventStart DESC;";
+            const string sql = "dbo.usp_Registration_GetRegistrationsByStudent";
 
             var param = new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = studentId.Trim() };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null)
             {
@@ -233,23 +148,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return list;
             }
 
-            const string sql = @"
-                SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
-                       r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
-                       e.EventPhotoPath,
-                       s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
-                       s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
-                       u.Email AS StudentEmail
-                FROM dbo.EventRegistrationTable r
-                INNER JOIN dbo.EventsTable e ON r.EventId = e.EventId
-                INNER JOIN dbo.StudentTable s ON r.StudentId = s.StudentId
-                LEFT JOIN dbo.UserTable u ON s.UserId = u.UserId
-                WHERE r.EventId = @EventId
-                ORDER BY r.EventRegistrationId ASC;";
+            const string sql = "dbo.usp_Registration_GetRegistrationsByEvent";
 
             var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null)
             {
@@ -272,9 +174,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = @"SELECT EventRegistrationId FROM dbo.EventRegistrationTable
-                WHERE EventId = @EventId AND StudentId = @StudentId;";
-            object id = DatabaseConnection.ExecuteScalar(sql,
+            const string sql = "dbo.usp_Registration_CheckInStudent";
+            object id = DatabaseConnection.ExecuteProcedureScalar(sql,
                 new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId },
                 new SqlParameter("@StudentId", SqlDbType.VarChar, 50) { Value = studentId.Trim() });
             return id != null && id != DBNull.Value && ConfirmCheckIn(Convert.ToInt32(id), out _);
@@ -287,8 +188,8 @@ namespace _241611JalopEventsManagement.Backend.Repository
         {
             try
             {
-                const string sql = "SELECT COUNT(*) FROM dbo.EventRegistrationTable WHERE Status = 'Present';";
-                object result = DatabaseConnection.ExecuteScalar(sql);
+                const string sql = "dbo.usp_Registration_GetTotalPresentAttendees";
+                object result = DatabaseConnection.ExecuteProcedureScalar(sql);
                 return result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
             }
             catch
@@ -314,15 +215,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
 
             try
             {
-                const string sql = @"
-                    SELECT 
-                        COUNT(CASE WHEN Status != 'Cancelled' THEN 1 END) AS TotalRegistered,
-                        COUNT(CASE WHEN Status = 'Present' THEN 1 END) AS TotalCheckedIn
-                    FROM dbo.EventRegistrationTable
-                    WHERE EventId = @EventId;";
+                const string sql = "dbo.usp_Registration_GetEventAttendanceSummary";
 
                 var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
-                DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+                DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     summary.TotalRegistered = dt.Rows[0]["TotalRegistered"] != DBNull.Value ? Convert.ToInt32(dt.Rows[0]["TotalRegistered"]) : 0;
@@ -349,45 +245,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = @"
-                BEGIN TRANSACTION;
-
-                DECLARE @EvtId INT, @CurStatus VARCHAR(50), @RegEnd DATETIME, @EventEnd DATETIME, @EvtStatus VARCHAR(50);
-
-                SELECT @EvtId = r.EventId, 
-                       @CurStatus = r.Status, 
-                       @RegEnd = e.RegEnd, @EvtStatus = e.Status
-                FROM dbo.EventRegistrationTable r WITH (UPDLOCK, HOLDLOCK)
-                INNER JOIN dbo.EventsTable e WITH (UPDLOCK, HOLDLOCK) ON r.EventId = e.EventId
-                WHERE r.EventRegistrationId = @EventRegistrationId;
-
-                -- Strictly enforce: 
-                -- 1. Status must be default 'NoShow' (cannot cancel if already 'Present' or 'Cancelled')
-                -- 2. Current time must be within registration window (GETDATE() <= RegEnd)
-                IF @EvtId IS NOT NULL AND @CurStatus = 'NoShow' AND GETDATE() <= @RegEnd AND @EvtStatus = 'Upcoming' AND EXISTS (SELECT 1 FROM dbo.EventsTable WHERE EventId = @EvtId AND EventEnd > GETDATE())
-                BEGIN
-                    UPDATE dbo.EventRegistrationTable
-                    SET Status = 'Cancelled'
-                    WHERE EventRegistrationId = @EventRegistrationId;
-
-                    UPDATE dbo.EventsTable
-                    SET CurrentRegistrations = CASE 
-                                                WHEN CurrentRegistrations > 0 THEN CurrentRegistrations - 1 
-                                                ELSE 0 
-                                               END
-                    WHERE EventId = @EvtId;
-
-                    COMMIT TRANSACTION;
-                    SELECT 1;
-                END
-                ELSE
-                BEGIN
-                    ROLLBACK TRANSACTION;
-                    SELECT 0;
-                END";
+            const string sql = "dbo.usp_Registration_CancelRegistration";
 
             var param = new SqlParameter("@EventRegistrationId", SqlDbType.Int) { Value = eventRegistrationId };
-            object result = DatabaseConnection.ExecuteScalar(sql, param);
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql, param);
 
             return Convert.ToInt32(result) > 0;
         }
@@ -403,40 +264,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = @"
-                BEGIN TRANSACTION;
-
-                DECLARE @EvtId INT, @CurStatus VARCHAR(50);
-
-                SELECT @EvtId = r.EventId, 
-                       @CurStatus = r.Status
-                FROM dbo.EventRegistrationTable r WITH (UPDLOCK, HOLDLOCK)
-                WHERE r.EventRegistrationId = @EventRegistrationId;
-
-                IF @EvtId IS NOT NULL AND @CurStatus != 'Cancelled'
-                BEGIN
-                    UPDATE dbo.EventRegistrationTable
-                    SET Status = 'Cancelled'
-                    WHERE EventRegistrationId = @EventRegistrationId;
-
-                    UPDATE dbo.EventsTable
-                    SET CurrentRegistrations = CASE 
-                                                WHEN CurrentRegistrations > 0 THEN CurrentRegistrations - 1 
-                                                ELSE 0 
-                                               END
-                    WHERE EventId = @EvtId;
-
-                    COMMIT TRANSACTION;
-                    SELECT 1;
-                END
-                ELSE
-                BEGIN
-                    ROLLBACK TRANSACTION;
-                    SELECT 0;
-                END";
+            const string sql = "dbo.usp_Registration_AdminVoidRegistration";
 
             var param = new SqlParameter("@EventRegistrationId", SqlDbType.Int) { Value = eventRegistrationId };
-            object result = DatabaseConnection.ExecuteScalar(sql, param);
+            object result = DatabaseConnection.ExecuteProcedureScalar(sql, param);
 
             return Convert.ToInt32(result) > 0;
         }
@@ -479,20 +310,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
             }
 
             // 1. Check in target event
-            const string sqlTargetEvent = @"
-                SELECT TOP 1 r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
-                       r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
-                       e.EventPhotoPath,
-                       s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
-                       s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
-                       u.Email AS StudentEmail
-                FROM dbo.EventRegistrationTable r
-                INNER JOIN dbo.EventsTable e ON r.EventId = e.EventId
-                INNER JOIN dbo.StudentTable s ON r.StudentId = s.StudentId
-                LEFT JOIN dbo.UserTable u ON s.UserId = u.UserId
-                WHERE r.EventId = @EventId 
-                  AND (r.EventRegistrationId = @ParsedId OR r.StudentId = @Query OR u.Email = @Query);";
+            const string sqlTargetEvent = "dbo.usp_Registration_GetRegistrationForScan_sqlTargetEvent";
 
             var targetParams = new[]
             {
@@ -501,27 +319,14 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@Query", SqlDbType.VarChar, 100) { Value = cleaned }
             };
 
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sqlTargetEvent, targetParams);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sqlTargetEvent, targetParams);
             if (dt != null && dt.Rows.Count > 0)
             {
                 return MapRowToRegistration(dt.Rows[0]);
             }
 
             // 2. Check across any event to detect wrong-event pass
-            const string sqlAnyEvent = @"
-                SELECT TOP 1 r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
-                       r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
-                       e.EventPhotoPath,
-                       s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
-                       s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
-                       u.Email AS StudentEmail
-                FROM dbo.EventRegistrationTable r
-                INNER JOIN dbo.EventsTable e ON r.EventId = e.EventId
-                INNER JOIN dbo.StudentTable s ON r.StudentId = s.StudentId
-                LEFT JOIN dbo.UserTable u ON s.UserId = u.UserId
-                WHERE (r.EventRegistrationId = @ParsedId OR r.StudentId = @Query OR u.Email = @Query)
-                ORDER BY r.EventRegistrationId DESC;";
+            const string sqlAnyEvent = "dbo.usp_Registration_GetRegistrationForScan_sqlAnyEvent";
 
             var anyParams = new[]
             {
@@ -529,7 +334,7 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 new SqlParameter("@Query", SqlDbType.VarChar, 100) { Value = cleaned }
             };
 
-            DataTable dtAny = DatabaseConnection.ExecuteDataTable(sqlAnyEvent, anyParams);
+            DataTable dtAny = DatabaseConnection.ExecuteProcedureDataTable(sqlAnyEvent, anyParams);
             if (dtAny != null && dtAny.Rows.Count > 0)
             {
                 return MapRowToRegistration(dtAny.Rows[0]);
@@ -552,52 +357,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return false;
             }
 
-            const string sql = @"
-                SET XACT_ABORT ON;
-                BEGIN TRANSACTION;
-
-                DECLARE @CurStatus VARCHAR(50), @EventId INT, @EvtStatus VARCHAR(50), @EventEnd DATETIME;
-
-                SELECT @CurStatus = Status, @EventId = EventId
-                FROM dbo.EventRegistrationTable WITH (UPDLOCK, HOLDLOCK)
-                WHERE EventRegistrationId = @EventRegistrationId;
-
-                SELECT @EvtStatus = Status, @EventEnd = EventEnd FROM dbo.EventsTable WITH (UPDLOCK, HOLDLOCK)
-                WHERE EventId = @EventId;
-
-                IF @CurStatus IS NULL
-                BEGIN
-                    ROLLBACK TRANSACTION;
-                    SELECT -1; -- Not found
-                END
-                ELSE IF @EvtStatus IS NULL OR @EvtStatus <> 'Upcoming' OR GETDATE() >= @EventEnd
-                BEGIN
-                    ROLLBACK TRANSACTION;
-                    SELECT -4; -- Cancelled or inactive event
-                END
-                ELSE IF @CurStatus = 'Present'
-                BEGIN
-                    ROLLBACK TRANSACTION;
-                    SELECT -2; -- Already checked in
-                END
-                ELSE IF @CurStatus = 'Cancelled'
-                BEGIN
-                    ROLLBACK TRANSACTION;
-                    SELECT -3; -- Cancelled pass
-                END
-                ELSE
-                BEGIN
-                    UPDATE dbo.EventRegistrationTable
-                    SET Status = 'Present',
-                        CheckInTimestamp = GETDATE()
-                    WHERE EventRegistrationId = @EventRegistrationId;
-
-                    COMMIT TRANSACTION;
-                    SELECT 1; -- Success
-                END";
+            const string sql = "dbo.usp_Registration_ConfirmCheckIn";
 
             var param = new SqlParameter("@EventRegistrationId", SqlDbType.Int) { Value = eventRegistrationId };
-            object res = DatabaseConnection.ExecuteScalar(sql, param);
+            object res = DatabaseConnection.ExecuteProcedureScalar(sql, param);
             int code = res != null ? Convert.ToInt32(res) : -1;
 
             if (code == 1)
@@ -637,22 +400,10 @@ namespace _241611JalopEventsManagement.Backend.Repository
                 return list;
             }
 
-            const string sql = @"
-                SELECT r.EventRegistrationId, r.EventId, r.StudentId, r.CurrentYearLvl, r.CurrentSection, 
-                       r.Status, r.CheckInTimestamp,
-                       e.Title AS EventTitle, e.VenueLocation, e.EventStart, e.EventEnd, e.RegStart, e.RegEnd, e.Status AS EventStatus, e.CancellationReason AS EventCancellationReason,
-                       s.FirstName AS StudentFirstName, s.MiddleName AS StudentMiddleName, s.LastName AS StudentLastName, 
-                       s.CampusBranch AS StudentCampusBranch, s.Program AS StudentProgram, s.Department AS StudentDepartment,
-                       u.Email AS StudentEmail
-                FROM dbo.EventRegistrationTable r
-                INNER JOIN dbo.EventsTable e ON r.EventId = e.EventId
-                INNER JOIN dbo.StudentTable s ON r.StudentId = s.StudentId
-                LEFT JOIN dbo.UserTable u ON s.UserId = u.UserId
-                WHERE r.EventId = @EventId AND r.Status = 'Present'
-                ORDER BY r.CheckInTimestamp DESC;";
+            const string sql = "dbo.usp_Registration_GetCheckedInAttendees";
 
             var param = new SqlParameter("@EventId", SqlDbType.Int) { Value = eventId };
-            DataTable dt = DatabaseConnection.ExecuteDataTable(sql, param);
+            DataTable dt = DatabaseConnection.ExecuteProcedureDataTable(sql, param);
 
             if (dt != null)
             {

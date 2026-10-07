@@ -1,7 +1,7 @@
 <%@ Page Title="Students Directory & Identity Master | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="StudentList.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.StudentList" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/student-list.css") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/student-list.css?v=20261007-local-fonts") %>" />
 </asp:Content>
 
 <asp:Content ID="MainArea" ContentPlaceHolderID="MainContent" runat="server">
@@ -110,8 +110,8 @@
                             <span class="branch-text"><%# Eval("CampusBranch") %></span>
                         </td>
                         <td style="text-align: right;">
-                            <asp:LinkButton ID="btnViewStudent" runat="server" CssClass="btn-view-link" CommandName="EditStudent" CommandArgument='<%# Eval("StudentId") %>'>
-                                View &gt;
+                            <asp:LinkButton ID="btnViewStudent" runat="server" CssClass="btn-view-link link-matrix-view" CommandName="EditStudent" CommandArgument='<%# Eval("StudentId") %>'>
+                                View
                             </asp:LinkButton>
                         </td>
                     </tr>

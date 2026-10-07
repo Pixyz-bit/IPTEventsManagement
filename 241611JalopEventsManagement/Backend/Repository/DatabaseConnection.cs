@@ -192,6 +192,45 @@ namespace _241611JalopEventsManagement.Backend.Repository
             return dataTable;
         }
 
+        /// <summary>Runs a stored procedure and preserves its affected-row result.</summary>
+        public static int ExecuteProcedureNonQuery(string procedure, params SqlParameter[] parameters)
+        {
+            using (var conn = GetOpenConnection())
+            using (var cmd = new SqlCommand(procedure, conn) { CommandType = CommandType.StoredProcedure })
+            {
+                if (parameters != null && parameters.Length > 0)
+                    cmd.Parameters.AddRange(parameters);
+                return cmd.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>Returns the first value selected by a stored procedure.</summary>
+        public static object ExecuteProcedureScalar(string procedure, params SqlParameter[] parameters)
+        {
+            using (var conn = GetOpenConnection())
+            using (var cmd = new SqlCommand(procedure, conn) { CommandType = CommandType.StoredProcedure })
+            {
+                if (parameters != null && parameters.Length > 0)
+                    cmd.Parameters.AddRange(parameters);
+                return cmd.ExecuteScalar();
+            }
+        }
+
+        /// <summary>Loads a stored procedure's result into the existing table mapper.</summary>
+        public static DataTable ExecuteProcedureDataTable(string procedure, params SqlParameter[] parameters)
+        {
+            var dataTable = new DataTable();
+            using (var conn = GetOpenConnection())
+            using (var cmd = new SqlCommand(procedure, conn) { CommandType = CommandType.StoredProcedure })
+            {
+                if (parameters != null && parameters.Length > 0)
+                    cmd.Parameters.AddRange(parameters);
+                using (var adapter = new SqlDataAdapter(cmd))
+                    adapter.Fill(dataTable);
+            }
+            return dataTable;
+        }
+
         #endregion
     }
 }

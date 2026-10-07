@@ -6,7 +6,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
     <!-- Optical QR Decoding Library -->
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="<%= ResolveUrl("~/Frontend/Assets/js/vendor/html5-qrcode-2.3.8.min.js") %>"></script>
 
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/attendance-scanner.css") %>?v=<%= DateTime.UtcNow.Ticks %>" />
 </asp:Content>
@@ -69,12 +69,6 @@
                 </div>
             </div>
 
-            <!-- Event Selector Switcher -->
-            <div class="event-switcher">
-                <label for="<%= ddlEvents.ClientID %>">Active Event:</label>
-                <asp:DropDownList ID="ddlEvents" runat="server" CssClass="event-dropdown-select" AutoPostBack="true" OnSelectedIndexChanged="ddlEvents_SelectedIndexChanged">
-                </asp:DropDownList>
-            </div>
         </div>
 
         <!-- Sub-Module Pipeline Progression Tabs -->
@@ -168,7 +162,7 @@
                 </div>
                 <div class="manual-input-row">
                     <input type="text" id="txtManualInput" class="manual-input-box" 
-                           placeholder="Enter Student ID (e.g. 2024-00101) or Ticket Ref (e.g. TCK-0001-00005)..." 
+                           placeholder="Enter Student ID or Ticket Ref" 
                            onkeydown="handleManualInputKeydown(event)" />
                     <button type="button" class="btn-manual-stage" onclick="stageManualLookup()">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

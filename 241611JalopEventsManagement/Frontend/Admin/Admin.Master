@@ -7,12 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><asp:ContentPlaceHolder ID="TitleContent" runat="server">University Admin Portal</asp:ContentPlaceHolder></title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/fonts.css?v=20261007") %>" />
 
     <!-- Enterprise Global Stylesheet & Design Tokens -->
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css?v=20261006-no-dots") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/global.css?v=20261007-local-fonts") %>" />
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />

@@ -86,12 +86,6 @@
                 </div>
             </div>
 
-            <!-- Event Selector Switcher -->
-            <div class="event-switcher">
-                <label for="<%= ddlEvents.ClientID %>">Active Event:</label>
-                <asp:DropDownList ID="ddlEvents" runat="server" CssClass="event-dropdown-select" AutoPostBack="true" OnSelectedIndexChanged="ddlEvents_SelectedIndexChanged">
-                </asp:DropDownList>
-            </div>
         </div>
 
         <!-- Sub-Module Pipeline Progression Tabs -->
@@ -169,11 +163,11 @@
     <!-- Main Content Bento Box Grid -->
     <div class="bento-box-layout">
         
-        <!-- BENTO ROW 1: CELL 1 (Span 8) - Hero Identity & Visual Media Showcase -->
+        <!-- BENTO ROW 1: CELL 1 (Span 8) - Event Overview -->
         <div class="bento-card bento-span-8">
             <div class="bento-card-header">
                 <div class="bento-card-title">
-                    <span>General Event Overview &amp; Branding</span>
+                    <span>Event Overview</span>
                 </div>
                 <span class="event-id-tag">SECTION 01</span>
             </div>
@@ -184,12 +178,12 @@
                     <div class="bento-hero-grid">
                         <div class="bento-hero-info">
                             <div class="kv-item full-width" style="margin-bottom:0.75rem;">
-                                <span class="kv-label">Event Specification Title</span>
+                                <span class="kv-label">Title</span>
                                 <span class="hero-event-title"><asp:Literal ID="litTitleView" runat="server" /></span>
                             </div>
 
                             <div class="kv-item full-width" style="margin-bottom:1rem; flex:1;">
-                                <span class="kv-label">Detailed Event Description &amp; Objectives</span>
+                                <span class="kv-label">Description</span>
                                 <div class="hero-event-desc"><asp:Literal ID="litDescView" runat="server" /></div>
                             </div>
 
@@ -200,7 +194,7 @@
                                         <circle cx="12" cy="10" r="3"></circle>
                                     </svg>
                                     <div class="hero-pill-text">
-                                        <span class="hero-pill-label">Physical Venue</span>
+                                        <span class="hero-pill-label">Venue</span>
                                         <span class="hero-pill-val"><asp:Literal ID="litVenueView" runat="server" /></span>
                                     </div>
                                 </div>
@@ -212,23 +206,13 @@
                                         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                     </svg>
                                     <div class="hero-pill-text">
-                                        <span class="hero-pill-label">Allocated Seating</span>
+                                        <span class="hero-pill-label">Seating Capacity</span>
                                         <span class="hero-pill-val mono"><asp:Literal ID="litCapacityView" runat="server" /> Seats</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="bento-hero-media">
-                            <div class="media-preview-container">
-                                <div class="banner-preview-box ratio-wide" style="height: 100%; min-height: 160px; position: relative; overflow: hidden; border-radius: 8px;">
-                                    <asp:Image ID="imgWideBanner" runat="server" CssClass="banner-img" ImageUrl="~/Frontend/Assets/campus-clean.jpg" AlternateText="Wide Banner Preview" />
-                                    <div class="banner-badge-overlay" style="position: absolute; top: 0.5rem; right: 0.5rem; z-index: 2;">
-                                        <span class="banner-ratio-tag" style="white-space: nowrap; font-size: 0.65rem; padding: 0.2rem 0.45rem;">16:9 BANNER</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </asp:PlaceHolder>
 
@@ -259,72 +243,51 @@
                             </div>
                         </div>
 
-                            <asp:PlaceHolder ID="phWideUpload" runat="server" Visible="true">
-                                <div class="upload-slot-group">
-                                    <div class="upload-slot-header">
-                                        <label class="form-label" style="margin-bottom:0;">16:9 Banner (Desktop / Web)</label>
-                                        <span class="banner-ratio-tag">16:9 WIDE</span>
-                                    </div>
-                                    <asp:HiddenField ID="hfEditPhotoBase64" runat="server" />
-                                    <asp:HiddenField ID="hfEditPhotoFileName" runat="server" />
-                                    <div id="editDropzoneContent" class="upload-dropzone" style="min-height:95px; padding:0.85rem; cursor:pointer;" onclick="triggerEditPhotoUpload();">
-                                        <svg class="upload-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                            <polyline points="17 8 12 3 7 8"></polyline>
-                                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                                        </svg>
-                                        <asp:FileUpload ID="fuWideBanner" runat="server" CssClass="form-control banner-file-input" accept="image/*" onchange="handleEditBannerFileSelect(this);" style="display:none;" />
-                                        <span style="font-weight:600; font-size:0.85rem; color:var(--text-heading); margin-bottom:0.25rem;">Click to Upload New Promotional Banner</span>
-                                        <span class="upload-formats-hint">Supported formats: PNG, JPG, JPEG, WEBP</span>
-                                    </div>
-
-                                    <!-- Live Interactive Banner Preview in Edit Mode -->
-                                    <div id="editBannerPreviewContainer" style="display:none; margin-top:0.65rem; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--card-bg);">
-                                        <img id="imgEditBannerPreview" src="" alt="New Selected Banner" style="width:100%; height:130px; object-fit:cover; display:block;" />
-                                        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.75rem; background:rgba(0,0,0,0.03);">
-                                            <span id="lblEditBannerFileName" style="font-size:0.8rem; font-weight:600; color:var(--text-heading); text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:140px;"></span>
-                                            <div style="display:flex; gap:0.4rem;">
-                                                <button type="button" onclick="triggerEditPhotoUpload();" style="background:#e0f2fe; color:#0284c7; border:none; border-radius:4px; padding:3px 7px; font-size:0.75rem; font-weight:600; cursor:pointer;">Change</button>
-                                                <button type="button" onclick="removeEditBanner();" style="background:#fee2e2; color:#ef4444; border:none; border-radius:4px; padding:3px 7px; font-size:0.75rem; font-weight:600; cursor:pointer;">Remove</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </asp:PlaceHolder>
                     </div>
                 </asp:PlaceHolder>
             </div>
         </div>
 
-        <!-- BENTO ROW 1: CELL 2 (Span 4) - Live Gate Cockpit & Real-Time Occupancy -->
-        <div class="bento-card bento-span-4">
+        <!-- Promotional banner uses the same card structure as Event Overview. -->
+        <div class="bento-card bento-span-4 event-banner-card">
             <div class="bento-card-header">
-                <div class="bento-card-title">
-                    <span>Gate Occupancy &amp; Quota</span>
-                </div>
-                <span class="status-pill <%= HeaderStatusBadgeClass %>">
-                    <asp:Literal ID="litSidebarStatus" runat="server" Text="Upcoming" />
-                </span>
+                <div class="bento-card-title"><span>Promotional Banner / Poster</span></div>
             </div>
-
             <div class="bento-card-body">
-                <div class="cockpit-hero-metric">
-                    <span class="cockpit-pct"><asp:Literal ID="litOccupancyPct" runat="server" Text="0%" /></span>
-                    <span class="cockpit-ratio-badge"><asp:Literal ID="litOccupancyCount" runat="server" Text="0 / 150" /> Seats</span>
-                </div>
-
-                <div class="cockpit-track-container">
-                    <div class="capacity-bar-track">
-                        <div class="capacity-bar-fill" style="width: <%= OccupancyBarWidth %>%;"></div>
+                <asp:PlaceHolder ID="phBannerView" runat="server">
+                    <div class="banner-preview-box ratio-wide">
+                        <asp:Image ID="imgWideBanner" runat="server" CssClass="banner-img" ImageUrl="~/Frontend/Assets/campus-clean.jpg" AlternateText="Event banner" />
+                        <div class="banner-badge-overlay"><span class="banner-ratio-tag">16:9 BANNER</span></div>
                     </div>
-                </div>
+                </asp:PlaceHolder>
+                <asp:PlaceHolder ID="phWideUpload" runat="server" Visible="false">
+                    <div class="banner-upload-fields">
+                        <asp:HiddenField ID="hfEditPhotoBase64" runat="server" />
+                        <asp:HiddenField ID="hfEditPhotoFileName" runat="server" />
+                        <div id="editDropzoneContent" class="upload-dropzone banner-upload-dropzone" role="button" tabindex="0" onclick="triggerEditPhotoUpload();" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); triggerEditPhotoUpload(); }">
+                            <svg class="upload-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <asp:FileUpload ID="fuWideBanner" runat="server" CssClass="form-control banner-file-input" accept="image/*" onchange="handleEditBannerFileSelect(this);" style="display:none;" />
+                            <span style="font-weight:600; font-size:0.85rem; color:var(--text-heading); margin-bottom:0.25rem;">Click to Upload New Promotional Banner</span>
+                            <span class="upload-formats-hint">Supported formats: PNG, JPG, JPEG, WEBP</span>
+                        </div>
 
-                <div class="cockpit-meta-grid">
-                    <div class="cockpit-meta-tile">
-                        <span class="cockpit-meta-label">Remaining Spots</span>
-                        <span class="cockpit-meta-value"><asp:Literal ID="litRemainingSpots" runat="server" Text="0 spots open" /></span>
+                        <!-- Live Interactive Banner Preview in Edit Mode -->
+                        <div id="editBannerPreviewContainer" style="display:none; margin-top:0.65rem; border-radius:8px; overflow:hidden; border:1px solid var(--border-color); background:var(--card-bg);">
+                            <img id="imgEditBannerPreview" src="" alt="New Selected Banner" class="banner-edit-preview-image" />
+                            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.75rem; background:rgba(0,0,0,0.03);">
+                                <span id="lblEditBannerFileName" style="font-size:0.8rem; font-weight:600; color:var(--text-heading); text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:140px;"></span>
+                                <div style="display:flex; gap:0.4rem;">
+                                    <button type="button" onclick="triggerEditPhotoUpload();" style="background:#e0f2fe; color:#0284c7; border:none; border-radius:4px; padding:3px 7px; font-size:0.75rem; font-weight:600; cursor:pointer;">Change</button>
+                                    <button type="button" onclick="removeEditBanner();" style="background:#fee2e2; color:#ef4444; border:none; border-radius:4px; padding:3px 7px; font-size:0.75rem; font-weight:600; cursor:pointer;">Remove</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </asp:PlaceHolder>
             </div>
         </div>
 
@@ -332,7 +295,7 @@
         <div class="bento-card bento-span-6">
             <div class="bento-card-header">
                 <div class="bento-card-title">
-                    <span>Execution Schedule &amp; Lifecycle</span>
+                    <span>Event Schedule</span>
                 </div>
                 <span class="event-id-tag">SECTION 02</span>
             </div>
@@ -346,15 +309,15 @@
                             <span class="telemetry-val mono accent"><asp:Literal ID="litEventDateView" runat="server" /></span>
                         </div>
                         <div class="telemetry-tile">
-                            <span class="telemetry-label">Execution Hours</span>
+                            <span class="telemetry-label">Event Timeframe</span>
                             <span class="telemetry-val mono"><asp:Literal ID="litEventHoursView" runat="server" /></span>
                         </div>
                         <div class="telemetry-tile">
-                            <span class="telemetry-label">Registration Opens (<%= RegistrationTimeZoneLabel %>)</span>
+                            <span class="telemetry-label">Registration Opens</span>
                             <span class="telemetry-val mono"><asp:Literal ID="litRegStartView" runat="server" /></span>
                         </div>
                         <div class="telemetry-tile">
-                            <span class="telemetry-label">Registration Deadline (<%= RegistrationTimeZoneLabel %>)</span>
+                            <span class="telemetry-label">Registration Deadline</span>
                             <span class="telemetry-val mono rose"><asp:Literal ID="litRegEndView" runat="server" /></span>
                         </div>
                     </div>

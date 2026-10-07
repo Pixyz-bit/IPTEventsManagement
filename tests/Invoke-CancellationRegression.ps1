@@ -64,6 +64,12 @@ INSERT INTO dbo.EventRegistrationTable (EventId,StudentId,CurrentYearLvl,Current
  (1,'TEST-1',1,'TEST','NoShow',NULL), (1,'TEST-2',1,'TEST','Present',GETDATE()),
  (5,'TEST-1',1,'TEST','NoShow',NULL), (8,'TEST-1',1,'TEST','NoShow',NULL);
 '@
+    $procedures = [IO.File]::ReadAllText((Join-Path $appRoot 'Backend/Database/StoredProcedures/00_InstallAll.sql')).Replace('USE [UniversityEventDB];', "USE [$databaseName];")
+    if ($procedures.Contains('USE [UniversityEventDB]')) { throw 'Unsafe procedure database target' }
+    $procedurePath = Join-Path $testRoot 'procedures.sql'
+    [IO.File]::WriteAllText($procedurePath, $procedures)
+    & $sqlcmd -S $server -d $databaseName -E -l 10 -t 20 -b -i $procedurePath
+    if ($LASTEXITCODE -ne 0) { throw 'Isolated procedure installation failed' }
     Copy-Item (Join-Path $appRoot 'bin') $testRoot -Recurse
     $runner = Join-Path $testRoot 'bin/CancellationRegression.exe'
     $assembly = Join-Path $testRoot 'bin/241611JalopEventsManagement.dll'

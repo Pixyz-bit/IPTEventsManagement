@@ -127,25 +127,6 @@
     color: var(--text-body);
 }
 
-/* View > Link (Underlined link) */
-.btn-view-link {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--text-heading);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1.5px;
-    cursor: pointer;
-    transition: color 0.15s ease;
-    background: none;
-    border: none;
-    padding: 0;
-}
-
-.btn-view-link:hover {
-    color: var(--brand-primary);
-}
-
 /* Edit Modal Tabs & Content */
 .edit-tab-pane {
     animation: fadeInTab 0.15s ease;
