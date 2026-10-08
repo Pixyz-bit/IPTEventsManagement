@@ -1,7 +1,7 @@
 <%@ Page Title="Students Directory & Identity Master | QCU Admin" Language="C#" MasterPageFile="~/Frontend/Admin/Admin.Master" AutoEventWireup="true" CodeBehind="StudentList.aspx.cs" Inherits="_241611JalopEventsManagement.Frontend.Admin.StudentList" EnableSessionState="ReadOnly" %>
 
 <asp:Content ID="HeadArea" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/student-list.css?v=20261007-local-fonts") %>" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/admin/student-list.css?v=20261008-csv-layout") %>" />
 </asp:Content>
 
 <asp:Content ID="MainArea" ContentPlaceHolderID="MainContent" runat="server">
@@ -460,9 +460,9 @@
                     Upload a standardized CSV file to register multiple student academic records and provision their event access accounts.
                 </p>
 
-                <div class="password-info-box">
-                    <strong>Standard CSV Header Format:</strong><br />
-                    <code>StudentId,FirstName,MiddleName,LastName,Gender,CampusBranch,Department,Program,Email,BirthDate</code><br />
+                <div class="password-info-box csv-format-info">
+                    <strong>Standard CSV Header Format:</strong>
+                    <code>StudentId,FirstName,MiddleName,LastName,Gender,CampusBranch,Department,Program,Email,BirthDate</code>
                     <em>Dates must follow the strict MM/dd/yyyy standard (e.g. 03/24/2004).</em>
                 </div>
 

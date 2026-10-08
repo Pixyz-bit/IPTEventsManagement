@@ -23,6 +23,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" type="image/png" href="<%= ResolveUrl("~/Frontend/Assets/QCU%20Logo.png") %>" />
     <title>Redirecting...</title>
     <meta http-equiv="refresh" content="0;url=Frontend/Login/Login.aspx" />
 </head>

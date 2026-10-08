@@ -127,6 +127,19 @@
     color: var(--text-body);
 }
 
+/* Keep CSV instructions readable within the import modal at every width. */
+.csv-format-info {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+    overflow-wrap: anywhere;
+}
+
+.csv-format-info code {
+    white-space: normal;
+    font-family: var(--font-mono);
+}
+
 /* Edit Modal Tabs & Content */
 .edit-tab-pane {
     animation: fadeInTab 0.15s ease;
