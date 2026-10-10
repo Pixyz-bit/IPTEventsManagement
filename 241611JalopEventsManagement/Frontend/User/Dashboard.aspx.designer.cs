@@ -29,5 +29,7 @@ namespace _241611JalopEventsManagement.Frontend.User
         protected global::System.Web.UI.WebControls.HiddenField hfSelectedEventId;
         protected global::System.Web.UI.WebControls.Button btnCancelModal;
         protected global::System.Web.UI.WebControls.Button btnConfirmRegistration;
+        protected global::System.Web.UI.WebControls.HiddenField hfCancelRegistrationId;
+        protected global::System.Web.UI.WebControls.Button btnConfirmCancelRegistration;
     }
 }

@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/fonts.css?v=20261007") %>" />
 
     <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/user/student-profile.css?v=" + DateTime.Now.Ticks) %>" />
-    <link rel="stylesheet" href="<%= ResolveUrl("~/Frontend/Assets/css/toast.css") %>" />
 </head>
 <body>
     <form id="studentProfileForm" runat="server">
@@ -76,62 +75,51 @@
             <!-- Page Workspace Header -->
             <div class="page-header-row">
                 <div class="header-title-block">
-                    <h1>Student Account Settings</h1>
-                    <p>Review verified institutional student records and manage account security credentials.</p>
+                    <h1>Account settings</h1>
+                    <p>View your academic information and manage your password.</p>
                 </div>
             </div>
 
             <!-- Tab Switcher Navigation (Segmented Control) -->
-            <div class="profile-tabs-nav" role="tablist">
-                <button type="button" class="tab-btn active" id="tabBtnProfile" onclick="switchProfileTab('profile')" role="tab" aria-selected="true">
+            <div class="profile-tabs-nav" role="tablist" aria-label="Account settings">
+                <button type="button" class="tab-btn active" id="tabBtnProfile" onclick="switchProfileTab('profile')" role="tab" aria-controls="tabContentProfile" aria-selected="true" tabindex="0">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    <span>Academic Demographics</span>
+                    <span>Student profile</span>
                 </button>
-                <button type="button" class="tab-btn" id="tabBtnSecurity" onclick="switchProfileTab('security')" role="tab" aria-selected="false">
+                <button type="button" class="tab-btn" id="tabBtnSecurity" onclick="switchProfileTab('security')" role="tab" aria-controls="tabContentSecurity" aria-selected="false" tabindex="-1">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                     </svg>
-                    <span>Account Credentials &amp; Security</span>
+                    <span>Account &amp; security</span>
                 </button>
             </div>
 
-            <!-- Feedback Notification Banners -->
-            <asp:Panel ID="pnlSuccess" runat="server" Visible="false" CssClass="feedback-alert alert-success">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <div>
-                    <asp:Literal ID="litSuccessMsg" runat="server" />
-                </div>
-            </asp:Panel>
 
-            <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="feedback-alert alert-error">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-                <div>
-                    <asp:Literal ID="litErrorMsg" runat="server" />
-                </div>
-            </asp:Panel>
 
             <!-- ══════════════════════════════════════════════════════════════
                  TAB 1: Student Profile & Academic Demographics
                  ══════════════════════════════════════════════════════════════ -->
-            <div id="tabContentProfile" class="tab-content-panel active-tab">
+            <div id="tabContentProfile" class="tab-content-panel active-tab" role="tabpanel" aria-labelledby="tabBtnProfile" tabindex="0">
                 <div class="profile-card">
                     <div class="profile-card-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        <h2>Student Profile &amp; Academic Demographics</h2>
+                        <div class="profile-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <h2>Academic information</h2>
+                        </div>
+                        <span class="profile-record-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                                <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            Official record
+                        </span>
                     </div>
 
                     <div class="profile-card-body">
@@ -143,57 +131,44 @@
                             <span><strong>Verified Academic Record:</strong> This demographic information is synchronized with university registrar records and is strictly read-only. For updates or major corrections, please coordinate with your college dean or campus registrar.</span>
                         </div>
 
-                        <!-- Form Row 1: Matriculation ID & Campus Branch -->
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtStudentId.ClientID %>">Student Matriculation ID <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtStudentId" runat="server" CssClass="form-input read-only" ReadOnly="true" />
+                        <dl class="academic-record">
+                            <div class="academic-record-field">
+                                <dt><span>Student ID</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd class="highlight-id"><asp:Literal ID="txtStudentId" runat="server" Mode="Encode" /></dd>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtCampusBranch.ClientID %>">Campus Branch <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtCampusBranch" runat="server" CssClass="form-input read-only" ReadOnly="true" />
+                            <div class="academic-record-field">
+                                <dt><span>Campus branch</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtCampusBranch" runat="server" Mode="Encode" /></dd>
                             </div>
-                        </div>
-
-                        <!-- Form Row 2: Full Name (3-column layout) -->
-                        <div class="form-grid-3">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtFirstName.ClientID %>">First Name <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtFirstName" runat="server" CssClass="form-input read-only" ReadOnly="true" />
+                            <div class="academic-record-field">
+                                <dt><span>First name</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtFirstName" runat="server" Mode="Encode" /></dd>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtMiddleName.ClientID %>">Middle Name</label>
-                                <asp:TextBox ID="txtMiddleName" runat="server" CssClass="form-input read-only" ReadOnly="true" />
+                            <div class="academic-record-field">
+                                <dt><span>Middle name</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtMiddleName" runat="server" Mode="Encode" /></dd>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtLastName.ClientID %>">Last Name <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtLastName" runat="server" CssClass="form-input read-only" ReadOnly="true" />
+                            <div class="academic-record-field">
+                                <dt><span>Last name</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtLastName" runat="server" Mode="Encode" /></dd>
                             </div>
-                        </div>
-
-                        <!-- Form Row 3: Department / College & Academic Program -->
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtDepartment.ClientID %>">Department / College <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtDepartment" runat="server" CssClass="form-input read-only" ReadOnly="true" />
+                            <div class="academic-record-field">
+                                <dt><span>College / department</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtDepartment" runat="server" Mode="Encode" /></dd>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtProgram.ClientID %>">Academic Program / Course <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtProgram" runat="server" CssClass="form-input read-only" ReadOnly="true" />
+                            <div class="academic-record-field">
+                                <dt><span>Academic program</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtProgram" runat="server" Mode="Encode" /></dd>
                             </div>
-                        </div>
-
-                        <!-- Form Row 4: Gender & Cohort -->
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtGender.ClientID %>">Gender</label>
-                                <asp:TextBox ID="txtGender" runat="server" CssClass="form-input read-only" ReadOnly="true" />
+                            <div class="academic-record-field">
+                                <dt><span>Gender</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtGender" runat="server" Mode="Encode" /></dd>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtYearLevel.ClientID %>">Academic Cohort / Year Level</label>
-                                <asp:TextBox ID="txtYearLevel" runat="server" CssClass="form-input read-only" ReadOnly="true" />
+                            <div class="academic-record-field">
+                                <dt><span>Year level</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtYearLevel" runat="server" Mode="Encode" /></dd>
                             </div>
-                        </div>
+                        </dl>
                     </div>
                 </div>
             </div>
@@ -201,59 +176,78 @@
             <!-- ══════════════════════════════════════════════════════════════
                  TAB 2: Account Credentials & Access Control
                  ══════════════════════════════════════════════════════════════ -->
-            <div id="tabContentSecurity" class="tab-content-panel">
+            <div id="tabContentSecurity" class="tab-content-panel" role="tabpanel" aria-labelledby="tabBtnSecurity" tabindex="0" hidden="hidden">
                 <div class="profile-card">
                     <div class="profile-card-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        <h2>Account Credentials &amp; Access Control</h2>
+                        <div class="profile-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                                <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <h2>Account details</h2>
+                        </div>
                     </div>
                     <div class="profile-card-body">
-                        <!-- Credentials Overview -->
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtEmail.ClientID %>">Institutional Email Address <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtEmail" runat="server" CssClass="form-input read-only" ReadOnly="true" />
+                        <dl class="academic-record account-record">
+                            <div class="academic-record-field">
+                                <dt><span>Institutional email</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtEmail" runat="server" Mode="Encode" /></dd>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtRole.ClientID %>">Assigned System Role <span class="required-mark">*</span></label>
-                                <asp:TextBox ID="txtRole" runat="server" CssClass="form-input read-only" ReadOnly="true" Text="Student (Student)" />
+                            <div class="academic-record-field">
+                                <dt><span>Account role</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtRole" runat="server" Mode="Encode" /></dd>
                             </div>
-                        </div>
-
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label" for="<%= txtStatus.ClientID %>">Account Status</label>
-                                <asp:TextBox ID="txtStatus" runat="server" CssClass="form-input read-only" ReadOnly="true" Text="Active (Authorized)" />
+                            <div class="academic-record-field">
+                                <dt><span>Account status</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></dt>
+                                <dd><asp:Literal ID="txtStatus" runat="server" Mode="Encode" /></dd>
                             </div>
-                        </div>
+                        </dl>
 
                         <!-- Self-Service Password Change Section -->
                         <div class="security-sub-section">
                             <div class="security-sub-header">
-                                <h3>Reset Password (Optional)</h3>
-                                <span class="form-hint">Enter at least 6 characters to securely re-hash and update credentials.</span>
+                                <h3>Change password</h3>
+                                <span class="form-hint" id="passwordHint">Your new password must contain at least 6 characters.</span>
                             </div>
 
-                            <div class="form-grid-3">
+                            <asp:Panel ID="pnlSuccess" runat="server" Visible="false" CssClass="feedback-alert alert-success" role="status">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                                <div>
+                                    <asp:Literal ID="litSuccessMsg" runat="server" />
+                                </div>
+                            </asp:Panel>
+
+                            <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="feedback-alert alert-error" role="alert">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                <div>
+                                    <asp:Literal ID="litErrorMsg" runat="server" />
+                                </div>
+                            </asp:Panel>
+
+                            <div class="form-grid-3 password-grid">
                                 <div class="form-group">
-                                    <label class="form-label" for="<%= txtCurrentPassword.ClientID %>">Current Password <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtCurrentPassword" runat="server" TextMode="Password" CssClass="form-input" placeholder="Current password..." />
+                                    <label class="form-label" for="<%= txtCurrentPassword.ClientID %>">Current password <span class="required-mark">*</span></label>
+                                    <asp:TextBox ID="txtCurrentPassword" runat="server" TextMode="Password" CssClass="form-input" autocomplete="current-password" />
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label" for="<%= txtNewPassword.ClientID %>">New Password <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtNewPassword" runat="server" TextMode="Password" CssClass="form-input" placeholder="Min. 6 characters..." />
+                                    <label class="form-label" for="<%= txtNewPassword.ClientID %>">New password <span class="required-mark">*</span></label>
+                                    <asp:TextBox ID="txtNewPassword" runat="server" TextMode="Password" CssClass="form-input" autocomplete="new-password" aria-describedby="passwordHint" />
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label" for="<%= txtConfirmPassword.ClientID %>">Confirm New Password <span class="required-mark">*</span></label>
-                                    <asp:TextBox ID="txtConfirmPassword" runat="server" TextMode="Password" CssClass="form-input" placeholder="Re-enter password..." />
+                                    <label class="form-label" for="<%= txtConfirmPassword.ClientID %>">Confirm new password <span class="required-mark">*</span></label>
+                                    <asp:TextBox ID="txtConfirmPassword" runat="server" TextMode="Password" CssClass="form-input" autocomplete="new-password" />
                                 </div>
                             </div>
 
-                            <div style="margin-top: 1.5rem;">
-                                <asp:Button ID="btnUpdatePassword" runat="server" Text="Update Password" CssClass="btn-update-pwd" OnClick="btnUpdatePassword_Click" />
+                            <div class="password-actions">
+                                <asp:Button ID="btnUpdatePassword" runat="server" Text="Update password" CssClass="btn-update-pwd" OnClick="btnUpdatePassword_Click" />
                             </div>
                         </div>
                     </div>
@@ -261,8 +255,6 @@
             </div>
         </main>
 
-        <!-- Enterprise Floating Lower-Right Toast Container -->
-        <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
     </form>
 
     <!-- Tab Controller Script -->
@@ -274,30 +266,43 @@
             var contentSecurity = document.getElementById('tabContentSecurity');
             var hf = document.getElementById('<%= hfActiveTab.ClientID %>');
 
-            if (tabName === 'security') {
-                if (btnProfile) btnProfile.classList.remove('active');
-                if (btnSecurity) btnSecurity.classList.add('active');
-                if (contentProfile) contentProfile.classList.remove('active-tab');
-                if (contentSecurity) contentSecurity.classList.add('active-tab');
-                if (hf) hf.value = 'security';
-            } else {
-                if (btnSecurity) btnSecurity.classList.remove('active');
-                if (btnProfile) btnProfile.classList.add('active');
-                if (contentSecurity) contentSecurity.classList.remove('active-tab');
-                if (contentProfile) contentProfile.classList.add('active-tab');
-                if (hf) hf.value = 'profile';
-            }
+            var securitySelected = tabName === 'security';
+            [btnProfile, btnSecurity].forEach(function (button, index) {
+                if (!button) return;
+                var selected = index === (securitySelected ? 1 : 0);
+                button.classList.toggle('active', selected);
+                button.setAttribute('aria-selected', selected ? 'true' : 'false');
+                button.tabIndex = selected ? 0 : -1;
+            });
+            [contentProfile, contentSecurity].forEach(function (panel, index) {
+                if (!panel) return;
+                var selected = index === (securitySelected ? 1 : 0);
+                panel.classList.toggle('active-tab', selected);
+                panel.hidden = !selected;
+            });
+            if (hf) hf.value = securitySelected ? 'security' : 'profile';
         }
 
         document.addEventListener('DOMContentLoaded', function () {
             var hf = document.getElementById('<%= hfActiveTab.ClientID %>');
-            if (hf && hf.value === 'security') {
-                switchProfileTab('security');
-            }
+            switchProfileTab(hf && hf.value === 'security' ? 'security' : 'profile');
+
+            var buttons = [document.getElementById('tabBtnProfile'), document.getElementById('tabBtnSecurity')];
+            buttons.forEach(function (button, index) {
+                if (!button) return;
+                button.addEventListener('keydown', function (event) {
+                    var next;
+                    if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') next = 1 - index;
+                    else if (event.key === 'Home') next = 0;
+                    else if (event.key === 'End') next = 1;
+                    else return;
+                    event.preventDefault();
+                    switchProfileTab(next === 1 ? 'security' : 'profile');
+                    buttons[next].focus();
+                });
+            });
         });
     </script>
 
-    <!-- Universal Toast Engine -->
-    <script type="text/javascript" src="<%= ResolveUrl("~/Frontend/Assets/js/toast.js") %>"></script>
 </body>
 </html>

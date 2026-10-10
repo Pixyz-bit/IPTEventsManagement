@@ -298,17 +298,11 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 ddlEditCampus.SelectedValue = student.CampusBranch;
             }
 
-            if (ddlEditDepartment.Items.FindByValue(student.Department) != null)
-            {
-                ddlEditDepartment.SelectedValue = student.Department;
-            }
+            SelectStoredValue(ddlEditDepartment, student.Department);
 
             UpdateEditProgramsForDepartment(ddlEditDepartment.SelectedValue);
 
-            if (ddlEditProgram.Items.FindByValue(student.Program) != null)
-            {
-                ddlEditProgram.SelectedValue = student.Program;
-            }
+            SelectStoredValue(ddlEditProgram, student.Program);
 
             if (ddlEditStatus != null)
             {
@@ -336,6 +330,21 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         #endregion
 
         #region Add New Student Operations
+
+        private static void SelectStoredValue(DropDownList dropdown, string storedValue)
+        {
+            // Imported program codes and legacy names must round-trip exactly as stored.
+            // Never silently replace an unlisted course with the first dropdown option.
+            string value = storedValue ?? string.Empty;
+            var item = dropdown.Items.FindByValue(value);
+            if (item == null)
+            {
+                item = new ListItem(string.IsNullOrWhiteSpace(value) ? "Select an option" : value, value);
+                dropdown.Items.Insert(0, item);
+            }
+            dropdown.ClearSelection();
+            item.Selected = true;
+        }
 
         protected void btnOpenAddModal_Click(object sender, EventArgs e)
         {

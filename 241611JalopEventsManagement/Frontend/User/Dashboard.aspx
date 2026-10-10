@@ -37,7 +37,7 @@
                         </div>
                     </a>
 
-                    <asp:LinkButton ID="btnSignOut" runat="server" CssClass="nav-btn-signout" OnClick="btnSignOut_Click" ToolTip="Sign Out" CausesValidation="false">
+                    <asp:LinkButton ID="btnSignOut" runat="server" CssClass="nav-btn-signout" OnClick="btnSignOut_Click" OnClientClick="return requestSignOut(this);" ToolTip="Sign Out" aria-label="Log out" aria-haspopup="dialog" CausesValidation="false">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
@@ -287,12 +287,15 @@
                                     <div class="card-action-row pass-card-action-row">
                                         <asp:LinkButton ID="btnCancelRegistration" runat="server" 
                                             CssClass="btn-pass-cancel"
-                                            CommandName="CancelRegistration" 
-                                            CommandArgument='<%# Eval("EventRegistrationId") %>'
                                             Visible='<%# Eval("CanCancel") %>'
-                                            OnClientClick="return confirm('Confirm cancellation of your attendance pass for this event?');"
+                                            OnClientClick='<%# string.Format("openCancelPassModal({0}, \"{1}\", \"{2}\", \"{3}\", \"{4}\"); return false;", Eval("EventRegistrationId"), HttpUtility.JavaScriptStringEncode(Eval("EventTitle").ToString()), HttpUtility.JavaScriptStringEncode(Eval("FormattedDate").ToString()), HttpUtility.JavaScriptStringEncode(Eval("FormattedTime").ToString()), HttpUtility.JavaScriptStringEncode(Eval("VenueLocation").ToString())) %>'
                                             CausesValidation="false"
-                                            ToolTip="Release reserved seat registration">
+                                            ToolTip="Cancel and release attendance pass">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:5px;">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                            </svg>
                                             <span>Cancel Pass</span>
                                         </asp:LinkButton>
 
@@ -429,7 +432,10 @@
                                 </svg>
                                 <span>Registration Window</span>
                             </div>
-                            <div class="modal-spec-val" id="modalRegPeriod">--</div>
+                            <dl class="modal-spec-val modal-reg-period" id="modalRegPeriod">
+                                <div class="modal-reg-period-row"><dt>Start</dt><dd id="modalRegStart">--</dd></div>
+                                <div class="modal-reg-period-row"><dt>End</dt><dd id="modalRegEnd">--</dd></div>
+                            </dl>
                             <div class="modal-spec-sub" id="modalRegStatusText">Open for Enrolled Students</div>
                         </div>
                     </div>
@@ -461,8 +467,119 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════════════════════════════════════════
+             PASS CANCELLATION CONFIRMATION MODAL DIALOG
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="modalCancelRegistration" class="cancel-modal-backdrop" onclick="handleCancelModalBackdropClick(event)">
+            <div class="cancel-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="cancelModalTitle">
+                <!-- Header with Close & Warning Badge -->
+                <div class="cancel-modal-header">
+                    <div class="cancel-icon-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                    <button type="button" class="cancel-modal-close" onclick="closeCancelModal()" aria-label="Close Modal" title="Close dialog">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Main Content Body -->
+                <div class="cancel-modal-body">
+                    <div class="cancel-modal-heading-block">
+                        <span class="cancel-eyebrow">CONFIRM PASS CANCELLATION</span>
+                        <h3 class="cancel-modal-title" id="cancelModalTitle">Cancel Event Registration?</h3>
+                        <p class="cancel-modal-subtitle">
+                            Please confirm if you wish to withdraw from this campus event. Releasing your registration makes your seat available to other enrolled students.
+                        </p>
+                    </div>
+
+                    <!-- Event Preview Card -->
+                    <div class="cancel-event-preview-card">
+                        <div class="preview-card-header">
+                            <span class="preview-pill-badge" id="cancelModalPassIdBadge">PASS RESERVATION</span>
+                        </div>
+                        <h4 class="preview-event-name" id="cancelModalEventTitle">--</h4>
+                        <div class="preview-event-meta-row">
+                            <div class="preview-meta-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <span id="cancelModalEventDate">--</span>
+                            </div>
+                            <div class="preview-meta-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span id="cancelModalEventTime">--</span>
+                            </div>
+                            <div class="preview-meta-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                <span id="cancelModalEventVenue">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Critical Notice Box -->
+                    <div class="cancel-warning-box">
+                        <div class="warning-box-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <span>Important consequences:</span>
+                        </div>
+                        <ul class="warning-box-list">
+                            <li>Your digital ticket pass and QR attendance credential will be permanently invalidated.</li>
+                            <li>Your reserved seat will be immediately released back to the university quota.</li>
+                            <li>Re-registering is not guaranteed if registration closes or capacity fills up.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Action Footer Buttons -->
+                <div class="cancel-modal-footer">
+                    <button type="button" class="btn-cancel-modal-keep" onclick="closeCancelModal()">
+                        Keep My Pass
+                    </button>
+                    <button type="button" id="btnCancelModalSubmit" class="btn-cancel-modal-confirm" onclick="submitCancelRegistration()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        <span id="btnCancelModalSubmitText">Yes, Cancel Pass</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden server controls for pass cancellation confirmation -->
+        <asp:HiddenField ID="hfCancelRegistrationId" runat="server" />
+        <asp:Button ID="btnConfirmCancelRegistration" runat="server" OnClick="btnConfirmCancelRegistration_Click" style="display:none;" CausesValidation="false" />
+
         <!-- Enterprise Floating Lower-Right Toast Container -->
         <div id="appToastContainer" class="app-toast-container" aria-live="polite" aria-atomic="true"></div>
+        <dialog id="logoutConfirmDialog" class="logout-confirm-dialog" aria-labelledby="logoutConfirmTitle" aria-describedby="logoutConfirmDescription">
+            <h2 id="logoutConfirmTitle">Log out?</h2>
+            <p id="logoutConfirmDescription">You’ll need to sign in again to access your account.</p>
+            <div class="logout-confirm-actions">
+                <button id="logoutStayButton" type="button" class="logout-stay-button" onclick="closeLogoutConfirmation()">Stay signed in</button>
+                <button type="button" class="logout-confirm-button" onclick="confirmSignOut()">Log out</button>
+            </div>
+        </dialog>
     </form>
 
     <!-- Client-Side Scripting: Auto Slide Carousel, Event Details Modal, Tabs, Category Filtering -->
@@ -594,6 +711,32 @@
             startAutoSlide();
         }
 
+        // Confirm before allowing the existing Web Forms logout postback.
+        var pendingSignOutTrigger = null;
+        var signOutConfirmed = false;
+        function requestSignOut(trigger) {
+            if (signOutConfirmed) { signOutConfirmed = false; return true; }
+            pendingSignOutTrigger = trigger;
+            document.getElementById('logoutConfirmDialog').showModal();
+            document.getElementById('logoutStayButton').focus();
+            return false;
+        }
+        function closeLogoutConfirmation() {
+            document.getElementById('logoutConfirmDialog').close();
+        }
+        function confirmSignOut() {
+            if (!pendingSignOutTrigger) return;
+            var trigger = pendingSignOutTrigger;
+            signOutConfirmed = true;
+            closeLogoutConfirmation();
+            trigger.click();
+        }
+        document.getElementById('logoutConfirmDialog').addEventListener('click', function (event) {
+            if (event.target !== this) return;
+            var bounds = this.getBoundingClientRect();
+            if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeLogoutConfirmation();
+        });
+
         // ─── Event Details Modal Logic ───
         function setRegistrationLinkAvailability(link, event) {
             var isOpen = event && event.isRegistrationOpen === true;
@@ -664,10 +807,10 @@
                 capBar.style.width = percent + "%";
             }
 
-            var regPeriod = document.getElementById("modalRegPeriod");
-            if (regPeriod) {
-                regPeriod.textContent = (ev.regStart && ev.regEnd) ? (ev.regStart + " - " + ev.regEnd) : "Registration Open";
-            }
+            var regStart = document.getElementById("modalRegStart");
+            var regEnd = document.getElementById("modalRegEnd");
+            if (regStart) regStart.textContent = ev.regStart || "Not specified";
+            if (regEnd) regEnd.textContent = ev.regEnd || "Not specified";
 
             // Description
             var desc = document.getElementById("modalEventDescription");
@@ -723,9 +866,75 @@
             }
         }
 
+        // ─── Registration Cancellation Modal Logic ───
+        var activeCancelRegId = null;
+
+        function openCancelPassModal(regId, title, date, time, venue) {
+            activeCancelRegId = regId;
+
+            var passBadge = document.getElementById("cancelModalPassIdBadge");
+            if (passBadge) passBadge.textContent = "PASS #" + regId;
+
+            var titleElem = document.getElementById("cancelModalEventTitle");
+            if (titleElem) titleElem.textContent = title || "Campus Event";
+
+            var dateElem = document.getElementById("cancelModalEventDate");
+            if (dateElem) dateElem.textContent = date || "Scheduled Date";
+
+            var timeElem = document.getElementById("cancelModalEventTime");
+            if (timeElem) timeElem.textContent = time || "";
+
+            var venueElem = document.getElementById("cancelModalEventVenue");
+            if (venueElem) venueElem.textContent = venue || "Campus Venue";
+
+            var submitBtn = document.getElementById("btnCancelModalSubmit");
+            if (submitBtn) submitBtn.disabled = false;
+            var submitText = document.getElementById("btnCancelModalSubmitText");
+            if (submitText) submitText.textContent = "Yes, Cancel Pass";
+
+            var modal = document.getElementById("modalCancelRegistration");
+            if (modal) {
+                modal.classList.add("active");
+                document.body.style.overflow = "hidden";
+            }
+        }
+
+        function closeCancelModal() {
+            var modal = document.getElementById("modalCancelRegistration");
+            if (modal) {
+                modal.classList.remove("active");
+                document.body.style.overflow = "";
+            }
+            activeCancelRegId = null;
+        }
+
+        function handleCancelModalBackdropClick(e) {
+            if (e.target && e.target.id === "modalCancelRegistration") {
+                closeCancelModal();
+            }
+        }
+
+        function submitCancelRegistration() {
+            if (!activeCancelRegId) return;
+
+            var hf = document.getElementById("<%= hfCancelRegistrationId.ClientID %>");
+            var btn = document.getElementById("<%= btnConfirmCancelRegistration.ClientID %>");
+            var submitBtn = document.getElementById("btnCancelModalSubmit");
+            var submitText = document.getElementById("btnCancelModalSubmitText");
+
+            if (submitBtn) submitBtn.disabled = true;
+            if (submitText) submitText.textContent = "Processing Cancellation...";
+
+            if (hf && btn) {
+                hf.value = activeCancelRegId;
+                btn.click();
+            }
+        }
+
         document.addEventListener("keydown", function (e) {
             if (e.key === "Escape" || e.keyCode === 27) {
                 closeEventDetailsModal();
+                closeCancelModal();
             }
         });
 

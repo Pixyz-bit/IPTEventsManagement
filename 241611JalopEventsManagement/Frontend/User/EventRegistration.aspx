@@ -108,57 +108,87 @@
             <asp:Panel ID="pnlRegistration" runat="server">
             <!-- Event Context Summary Card -->
             <div class="event-summary-card">
-                <div class="event-summary-header">
-                    <div>
-                        <div style="font-size:0.75rem; font-family:var(--font-mono); font-weight:700; color:var(--accent-gold); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.35rem;">
-                            REGISTERING FOR:
+                <!-- Topmost Event Promotional Banner Poster -->
+                <asp:Panel ID="pnlEventPhoto" runat="server" Visible="false" CssClass="event-summary-banner-hero">
+                    <asp:Image ID="imgEventPhoto" runat="server" AlternateText="Event Banner Poster" CssClass="event-summary-banner-img" />
+                    <div class="event-summary-banner-gradient"></div>
+                    <div class="event-summary-banner-tag">
+                        <span class="banner-tag-pulse"></span>
+                        <span>FEATURED CAMPUS EVENT</span>
+                    </div>
+                </asp:Panel>
+
+                <!-- Structured Event Details Body -->
+                <div class="event-summary-content">
+                    <div class="event-summary-header">
+                        <div class="event-summary-title-col">
+                            <div class="event-summary-eyebrow">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="8.5" cy="7" r="4"></circle>
+                                    <polyline points="17 11 19 13 23 9"></polyline>
+                                </svg>
+                                <span>REGISTERING FOR:</span>
+                            </div>
+                            <h3 class="event-summary-title">
+                                <asp:Literal ID="litStep1Title" runat="server" Text="--" />
+                            </h3>
+                            <p class="event-summary-desc">
+                                <asp:Literal ID="litStep1Description" runat="server" Text="--" />
+                            </p>
                         </div>
-                        <h3 class="event-summary-title">
-                            <asp:Literal ID="litStep1Title" runat="server" Text="--" />
-                        </h3>
-                        <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.5; max-width:800px; margin:0;">
-                            <asp:Literal ID="litStep1Description" runat="server" Text="--" />
-                        </p>
                     </div>
 
-                    <!-- Optional Event Promotional Banner Poster -->
-                    <asp:Panel ID="pnlEventPhoto" runat="server" Visible="false" style="flex-shrink:0;">
-                        <asp:Image ID="imgEventPhoto" runat="server" AlternateText="Event Banner Poster" 
-                            style="width:140px; height:85px; object-fit:cover; border-radius:10px; border:1px solid rgba(255,255,255,0.15);" />
-                    </asp:Panel>
-                </div>
+                    <div class="event-summary-meta-grid">
+                        <div class="meta-chip">
+                            <div class="meta-chip-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                            <div class="meta-chip-content">
+                                <span class="meta-chip-label">DATE &amp; TIME</span>
+                                <span class="meta-chip-val meta-chip-val-stacked">
+                                    <span><asp:Literal ID="litStep1Date" runat="server" Text="--" /></span>
+                                    <span><asp:Literal ID="litStep1Schedule" runat="server" Text="--" /></span>
+                                </span>
+                            </div>
+                        </div>
 
-                <div class="event-summary-meta-grid">
-                    <div class="meta-chip">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <span><asp:Literal ID="litStep1Date" runat="server" Text="--" /> (<asp:Literal ID="litStep1Schedule" runat="server" Text="--" />)</span>
+                        <div class="meta-chip">
+                            <div class="meta-chip-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                            </div>
+                            <div class="meta-chip-content">
+                                <span class="meta-chip-label">VENUE LOCATION</span>
+                                <span class="meta-chip-val"><asp:Literal ID="litStep1Venue" runat="server" Text="--" /></span>
+                            </div>
+                        </div>
+
+                        <div class="meta-chip">
+                            <div class="meta-chip-icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <div class="meta-chip-content">
+                                <span class="meta-chip-label">LIVE CAPACITY</span>
+                                <span class="meta-chip-val"><asp:Literal ID="litStep1Spots" runat="server" Text="--" /></span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="meta-chip">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        <span><asp:Literal ID="litStep1Venue" runat="server" Text="--" /></span>
+                    <!-- Hidden literal placeholders retained for code-behind bindings -->
+                    <div style="display:none;">
+                        <asp:Literal ID="litStep1Capacity" runat="server" />
+                        <asp:Literal ID="litStep1Audience" runat="server" />
                     </div>
-
-                    <div class="meta-chip">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                        </svg>
-                        <span><asp:Literal ID="litStep1Spots" runat="server" Text="--" /></span>
-                    </div>
-                </div>
-
-                <!-- Hidden literal placeholders retained for code-behind bindings -->
-                <div style="display:none;">
-                    <asp:Literal ID="litStep1Capacity" runat="server" />
-                    <asp:Literal ID="litStep1Audience" runat="server" />
                 </div>
             </div>
 

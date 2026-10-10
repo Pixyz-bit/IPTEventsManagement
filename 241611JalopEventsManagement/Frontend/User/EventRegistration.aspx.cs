@@ -100,14 +100,14 @@ namespace _241611JalopEventsManagement.Frontend.User
                 litStep1Audience.Text = string.Join(" • ", audienceParts);
             }
 
+            pnlEventPhoto.Visible = true;
             if (!string.IsNullOrWhiteSpace(ev.EventPhotoPath))
             {
-                pnlEventPhoto.Visible = true;
                 imgEventPhoto.ImageUrl = ResolveUrl(ev.EventPhotoPath);
             }
             else
             {
-                pnlEventPhoto.Visible = false;
+                imgEventPhoto.ImageUrl = ResolveUrl("~/Frontend/Assets/campus-clean.jpg");
             }
 
             // Populate Step 2: Student Profile (View-Only)

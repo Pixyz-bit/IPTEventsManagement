@@ -1,4 +1,5 @@
-// Read-only audit of the actual wizard functions; no database or browser writes.
+// Regression checks of the actual wizard functions; no database or browser writes.
+const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
@@ -17,7 +18,7 @@ const document = {
 };
 const context = vm.createContext({document}); vm.runInContext(script, context);
 let passed=0, findings=0;
-const check=(ok,name)=>{if(ok){passed++;console.log('PASS: '+name);}else{findings++;console.log('FINDING: '+name);}};
+const check=(ok,name)=>{assert(ok, name);passed++;console.log('PASS: '+name);};
 context.selectAllPrograms(true);check(hidden.value==='BSIT, BSCS, BSEd','all visible courses selected');
 context.selectAllPrograms(false);check(hidden.value==='','clear means open to all');
 inputs[0].checked=true;context.onCourseSelectionChanged();check(hidden.value==='BSIT','individual course persisted to hidden field');
@@ -29,4 +30,15 @@ context.selectAllPrograms(true);check(hidden.value==='BSEd','select all in educa
 department.value='CCS';hidden.value='BSIT';inputs.forEach(input=>input.checked=false);
 context.restoreCourseSelection();
 check(hidden.value==='BSIT' && inputs[0].checked,'saved program survives full sponsor postback');
+check(cards[0].classList.contains('selected'), 'restored BSIT card is visibly selected');
+context.restoreCourseSelection();
+check(hidden.value==='BSIT' && inputs[0].checked,'repeated sponsor actions preserve BSIT');
+hidden.value='BSIT, BSCS';inputs.forEach(input=>input.checked=false);
+context.restoreCourseSelection();
+check(hidden.value==='BSIT, BSCS' && inputs[0].checked && inputs[1].checked,'multiple targets survive sponsor actions');
+hidden.value='BSIT, BSEd';inputs.forEach(input=>input.checked=false);
+context.restoreCourseSelection();
+check(hidden.value==='BSIT' && !inputs[2].checked,'restore removes courses outside the selected department');
+hidden.value='';context.restoreCourseSelection();
+check(inputs.every(input=>!input.checked) && hidden.value==='','empty saved audience clears stale checkboxes');
 console.log(`RESULT: ${passed} passed; ${findings} finding(s).`);

@@ -15,6 +15,7 @@ namespace _241611JalopEventsManagement.Frontend.User
         private readonly SponsorRepository _sponsorRepo = new SponsorRepository();
         private readonly RegistrationRepository _regRepo = new RegistrationRepository();
         private readonly StudentRepository _studentRepo = new StudentRepository();
+        private Dictionary<int, bool> _registrationClosedByEvent = new Dictionary<int, bool>();
 
         #region View Models for Presentation
 
@@ -32,6 +33,7 @@ namespace _241611JalopEventsManagement.Frontend.User
             public DateTime RegEnd { get; set; }
             public string Status { get; set; }
             public bool IsRegistrationOpen { get; set; }
+            public bool IsRegistrationClosed { get; set; }
             public string FormattedSchedule { get; set; }
             public string FormattedDate => EventStart != DateTime.MinValue ? EventStart.ToString("MM/dd/yyyy") : "TBA";
             public string FormattedTime
@@ -72,6 +74,7 @@ namespace _241611JalopEventsManagement.Frontend.User
             public string PassIdChipText { get; set; }
             public string SponsorBadgesHtml { get; set; }
             public bool CanCancel { get; set; }
+            public bool IsRegistrationClosed { get; set; }
             public string EventPhotoPath { get; set; }
             public string BannerImageUrl { get; set; }
         }
@@ -155,6 +158,18 @@ namespace _241611JalopEventsManagement.Frontend.User
                     _eventRepo.GetEventsForStudent(profile.CampusBranch, profile.Department, profile.Program,
                         null);
 
+                DateTime now = DateTime.Now;
+                _registrationClosedByEvent = (events ?? new List<EventModel>()).ToDictionary(
+                    ev => ev.EventId, ev => ev.GetMatrixStatus(now) != "Open" && ev.GetMatrixStatus(now) != "Soon");
+
+                // A current pass belongs exclusively in My Registered Events.
+                // Cancelled passes release their event back to the available catalog.
+                var registeredEventIds = new HashSet<int>(_regRepo
+                    .GetRegistrationsByStudent(SessionHelper.CurrentStudentId)
+                    .Where(reg => !reg.IsCancelled)
+                    .Select(reg => reg.EventId));
+                events = events?.Where(ev => !registeredEventIds.Contains(ev.EventId)).ToList();
+
                 if (events != null && events.Count > 0)
                 {
                     // Batch fetch sponsors for all events in a single SQL query
@@ -187,6 +202,9 @@ namespace _241611JalopEventsManagement.Frontend.User
                 // Keep the catalog empty when event data is unavailable.
             }
 
+            // Open registration leads the catalog and showcase; closed events stay last.
+            // Stable ordering preserves the existing schedule order within each group.
+            viewModels = viewModels.OrderBy(vm => vm.IsRegistrationOpen ? 0 : vm.IsRegistrationClosed ? 2 : 1).ToList();
             rptEventCards.DataSource = viewModels;
             rptEventCards.DataBind();
             pnlNoEligibleEvents.Visible = viewModels.Count == 0;
@@ -205,6 +223,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 dateFormatted = vm.FormattedDate,
                 timeFormatted = vm.FormattedTime,
                 isRegistrationOpen = vm.IsRegistrationOpen,
+                isRegistrationClosed = vm.IsRegistrationClosed,
                 status = vm.Status,
                 regStatusBadgeHtml = vm.RegStatusBadgeHtml,
                 bannerUrl = vm.BannerImageUrl,
@@ -326,12 +345,13 @@ namespace _241611JalopEventsManagement.Frontend.User
         private void PopulateRegistrationPresentation(EventCardViewModel model)
         {
             DateTime now = DateTime.Now;
-            bool isUpcoming = string.Equals(model.Status, "Upcoming", StringComparison.OrdinalIgnoreCase);
+            bool isUpcoming = string.Equals(model.Status, "Upcoming", StringComparison.OrdinalIgnoreCase) && now < model.EventEnd;
             bool isBeforeReg = isUpcoming && now < model.RegStart;
             bool isOpen = isUpcoming && now >= model.RegStart && now <= model.RegEnd && model.CurrentRegistrations < model.MaxCapacity;
             bool isFullyBooked = isUpcoming && now >= model.RegStart && now <= model.RegEnd && model.CurrentRegistrations >= model.MaxCapacity;
 
             model.IsRegistrationOpen = isOpen;
+            model.IsRegistrationClosed = !isBeforeReg && !isOpen;
 
             if (isBeforeReg)
             {
@@ -381,7 +401,7 @@ namespace _241611JalopEventsManagement.Frontend.User
 
         private void LoadStudentRegistrations()
         {
-            string studentId = litStudentId.Text;
+            string studentId = SessionHelper.CurrentStudentId;
             var list = new List<StudentRegistrationViewModel>();
 
             try
@@ -432,6 +452,11 @@ namespace _241611JalopEventsManagement.Frontend.User
                             PassIdChipText = $"PASS #{reg.EventRegistrationId}",
                             SponsorBadgesHtml = "<span class=\"sponsor-pill\">OFFICIAL PASS</span>",
                             CanCancel = reg.CanCancel,
+                            IsRegistrationClosed = (_registrationClosedByEvent.TryGetValue(reg.EventId, out bool eventClosed) && eventClosed)
+                                || reg.IsCancelled || reg.IsEventCancelled
+                                || string.Equals(reg.EventStatus, "Completed", StringComparison.OrdinalIgnoreCase)
+                                || (reg.EventEnd.HasValue && DateTime.Now >= reg.EventEnd.Value)
+                                || (reg.RegEnd.HasValue && DateTime.Now > reg.RegEnd.Value),
                             EventPhotoPath = reg.EventPhotoPath,
                             BannerImageUrl = !string.IsNullOrWhiteSpace(reg.EventPhotoPath) ? ResolveUrl(reg.EventPhotoPath) : ResolveUrl("~/Frontend/Assets/campus-clean.jpg")
                         });
@@ -443,6 +468,7 @@ namespace _241611JalopEventsManagement.Frontend.User
                 // Keep registrations empty when data is unavailable.
             }
 
+            list = list.OrderBy(reg => reg.IsRegistrationClosed ? 1 : 0).ToList();
             if (list.Count > 0)
             {
                 pnlNoRegistrations.Visible = false;
@@ -583,35 +609,48 @@ namespace _241611JalopEventsManagement.Frontend.User
             }
         }
 
+        protected void btnConfirmCancelRegistration_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(hfCancelRegistrationId.Value, out int regId) && regId > 0)
+            {
+                PerformCancelRegistration(regId);
+            }
+        }
+
         protected void rptMyRegistrations_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "CancelRegistration")
             {
                 int regId = Convert.ToInt32(e.CommandArgument);
-                try
-                {
-                    var registration = _regRepo.GetRegistrationById(regId);
-                    bool cancelled = registration != null
-                        && string.Equals(registration.StudentId, SessionHelper.CurrentStudentId, StringComparison.OrdinalIgnoreCase)
-                        && _regRepo.CancelRegistration(regId);
-                    if (cancelled)
-                    {
-                        ShowToast("Registration successfully cancelled. One seat has been released back to capacity.", true);
-                    }
-                    else
-                    {
-                        ShowToast("Unable to cancel registration. Cancellation is only permitted during the open registration period.", false);
-                    }
-                }
-                catch
-                {
-                    // Report failure without changing the displayed registration status.
-                    ShowToast("Unable to cancel registration right now. Please try again.", false);
-                }
-
-                LoadEventsCatalog();
-                LoadStudentRegistrations();
+                PerformCancelRegistration(regId);
             }
+        }
+
+        private void PerformCancelRegistration(int regId)
+        {
+            try
+            {
+                var registration = _regRepo.GetRegistrationById(regId);
+                bool cancelled = registration != null
+                    && string.Equals(registration.StudentId, SessionHelper.CurrentStudentId, StringComparison.OrdinalIgnoreCase)
+                    && _regRepo.CancelRegistration(regId);
+                if (cancelled)
+                {
+                    ShowToast("Registration successfully cancelled. One seat has been released back to capacity.", true);
+                }
+                else
+                {
+                    ShowToast("Unable to cancel registration. Cancellation is only permitted during the open registration period.", false);
+                }
+            }
+            catch
+            {
+                // Report failure without changing the displayed registration status.
+                ShowToast("Unable to cancel registration right now. Please try again.", false);
+            }
+
+            LoadEventsCatalog();
+            LoadStudentRegistrations();
         }
 
         private void ShowToast(string message, bool isSuccess)

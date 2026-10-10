@@ -310,6 +310,56 @@
         </div>
     </div>
 
+    <section class="telemetry-panel check-in-flow-panel" aria-labelledby="checkInFlowTitle">
+        <div class="panel-header-bar check-in-flow-header">
+            <div class="check-in-flow-heading">
+                <h2 id="checkInFlowTitle" class="panel-title">Check-ins every 15 minutes</h2>
+                <p class="check-in-flow-caption" id="checkInFlowDescription">Arrival activity from the first confirmed check-in to the last.</p>
+            </div>
+            <div class="check-in-flow-controls">
+                <div class="check-in-interval-control">
+                    <label for="checkInInterval">Interval</label>
+                    <select id="checkInInterval" class="dim-dropdown-select check-in-interval-select" onchange="renderCheckInFlowChart()" aria-controls="checkInFlowSvg checkInIntervalRows" <%= HasCheckInIntervals ? "" : "disabled" %>>
+                        <option value="5">5 minutes</option>
+                        <option value="15" selected="selected">15 minutes</option>
+                        <option value="30">30 minutes</option>
+                    </select>
+                </div>
+                <span id="checkInPeakSummary" class="check-in-peak-summary" role="status"><%= Server.HtmlEncode(PeakCheckInSummary) %></span>
+            </div>
+        </div>
+        <div class="panel-body check-in-flow-body">
+            <div class="check-in-flow-legend" id="checkInFlowLegend" aria-label="Chart legend">
+                <span><i class="check-in-legend-line" aria-hidden="true"></i>Check-ins</span>
+                <span><i class="check-in-legend-peak" aria-hidden="true"></i>Peak interval</span>
+            </div>
+            <p id="checkInFlowEmpty" class="check-in-flow-empty" <%= HasCheckInIntervals ? "hidden" : "" %>>No check-ins recorded yet. The graph will appear once attendance is confirmed.</p>
+            <div id="checkInFlowChart" class="check-in-flow-chart" tabindex="0" role="region" aria-label="Check-in graph; scroll horizontally for more intervals" <%= HasCheckInIntervals ? "" : "hidden" %>>
+                <svg id="checkInFlowSvg" class="check-in-flow-svg" role="group" aria-labelledby="checkInFlowTitle" aria-describedby="checkInFlowDescription"></svg>
+            </div>
+            <div class="check-in-flow-footer" id="checkInFlowFooter">
+                <p id="checkInFlowPointDetail" class="check-in-point-detail" aria-live="polite">Hover or tap a point. Use arrow keys to explore.</p>
+                <button type="button" class="check-in-inspect-peak" onclick="focusCheckInPeak()">Inspect peak
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+                </button>
+            </div>
+            <details id="checkInIntervalDetails" class="check-in-interval-details" <%= HasCheckInIntervals ? "" : "hidden" %>>
+                <summary>View interval data</summary>
+                <div class="table-responsive">
+                    <table class="analytics-table">
+                        <caption id="checkInTableCaption" class="check-in-table-caption">Check-ins by 15-minute interval</caption>
+                        <thead><tr><th scope="col">Time interval</th><th scope="col">Check-ins</th></tr></thead>
+                        <tbody id="checkInIntervalRows">
+                            <asp:Repeater ID="rptCheckInIntervals" runat="server">
+                                <ItemTemplate><tr><td><%#: Eval("IntervalWindow") %></td><td><%#: Eval("CheckInCount") %></td></tr></ItemTemplate>
+                            </asp:Repeater>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+        </div>
+    </section>
+
     <!-- ROW 2: ATTENDEE COHORT ROSTER AUDIT (PRESENT, NO-SHOW, CANCELLED) -->
     <div class="telemetry-panel attendee-roster-panel">
         <div class="sheet-tabs-container">
@@ -488,7 +538,6 @@
         <asp:Literal ID="litBeforeAttritionRate" runat="server" Text="0.0%"></asp:Literal>
         <asp:Literal ID="litBeforeAvailableQuota" runat="server" Text="0"></asp:Literal>
         <asp:Literal ID="litDuringPeakWindow" runat="server" Text="Awaiting Traffic"></asp:Literal>
-        <asp:Repeater ID="rptCheckInIntervals" runat="server"><ItemTemplate></ItemTemplate></asp:Repeater>
     </asp:PlaceHolder>
 
     <!-- Hidden Demographics & Telemetry Data JSON Literal -->
@@ -497,6 +546,15 @@
 </div>
 
 <!-- Floating interactive tooltip for mouse hover over pie slices, points, and legend items -->
+<div id="checkInFlowTooltip" class="check-in-flow-tooltip" role="tooltip" hidden>
+    <div class="check-in-tooltip-header">
+        <span id="checkInTooltipWindow" class="check-in-tooltip-window"></span>
+        <span id="checkInTooltipPeak" class="check-in-tooltip-peak" hidden>Peak interval</span>
+    </div>
+    <div class="check-in-tooltip-measure"><strong id="checkInTooltipCount"></strong><span>check-ins</span></div>
+    <div id="checkInTooltipShare" class="check-in-tooltip-share"></div>
+    <div id="checkInTooltipChange" class="check-in-tooltip-change"></div>
+</div>
 <div id="pieInteractiveTooltip" class="pie-interactive-tooltip">
     <div id="pieTooltipTitle" class="tooltip-title">Category</div>
     <div id="pieTooltipBody" class="tooltip-body">
@@ -529,6 +587,7 @@
         renderDemographicDimension(initialDim, initialLabel);
         initializeCohortFilters();
         renderReservationChart();
+        renderCheckInFlowChart();
         filterCohortTable();
     }
 
@@ -648,6 +707,209 @@
         renderDonutChart(list, 'reservationPieSvg', 'reservationLegend', 'reservationCenterCount', 'reservationCenterLabel', 'Students',
             'No reserved or cancelled registrations');
         document.getElementById('reservationChartSummary').textContent = total ? total.toLocaleString() + ' reserved or cancelled registrations' : 'No reserved or cancelled registrations';
+    }
+
+    let dismissCheckInTooltip = function () {};
+    let repositionCheckInTooltip = function () {};
+    let checkInPeakPoint = null;
+
+    function focusCheckInPeak() {
+        if (checkInPeakPoint) checkInPeakPoint.focus();
+    }
+
+    function getCheckInTooltipPosition(rect, width, height, viewportWidth, viewportHeight) {
+        const margin = 12, gap = 12;
+        const center = rect.left + rect.width / 2;
+        const left = Math.max(margin, Math.min(center - width / 2, viewportWidth - width - margin));
+        const fitsAbove = rect.top - height - gap >= margin;
+        const top = Math.max(margin, Math.min(fitsAbove ? rect.top - height - gap : rect.bottom + gap, viewportHeight - height - margin));
+        return { left: left, top: top, placement: fitsAbove ? 'above' : 'below',
+            anchor: Math.max(18, Math.min(center - left, width - 18)) };
+    }
+
+    function renderCheckInFlowChart() {
+        dismissCheckInTooltip();
+        repositionCheckInTooltip = function () {};
+        checkInPeakPoint = null;
+        const svg = document.getElementById('checkInFlowSvg');
+        if (!svg) return;
+        const chart = document.getElementById('checkInFlowChart');
+        const tooltip = document.getElementById('checkInFlowTooltip');
+        const detail = document.getElementById('checkInFlowPointDetail');
+        const selector = document.getElementById('checkInInterval');
+        const selectedMinutes = Number(selector.value);
+        const minutes = [5, 15, 30].includes(selectedMinutes) ? selectedMinutes : 15;
+        selector.value = String(minutes);
+        const intervals = telemetryData.intervalSeries ? telemetryData.intervalSeries[minutes] || [] : telemetryData.intervals || [];
+        const hasData = intervals.length > 0;
+        selector.disabled = !hasData;
+        document.getElementById('checkInFlowTitle').textContent = 'Check-ins every ' + minutes + ' minutes';
+        document.getElementById('checkInTableCaption').textContent = 'Check-ins by ' + minutes + '-minute interval';
+        const rows = document.getElementById('checkInIntervalRows');
+        rows.innerHTML = '';
+        intervals.forEach(function (item) {
+            const row = document.createElement('tr');
+            [item.window, item.count.toLocaleString()].forEach(function (value) {
+                const cell = document.createElement('td');
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+            rows.appendChild(row);
+        });
+        const peak = intervals.reduce(function (max, item) { return Math.max(max, item.count); }, 0);
+        const peaks = intervals.filter(function (item) { return item.count === peak; });
+        document.getElementById('checkInPeakSummary').textContent = hasData
+            ? 'Peak: ' + peak.toLocaleString() + ' check-ins · ' + peaks[0].window
+                + (peaks.length > 1 ? ' (first of ' + peaks.length + ' tied intervals)' : '')
+            : 'No check-ins recorded yet.';
+        document.getElementById('checkInFlowEmpty').hidden = hasData;
+        ['checkInFlowChart', 'checkInIntervalDetails', 'checkInFlowLegend', 'checkInFlowFooter'].forEach(function (id) {
+            document.getElementById(id).hidden = !hasData;
+        });
+        detail.hidden = !hasData;
+        svg.innerHTML = '';
+        if (!hasData) return;
+        detail.textContent = 'Hover or tap a point. Use arrow keys to explore.';
+
+        const height = 300, left = 48, right = 28, top = 40, bottom = 52;
+        const width = Math.max(320, chart.clientWidth || 640, intervals.length * 44 + left + right);
+        const plotWidth = width - left - right, plotHeight = height - top - bottom;
+        const total = intervals.reduce(function (sum, item) { return sum + item.count; }, 0);
+        const rawStep = Math.max(1, peak / 5);
+        const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+        const step = [1, 2, 5, 10].find(function (value) { return value * magnitude >= rawStep; }) * magnitude;
+        const ticks = Math.max(2, Math.ceil(peak / step));
+        const maximum = step * ticks;
+        const x = function (index) { return intervals.length === 1 ? left + plotWidth / 2 : left + index * plotWidth / (intervals.length - 1); };
+        const y = function (count) { return top + plotHeight * (1 - count / maximum); };
+        svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+        svg.style.width = width + 'px';
+        svg.style.minWidth = width + 'px';
+        svg.setAttribute('aria-label', 'Check-ins every ' + minutes + ' minutes. Peak: ' + peak.toLocaleString() + ' check-ins.');
+
+        function node(tag, attributes, text, parent) {
+            const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
+            Object.keys(attributes).forEach(function (key) { element.setAttribute(key, attributes[key]); });
+            if (text !== undefined) element.textContent = text;
+            (parent || svg).appendChild(element);
+            return element;
+        }
+        for (let tick = 0; tick <= ticks; tick++) {
+            const value = tick * step;
+            node('line', { x1: left, y1: y(value), x2: width - right, y2: y(value), class: 'check-in-grid-line' });
+            node('text', { x: left - 14, y: y(value) + 4, 'text-anchor': 'end', class: 'check-in-axis-label' }, value.toLocaleString());
+        }
+        node('text', { x: left, y: 17, class: 'check-in-axis-label' }, 'Check-ins');
+        node('text', { x: left + plotWidth / 2, y: height - 4, 'text-anchor': 'middle', class: 'check-in-axis-caption' }, 'Interval start time');
+        const coordinates = intervals.map(function (item, index) { return x(index) + ',' + y(item.count); }).join(' ');
+        node('polygon', { points: x(0) + ',' + y(0) + ' ' + coordinates + ' ' + x(intervals.length - 1) + ',' + y(0), class: 'check-in-area' });
+        node('polyline', { points: coordinates, class: 'check-in-line' });
+        const guide = node('line', { x1: left, y1: top, x2: left, y2: y(0), class: 'check-in-inspect-guide', visibility: 'hidden' });
+        const labelEvery = Math.max(1, Math.ceil(intervals.length / Math.max(1, plotWidth / 108)));
+        const points = [];
+        let activePoint = null, focusedPoint = null, hideTimer = null;
+        function cancelHide() { if (hideTimer !== null) { clearTimeout(hideTimer); hideTimer = null; } }
+        function hide() {
+            cancelHide();
+            if (activePoint) activePoint.classList.remove('is-inspected');
+            activePoint = null;
+            tooltip.hidden = true;
+            guide.setAttribute('visibility', 'hidden');
+        }
+        function scheduleHide() {
+            cancelHide();
+            if (!focusedPoint) hideTimer = setTimeout(hide, 180);
+        }
+        dismissCheckInTooltip = hide;
+        repositionCheckInTooltip = function () {
+            if (!activePoint || tooltip.hidden) return;
+            const rect = activePoint.getBoundingClientRect();
+            const chartRect = chart.getBoundingClientRect();
+            const center = rect.left + rect.width / 2;
+            if (rect.bottom < 0 || rect.top > window.innerHeight || center < 0 || center > window.innerWidth
+                || center < chartRect.left || center > chartRect.left + chartRect.width) { hide(); return; }
+            const position = getCheckInTooltipPosition(rect, tooltip.offsetWidth, tooltip.offsetHeight, window.innerWidth, window.innerHeight);
+            tooltip.style.left = position.left + 'px';
+            tooltip.style.top = position.top + 'px';
+            tooltip.style.setProperty('--tooltip-anchor', position.anchor + 'px');
+            tooltip.setAttribute('data-placement', position.placement);
+        };
+        tooltip.onmouseenter = cancelHide;
+        tooltip.onmouseleave = scheduleHide;
+        chart.onmouseleave = scheduleHide;
+
+        intervals.forEach(function (item, index) {
+            const px = x(index), py = y(item.count);
+            const isPeak = item.count === peak && peak > 0;
+            const isLast = index === intervals.length - 1;
+            if (index % labelEvery === 0 || (isLast && index % labelEvery * plotWidth / Math.max(1, intervals.length - 1) >= 94)) {
+                node('text', { x: px, y: height - 28, 'text-anchor': index === 0 ? 'start' : isLast ? 'end' : 'middle', class: 'check-in-axis-label' }, item.label);
+            }
+            if (isPeak) node('text', { x: px, y: py - 16, 'text-anchor': 'middle', class: 'check-in-peak-label' }, item.count.toLocaleString());
+            const label = item.window + ': ' + item.count.toLocaleString() + ' check-ins' + (isPeak ? ' (peak)' : '');
+            const point = node('g', { class: 'check-in-point' + (isPeak ? ' is-peak' : ''), tabindex: 0,
+                role: 'img', 'aria-label': label, 'aria-keyshortcuts': 'ArrowLeft ArrowRight Home End Escape',
+                'aria-describedby': 'checkInFlowTooltip', 'data-interval-index': index });
+            node('circle', { cx: px, cy: py, r: 22, class: 'check-in-hit-area' }, undefined, point);
+            node('circle', { cx: px, cy: py, r: isPeak ? 6 : 4.5, class: 'check-in-point-dot' }, undefined, point);
+            points.push(point);
+            if (isPeak && !checkInPeakPoint) checkInPeakPoint = point;
+
+            function inspect() {
+                cancelHide();
+                if (activePoint) activePoint.classList.remove('is-inspected');
+                activePoint = point;
+                point.classList.add('is-inspected');
+                detail.textContent = label;
+                document.getElementById('checkInTooltipWindow').textContent = item.window;
+                document.getElementById('checkInTooltipCount').textContent = item.count.toLocaleString();
+                document.getElementById('checkInTooltipPeak').hidden = !isPeak;
+                document.getElementById('checkInTooltipShare').textContent = (total ? 100 * item.count / total : 0).toFixed(1) + '% of confirmed arrivals';
+                const delta = index > 0 ? item.count - intervals[index - 1].count : 0;
+                document.getElementById('checkInTooltipChange').textContent = index === 0 ? 'First recorded interval'
+                    : delta === 0 ? 'Same as the previous interval'
+                    : Math.abs(delta).toLocaleString() + (delta > 0 ? ' more' : ' fewer') + ' than the previous interval';
+                tooltip.hidden = false;
+                const position = getCheckInTooltipPosition(point.getBoundingClientRect(), tooltip.offsetWidth, tooltip.offsetHeight, window.innerWidth, window.innerHeight);
+                tooltip.style.left = position.left + 'px';
+                tooltip.style.top = position.top + 'px';
+                tooltip.style.setProperty('--tooltip-anchor', position.anchor + 'px');
+                tooltip.setAttribute('data-placement', position.placement);
+                guide.setAttribute('x1', px);
+                guide.setAttribute('x2', px);
+                guide.setAttribute('visibility', 'visible');
+            }
+            point.addEventListener('mouseenter', inspect);
+            point.addEventListener('mouseleave', scheduleHide);
+            point.addEventListener('focus', function () { focusedPoint = point; inspect(); });
+            point.addEventListener('blur', function () { focusedPoint = null; scheduleHide(); });
+            point.addEventListener('click', inspect);
+            point.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') { hide(); return; }
+                const next = event.key === 'ArrowRight' ? Math.min(index + 1, points.length - 1)
+                    : event.key === 'ArrowLeft' ? Math.max(0, index - 1)
+                    : event.key === 'Home' ? 0 : event.key === 'End' ? points.length - 1 : null;
+                if (next !== null) { event.preventDefault(); points[next].focus(); }
+            });
+        });
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') dismissCheckInTooltip();
+    });
+    document.addEventListener('pointerdown', function (event) {
+        const tooltip = document.getElementById('checkInFlowTooltip');
+        const svg = document.getElementById('checkInFlowSvg');
+        if (tooltip && !tooltip.hidden && !tooltip.contains(event.target) && !svg.contains(event.target)) dismissCheckInTooltip();
+    });
+    if (window.addEventListener) {
+        let chartResizeTimer;
+        window.addEventListener('resize', function () {
+            dismissCheckInTooltip();
+            clearTimeout(chartResizeTimer);
+            chartResizeTimer = setTimeout(renderCheckInFlowChart, 120);
+        });
+        window.addEventListener('scroll', function () { repositionCheckInTooltip(); }, true);
     }
 
     function resetCohortFilters() {

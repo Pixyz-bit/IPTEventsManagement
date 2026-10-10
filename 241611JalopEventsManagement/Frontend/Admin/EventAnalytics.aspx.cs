@@ -29,6 +29,8 @@ namespace _241611JalopEventsManagement.Frontend.Admin
         public int ReservationChartTotal { get; private set; }
         public double ReservationChartReservedPercent { get; private set; }
         public double ReservationChartCancelledPercent { get; private set; }
+        public string PeakCheckInSummary { get; private set; } = "No check-ins recorded yet.";
+        public bool HasCheckInIntervals { get; private set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -305,36 +307,24 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                     litCapacityStatus.Text = "SEATS AVAILABLE";
             }
 
-            // 15-Minute Peak Surge Velocity
-            var intervalList = new List<IntervalTelemetryItem>();
+            // Prepare each supported window size from the same confirmed arrivals.
             var checkInTimes = presentCohort.Where(r => r.CheckInTimestamp.HasValue).Select(r => r.CheckInTimestamp.Value).ToList();
+            var intervalSeries = new[] { 5, 15, 30 }.ToDictionary(
+                minutes => minutes.ToString(), minutes => BuildCheckInIntervals(checkInTimes, minutes));
+            var intervalList = intervalSeries["15"];
+            HasCheckInIntervals = intervalList.Count > 0;
 
-            if (checkInTimes.Count > 0)
+            if (HasCheckInIntervals)
             {
-                // Round to 15-min intervals
-                var intervalGroups = checkInTimes
-                    .GroupBy(dt => new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, (dt.Minute / 15) * 15, 0))
-                    .OrderBy(g => g.Key)
-                    .ToList();
-
-                int maxInterval = intervalGroups.Max(g => g.Count());
-                var peakGroup = intervalGroups.OrderByDescending(g => g.Count()).First();
-                if (litDuringPeakWindow != null) litDuringPeakWindow.Text = $"{peakGroup.Key:hh:mm tt} - {peakGroup.Key.AddMinutes(15):hh:mm tt}";
-
-                foreach (var ig in intervalGroups)
-                {
-                    intervalList.Add(new IntervalTelemetryItem
-                    {
-                        IntervalWindow = $"{ig.Key:hh:mm tt} - {ig.Key.AddMinutes(15):hh:mm tt}",
-                        CheckInCount = ig.Count(),
-                        IntensityPercent = maxInterval > 0 ? ((double)ig.Count() / maxInterval) * 100.0 : 0.0
-                    });
-                }
+                int peakCount = intervalList.Max(i => i.CheckInCount);
+                var peaks = intervalList.Where(i => i.CheckInCount == peakCount).ToList();
+                if (litDuringPeakWindow != null) litDuringPeakWindow.Text = peaks[0].IntervalWindow;
+                PeakCheckInSummary = $"Peak: {peakCount:N0} check-ins · {peaks[0].IntervalWindow}";
+                if (peaks.Count > 1) PeakCheckInSummary += $" (first of {peaks.Count} tied intervals)";
             }
             else
             {
                 if (litDuringPeakWindow != null) litDuringPeakWindow.Text = "Awaiting Gate Traffic";
-                intervalList.Add(new IntervalTelemetryItem { IntervalWindow = "Terminal Idle", CheckInCount = 0, IntensityPercent = 0.0 });
             }
             if (rptCheckInIntervals != null)
             {
@@ -382,7 +372,12 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 course = courseGroups.Select(c => new { label = c.Label, count = c.Count, percentage = Math.Round(c.Percentage, 1) }),
                 branch = branchGroups.Select(b => new { label = b.Label, count = b.Count, percentage = Math.Round(b.Percentage, 1) }),
                 year = yearGroups.Select(y => new { label = y.Label, count = y.Count, percentage = Math.Round(y.Percentage, 1) }),
-                intervals = intervalList.Select(i => new { window = i.IntervalWindow, count = i.CheckInCount, intensity = Math.Round(i.IntensityPercent, 1) })
+                intervals = intervalList.Select(i => new { window = i.IntervalWindow, label = i.AxisLabel, count = i.CheckInCount, intensity = Math.Round(i.IntensityPercent, 1) }),
+                intervalSeries = intervalSeries.ToDictionary(series => series.Key, series => series.Value.Select(i => new
+                {
+                    window = i.IntervalWindow, label = i.AxisLabel, count = i.CheckInCount,
+                    intensity = Math.Round(i.IntensityPercent, 1)
+                }))
             };
             if (litDemographicsJson != null)
             {
@@ -438,6 +433,38 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
         }
 
+        internal static List<IntervalTelemetryItem> BuildCheckInIntervals(IEnumerable<DateTime> checkInTimes, int minutes = 15)
+        {
+            if (minutes != 5 && minutes != 15 && minutes != 30)
+                throw new ArgumentOutOfRangeException(nameof(minutes), "Choose a 5-, 15-, or 30-minute interval.");
+            var counts = (checkInTimes ?? Enumerable.Empty<DateTime>())
+                .GroupBy(dt => new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, (dt.Minute / minutes) * minutes, 0))
+                .ToDictionary(g => g.Key, g => g.Count());
+            var result = new List<IntervalTelemetryItem>();
+            if (counts.Count == 0) return result;
+
+            DateTime first = counts.Keys.Min();
+            DateTime last = counts.Keys.Max();
+            int peak = counts.Values.Max();
+            bool multipleDates = first.Date != last.AddMinutes(minutes).Date;
+            for (DateTime start = first; start <= last; start = start.AddMinutes(minutes))
+            {
+                int count;
+                counts.TryGetValue(start, out count);
+                DateTime end = start.AddMinutes(minutes);
+                string format = multipleDates ? "MMM d, h:mm tt" : "h:mm tt";
+                result.Add(new IntervalTelemetryItem
+                {
+                    IntervalStart = start,
+                    IntervalWindow = start.ToString(format) + " – " + end.ToString(format),
+                    AxisLabel = start.ToString(multipleDates ? "MM/dd h:mm tt" : "h:mm tt"),
+                    CheckInCount = count,
+                    IntensityPercent = 100.0 * count / peak
+                });
+            }
+            return result;
+        }
+
         protected string FormatTimestamp(object timestampObj)
         {
             if (timestampObj is DateTime dt && dt != DateTime.MinValue)
@@ -459,7 +486,9 @@ namespace _241611JalopEventsManagement.Frontend.Admin
 
     public class IntervalTelemetryItem
     {
+        public DateTime IntervalStart { get; set; }
         public string IntervalWindow { get; set; }
+        public string AxisLabel { get; set; }
         public int CheckInCount { get; set; }
         public double IntensityPercent { get; set; }
     }

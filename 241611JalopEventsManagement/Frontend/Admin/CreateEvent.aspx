@@ -672,10 +672,17 @@
             stepNumber = parseInt(stepNumber);
             if (isNaN(stepNumber) || stepNumber < 1 || stepNumber > 5) stepNumber = 1;
 
+            var sponsorPanel = document.getElementById('step-panel-4');
+            if (sponsorPanel) {
+                sponsorPanel.parentElement.classList.toggle('sponsor-step-active', stepNumber === 4);
+            }
+
             // 1. Update Step Panels
             for (var i = 1; i <= 5; i++) {
                 var panel = document.getElementById('step-panel-' + i);
                 if (panel) {
+                    panel.inert = i !== stepNumber;
+                    panel.setAttribute('aria-hidden', i === stepNumber ? 'false' : 'true');
                     if (i === stepNumber) {
                         panel.classList.add('active-panel');
                     } else {
@@ -1024,24 +1031,14 @@
         }
 
         function restoreCourseSelection() {
-            var deptDdl = document.getElementById('<%= ddlDepartment.ClientID %>');
-            if (deptDdl) {
-                filterProgramsByDepartment(deptDdl.value);
-            }
+            // Read the posted selection before filtering synchronizes the hidden field.
             var hf = document.getElementById('<%= hfSelectedPrograms.ClientID %>');
-            if (hf && hf.value) {
-                var selected = hf.value.split(',').map(function (s) { return s.trim(); });
-                var checkboxes = document.querySelectorAll('input[name="courseFilter"]');
-                checkboxes.forEach(function (cb) {
-                    var match = selected.indexOf(cb.value) !== -1;
-                    cb.checked = match;
-                    var card = document.getElementById('card_' + cb.value);
-                    if (card) {
-                        if (match && card.style.display !== 'none') card.classList.add('selected');
-                        else card.classList.remove('selected');
-                    }
-                });
-            }
+            var selected = hf && hf.value ? hf.value.split(',').map(function (s) { return s.trim(); }) : [];
+            document.querySelectorAll('input[name="courseFilter"]').forEach(function (cb) {
+                cb.checked = selected.indexOf(cb.value) !== -1;
+            });
+            var deptDdl = document.getElementById('<%= ddlDepartment.ClientID %>');
+            filterProgramsByDepartment(deptDdl ? deptDdl.value : '');
         }
 
         // ─── Step 5 Live Summary Generation ───

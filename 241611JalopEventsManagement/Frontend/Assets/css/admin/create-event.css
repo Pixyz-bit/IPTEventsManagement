@@ -228,16 +228,58 @@
         /* Step Panels Visibility */
         .create-form-layout > div {
             width: 100%;
+            min-width: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
         }
 
         .step-panel {
-            display: none;
+            display: flex;
+            grid-area: 1 / 1;
+            visibility: hidden;
+            pointer-events: none;
             width: 100%;
+            min-width: 0;
         }
 
         .step-panel.active-panel {
-            display: block;
+            visibility: visible;
+            pointer-events: auto;
             width: 100%;
+        }
+
+        .step-panel > .form-section-card {
+            width: 100%;
+            min-width: 0;
+            display: flex;
+        }
+
+        .step-panel > .form-section-card > .card-body {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-panel .step-nav-footer {
+            margin-top: auto;
+        }
+
+        /* Sponsors uses its own content height instead of the shared step frame. */
+        .create-form-layout > .sponsor-step-active {
+            display: block;
+        }
+
+        .sponsor-step-active > .step-panel {
+            display: none;
+        }
+
+        .sponsor-step-active > #step-panel-4.active-panel {
+            display: flex;
+        }
+
+        #step-panel-4 .step-nav-footer {
+            margin-top: 1.5rem;
         }
 
         /* Step Footer Navigation */
@@ -375,6 +417,12 @@
             display: flex;
             gap: 0.5rem;
             margin-bottom: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+        .sponsor-input-row .form-input {
+            flex: 1 1 220px;
+            min-width: 0;
         }
 
         .sponsor-chips-container {
@@ -382,6 +430,9 @@
             flex-wrap: wrap;
             gap: 0.45rem;
             min-height: 38px;
+            max-height: 12rem;
+            overflow-y: auto;
+            overflow-wrap: anywhere;
             padding: 0.6rem;
             background-color: #f8fafc;
             border: 1px dashed var(--border-subtle);
@@ -391,6 +442,8 @@
         }
 
         .sponsor-chip {
+            max-width: 100%;
+            min-width: 0;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -411,6 +464,8 @@
             display: inline-flex;
             align-items: center;
             line-height: 1.2;
+            min-width: 0;
+            overflow-wrap: anywhere;
         }
 
         .btn-remove-chip {

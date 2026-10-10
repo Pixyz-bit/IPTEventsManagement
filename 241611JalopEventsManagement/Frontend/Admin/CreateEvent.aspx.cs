@@ -350,6 +350,7 @@ namespace _241611JalopEventsManagement.Frontend.Admin
                 hfPhotoFileName.Value = string.Empty;
                 hfActiveStep.Value = "1";
                 InitializeFormDefaults();
+                BindSponsors();
                 UpdatePreviewCard();
             }
             catch (Exception ex)

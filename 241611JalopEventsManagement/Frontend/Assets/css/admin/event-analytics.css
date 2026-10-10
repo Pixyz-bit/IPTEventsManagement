@@ -1013,6 +1013,71 @@
         .seg-unscanned { background-color: #94a3b8; }
         .seg-cancelled { background-color: var(--accent-rose); }
 
+        /* Check-in activity: a readable plot with an anchored inspection tooltip. */
+        .check-in-flow-panel { margin-bottom: 1.5rem; }
+        .check-in-flow-header { padding: 1.35rem 1.5rem; background: var(--bg-card); flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
+        .check-in-flow-heading { min-width: 0; }
+        .check-in-flow-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem 1rem; }
+        .check-in-interval-control { display: flex; align-items: center; gap: 0.6rem; }
+        .check-in-interval-control label { color: var(--text-heading); font-size: 0.78rem; font-weight: 600; }
+        .check-in-interval-select { min-width: 132px; height: 40px; box-shadow: none; font-variant-numeric: tabular-nums; }
+        .check-in-interval-select:disabled { cursor: default; opacity: 0.6; }
+        .check-in-flow-header h2 { margin: 0; font-size: 1rem; letter-spacing: -0.015em; }
+        .check-in-flow-caption { margin: 0.45rem 0 0; color: var(--text-muted); font-size: 0.8rem; line-height: 1.6; max-width: 75ch; }
+        .check-in-peak-summary { padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--brand-subtle); color: #1d4ed8; font-size: 0.78rem; font-weight: 600; line-height: 1.6; font-variant-numeric: tabular-nums; }
+        .check-in-flow-body { padding: 1.25rem 1.5rem 0.75rem; }
+        .check-in-flow-legend { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 1rem; color: var(--text-body); font-size: 0.75rem; }
+        .check-in-flow-legend > span { display: inline-flex; align-items: center; gap: 0.5rem; }
+        .check-in-legend-line { display: inline-block; width: 20px; height: 3px; background: var(--brand-primary); border-radius: 2px; }
+        .check-in-legend-peak { display: inline-block; width: 10px; height: 10px; border: 2px solid var(--brand-primary); border-radius: 50%; }
+        .check-in-flow-chart { width: 100%; overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--border-medium) var(--bg-card); }
+        .check-in-flow-svg { display: block; height: 300px; }
+        .check-in-grid-line { stroke: var(--border-subtle); stroke-width: 1; }
+        .check-in-axis-label { fill: var(--text-muted); font-family: var(--font-sans); font-size: 12px; font-variant-numeric: tabular-nums; }
+        .check-in-axis-caption { fill: var(--text-muted); font-family: var(--font-sans); font-size: 11px; }
+        .check-in-area { fill: var(--brand-subtle); }
+        .check-in-line { fill: none; stroke: var(--brand-primary); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+        .check-in-inspect-guide { stroke: #94a3b8; stroke-width: 1; stroke-dasharray: 4 4; pointer-events: none; }
+        .check-in-peak-label { fill: #1d4ed8; font-family: var(--font-sans); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; pointer-events: none; }
+        .check-in-point { cursor: pointer; outline: none; }
+        .check-in-hit-area { fill: transparent; }
+        .check-in-point-dot { fill: var(--brand-primary); stroke: var(--bg-card); stroke-width: 2; }
+        .check-in-point.is-peak .check-in-point-dot { fill: var(--bg-card); stroke: var(--brand-primary); stroke-width: 3; }
+        .check-in-point.is-inspected .check-in-point-dot, .check-in-point:focus-visible .check-in-point-dot { fill: var(--bg-card); stroke: #1d4ed8; stroke-width: 3; }
+        .check-in-point:focus-visible .check-in-hit-area { fill: rgba(37, 99, 235, 0.08); stroke: var(--brand-primary); stroke-width: 1.5; }
+        .check-in-flow-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem 1rem; padding: 0.75rem 0; margin-top: 0.5rem; }
+        .check-in-point-detail { margin: 0; min-height: 1.6em; color: var(--text-muted); font-size: 0.75rem; line-height: 1.6; font-variant-numeric: tabular-nums; }
+        .check-in-inspect-peak { display: inline-flex; align-items: center; gap: 0.4rem; flex-shrink: 0; border: 1px solid var(--border-medium); border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-body); padding: 0.55rem 0.7rem; font: 600 0.75rem var(--font-sans); cursor: pointer; }
+        .check-in-inspect-peak:hover { background: var(--brand-subtle); border-color: var(--brand-border); color: #1d4ed8; }
+        .check-in-flow-empty { margin: 0; padding: 2rem 0; color: var(--text-muted); font-size: 0.875rem; line-height: 1.6; }
+        .check-in-interval-details { border-top: 1px solid var(--border-subtle); }
+        .check-in-interval-details summary { width: fit-content; cursor: pointer; color: #1d4ed8; font-size: 0.75rem; font-weight: 600; padding: 0.9rem 0; }
+        .check-in-interval-details .table-responsive { max-height: 320px; overflow: auto; margin-top: 0.5rem; }
+        .check-in-table-caption { padding: 0.75rem 0; text-align: left; color: var(--text-muted); font-size: 0.8rem; }
+        .check-in-flow-chart:focus-visible, .check-in-interval-details summary:focus-visible, .check-in-inspect-peak:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 3px; }
+        .check-in-flow-panel [hidden], .check-in-flow-tooltip[hidden], .check-in-flow-tooltip [hidden] { display: none; }
+        .check-in-flow-tooltip { position: fixed; z-index: 1200; width: 252px; max-width: calc(100vw - 24px); padding: 1rem; border-radius: 12px; background: #0f172a; color: #f8fafc; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.22); font-family: var(--font-sans); animation: check-in-tooltip-enter 120ms ease-out; }
+        .check-in-flow-tooltip::after { content: ''; position: absolute; left: var(--tooltip-anchor, 50%); width: 10px; height: 10px; background: #0f172a; transform: translateX(-50%) rotate(45deg); }
+        .check-in-flow-tooltip[data-placement='above']::after { bottom: -5px; }
+        .check-in-flow-tooltip[data-placement='below']::after { top: -5px; }
+        .check-in-tooltip-header { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; }
+        .check-in-tooltip-window { color: #e2e8f0; font-size: 0.75rem; line-height: 1.5; font-weight: 500; font-variant-numeric: tabular-nums; }
+        .check-in-tooltip-peak { color: #bfdbfe; font-size: 0.65rem; line-height: 1.5; font-weight: 600; background: #1e3a5f; border-radius: 4px; padding: 0.15rem 0.4rem; }
+        .check-in-tooltip-measure { display: flex; align-items: baseline; gap: 0.5rem; }
+        .check-in-tooltip-measure strong { font-size: 1.7rem; font-weight: 700; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+        .check-in-tooltip-measure > span, .check-in-tooltip-share { color: #cbd5e1; font-size: 0.75rem; line-height: 1.6; }
+        .check-in-tooltip-share { margin-top: 0.55rem; }
+        .check-in-tooltip-change { margin-top: 0.75rem; padding-top: 0.65rem; border-top: 1px solid #334155; color: #e2e8f0; font-size: 0.7rem; line-height: 1.5; }
+        @keyframes check-in-tooltip-enter { from { opacity: 0; } to { opacity: 1; } }
+        @media (max-width: 640px) {
+            .check-in-flow-header { padding: 1.1rem; align-items: flex-start; flex-direction: column; gap: 0.8rem; }
+            .check-in-flow-controls { width: 100%; align-items: flex-start; flex-direction: column; }
+            .check-in-flow-body { padding: 1rem 1.1rem 0.5rem; }
+            .check-in-flow-footer { align-items: flex-start; flex-wrap: wrap; }
+            .check-in-inspect-peak { min-height: 40px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .check-in-flow-tooltip { animation: none; } }
+
         /* Peak Flow Telemetry Section */
         .peak-flow-layout {
             display: grid;
