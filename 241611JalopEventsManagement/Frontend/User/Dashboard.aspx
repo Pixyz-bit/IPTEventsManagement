@@ -331,23 +331,6 @@
             </section>
         </main>
 
-        <!-- Hidden controls retained invisibly for designer & code-behind compatibility -->
-        <asp:PlaceHolder ID="phModalHidden" runat="server" Visible="false">
-            <asp:Panel ID="pnlModalDetails" runat="server">
-                <asp:LinkButton ID="btnCloseModal" runat="server" />
-                <asp:Literal ID="litModalTitle" runat="server" />
-                <asp:Literal ID="litModalDescription" runat="server" />
-                <asp:Literal ID="litModalSchedule" runat="server" />
-                <asp:Literal ID="litModalVenue" runat="server" />
-                <asp:Literal ID="litModalCapacity" runat="server" />
-                <asp:Literal ID="litModalRegPeriod" runat="server" />
-                <asp:Literal ID="litModalSponsors" runat="server" />
-                <asp:HiddenField ID="hfSelectedEventId" runat="server" />
-                <asp:Button ID="btnCancelModal" runat="server" />
-                <asp:Button ID="btnConfirmRegistration" runat="server" />
-            </asp:Panel>
-        </asp:PlaceHolder>
-
         <!-- ══════════════════════════════════════════════════════════════
              EVENT DETAILS INTERACTIVE MODAL DIALOG
              ══════════════════════════════════════════════════════════════ -->

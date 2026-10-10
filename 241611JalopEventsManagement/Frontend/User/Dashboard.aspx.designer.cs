@@ -17,18 +17,6 @@ namespace _241611JalopEventsManagement.Frontend.User
         protected global::System.Web.UI.WebControls.Panel pnlNoEligibleEvents;
         protected global::System.Web.UI.WebControls.Panel pnlNoRegistrations;
         protected global::System.Web.UI.WebControls.Repeater rptMyRegistrations;
-        protected global::System.Web.UI.WebControls.Panel pnlModalDetails;
-        protected global::System.Web.UI.WebControls.LinkButton btnCloseModal;
-        protected global::System.Web.UI.WebControls.Literal litModalTitle;
-        protected global::System.Web.UI.WebControls.Literal litModalDescription;
-        protected global::System.Web.UI.WebControls.Literal litModalVenue;
-        protected global::System.Web.UI.WebControls.Literal litModalSchedule;
-        protected global::System.Web.UI.WebControls.Literal litModalCapacity;
-        protected global::System.Web.UI.WebControls.Literal litModalRegPeriod;
-        protected global::System.Web.UI.WebControls.Literal litModalSponsors;
-        protected global::System.Web.UI.WebControls.HiddenField hfSelectedEventId;
-        protected global::System.Web.UI.WebControls.Button btnCancelModal;
-        protected global::System.Web.UI.WebControls.Button btnConfirmRegistration;
         protected global::System.Web.UI.WebControls.HiddenField hfCancelRegistrationId;
         protected global::System.Web.UI.WebControls.Button btnConfirmCancelRegistration;
     }

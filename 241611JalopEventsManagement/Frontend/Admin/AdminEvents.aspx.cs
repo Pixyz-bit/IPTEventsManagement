@@ -255,22 +255,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             pnlFeedback.Visible = false;
         }
 
-        public static int GetCapacityPercentage(object registrations, object maxCapacity)
-        {
-            if (registrations == null || maxCapacity == null)
-            {
-                return 0;
-            }
-
-            if (int.TryParse(registrations.ToString(), out int reg) && int.TryParse(maxCapacity.ToString(), out int cap) && cap > 0)
-            {
-                int pct = (int)Math.Round((double)reg / cap * 100);
-                return Math.Min(100, Math.Max(0, pct));
-            }
-
-            return 0;
-        }
-
         public static string GetEventMatrixStatus(EventModel ev)
         {
             return ev == null ? "Close" : ev.GetMatrixStatus(DateTime.Now);

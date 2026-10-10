@@ -214,23 +214,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
         }
 
-        protected void btnCancelRow_Command(object sender, CommandEventArgs e)
-        {
-            if (e.CommandArgument != null && int.TryParse(e.CommandArgument.ToString(), out int regId))
-            {
-                bool success = _registrationRepo.AdminVoidRegistration(regId);
-                if (success)
-                {
-                    ShowAlert("Attendee registration pass successfully voided. 1 seat has been released back to the event capacity pool in real time.", true);
-                    LoadEventData();
-                }
-                else
-                {
-                    ShowAlert("Unable to void registration. The pass may already be cancelled or invalid.", false);
-                }
-            }
-        }
-
         private void ShowAlert(string message, bool isSuccess)
         {
             pnlAlert.Visible = true;

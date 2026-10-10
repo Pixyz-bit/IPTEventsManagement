@@ -76,11 +76,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             litNoSponsorsHint.Visible = (Sponsors == null || Sponsors.Count == 0);
         }
 
-        protected void FormField_Changed(object sender, EventArgs e)
-        {
-            UpdatePreviewCard();
-        }
-
         private void UpdatePreviewCard()
         {
             // Event card preview removed from CreateEvent (reserved for EventDetails)

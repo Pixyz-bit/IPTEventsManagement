@@ -500,111 +500,15 @@ namespace _241611JalopEventsManagement.Frontend.User
             }
         }
 
-        public string GetStatusBadgeCss(string status)
-        {
-            if (string.Equals(status, "Present", StringComparison.OrdinalIgnoreCase)) return "status-badge-present";
-            if (string.Equals(status, "Cancelled", StringComparison.OrdinalIgnoreCase)) return "status-badge-cancelled";
-            return "status-badge-noshow";
-        }
-
         #endregion
 
-        #region Event Handlers & Modal Interactions
+        #region Event Handlers
 
         protected void rptEventCards_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "ViewDetails")
             {
                 int eventId = Convert.ToInt32(e.CommandArgument);
-                Response.Redirect($"~/Frontend/User/EventRegistration.aspx?eventId={eventId}", true);
-            }
-        }
-
-        private void ShowEventDetailsModal(int eventId)
-        {
-            hfSelectedEventId.Value = eventId.ToString();
-
-            // Try loading from repository
-            EventModel ev = null;
-            try
-            {
-                ev = _eventRepo.GetEventById(eventId);
-            }
-            catch
-            {
-                // DB not reachable
-            }
-
-            if (ev != null)
-            {
-                litModalTitle.Text = Server.HtmlEncode(ev.Title);
-                litModalDescription.Text = Server.HtmlEncode(string.IsNullOrEmpty(ev.Description) ? "Comprehensive campus event organized for academic and technical development." : ev.Description);
-                litModalVenue.Text = Server.HtmlEncode(ev.VenueLocation);
-                litModalSchedule.Text = $"{ev.EventStart:MMM dd, yyyy} | {ev.EventStart:hh:mm tt} - {ev.EventEnd:hh:mm tt}";
-                litModalCapacity.Text = $"{ev.CurrentRegistrations} / {ev.MaxCapacity} ({ev.RemainingCapacity} slots remaining)";
-                litModalRegPeriod.Text = $"{ev.RegStart:MMM dd} - {ev.RegEnd:MMM dd, yyyy}";
-
-                List<string> sponsorNames = new List<string>();
-                try
-                {
-                    var sponsors = _sponsorRepo.GetSponsorsByEventId(eventId);
-                    if (sponsors != null && sponsors.Count > 0)
-                    {
-                        sponsorNames = sponsors.Select(s => s.SponsorName).ToList();
-                    }
-                }
-                catch { }
-
-                litModalSponsors.Text = BuildSponsorBadgesHtml(sponsorNames);
-
-                DateTime now = DateTime.Now;
-                bool isUpcoming = string.Equals(ev.Status, "Upcoming", StringComparison.OrdinalIgnoreCase);
-                bool isBeforeReg = isUpcoming && now < ev.RegStart;
-                bool isOpen = isUpcoming && now >= ev.RegStart && now <= ev.RegEnd && ev.CurrentRegistrations < ev.MaxCapacity;
-                bool isFullyBooked = isUpcoming && now >= ev.RegStart && now <= ev.RegEnd && ev.CurrentRegistrations >= ev.MaxCapacity;
-
-                if (isBeforeReg)
-                {
-                    btnConfirmRegistration.Enabled = false;
-                    btnConfirmRegistration.Text = $"Registration Opens on {ev.RegStart:MMM dd, h:mm tt}";
-                }
-                else if (isOpen)
-                {
-                    btnConfirmRegistration.Enabled = true;
-                    btnConfirmRegistration.Text = "Register For Event";
-                }
-                else if (isFullyBooked)
-                {
-                    btnConfirmRegistration.Enabled = false;
-                    btnConfirmRegistration.Text = "Fully Booked";
-                }
-                else
-                {
-                    btnConfirmRegistration.Enabled = false;
-                    btnConfirmRegistration.Text = "Registration Closed";
-                }
-            }
-            else
-            {
-                pnlModalDetails.Visible = false;
-                ShowToast("This event is unavailable. Please refresh and try again.", false);
-                return;
-            }
-
-            pnlModalDetails.Visible = true;
-            pnlModalDetails.CssClass = "modal-overlay active";
-        }
-
-        protected void btnCloseModal_Click(object sender, EventArgs e)
-        {
-            pnlModalDetails.Visible = false;
-            pnlModalDetails.CssClass = "modal-overlay";
-        }
-
-        protected void btnConfirmRegistration_Click(object sender, EventArgs e)
-        {
-            if (int.TryParse(hfSelectedEventId.Value, out int eventId) && eventId > 0)
-            {
                 Response.Redirect($"~/Frontend/User/EventRegistration.aspx?eventId={eventId}", true);
             }
         }

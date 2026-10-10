@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.UI;
@@ -384,28 +383,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
         }
 
-        private string ResolvePhotoUrl(UserModel user)
-        {
-            // Check for student photo in Assets or scratch
-            string localScratchJpg = Server.MapPath("~/Frontend/Assets/Student_Photo.jpg");
-            if (File.Exists(localScratchJpg))
-            {
-                return ResolveUrl("~/Frontend/Assets/Student_Photo.jpg");
-            }
-
-            // Check if student ID matches Rocel Jalop
-            if (user.StudentProfile != null && (user.StudentProfile.LastName?.IndexOf("Jalop", StringComparison.OrdinalIgnoreCase) >= 0 || user.Email?.IndexOf("jalop", StringComparison.OrdinalIgnoreCase) >= 0))
-            {
-                string photoPath = Server.MapPath("~/scratch/photo1.jpg");
-                if (File.Exists(photoPath))
-                {
-                    return ResolveUrl("~/scratch/photo1.jpg");
-                }
-            }
-
-            return null;
-        }
-
         #endregion
 
         #region Provision Administrator
@@ -662,26 +639,6 @@ namespace _241611JalopEventsManagement.Frontend.Admin
             }
 
             return email ?? "University User";
-        }
-
-        public string GetAffiliationText(string role, string dept, string prog)
-        {
-            if (string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
-            {
-                return "University Events Management & Operations";
-            }
-
-            if (!string.IsNullOrWhiteSpace(prog))
-            {
-                return prog;
-            }
-
-            if (!string.IsNullOrWhiteSpace(dept))
-            {
-                return dept;
-            }
-
-            return "Academic Affairs";
         }
 
         private static string EscapeCsv(string val)
